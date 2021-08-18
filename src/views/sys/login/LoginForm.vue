@@ -179,9 +179,9 @@
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
             getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
           });
+          getCode();
         } finally {
           loading.value = false;
-          getCode();
         }
       }
 
