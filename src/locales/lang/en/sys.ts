@@ -71,6 +71,7 @@ export default {
     signUpFormTitle: 'Sign up',
     forgetFormTitle: 'Reset password',
     code: 'Please enter the validate code result',
+    noRole: 'miss role',
 
     signInTitle: 'Backstage management system',
     signInDesc: 'Enter your personal details and get started!',

@@ -102,14 +102,23 @@ export const usePermissionStore = defineStore({
       const appStore = useAppStoreWithOut();
 
       let routes: AppRouteRecordRaw[] = [];
-      const roleList = toRaw(userStore.getUserInfo.sysRoleBeans) || [];
       const { permissionMode = projectSetting.permissionMode } = appStore.getProjectConfig;
 
       const routeFilter = (route: AppRouteRecordRaw) => {
+        const roleList = toRaw(
+          userStore.getUserInfo.sysRoleBeans.filter(
+            (roleInfo) => roleInfo.roleName === userStore.getUserInfo.roleName
+          )
+        );
+        if (roleList.length < 1) {
+          return false;
+        }
+        let menus = roleList[0].menus;
+        menus = menus.filter((menu) => menu.type === '0');
         const { meta } = route;
         const { roles } = meta || {};
         if (!roles) return true;
-        return roleList.some((role) => roles.includes(role));
+        return menus.some((menu) => roles.includes(menu.path));
       };
 
       const routeRmoveIgnoreFilter = (route: AppRouteRecordRaw) => {

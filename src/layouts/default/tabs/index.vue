@@ -89,11 +89,11 @@
 
       listenerRouteChange((route) => {
         const { name } = route;
-        if (name === REDIRECT_NAME || !route || !userStore.getToken) {
+        if (name === REDIRECT_NAME || !route || !userStore.getAccessToken) {
           return;
         }
 
-        const { path, fullPath, meta = {} } = route;
+        const { path, fullPath, meta } = route;
         const { currentActiveMenu, hideTab } = meta;
         const isHide = !hideTab ? null : currentActiveMenu;
         const p = isHide || fullPath || path;
