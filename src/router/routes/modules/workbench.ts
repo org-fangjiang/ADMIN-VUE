@@ -10,7 +10,7 @@ const workBench: AppRouteModule = {
   redirect: '/workbench/index',
   meta: {
     hideChildrenInMenu: true,
-    icon: 'simple-icons:about-dot-me',
+    icon: 'ant-design:expand-outlined',
     title: t('routes.dashboard.workbench'),
     orderNo: 100000,
   },

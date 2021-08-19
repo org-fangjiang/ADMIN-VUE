@@ -10,8 +10,9 @@ const system: AppRouteModule = {
   redirect: '/system/location',
   meta: {
     orderNo: 10,
-    icon: 'ion:grid-outline',
+    icon: 'ant-design:setting-filled',
     title: t('routes.system.system'),
+    roles: ['/system'],
   },
   children: [
     {
@@ -21,6 +22,7 @@ const system: AppRouteModule = {
       meta: {
         title: t('routes.system.location'),
         roles: ['/system/location'],
+        icon: 'mdi:compass',
       },
     },
     {
@@ -30,6 +32,7 @@ const system: AppRouteModule = {
       meta: {
         title: t('routes.system.metro'),
         roles: ['/system/metro'],
+        icon: 'maki:rail-metro',
       },
     },
     {
@@ -50,14 +53,55 @@ const system: AppRouteModule = {
         roles: ['/system/dict'],
       },
     },
-    // {
-    //   path: 'workbench',
-    //   name: 'Workbench',
-    //   component: () => import('/@/views/dashboard/workbench/index.vue'),
-    //   meta: {
-    //     title: t('routes.dashboard.workbench'),
-    //   },
-    // },
+    {
+      path: 'company',
+      name: 'Company',
+      component: () => import('/@/views/sys/company/index.vue'),
+      meta: {
+        title: t('routes.system.company'),
+        roles: ['/system/company'],
+        icon: 'clarity:organization-solid',
+      },
+    },
+    {
+      path: 'dept',
+      name: 'Dept',
+      component: () => import('/@/views/sys/department/index.vue'),
+      meta: {
+        title: t('routes.system.dept'),
+        roles: ['/system/dept'],
+      },
+    },
+    {
+      path: 'menu',
+      name: 'Menu',
+      component: () => import('/@/views/sys/menu/index.vue'),
+      meta: {
+        title: t('routes.system.menu'),
+        roles: ['/system/menu'],
+        icon: 'bx:bx-menu',
+      },
+    },
+    {
+      path: 'role',
+      name: 'Role',
+      component: () => import('/@/views/sys/role/index.vue'),
+      meta: {
+        title: t('routes.system.role'),
+        roles: ['/system/role'],
+        icon: 'ri:function-fill',
+      },
+    },
+    {
+      path: 'user',
+      name: 'User',
+      component: () => import('/@/views/sys/user/index.vue'),
+      meta: {
+        title: t('routes.system.user'),
+        roles: ['/system/user'],
+        icon: 'mdi:account',
+      },
+    },
   ],
 };
 

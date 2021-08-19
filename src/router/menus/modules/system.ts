@@ -22,6 +22,26 @@ const system: MenuModule = {
         path: 'dict',
         name: t('routes.system.dict'),
       },
+      {
+        path: 'company',
+        name: t('routes.system.company'),
+      },
+      {
+        path: 'dept',
+        name: t('routes.system.dept'),
+      },
+      {
+        path: 'menu',
+        name: t('routes.system.menu'),
+      },
+      {
+        path: 'role',
+        name: t('routes.system.role'),
+      },
+      {
+        path: 'user',
+        name: t('routes.system.user'),
+      },
     ],
   },
 };
