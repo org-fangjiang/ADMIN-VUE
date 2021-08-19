@@ -1,6 +1,6 @@
 import type { MenuModule } from '/@/router/types';
 import { t } from '/@/hooks/web/useI18n';
-const menu: MenuModule = {
+const about: MenuModule = {
   orderNo: 10,
   menu: {
     name: t('routes.dashboard.about'),
@@ -13,4 +13,4 @@ const menu: MenuModule = {
     ],
   },
 };
-export default menu;
+export default about;

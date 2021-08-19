@@ -24,14 +24,14 @@ const dashboard: AppRouteModule = {
         roles: ['/system/function'],
       },
     },
-    {
-      path: 'workbench',
-      name: 'Workbench',
-      component: () => import('/@/views/dashboard/workbench/index.vue'),
-      meta: {
-        title: t('routes.dashboard.workbench'),
-      },
-    },
+    // {
+    //   path: 'workbench',
+    //   name: 'Workbench',
+    //   component: () => import('/@/views/dashboard/workbench/index.vue'),
+    //   meta: {
+    //     title: t('routes.dashboard.workbench'),
+    //   },
+    // },
   ],
 };
 

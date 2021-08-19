@@ -1,6 +1,6 @@
 import type { MenuModule } from '/@/router/types';
 import { t } from '/@/hooks/web/useI18n';
-const menu: MenuModule = {
+const dashboard: MenuModule = {
   orderNo: 10,
   menu: {
     name: t('routes.dashboard.dashboard'),
@@ -10,11 +10,11 @@ const menu: MenuModule = {
         path: 'function',
         name: t('routes.dashboard.analysis'),
       },
-      {
-        path: 'workbench',
-        name: t('routes.dashboard.workbench'),
-      },
+      // {
+      //   path: 'workbench',
+      //   name: t('routes.dashboard.workbench'),
+      // },
     ],
   },
 };
-export default menu;
+export default dashboard;
