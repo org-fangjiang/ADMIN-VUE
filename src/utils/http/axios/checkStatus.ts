@@ -70,6 +70,7 @@ export function checkStatus(
       errMessage = t('sys.api.errMsg505');
       break;
     default:
+      errMessage = msg;
   }
   if (errMessage) {
     if (errorMessageMode === 'modal') {
