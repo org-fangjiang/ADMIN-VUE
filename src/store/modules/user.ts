@@ -14,9 +14,11 @@ import { usePermissionStore } from '/@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { tokenInfoModel } from '/@/api/sys/model/tokenModel';
+import { MenuConst } from '/@/api/sys/menu/model/menuModel';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
+  perms: string[];
   access_token: string | undefined;
   expires_in: number;
   refresh_token: string | undefined;
@@ -30,6 +32,7 @@ export const useUserStore = defineStore({
   state: (): UserState => ({
     // user info
     userInfo: null,
+    perms: [],
     // token
     access_token: undefined,
     expires_in: 0,
@@ -43,8 +46,14 @@ export const useUserStore = defineStore({
     getUserInfo(): UserInfo {
       return this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
     },
+    getPerms(): string[] {
+      return this.perms;
+    },
     getAccessToken(): string {
       return this.access_token || getAuthCache<string>(ACCESS_TOKEN_KEY);
+    },
+    getRefreshToken(): string {
+      return this.access_token || getAuthCache<string>(REFRESH_TOKEN_KEY);
     },
     getSessionTimeout(): boolean {
       return !!this.sessionTimeout;
@@ -52,7 +61,7 @@ export const useUserStore = defineStore({
   },
   actions: {
     setTokenInfo(tokenInfo: tokenInfoModel) {
-      this.setAccessToken(tokenInfo.access_token);
+      this.setAccessToken(tokenInfo.token_type + ' ' + tokenInfo.access_token);
       this.setExpiresIn(tokenInfo.expires_in);
       this.setRefreshToken(tokenInfo.refresh_token);
       this.setScope(tokenInfo.scope);
@@ -79,11 +88,15 @@ export const useUserStore = defineStore({
       this.userInfo = info;
       setAuthCache(USER_INFO_KEY, info);
     },
+    setPerms(info: string[]) {
+      this.perms = info;
+    },
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag;
     },
     resetState() {
       this.userInfo = null;
+      this.perms = [];
       this.access_token = '';
       this.expires_in = 0;
       this.refresh_token = '';
@@ -92,12 +105,13 @@ export const useUserStore = defineStore({
       this.sessionTimeout = false;
     },
     async refreshToken() {
-      if (!this.refresh_token) {
+      const refresh = this.getRefreshToken;
+      if (!refresh) {
         return;
       }
       const tokenInfo: LoginResultModel = await refreshTokenApi({
         grant_type: 'refresh_token',
-        refresh_token: this.refresh_token,
+        refresh_token: refresh,
         client_id: 'fangjiang',
         client_secret: '123456',
         scope: 'all',
@@ -144,6 +158,19 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<UserInfo> {
       const userInfo = await getUserInfo();
       this.setUserInfo(userInfo);
+      const roleId = userInfo.roleId;
+      const roleList = userInfo.sysRoleBeans.filter((roleInfo) => {
+        return roleInfo.id === roleId;
+      });
+      if (roleList.length > 0) {
+        const perms: string[] = [];
+        roleList[0].menus.forEach((menu) => {
+          if (menu.type === MenuConst.EFFECTIVE && menu.perms) {
+            perms.push(menu.perms);
+          }
+        });
+        this.setPerms(perms);
+      }
       return userInfo;
     },
     /**

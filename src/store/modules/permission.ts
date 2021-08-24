@@ -23,6 +23,7 @@ import { getPermCode } from '/@/api/sys/user';
 
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
+import { MenuConst } from '/@/api/sys/menu/model/menuModel';
 
 interface PermissionState {
   // Permission code list
@@ -114,7 +115,7 @@ export const usePermissionStore = defineStore({
           return false;
         }
         let menus = roleList[0].menus;
-        menus = menus.filter((menu) => menu.type === '0');
+        menus = menus.filter((menu) => menu.type === MenuConst.INVALID);
         const { meta } = route;
         const { roles } = meta || {};
         if (!roles) return true;
