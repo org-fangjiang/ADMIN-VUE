@@ -26,9 +26,10 @@ export function createPermissionGuard(router: Router) {
     }
 
     const token = userStore.getAccessToken;
+    const refresh = userStore.getAccessToken;
 
     // token does not exist
-    if (!token) {
+    if (!token && !refresh) {
       // You can access without permission. You need to set the routing meta.ignoreAuth to true
       if (to.meta.ignoreAuth) {
         next();
@@ -48,6 +49,21 @@ export function createPermissionGuard(router: Router) {
       }
       next(redirectData);
       return;
+    }
+    if (!token) {
+      await userStore.refreshToken();
+    }
+    try {
+      await userStore.getUserInfoAction();
+    } catch (error) {
+      if (error?.response?.data?.code === 5008) {
+        try {
+          await userStore.refreshToken();
+        } catch (error) {
+          userStore.resetState();
+          next(PageEnum.BASE_LOGIN);
+        }
+      }
     }
 
     // Jump to the 404 page after processing the login
