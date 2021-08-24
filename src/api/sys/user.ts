@@ -18,10 +18,15 @@ enum Api {
   GetPermCode = '/getPermCode',
 }
 export function refreshTokenApi(params: RefreshParams) {
-  return defHttp.post<LoginResultModel>({
-    url: Api.RefreshToken,
-    params,
-  });
+  return defHttp.post<LoginResultModel>(
+    {
+      url: Api.RefreshToken,
+      params,
+    },
+    {
+      withToken: false,
+    }
+  );
 }
 
 export function getCodeApi() {
@@ -51,7 +56,7 @@ export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') 
  * @description: getUserInfo
  */
 export function getUserInfo() {
-  return defHttp.get<UserInfoModel>({ url: Api.GetUserInfo });
+  return defHttp.get<UserInfoModel>({ url: Api.GetUserInfo }, { errorMessageMode: 'modal' });
 }
 
 export function getPermCode() {
