@@ -160,18 +160,20 @@
     setup() {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
+      // 修改为其它对应的组件名称
       const { prefixCls } = useDesign('company');
       const drawerParam = reactive({
         id: '',
-        containerDispaly: 'none',
         state: '0',
         title: '',
         visible: false,
       });
       const pageSizeList = ref<string[]>(PageSizeList);
+      // 修改为其它对应的Const
       const companyConst = ref(CompanyConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // 修改为其它对应的columns
       const columns = reactive(CompanyColumns);
       let pageParam = reactive({
         size: 10,
@@ -240,14 +242,13 @@
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
-        pageParam.number = 0;
+        pageParam.number = 1;
         const result = await getList();
         processList(result);
       };
 
       // 企业操作
       const action = async (key) => {
-        console.log(key);
         const code = key.key;
         const id = key?.item['data-id'] || undefined;
         switch (code) {
@@ -325,14 +326,11 @@
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
-        drawerParam.title = t('model.company.updateInfo');
-        drawerParam.containerDispaly = 'block';
+        drawerParam.title = t('model.company.add');
       };
 
-      const onClose = async (e) => {
-        console.log(e);
+      const onClose = async () => {
         drawerParam.visible = false;
-        drawerParam.containerDispaly = 'none';
         const result = await getList();
         processList(result);
       };

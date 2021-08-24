@@ -155,7 +155,6 @@
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
       const companyId = ref(props.id || undefined);
-      console.log('companyId', companyId);
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
       const formRef = ref();
