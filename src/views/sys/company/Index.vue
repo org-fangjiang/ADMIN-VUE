@@ -1,0 +1,387 @@
+// 企业信息管理页面
+
+<template>
+  <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Select
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+    >
+      <SelectOption value="0" key="0">到期</SelectOption>
+      <SelectOption value="1" key="1">锁定</SelectOption>
+      <SelectOption value="2" key="2">正常</SelectOption>
+    </Select>
+    <Button :class="prefixCls" v-auth="companyConst.COMPANY_PERMS.ADD" @click="add">{{
+      t('model.company.add')
+    }}</Button>
+    <Table :columns="columns" :data-source="list" rowKey="id">
+      <template #companySize="{ text: size }">
+        <span>
+          <Tag :color="companyConst.COMPANY_SIZES[size].color">
+            {{ companyConst.COMPANY_SIZES[size].content }}
+          </Tag>
+        </span>
+      </template>
+      <template #state="{ text: state }">
+        <span>
+          <Tag :color="companyConst.STATES[state].color">
+            {{ companyConst.STATES[state].content }}
+          </Tag>
+        </span>
+      </template>
+      <template #action="{ text: company }">
+        <Dropdown placement="bottomCenter" trigger="click">
+          <Button type="link">{{ t('model.company.action') }}</Button>
+          <template #overlay>
+            <Menu mode="horizontal" @click="action">
+              <MenuItem :key="0" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">{{
+                  t('model.company.updateInfo')
+                }}</Button>
+              </MenuItem>
+              <MenuItem
+                v-if="company.state !== companyConst.LOCKED"
+                :key="1"
+                :data-id="company.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
+                <template #icon></template>
+                <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
+                  {{ t('model.company.updateLocked') }}
+                </Button>
+              </MenuItem>
+              <MenuItem
+                v-else
+                :key="2"
+                :data-id="company.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
+                <template #icon></template>
+                <Button v-auth="companyConst.COMPANY_PERMS.DELETE" type="link" size="small">
+                  {{ t('model.company.updateUnLocked') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="3" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
+                  {{ t('model.company.changeCreateBy') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="4" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
+                  {{ t('model.company.updateRenewalData') }}
+                </Button>
+              </MenuItem>
+            </Menu>
+          </template>
+        </Dropdown>
+      </template>
+    </Table>
+    <Pagination
+      show-size-changer
+      size="large"
+      :show-total="(total) => t('component.table.total', { total })"
+      :pageSizeOptions="pageSizeList"
+      :current="pageParam.number"
+      :pageSize="pageParam.size"
+      :total="pageParam.totalElements"
+      @change="onChange"
+      @showSizeChange="onShowSizeChange"
+    />
+    <Drawer
+      :title="drawerParam.title"
+      :width="'100%'"
+      :destroyOnClose="true"
+      :visible="drawerParam.visible"
+      :wrapClassName="`${prefixCls}-drawer`"
+      :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"
+      :wrap-style="{ position: 'absolute' }"
+      @close="onClose"
+    >
+      <CompanyForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+      <CompanyFormCreateBy v-if="drawerParam.state === '3'" :id="drawerParam.id" />
+      <CompanyFormExpirationData v-if="drawerParam.state === '4'" :id="drawerParam.id" />
+    </Drawer>
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
+  </div>
+</template>
+
+<script lang="ts">
+  import { useI18n } from '/@/hooks/web/useI18n';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import { getCompanies, deleteCompany, reEnableCompany } from '/@/api/sys/compnay/company';
+  import {
+    CompanyModel,
+    CompanyColumns,
+    CompanyConst,
+  } from '/@/api/sys/compnay/model/companyModel';
+  import { Loading } from '/@/components/Loading';
+  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
+  import CompanyForm from './components/CompanyForm.vue';
+  import CompanyFormCreateBy from './components/CompanyFormCreateBy.vue';
+  import CompanyFormExpirationData from './components/CompanyFormExpirationData.vue';
+  import {
+    Drawer,
+    Menu,
+    MenuItem,
+    Dropdown,
+    Tag,
+    SelectOption,
+    Select,
+    Table,
+    Pagination,
+    Button,
+  } from 'ant-design-vue';
+  import { defineComponent, onMounted, reactive, ref } from 'vue';
+
+  export default defineComponent({
+    name: 'Company',
+    components: {
+      Loading,
+      CompanyFormExpirationData,
+      CompanyFormCreateBy,
+      CompanyForm,
+      Drawer,
+      Menu,
+      MenuItem,
+      Dropdown,
+      Tag,
+      SelectOption,
+      Select,
+      Table,
+      Pagination,
+      Button,
+    },
+    setup() {
+      const { t } = useI18n();
+      const { notification, createErrorModal } = useMessage();
+      const { prefixCls } = useDesign('company');
+      const drawerParam = reactive({
+        id: '',
+        containerDispaly: 'none',
+        state: '0',
+        title: '',
+        visible: false,
+      });
+      const pageSizeList = ref<string[]>(PageSizeList);
+      const companyConst = ref(CompanyConst);
+      let loading = ref<boolean>(true);
+      let tip = ref<string>('加载中...');
+      const columns = reactive(CompanyColumns);
+      let pageParam = reactive({
+        size: 10,
+        number: 1,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+      });
+
+      const condition = reactive({
+        state: '',
+        provinceId: '',
+        cityId: '',
+        areaId: '',
+      });
+
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        const result = await getList();
+        processList(result);
+      };
+
+      // 企业信息数据
+      const companies: CompanyModel[] = [];
+      let list = reactive(companies);
+
+      const getList = async () => {
+        loading.value = true;
+        let result: BasePageResult<CompanyModel> | undefined;
+        try {
+          result = await getCompanies(condition, {
+            pageSize: pageParam.size,
+            pageNum: pageParam.number,
+          });
+        } catch (error) {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
+            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          });
+        } finally {
+          loading.value = false;
+        }
+        return result;
+      };
+
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result);
+      };
+
+      function processList(result: any) {
+        if (!result) {
+          return;
+        }
+        const { page, content } = result;
+        list.splice(0);
+        content.forEach((company) => {
+          list.push(company);
+        });
+        page.number = page.number + 1;
+        Object.assign(pageParam, {}, page);
+      }
+
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 0;
+        const result = await getList();
+        processList(result);
+      };
+
+      // 企业操作
+      const action = async (key) => {
+        console.log(key);
+        const code = key.key;
+        const id = key?.item['data-id'] || undefined;
+        switch (code) {
+          case 0:
+            // update info
+            drawerParam.state = '0';
+            drawerParam.id = id;
+            drawerParam.title = t('model.company.updateInfo');
+            drawerParam.visible = true;
+            break;
+          case 1:
+            // update locked
+            try {
+              loading.value = true;
+              const company: CompanyModel = { id: id };
+              await deleteCompany(company);
+              success(t('model.company.updateInfo'), t('model.company.update_success'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.company.update_failed'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 2:
+            // update unLocked
+            try {
+              loading.value = true;
+              const company: CompanyModel = { id: id };
+              await reEnableCompany(company);
+              success(t('model.company.updateInfo'), t('model.company.update_success'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.company.update_failed'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 3:
+            // update create by 修改渠道负责人
+            drawerParam.state = '3';
+            drawerParam.id = id;
+            drawerParam.title = t('model.company.changeCreateBy');
+            drawerParam.visible = true;
+            break;
+          case 4:
+            // 续期
+            drawerParam.state = '4';
+            drawerParam.id = id;
+            drawerParam.title = t('model.company.updateRenewalData');
+            drawerParam.visible = true;
+            break;
+        }
+      };
+
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
+      };
+
+      const add = () => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = '';
+        drawerParam.title = t('model.company.updateInfo');
+        drawerParam.containerDispaly = 'block';
+      };
+
+      const onClose = async (e) => {
+        console.log(e);
+        drawerParam.visible = false;
+        drawerParam.containerDispaly = 'none';
+        const result = await getList();
+        processList(result);
+      };
+
+      onMounted(async () => {
+        const result = await getList();
+        processList(result);
+      });
+
+      return {
+        t,
+        prefixCls,
+        companyConst,
+        columns,
+        drawerParam,
+        loading,
+        tip,
+        pageSizeList,
+        pageParam,
+        condition,
+        list,
+        onChange,
+        onShowSizeChange,
+        stateHandleChange,
+        action,
+        add,
+        onClose,
+      };
+    },
+  });
+</script>
+
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-company';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-drawer {
+      max-width: 500px;
+    }
+
+    &-action-menu-item {
+      text-align: center;
+    }
+  }
+</style>

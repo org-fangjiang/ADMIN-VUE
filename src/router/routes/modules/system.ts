@@ -56,7 +56,7 @@ const system: AppRouteModule = {
     {
       path: 'company',
       name: 'Company',
-      component: () => import('/@/views/sys/company/index.vue'),
+      component: () => import('../../../views/sys/company/Index.vue'),
       meta: {
         title: t('routes.system.company'),
         roles: ['/system/company'],
