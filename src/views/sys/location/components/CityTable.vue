@@ -18,9 +18,7 @@
         </span>
       </template>
       <template #expandedRowRender="{ record }">
-        <slot name="area">
-          {{ record }}
-        </slot>
+        <slot name="city" :city="record"></slot>
       </template>
     </Table>
     <Pagination
@@ -57,7 +55,7 @@
     props: {
       provinceId: {
         type: String,
-        default: '',
+        require: true,
       },
     },
     setup(props) {
@@ -77,7 +75,7 @@
         totalElements: 0,
       });
       const condition = reactive({
-        id: '',
+        id: props.provinceId,
         state: '',
       });
 
@@ -112,7 +110,6 @@
       onMounted(async () => {
         const result = await getList();
         processList(result);
-        console.log('provinceID: ', props.provinceId);
       });
 
       function processList(result: any) {

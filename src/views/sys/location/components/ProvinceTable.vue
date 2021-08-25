@@ -18,9 +18,7 @@
         </span>
       </template>
       <template #expandedRowRender="{ record }">
-        <slot name="city">
-          {{ record }}
-        </slot>
+        <slot :name="'province'" :province="record"></slot>
       </template>
     </Table>
     <Pagination

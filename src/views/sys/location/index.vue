@@ -3,10 +3,10 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <ProvinceTable>
-      <template #city="{ record }">
-        <CityTable :provinceId="record.id">
-          <template #area>
-            <AreaTable />
+      <template #province="{ province }">
+        <CityTable :provinceId="province.id">
+          <template #city="{ city }">
+            <AreaTable :cityId="city" />
           </template>
         </CityTable>
       </template>
@@ -83,8 +83,8 @@
         return result;
       };
       onMounted(async () => {
-        const result = await getList();
-        processList(result);
+        // const result = await getList();
+        // processList(result);
       });
 
       function processList(result: any) {
