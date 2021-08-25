@@ -53,7 +53,23 @@ export default {
   },
   location: {
     area: {},
-    city: {},
-    province: {},
+    city: {
+      id: 'id',
+      name: 'name',
+      firstLetter: 'First Letter',
+      state: 'State',
+      action: 'Action',
+      provinceId: 'ProvinceId',
+      invalidState: 'Invalid',
+      validState: 'Valid',
+    },
+    province: {
+      provinceName: 'Province',
+      state: 'State',
+      invalidState: 'Invalid',
+      validState: 'Valid',
+      id: 'id',
+      name: 'name',
+    },
   },
 };

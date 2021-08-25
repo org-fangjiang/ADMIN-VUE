@@ -2,15 +2,33 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <ProvinceTable>
-      <template #city="{ record }">
-        <CityTable :provinceId="record.id">
-          <template #area>
-            <AreaTable />
-          </template>
-        </CityTable>
+    <Table :columns="provinceColumns" :data-source="list" rowKey="id" size="small">
+      <template #state="{ text: state }">
+        <span>
+          <Tag :color="provinceConst.STATES[state].color">
+            {{ provinceConst.STATES[state].label }}
+          </Tag>
+        </span>
       </template>
-    </ProvinceTable>
+      <template #action="{ text: info }">
+        <span>
+          <Button v-auth="provinceConst._PERMS.UPDATE" type="link" size="small">
+            {{ info.id }}
+          </Button>
+        </span>
+      </template>
+    </Table>
+    <Pagination
+      show-size-changer
+      size="large"
+      :show-total="(total) => t('component.table.total', { total })"
+      :pageSizeOptions="pageSizeList"
+      :current="pageParam.number"
+      :pageSize="pageParam.size"
+      :total="pageParam.totalElements"
+      @change="onChange"
+      @showSizeChange="onShowSizeChange"
+    />
   </div>
 </template>
 
@@ -24,17 +42,16 @@
     ProvinceModel,
   } from '/@/api/sys/province/model/provinceModel';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { Table, Pagination, Tag, Button } from 'ant-design-vue';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import ProvinceTable from './components/ProvinceTable.vue';
-  import CityTable from './components/CityTable.vue';
-  import AreaTable from './components/AreaTable.vue';
   export default defineComponent({
-    name: 'Location',
+    name: 'AreaTable',
     components: {
-      ProvinceTable,
-      CityTable,
-      AreaTable,
+      Table,
+      Pagination,
+      Tag,
+      Button,
     },
     setup() {
       const { t } = useI18n();
@@ -129,14 +146,3 @@
     },
   });
 </script>
-
-<style lang="less">
-  @prefix-cls: ~'@{namespace}-location';
-  @dark-bg: #293146;
-
-  html[data-theme='dark'] {
-    .@{prefix-cls} {
-      background-color: @dark-bg;
-    }
-  }
-</style>

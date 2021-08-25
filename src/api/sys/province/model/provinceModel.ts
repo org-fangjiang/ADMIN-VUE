@@ -22,15 +22,15 @@ export const ProvinceConst = {
   INVALID: '0',
   EFFECTIVE: '1',
   STATES: [
-    { value: '0', label: t(''), color: 'volcano' },
-    { value: '1', label: t(''), color: 'geekblue' },
+    { value: '0', label: t('model.location.province.invalidState'), color: 'volcano' },
+    { value: '1', label: t('model.location.province.validState'), color: 'geekblue' },
   ],
   _ADD_FIELDS: ['id', 'name', 'state'],
   _UPDATE_FIELDS: ['id', 'name', 'state'],
   _RULES: {
-    id: [{ required: true, message: t(''), trigger: 'blur' }],
-    name: [{ required: true, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    id: [{ required: true, message: t('model.location.province.id'), trigger: 'blur' }],
+    name: [{ required: true, message: t('model.location.province.name'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.location.province.state'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'location:select',
@@ -42,18 +42,24 @@ export const ProvinceConst = {
 
 export const ProvinceColumns = [
   {
-    title: t(''),
+    title: t('model.location.province.provinceName'),
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.province.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
+  },
+  {
+    title: t('model.company.action'),
+    key: 'action',
+    ellipsis: 'true',
+    slots: { customRender: 'action' },
   },
 ];
 

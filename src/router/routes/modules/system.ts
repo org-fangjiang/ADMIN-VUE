@@ -18,7 +18,7 @@ const system: AppRouteModule = {
     {
       path: 'location',
       name: 'Location',
-      component: () => import('/@/views/sys/location/index.vue'),
+      component: () => import('/@/views/sys/location/Index.vue'),
       meta: {
         title: t('routes.system.location'),
         roles: ['/system/location'],

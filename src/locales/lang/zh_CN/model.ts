@@ -53,7 +53,23 @@ export default {
   },
   location: {
     area: {},
-    city: {},
-    province: {},
+    city: {
+      id: '编号',
+      name: '名称',
+      firstLetter: '首字母',
+      state: '状态',
+      action: '操作',
+      provinceId: '省份编号',
+      invalidState: '无效',
+      validState: '有效',
+    },
+    province: {
+      provinceName: '省份',
+      state: '状态',
+      invalidState: '无效',
+      validState: '有效',
+      id: '编号',
+      name: '名称',
+    },
   },
 };

@@ -27,17 +27,19 @@ export const CityConst = {
   INVALID: '0',
   EFFECTIVE: '1',
   STATES: [
-    { value: '0', label: t(''), color: 'volcano' },
-    { value: '1', label: t(''), color: 'geekblue' },
+    { value: '0', label: t('model.location.city.invalidState'), color: 'volcano' },
+    { value: '1', label: t('model.location.city.validState'), color: 'geekblue' },
   ],
   _ADD_FIELDS: ['id', 'name', 'provinceId', 'firstLetter', 'state'],
   _UPDATE_FIELDS: ['id', 'name', 'provinceId', 'firstLetter', 'state'],
   _RULES: {
-    id: [{ required: true, message: t(''), trigger: 'blur' }],
-    name: [{ required: true, message: t(''), trigger: 'blur' }],
-    provinceId: [{ required: true, message: t(''), trigger: 'blur' }],
-    firstLetter: [{ required: true, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    id: [{ required: true, message: t('model.location.city.id'), trigger: 'blur' }],
+    name: [{ required: true, message: t('model.location.city.name'), trigger: 'blur' }],
+    provinceId: [{ required: true, message: t('model.location.city.provinceId'), trigger: 'blur' }],
+    firstLetter: [
+      { required: true, message: t('model.location.city.firstLetter'), trigger: 'blur' },
+    ],
+    state: [{ required: true, message: t('model.location.city.state'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'location:select',
@@ -49,35 +51,35 @@ export const CityConst = {
 
 export const CityColumns = [
   {
-    title: t(''),
+    title: t('model.location.city.id'),
     key: 'id',
     dataIndex: 'id',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.city.name'),
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.city.firstLetter'),
     key: 'firstLetter',
     dataIndex: 'firstLetter',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.city.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.city.action'),
     key: 'action',
     ellipsis: 'true',
     slots: { customRender: 'action' },

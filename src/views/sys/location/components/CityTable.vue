@@ -2,49 +2,73 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <ProvinceTable>
-      <template #city="{ record }">
-        <CityTable :provinceId="record.id">
-          <template #area>
-            <AreaTable />
-          </template>
-        </CityTable>
+    <Table :columns="cityColumns" :data-source="list" rowKey="id" size="small">
+      <template #state="{ text: state }">
+        <span>
+          <Tag :color="cityConst.STATES[state].color">
+            {{ cityConst.STATES[state].label }}
+          </Tag>
+        </span>
       </template>
-    </ProvinceTable>
+      <template #action="{ text: info }">
+        <span>
+          <Button v-auth="cityConst._PERMS.UPDATE" type="link" size="small">
+            {{ info.id }}
+          </Button>
+        </span>
+      </template>
+      <template #expandedRowRender="{ record }">
+        <slot name="area">
+          {{ record }}
+        </slot>
+      </template>
+    </Table>
+    <Pagination
+      show-size-changer
+      size="large"
+      :show-total="(total) => t('component.table.total', { total })"
+      :pageSizeOptions="pageSizeList"
+      :current="pageParam.number"
+      :pageSize="pageParam.size"
+      :total="pageParam.totalElements"
+      @change="onChange"
+      @showSizeChange="onShowSizeChange"
+    />
   </div>
 </template>
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getProvinces } from '/@/api/sys/province/province';
-  import {
-    ProvinceConst,
-    ProvinceColumns,
-    ProvinceModel,
-  } from '/@/api/sys/province/model/provinceModel';
+  import { getCities } from '/@/api/sys/city/city';
+  import { CityConst, CityColumns, CityModel } from '/@/api/sys/city/model/cityModel';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { Table, Pagination, Tag, Button } from 'ant-design-vue';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import ProvinceTable from './components/ProvinceTable.vue';
-  import CityTable from './components/CityTable.vue';
-  import AreaTable from './components/AreaTable.vue';
   export default defineComponent({
-    name: 'Location',
+    name: 'CityTable',
     components: {
-      ProvinceTable,
-      CityTable,
-      AreaTable,
+      Table,
+      Pagination,
+      Tag,
+      Button,
     },
-    setup() {
+    props: {
+      provinceId: {
+        type: String,
+        default: '',
+      },
+    },
+    setup(props) {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
-      const provinceConst = ref(ProvinceConst);
+      const cityConst = ref(CityConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const provinceColumns = reactive(ProvinceColumns);
+      const cityColumns = reactive(CityColumns);
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -52,7 +76,10 @@
         totalPages: 0,
         totalElements: 0,
       });
-      const condition = reactive({ state: '' });
+      const condition = reactive({
+        id: '',
+        state: '',
+      });
 
       const stateHandleChange = async (value) => {
         condition.state = value;
@@ -60,14 +87,14 @@
         processList(result);
       };
 
-      const provinces: ProvinceModel[] = [];
-      let list = reactive(provinces);
+      const cities: CityModel[] = [];
+      let list = reactive(cities);
 
       const getList = async () => {
         loading.value = true;
-        let result: BasePageResult<ProvinceModel> | undefined;
+        let result: BasePageResult<CityModel> | undefined;
         try {
-          result = await getProvinces(condition, {
+          result = await getCities(condition, {
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
@@ -85,6 +112,7 @@
       onMounted(async () => {
         const result = await getList();
         processList(result);
+        console.log('provinceID: ', props.provinceId);
       });
 
       function processList(result: any) {
@@ -115,9 +143,9 @@
       return {
         t,
         prefixCls,
-        provinceConst,
+        cityConst,
         tip,
-        provinceColumns,
+        cityColumns,
         loading,
         pageSizeList,
         pageParam,
@@ -129,14 +157,3 @@
     },
   });
 </script>
-
-<style lang="less">
-  @prefix-cls: ~'@{namespace}-location';
-  @dark-bg: #293146;
-
-  html[data-theme='dark'] {
-    .@{prefix-cls} {
-      background-color: @dark-bg;
-    }
-  }
-</style>
