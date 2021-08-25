@@ -51,4 +51,9 @@ export default {
     add_expirationData: '请输入企业到期时间',
     add_createBy: '请选择企业负责人',
   },
+  location: {
+    area: {},
+    city: {},
+    province: {},
+  },
 };

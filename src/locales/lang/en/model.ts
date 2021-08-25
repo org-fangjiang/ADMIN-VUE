@@ -51,4 +51,9 @@ export default {
     add_expirationData: 'Please enter the business expiration time',
     add_createBy: 'Please select the person in charge of the company',
   },
+  location: {
+    area: {},
+    city: {},
+    province: {},
+  },
 };

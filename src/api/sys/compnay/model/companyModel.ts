@@ -164,3 +164,16 @@ export const CompanyColumns = [
     slots: { customRender: 'action' },
   },
 ];
+
+// SYS_COMPANY_MISS_ID(4001, "企业参数错误：编号"),
+// SYS_COMPANY_MISS_NAME(4002, "企业参数错误：名称"),
+// SYS_COMPANY_MISS_PROVINCE_ID(4003, "企业参数错误：省级编号"),
+// SYS_COMPANY_MISS_CITY_ID(4004, "企业参数错误：市级编号"),
+// SYS_COMPANY_MISS_AREA_ID(4005, "企业参数错误：区级编号"),
+// SYS_COMPANY_MISS_COMPANY_ADDRESS(4006, "企业参数错误：详细地址"),
+// SYS_COMPANY_MISS_COMPANY_SIZE(4007, "企业参数错误：规模"),
+// SYS_COMPANY_MISS_STATE(4008, "企业参数错误：状态"),
+// SYS_COMPANY_MISS_EXPIRATION_DATA(4009, "企业参数错误：到期时间"),
+// SYS_COMPANY_MISS_COMMISSION_MODE(4010, "企业参数错误：抽成方式"),
+// SYS_COMPANY_MISS_CREATE_BY(4011, "企业参数错误：负责人"),
+// SYS_COMPANY_MISS_BUSINESS_LICENSE(4012, "企业参数错误：营业执照编号"),
