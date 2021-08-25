@@ -8,7 +8,7 @@ import { PageParam, SortParam } from '/@/api/model/baseModel';
 enum Api {
   GetCompanies = '/sys-server/company/getCompanies',
   GetCompany = '/sys-server/company/getCompany',
-  AddCompany = '/sys-server/company/changeCreateBy',
+  AddCompany = '/sys-server/company/addCompany',
   UpdateCompany = '/sys-server/company/updateCompany',
   DeleteCompany = '/sys-server/company/deleteCompany',
   ReEnableCompany = '/sys-server/company/reEnableCompany',

@@ -13,7 +13,14 @@
         :label="t('model.company.expirationData')"
         name="expirationData"
       >
-        <Input v-model:value="formState.expirationData" autoComplete="off" />
+        <!-- <Input v-model:value="formState.expirationData" autoComplete="off" /> -->
+        <DatePicker
+          showTime
+          :disabled-date="disabledDate"
+          format="YYYY-MM-DD HH:mm:ss"
+          :value="formState.expirationData"
+          @change="change"
+        />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button v-if="!companyId" type="primary" @click="onSubmit">{{
@@ -37,8 +44,9 @@
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { CompanyModel, CompanyConst } from '/@/api/sys/compnay/model/companyModel';
   import { Loading } from '/@/components/Loading';
-  import { Form, FormItem, Button, Input } from 'ant-design-vue';
+  import { Form, FormItem, Button, DatePicker } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
+  import moment from 'moment';
   export default defineComponent({
     name: 'CompanyFormExpirationData',
     components: {
@@ -46,7 +54,7 @@
       Form,
       FormItem,
       Button,
-      Input,
+      DatePicker,
     },
     props: {
       id: {
@@ -119,6 +127,15 @@
         }
       };
 
+      const change = (_date: any | string, dateString: string) => {
+        formState.expirationData = dateString;
+      };
+
+      const disabledDate = (current: any) => {
+        // Can not select days before today and today
+        return current && current < moment().endOf('day');
+      };
+
       onMounted(async () => {
         if (companyId.value) {
           loading.value = true;
@@ -145,6 +162,8 @@
         wrapperCol: { span: 14 },
         onSubmit,
         resetForm,
+        change,
+        disabledDate,
       };
     },
   });

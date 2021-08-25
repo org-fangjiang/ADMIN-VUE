@@ -73,17 +73,28 @@
         />
       </FormItem>
       <FormItem ref="companySize" :label="t('model.company.companySize')" name="companySize">
-        <Input
+        <!-- <Input
           :disabled="companyId && !updateFields.includes('companySize')"
           v-model:value="formState.companySize"
           autoComplete="off"
+        /> -->
+        <Select
+          @change="stateHandleChange"
+          v-model:value="formState.companySize"
+          :options="companySizes"
         />
       </FormItem>
       <FormItem ref="commission" :label="t('model.company.commission')" name="commission">
         <Input
           :disabled="companyId && !updateFields.includes('commission')"
+          v-if="formState.commissionMode === '1'"
           v-model:value="formState.commission"
           autoComplete="off"
+        />
+        <Slider
+          :disabled="companyId && !updateFields.includes('commission')"
+          v-else
+          v-model:value="formState.commission"
         />
       </FormItem>
       <FormItem
@@ -91,11 +102,15 @@
         :label="t('model.company.commissionMode')"
         name="commissionMode"
       >
-        <Input
+        <!-- <Input
           :disabled="companyId && !updateFields.includes('commissionMode')"
           v-model:value="formState.commissionMode"
           autoComplete="off"
-        />
+        /> -->
+        <RadioGroup v-model:value="formState.commissionMode">
+          <Radio value="0">百分比</Radio>
+          <Radio value="1">固定金额</Radio>
+        </RadioGroup>
       </FormItem>
       <FormItem ref="onlineNumber" :label="t('model.company.onlineNumber')" name="onlineNumber">
         <Input v-model:value="formState.onlineNumber" autoComplete="off" />
@@ -105,10 +120,19 @@
         :label="t('model.company.expirationData')"
         name="expirationData"
       >
-        <Input
+        <!-- <Input
+          v-show="false"
           :disabled="companyId && !updateFields.includes('expirationData')"
           v-model:value="formState.expirationData"
           autoComplete="off"
+        /> -->
+        <DatePicker
+          showTime
+          :disabled-date="disabledDate"
+          :disabled="companyId && !updateFields.includes('expirationData')"
+          format="YYYY-MM-DD HH:mm:ss"
+          :value="formState.expirationData"
+          @change="change"
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
@@ -130,11 +154,23 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { getCompany, addCompany, updateCompany } from '/@/api/sys/compnay/company';
-  import { defineComponent, onMounted, reactive, ref, toRaw, UnwrapRef } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import moment from 'moment';
   import { CompanyModel, CompanyConst } from '/@/api/sys/compnay/model/companyModel';
   import { Loading } from '/@/components/Loading';
-  import { Form, FormItem, Button, Input } from 'ant-design-vue';
+  import {
+    Form,
+    FormItem,
+    Button,
+    Input,
+    Select,
+    RadioGroup,
+    Radio,
+    DatePicker,
+    Slider,
+  } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
+
   export default defineComponent({
     name: 'CompanyForm',
     components: {
@@ -143,6 +179,11 @@
       FormItem,
       Button,
       Input,
+      Select,
+      RadioGroup,
+      Radio,
+      DatePicker,
+      Slider,
     },
     props: {
       id: {
@@ -159,6 +200,11 @@
       const tip = ref<string>('加载中...');
       const formRef = ref();
       const rules = reactive(CompanyConst.COMPANY_RULES);
+      const companySizes = reactive(CompanyConst.COMPANY_SIZES);
+      const stateHandleChange = async (value) => {
+        formState.companySize = value;
+      };
+
       const formState: UnwrapRef<CompanyModel> = reactive({
         id: '',
         name: '',
@@ -170,7 +216,7 @@
         companyPhone: '',
         businessLicense: '',
         companySize: '',
-        commission: '',
+        commission: 0,
         commissionMode: '',
         onlineNumber: '',
         expirationData: '',
@@ -189,13 +235,13 @@
         formRef.value
           .validate()
           .then(async () => {
-            console.log('values', formState, toRaw(formState));
             if (companyId.value) {
               loading.value = true;
               try {
                 const { content } = await updateCompany(formState);
                 success(t('model.company.updateInfo'), t('model.company.update_success'));
                 Object.assign(formState, content);
+                formState.commission = Number(formState.commission);
               } catch (error) {
                 failed(error?.response?.data?.message, t('model.company.update_failed'));
               } finally {
@@ -207,6 +253,7 @@
                 const { content } = await addCompany(formState);
                 success(t('model.company.save'), t('model.company.save_success'));
                 Object.assign(formState, content);
+                formState.commission = Number(formState.commission);
               } catch (error) {
                 failed(error?.response?.data?.message, t('model.company.save_failed'));
               } finally {
@@ -217,6 +264,10 @@
           .catch((error: ValidateErrorEntity<CompanyModel>) => {
             console.log('error', error);
           });
+      };
+
+      const change = (_date: any | string, dateString: string) => {
+        formState.expirationData = dateString;
       };
 
       const success = (message: any, description: any) => {
@@ -241,6 +292,7 @@
           try {
             const { content } = await getCompany(companyId.value);
             Object.assign(formState, content);
+            formState.commission = Number(formState.commission);
           } catch (error) {
           } finally {
             loading.value = false;
@@ -250,16 +302,25 @@
         }
       };
 
+      const disabledDate = (current: any) => {
+        // Can not select days before today and today
+        return current && current < moment().endOf('day');
+      };
+
       onMounted(async () => {
         if (companyId.value) {
           loading.value = true;
           try {
             const { content } = await getCompany(companyId.value);
             Object.assign(formState, content);
+            formState.commission = Number(formState.commission);
           } catch (error) {
           } finally {
             loading.value = false;
           }
+        } else {
+          // 如果是添加时，默认设置为百分比
+          formState.commissionMode = '0';
         }
       });
 
@@ -276,6 +337,10 @@
         wrapperCol: { span: 14 },
         onSubmit,
         resetForm,
+        stateHandleChange,
+        companySizes,
+        change,
+        disabledDate,
       };
     },
   });

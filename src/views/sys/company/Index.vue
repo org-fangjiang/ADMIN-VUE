@@ -8,10 +8,11 @@
       v-model:value="condition.state"
       style="width: 120px"
       @change="stateHandleChange"
+      :options="companyConst.STATES"
     >
-      <SelectOption value="0" key="0">到期</SelectOption>
+      <!-- <SelectOption value="0" key="0">到期</SelectOption>
       <SelectOption value="1" key="1">锁定</SelectOption>
-      <SelectOption value="2" key="2">正常</SelectOption>
+      <SelectOption value="2" key="2">正常</SelectOption> -->
     </Select>
     <Button :class="prefixCls" v-auth="companyConst.COMPANY_PERMS.ADD" @click="add">{{
       t('model.company.add')
@@ -20,14 +21,14 @@
       <template #companySize="{ text: size }">
         <span>
           <Tag :color="companyConst.COMPANY_SIZES[size].color">
-            {{ companyConst.COMPANY_SIZES[size].content }}
+            {{ companyConst.COMPANY_SIZES[size].label }}
           </Tag>
         </span>
       </template>
       <template #state="{ text: state }">
         <span>
           <Tag :color="companyConst.STATES[state].color">
-            {{ companyConst.STATES[state].content }}
+            {{ companyConst.STATES[state].label }}
           </Tag>
         </span>
       </template>
@@ -131,7 +132,6 @@
     MenuItem,
     Dropdown,
     Tag,
-    SelectOption,
     Select,
     Table,
     Pagination,
@@ -151,7 +151,6 @@
       MenuItem,
       Dropdown,
       Tag,
-      SelectOption,
       Select,
       Table,
       Pagination,

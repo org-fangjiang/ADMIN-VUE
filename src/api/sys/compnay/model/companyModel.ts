@@ -15,7 +15,7 @@ export interface CompanyModel {
   companyPhone?: string; //*
   businessLicense?: string; //-
   companySize?: string; //*
-  commission?: string; //-
+  commission?: number; //-
   commissionMode?: string; //-
   onlineNumber?: string; //*
   state?: string; //-
@@ -42,18 +42,18 @@ export const CompanyConst = {
   LOCKED: '1',
   EFFECTIVE: '2',
   STATES: [
-    { value: '0', content: t('model.company.invalid'), color: 'volcano' },
-    { value: '1', content: t('model.company.locked'), color: 'geekblue' },
-    { value: '2', content: t('model.company.effective'), color: 'green' },
+    { value: '0', label: t('model.company.invalid'), color: 'volcano' },
+    { value: '1', label: t('model.company.locked'), color: 'geekblue' },
+    { value: '2', label: t('model.company.effective'), color: 'green' },
   ],
   COMPANY_SIZES: [
-    { value: '0', content: t('model.company.size0'), color: 'pink' },
-    { value: '1', content: t('model.company.size1'), color: 'red' },
-    { value: '2', content: t('model.company.size2'), color: 'orange' },
-    { value: '3', content: t('model.company.size3'), color: 'green' },
-    { value: '4', content: t('model.company.size4'), color: 'cyan' },
-    { value: '5', content: t('model.company.size5'), color: 'blue' },
-    { value: '6', content: t('model.company.size6'), color: 'purple' },
+    { value: '0', label: t('model.company.size0'), color: 'pink' },
+    { value: '1', label: t('model.company.size1'), color: 'red' },
+    { value: '2', label: t('model.company.size2'), color: 'orange' },
+    { value: '3', label: t('model.company.size3'), color: 'green' },
+    { value: '4', label: t('model.company.size4'), color: 'cyan' },
+    { value: '5', label: t('model.company.size5'), color: 'blue' },
+    { value: '6', label: t('model.company.size6'), color: 'purple' },
   ],
   COMPANY_ADD_FIELDS: [
     'name',
