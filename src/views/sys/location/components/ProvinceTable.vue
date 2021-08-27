@@ -2,6 +2,17 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Select
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="provinceConst.STATES"
+    />
+    <Button :class="prefixCls" v-auth="provinceConst._PERMS.ADD" @click="addProvince">{{
+      t('model.location.province.addProvince')
+    }}</Button>
     <Table :columns="provinceColumns" :data-source="list" rowKey="id">
       <template #state="{ text: state }">
         <span>
@@ -10,12 +21,58 @@
           </Tag>
         </span>
       </template>
-      <template #action="{ text: info }">
-        <span>
-          <Button v-auth="provinceConst._PERMS.UPDATE" type="link" size="small">
-            {{ info.id }}
-          </Button>
-        </span>
+      <template #action="{ text: province }">
+        <!-- 操作下拉框 -->
+        <Dropdown placement="bottomCenter" trigger="click">
+          <Button type="link">{{ t('model.location.province.action') }}</Button>
+          <template #overlay>
+            <Menu mode="horizontal" @click="action">
+              <MenuItem :key="0" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  :class="prefixCls"
+                  v-auth="provinceConst._PERMS.DELETE"
+                  type="link"
+                  size="small"
+                  >{{ t('model.location.province.deleteProvince') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="1" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="provinceConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.location.province.recoveryProvince') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="2" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="provinceConst._PERMS.ADD"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.location.city.addCity') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="3" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="provinceConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.location.province.updateProvince') }}
+                </Button>
+              </MenuItem>
+            </Menu>
+          </template>
+        </Dropdown>
       </template>
       <template #expandedRowRender="{ record }">
         <slot :name="'province'" :province="record"></slot>
@@ -32,22 +89,24 @@
       @change="onChange"
       @showSizeChange="onShowSizeChange"
     />
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getProvinces } from '/@/api/sys/province/province';
+  import { getProvinces, deleteProvince, reEnableProvince } from '/@/api/sys/province/province';
   import {
     ProvinceConst,
     ProvinceColumns,
     ProvinceModel,
   } from '/@/api/sys/province/model/provinceModel';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { Table, Pagination, Tag, Button } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Button, Dropdown, Menu, MenuItem, Select } from 'ant-design-vue';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { Loading } from '/@/components/Loading';
   export default defineComponent({
     name: 'ProvinceTable',
     components: {
@@ -55,10 +114,17 @@
       Pagination,
       Tag,
       Button,
+      Select,
+      Dropdown,
+      Menu,
+      MenuItem,
+      Loading,
     },
-    setup() {
+    props: {},
+    emits: ['onAddCity', 'onUpdateProvince', 'onAddProvince'],
+    setup(_props, { emit }) {
       const { t } = useI18n();
-      const { createErrorModal } = useMessage();
+      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
       const provinceConst = ref(ProvinceConst);
       let loading = ref<boolean>(true);
@@ -106,7 +172,72 @@
         const result = await getList();
         processList(result);
       });
+      // 操作
+      const action = async (key) => {
+        const code = key.key;
+        const id = key?.item['data-id'] || undefined;
+        switch (code) {
+          case 0:
+            // 删除
+            try {
+              loading.value = true;
+              const province: ProvinceModel = { id: id };
+              await deleteProvince(province);
+              success(
+                t('model.location.province.deleteProvince'),
+                t('model.location.province.success')
+              );
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.location.province.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 1:
+            // 恢复
+            try {
+              loading.value = true;
+              const province: ProvinceModel = { id: id };
+              await reEnableProvince(province);
+              success(
+                t('model.location.province.recoveryProvince'),
+                t('model.location.province.success')
+              );
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.location.province.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 2:
+            // 添加
+            addCity(id);
+            break;
+          case 3:
+            // 更新城市
+            updateProvince(id);
+            break;
+        }
+      };
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
 
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
+      };
       function processList(result: any) {
         if (!result) {
           return;
@@ -119,7 +250,6 @@
         page.number = page.number + 1;
         Object.assign(pageParam, {}, page);
       }
-
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
@@ -132,12 +262,33 @@
         const result = await getList();
         processList(result);
       };
+      //添加省
+      const addProvince = () => {
+        emit('onAddProvince');
+      };
+      // addCity
+      const addCity = (provinceId) => {
+        emit('onAddCity', { provinceId });
+      };
+      // updateProvince
+      const updateProvince = (provinceId) => {
+        emit('onUpdateProvince', { provinceId });
+      };
+      // refresh list
+      const refresh = async () => {
+        const result = await getList();
+        processList(result);
+      };
       return {
         t,
         prefixCls,
         provinceConst,
         tip,
         provinceColumns,
+        condition,
+        action,
+        labelCol: { span: 6 },
+        wrapperCol: { span: 14 },
         loading,
         pageSizeList,
         pageParam,
@@ -145,6 +296,8 @@
         stateHandleChange,
         onChange,
         onShowSizeChange,
+        refresh,
+        addProvince,
       };
     },
   });

@@ -26,7 +26,7 @@ export const ProvinceConst = {
     { value: '1', label: t('model.location.province.validState'), color: 'geekblue' },
   ],
   _ADD_FIELDS: ['id', 'name', 'state'],
-  _UPDATE_FIELDS: ['id', 'name', 'state'],
+  _UPDATE_FIELDS: ['name'],
   _RULES: {
     id: [{ required: true, message: t('model.location.province.id'), trigger: 'blur' }],
     name: [{ required: true, message: t('model.location.province.name'), trigger: 'blur' }],

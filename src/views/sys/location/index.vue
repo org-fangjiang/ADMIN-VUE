@@ -2,129 +2,166 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <ProvinceTable>
+    <ProvinceTable
+      ref="provinceRef"
+      @onAddProvince="addProvince"
+      @onAddCity="addCity"
+      @onUpdateProvince="updateProvince"
+    >
       <template #province="{ province }">
-        <CityTable :provinceId="province.id">
+        <CityTable
+          ref="cityRef"
+          :provinceId="province.id"
+          @onAddArea="addArea"
+          @onUpdateProvince="updateCity"
+        >
           <template #city="{ city }">
-            <AreaTable :cityId="city" />
+            <AreaTable ref="areaRef" :cityId="city.id" @onUpdateArea="updateArea" />
           </template>
         </CityTable>
       </template>
     </ProvinceTable>
+    <Drawer
+      :zIndex="1"
+      :title="drawerParam.title"
+      :width="'100%'"
+      :destroyOnClose="true"
+      :visible="drawerParam.visible"
+      :get-container="false"
+      :wrapClassName="`${prefixCls}-drawer`"
+      :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"
+      :wrap-style="{ position: 'absolute' }"
+      @close="onClose"
+    >
+      <AreaForm
+        v-if="drawerParam.state === '0'"
+        :cityId="drawerParam.cityId"
+        :id="drawerParam.id"
+      />
+      <CityForm
+        v-if="drawerParam.state === '1'"
+        :provinceId="drawerParam.provinceId"
+        :id="drawerParam.id"
+      />
+      <ProvinceForm v-if="drawerParam.state === '2'" :id="drawerParam.id" />
+    </Drawer>
   </div>
 </template>
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getProvinces } from '/@/api/sys/province/province';
-  import {
-    ProvinceConst,
-    ProvinceColumns,
-    ProvinceModel,
-  } from '/@/api/sys/province/model/provinceModel';
-  import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { defineComponent, ref, reactive } from 'vue';
+  import { Drawer } from 'ant-design-vue';
   import ProvinceTable from './components/ProvinceTable.vue';
   import CityTable from './components/CityTable.vue';
   import AreaTable from './components/AreaTable.vue';
+  import AreaForm from './components/AreaForm.vue';
+  import CityForm from './components/CityForm.vue';
+  import ProvinceForm from './components/ProvinceForm.vue';
   export default defineComponent({
     name: 'Location',
     components: {
+      Drawer,
       ProvinceTable,
       CityTable,
       AreaTable,
+      AreaForm,
+      CityForm,
+      ProvinceForm,
     },
     setup() {
       const { t } = useI18n();
-      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
-      const provinceConst = ref(ProvinceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
-      const provinceColumns = reactive(ProvinceColumns);
-      let pageParam = reactive({
-        size: 10,
-        number: 1,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
-      });
-      const condition = reactive({ state: '' });
 
-      const stateHandleChange = async (value) => {
-        condition.state = value;
-        const result = await getList();
-        processList(result);
-      };
-
-      const provinces: ProvinceModel[] = [];
-      let list = reactive(provinces);
-
-      const getList = async () => {
-        loading.value = true;
-        let result: BasePageResult<ProvinceModel> | undefined;
-        try {
-          result = await getProvinces(condition, {
-            pageSize: pageParam.size,
-            pageNum: pageParam.number,
-          });
-        } catch (error) {
-          createErrorModal({
-            title: t('sys.api.errorTip'),
-            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
-            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-          });
-        } finally {
-          loading.value = false;
-        }
-        return result;
-      };
-      onMounted(async () => {
-        // const result = await getList();
-        // processList(result);
+      const provinceRef = ref();
+      const cityRef = ref();
+      const areaRef = ref();
+      const drawerParam = reactive({
+        id: '',
+        provinceId: '',
+        cityId: '',
+        state: '', // 0: area 1: city 2: provice
+        title: '',
+        visible: false,
       });
 
-      function processList(result: any) {
-        if (!result) {
-          return;
+      const onClose = () => {
+        switch (drawerParam.state) {
+          case '2':
+            provinceRef.value.refresh();
+            break;
+          case '1':
+            cityRef.value.refresh();
+            break;
+          case '0':
+            areaRef.value.refresh();
+            break;
         }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
+        drawerParam.id = '';
+        drawerParam.provinceId = '';
+        drawerParam.cityId = '';
+        drawerParam.state = '';
+        drawerParam.title = '';
+        drawerParam.visible = false;
       };
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
+      const addProvince = () => {
+        drawerParam.visible = true;
+        drawerParam.state = '2';
+        drawerParam.id = '';
+        drawerParam.title = t('model.location.province.addProvince');
+      };
+      const addCity = (e) => {
+        drawerParam.visible = true;
+        drawerParam.provinceId = e.provinceId;
+        drawerParam.state = '1';
+        drawerParam.title = t('model.location.city.addCity');
+      };
+
+      const updateProvince = (e) => {
+        drawerParam.visible = true;
+        drawerParam.id = e.provinceId;
+        drawerParam.state = '2';
+        drawerParam.title = t('model.location.province.updateProvince');
+      };
+
+      const addArea = (e) => {
+        drawerParam.visible = true;
+        drawerParam.cityId = e.cityId;
+        drawerParam.state = '0';
+        drawerParam.title = t('model.location.area.addArea');
+      };
+      const updateCity = (e) => {
+        drawerParam.visible = true;
+        drawerParam.id = e.cityId;
+        drawerParam.state = '1';
+        drawerParam.title = t('model.location.city.updateCity');
+      };
+
+      const updateArea = (e) => {
+        drawerParam.visible = true;
+        drawerParam.id = e.areaId;
+        drawerParam.state = '0';
+        drawerParam.title = t('model.location.area.updateArea');
       };
       return {
         t,
         prefixCls,
-        provinceConst,
         tip,
-        provinceColumns,
         loading,
-        pageSizeList,
-        pageParam,
-        list,
-        stateHandleChange,
-        onChange,
-        onShowSizeChange,
+        provinceRef,
+        cityRef,
+        areaRef,
+        drawerParam,
+        onClose,
+        addProvince,
+        addCity,
+        updateProvince,
+        addArea,
+        updateCity,
+        updateArea,
       };
     },
   });
@@ -137,6 +174,16 @@
   html[data-theme='dark'] {
     .@{prefix-cls} {
       background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-drawer {
+      max-width: 500px;
+    }
+
+    &-action-menu-item {
+      text-align: center;
     }
   }
 </style>

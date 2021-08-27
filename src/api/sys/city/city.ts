@@ -44,7 +44,7 @@ export function getCity(city: CityModel, mode: ErrorMessageMode = 'modal') {
   const data = reqParam.getInstance();
   return defHttp.post<BaseResult<CityModel>>(
     {
-      url: Api.GetCities,
+      url: Api.GetCity,
       data,
     },
     {

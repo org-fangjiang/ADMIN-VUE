@@ -16,16 +16,16 @@ export const AreaConst = {
   INVALID: '0',
   EFFECTIVE: '1',
   STATES: [
-    { value: '0', label: t(''), color: 'volcano' },
-    { value: '1', label: t(''), color: 'geekblue' },
+    { value: '0', label: t('model.location.area.invalidState'), color: 'volcano' },
+    { value: '1', label: t('model.location.area.validState'), color: 'geekblue' },
   ],
   _ADD_FIELDS: ['id', 'name', 'cityId', 'state'],
-  _UPDATE_FIELDS: ['id', 'name', 'cityId', 'state'],
+  _UPDATE_FIELDS: ['name'],
   _RULES: {
-    id: [{ required: true, message: t(''), trigger: 'blur' }],
-    name: [{ required: true, message: t(''), trigger: 'blur' }],
-    cityId: [{ required: true, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    id: [{ required: true, message: t('model.location.area.id'), trigger: 'blur' }],
+    name: [{ required: true, message: t('model.location.area.name'), trigger: 'blur' }],
+    cityId: [{ required: true, message: t('model.location.area.areaId'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.location.area.state'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'location:select',
@@ -37,28 +37,28 @@ export const AreaConst = {
 
 export const AreaColumns = [
   {
-    title: t(''),
+    title: t('model.location.area.id'),
     key: 'id',
     dataIndex: 'id',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.area.name'),
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.location.area.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
   {
-    title: t(''),
+    title: t('model.location.area.action'),
     key: 'action',
     ellipsis: 'true',
     slots: { customRender: 'action' },

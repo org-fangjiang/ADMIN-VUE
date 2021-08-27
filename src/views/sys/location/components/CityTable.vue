@@ -10,12 +10,49 @@
           </Tag>
         </span>
       </template>
-      <template #action="{ text: info }">
-        <span>
-          <Button v-auth="cityConst._PERMS.UPDATE" type="link" size="small">
-            {{ info.id }}
-          </Button>
-        </span>
+      <template #action="{ text: city }">
+        <!-- 操作下拉框 -->
+        <Dropdown placement="bottomCenter" trigger="click">
+          <Button type="link">{{ t('model.location.city.action') }}</Button>
+          <template #overlay>
+            <Menu mode="horizontal" @click="action">
+              <MenuItem :key="0" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button :class="prefixCls" v-auth="cityConst._PERMS.DELETE" type="link" size="small"
+                  >{{ t('model.location.city.deleteCity') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="1" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="cityConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.location.city.recoveryCity') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="2" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button v-auth="areaConst._PERMS.ADD" type="link" size="small" :class="prefixCls">
+                  {{ t('model.location.area.addArea') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="3" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="cityConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.location.city.updateCity') }}
+                </Button>
+              </MenuItem>
+            </Menu>
+          </template>
+        </Dropdown>
       </template>
       <template #expandedRowRender="{ record }">
         <slot name="city" :city="record"></slot>
@@ -32,18 +69,22 @@
       @change="onChange"
       @showSizeChange="onShowSizeChange"
     />
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getCities } from '/@/api/sys/city/city';
+  import { getCities, deleteCity, reEnableCity, addCity } from '/@/api/sys/city/city';
   import { CityConst, CityColumns, CityModel } from '/@/api/sys/city/model/cityModel';
-  import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { Table, Pagination, Tag, Button } from 'ant-design-vue';
+  import { AreaConst } from '/@/api/sys/area/model/areaModel';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { Table, Pagination, Tag, Button, Dropdown, Menu, MenuItem } from 'ant-design-vue';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
+  import { Loading } from '/@/components/Loading';
   export default defineComponent({
     name: 'CityTable',
     components: {
@@ -51,6 +92,10 @@
       Pagination,
       Tag,
       Button,
+      Dropdown,
+      Menu,
+      MenuItem,
+      Loading,
     },
     props: {
       provinceId: {
@@ -58,13 +103,24 @@
         require: true,
       },
     },
-    setup(props) {
+    emits: ['onAddArea', 'onUpdateProvince'],
+    setup(props, { emit }) {
       const { t } = useI18n();
-      const { createErrorModal } = useMessage();
+      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
       const cityConst = ref(CityConst);
+      const areaConst = ref(AreaConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      const formRef = ref();
+
+      const formState: UnwrapRef<CityModel> = reactive({
+        id: '',
+        name: '',
+        provinceId: '',
+        firstLetter: '',
+        state: '',
+      });
       const pageSizeList = ref<string[]>(PageSizeList);
       const cityColumns = reactive(CityColumns);
       let pageParam = reactive({
@@ -78,12 +134,6 @@
         id: props.provinceId,
         state: '',
       });
-
-      const stateHandleChange = async (value) => {
-        condition.state = value;
-        const result = await getList();
-        processList(result);
-      };
 
       const cities: CityModel[] = [];
       let list = reactive(cities);
@@ -107,6 +157,26 @@
         }
         return result;
       };
+      //提交
+      const onSubmit = () => {
+        formRef.value
+          .validate()
+          .then(async () => {
+            loading.value = true;
+            try {
+              const { content } = await addCity(formState);
+              success(t('model.location.city.addCity'), t('model.location.city.success'));
+              Object.assign(formState, content);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.location.city.fail'));
+            } finally {
+              loading.value = false;
+            }
+          })
+          .catch((error: ValidateErrorEntity<CityModel>) => {
+            console.log('error', error);
+          });
+      };
       onMounted(async () => {
         const result = await getList();
         processList(result);
@@ -125,6 +195,65 @@
         Object.assign(pageParam, {}, page);
       }
 
+      // 操作
+      const action = async (key) => {
+        const code = key.key;
+        const id = key?.item['data-id'] || undefined;
+        switch (code) {
+          case 0:
+            // 删除
+            try {
+              loading.value = true;
+              const city: CityModel = { id: id };
+              await deleteCity(city);
+              success(t('model.location.city.deleteCity'), t('model.location.city.success'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.location.city.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 1:
+            // 恢复
+            try {
+              loading.value = true;
+              const city: CityModel = { id: id };
+              await reEnableCity(city);
+              success(t('model.location.city.recoveryCity'), t('model.location.city.success'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.location.city.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 2:
+            addArea(id);
+            break;
+          case 3:
+            updateCity(id);
+            break;
+        }
+      };
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
+      };
+
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
@@ -137,19 +266,40 @@
         const result = await getList();
         processList(result);
       };
+      //添加地区
+      const addArea = (cityId) => {
+        emit('onAddArea', { cityId });
+      };
+      //更新城市
+      const updateCity = (cityId) => {
+        emit('onUpdateProvince', { cityId });
+      };
+      //刷新列表
+      const refresh = async () => {
+        const result = await getList();
+        processList(result);
+      };
       return {
         t,
         prefixCls,
         cityConst,
+        areaConst,
         tip,
         cityColumns,
         loading,
         pageSizeList,
         pageParam,
         list,
-        stateHandleChange,
         onChange,
         onShowSizeChange,
+        action,
+        addArea,
+        updateCity,
+        onSubmit,
+        formState,
+        labelCol: { span: 6 },
+        wrapperCol: { span: 14 },
+        refresh,
       };
     },
   });

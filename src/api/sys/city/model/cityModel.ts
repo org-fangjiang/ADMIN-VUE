@@ -31,7 +31,7 @@ export const CityConst = {
     { value: '1', label: t('model.location.city.validState'), color: 'geekblue' },
   ],
   _ADD_FIELDS: ['id', 'name', 'provinceId', 'firstLetter', 'state'],
-  _UPDATE_FIELDS: ['id', 'name', 'provinceId', 'firstLetter', 'state'],
+  _UPDATE_FIELDS: ['name', 'firstLetter'],
   _RULES: {
     id: [{ required: true, message: t('model.location.city.id'), trigger: 'blur' }],
     name: [{ required: true, message: t('model.location.city.name'), trigger: 'blur' }],
@@ -76,7 +76,7 @@ export const CityColumns = [
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
   {
     title: t('model.location.city.action'),
