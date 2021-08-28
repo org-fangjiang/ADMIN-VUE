@@ -10,13 +10,13 @@
     >
       <template #province="{ province }">
         <CityTable
-          ref="cityRef"
+          :ref="cityRefFunc"
           :provinceId="province.id"
           @onAddArea="addArea"
           @onUpdateProvince="updateCity"
         >
           <template #city="{ city }">
-            <AreaTable ref="areaRef" :cityId="city.id" @onUpdateArea="updateArea" />
+            <AreaTable :ref="areaRefFunc" :cityId="city.id" @onUpdateArea="updateArea" />
           </template>
         </CityTable>
       </template>
@@ -30,7 +30,7 @@
       :get-container="false"
       :wrapClassName="`${prefixCls}-drawer`"
       :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"
-      :wrap-style="{ position: 'absolute' }"
+      :wrap-style="{ position: 'fixed', top: '80px', righ: '0' }"
       @close="onClose"
     >
       <AreaForm
@@ -76,9 +76,9 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
 
+      const cityRefObject = reactive<any>([]);
+      const areaRefObject = reactive<any>([]);
       const provinceRef = ref();
-      const cityRef = ref();
-      const areaRef = ref();
       const drawerParam = reactive({
         id: '',
         provinceId: '',
@@ -94,12 +94,14 @@
             provinceRef.value.refresh();
             break;
           case '1':
-            cityRef.value.refresh();
+            cityRefObject[0].refresh();
             break;
           case '0':
-            areaRef.value.refresh();
+            areaRefObject[0].refresh();
             break;
         }
+        cityRefObject.splice(0);
+        areaRefObject.splice(0);
         drawerParam.id = '';
         drawerParam.provinceId = '';
         drawerParam.cityId = '';
@@ -146,14 +148,22 @@
         drawerParam.state = '0';
         drawerParam.title = t('model.location.area.updateArea');
       };
+
+      const cityRefFunc = (el) => {
+        cityRefObject.push(el);
+      };
+      const areaRefFunc = (el) => {
+        areaRefObject.push(el);
+      };
+
       return {
         t,
         prefixCls,
         tip,
         loading,
         provinceRef,
-        cityRef,
-        areaRef,
+        cityRefFunc,
+        areaRefFunc,
         drawerParam,
         onClose,
         addProvince,

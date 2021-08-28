@@ -8,6 +8,7 @@ import { AreaByCondition, AreaModel } from './model/areaModel';
 
 enum Api {
   GetAreas = '/sys-server/area/getAreasByCityId',
+  GetAllAreas = '/sys-server/area/getAllAreasByCityId',
   GetArea = '/sys-server/area/getAreaById',
   AddArea = '/sys-server/area/addArea',
   UpdateArea = '/sys-server/area/updateArea',
@@ -29,6 +30,21 @@ export function getAreas(
   return defHttp.post<BasePageResult<AreaModel>>(
     {
       url: Api.GetAreas,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getAllAreas(condition: AreaByCondition, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData(condition);
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<AreaModel>>(
+    {
+      url: Api.GetAllAreas,
       data,
     },
     {

@@ -12,6 +12,7 @@ import {
 
 enum Api {
   GetProvinces = '/sys-server/province/getProvinces',
+  GetAllProvinces = '/sys-server/province/getAllProvinces',
   GetProvince = '/sys-server/province/getProvinceById',
   GetProvinceWithAllCities = '/sys-server/province/getProvinceWithAllCities',
   AddProvince = '/sys-server/province/addProvince',
@@ -35,6 +36,17 @@ export function getProvinces(
     {
       url: Api.GetProvinces,
       data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getAllProvinces(mode: ErrorMessageMode = 'modal') {
+  return defHttp.post<BasePageResult<ProvinceModel>>(
+    {
+      url: Api.GetAllProvinces,
     },
     {
       errorMessageMode: mode,

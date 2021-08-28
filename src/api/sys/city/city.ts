@@ -8,6 +8,7 @@ import { CityByCondition, CityModel, CityWithAreaModel } from './model/cityModel
 
 enum Api {
   GetCities = '/sys-server/city/getCitiesByProvinceId',
+  GetAllCities = '/sys-server/city/getAllCitiesByProvinceId',
   GetCity = '/sys-server/city/getCityById',
   GetCityWithAllArea = '/sys-server/city/getCityWithAllAreas',
   AddCity = '/sys-server/city/addCity',
@@ -30,6 +31,21 @@ export function getCities(
   return defHttp.post<BasePageResult<CityModel>>(
     {
       url: Api.GetCities,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getAllCities(condition: CityByCondition, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData(condition);
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<CityModel>>(
+    {
+      url: Api.GetAllCities,
       data,
     },
     {

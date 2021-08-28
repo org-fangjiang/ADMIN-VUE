@@ -2,21 +2,20 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Select
-      ref="select"
-      :allowClear="true"
-      v-model:value="condition.state"
-      style="width: 120px"
-      @change="stateHandleChange"
-      :options="companyConst.STATES"
-    >
-      <!-- <SelectOption value="0" key="0">到期</SelectOption>
-      <SelectOption value="1" key="1">锁定</SelectOption>
-      <SelectOption value="2" key="2">正常</SelectOption> -->
-    </Select>
-    <Button :class="prefixCls" v-auth="companyConst.COMPANY_PERMS.ADD" @click="add">{{
-      t('model.company.add')
-    }}</Button>
+    <div class="container flex-row">
+      <Select
+        ref="select"
+        :allowClear="true"
+        v-model:value="condition.state"
+        style="width: 120px"
+        @change="stateHandleChange"
+        :options="companyConst.STATES"
+      />
+      <FCascader @change="locationChange" />
+      <Button :class="prefixCls" v-auth="companyConst.COMPANY_PERMS.ADD" @click="add">{{
+        t('model.company.add')
+      }}</Button>
+    </div>
     <Table :columns="columns" :data-source="list" rowKey="id">
       <template #companySize="{ text: size }">
         <span>
@@ -121,6 +120,7 @@
     CompanyColumns,
     CompanyConst,
   } from '/@/api/sys/compnay/model/companyModel';
+  import FCascader from '/@/components/FCascader';
   import { Loading } from '/@/components/Loading';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import CompanyForm from './components/CompanyForm.vue';
@@ -142,6 +142,7 @@
   export default defineComponent({
     name: 'Company',
     components: {
+      FCascader,
       Loading,
       CompanyFormExpirationData,
       CompanyFormCreateBy,
@@ -334,6 +335,16 @@
         processList(result);
       };
 
+      const locationChange = async (e) => {
+        debugger;
+        condition.provinceId = e.value[0] || '';
+        condition.cityId = e.value[1] || '';
+        condition.areaId = e.value[2] || '';
+        pageParam.number = 0;
+        const result = await getList();
+        processList(result);
+      };
+
       onMounted(async () => {
         const result = await getList();
         processList(result);
@@ -357,6 +368,7 @@
         action,
         add,
         onClose,
+        locationChange,
       };
     },
   });
