@@ -14,7 +14,7 @@ export interface DictGroupModel {
   sysDictDetails?: DictDetailModel[];
 }
 
-export interface DictByCondition {
+export interface DetailByCondition {
   id?: string; // dictId
   groupId?: string;
   state?: string;
