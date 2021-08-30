@@ -89,19 +89,24 @@
       });
 
       const onClose = () => {
-        switch (drawerParam.state) {
-          case '2':
-            provinceRef.value.refresh();
-            break;
-          case '1':
-            cityRefObject[0].refresh();
-            break;
-          case '0':
-            areaRefObject[0].refresh();
-            break;
+        try {
+          switch (drawerParam.state) {
+            case '2':
+              provinceRef.value.refresh();
+              break;
+            case '1':
+              cityRefObject[0].refresh();
+              break;
+            case '0':
+              areaRefObject[0].refresh();
+              break;
+          }
+          cityRefObject.splice(0);
+          areaRefObject.splice(0);
+        } catch (e) {
+          console.error(e);
         }
-        cityRefObject.splice(0);
-        areaRefObject.splice(0);
+
         drawerParam.id = '';
         drawerParam.provinceId = '';
         drawerParam.cityId = '';

@@ -125,8 +125,8 @@
       const resetForm = async () => {
         loading.value = true;
         try {
-          const { content } = await getArea({ id: props.id });
-          Object.assign(formState, content);
+          const area = await getArea({ id: props.id });
+          Object.assign(formState, area);
         } catch (error) {
         } finally {
           loading.value = false;
@@ -135,9 +135,9 @@
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
-          const city = await getArea({ id: props.id });
-          if (city) {
-            Object.assign(formState, city);
+          const area = await getArea({ id: props.id });
+          if (area) {
+            Object.assign(formState, area);
           }
         }
         loading.value = false;
