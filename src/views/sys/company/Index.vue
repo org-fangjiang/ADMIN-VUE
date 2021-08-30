@@ -96,6 +96,7 @@
       :title="drawerParam.title"
       :width="'100%'"
       :destroyOnClose="true"
+      :get-container="false"
       :visible="drawerParam.visible"
       :wrapClassName="`${prefixCls}-drawer`"
       :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"

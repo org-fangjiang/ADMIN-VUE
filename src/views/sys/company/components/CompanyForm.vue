@@ -23,24 +23,41 @@
         />
       </FormItem>
       <FormItem ref="provinceId" :label="t('model.company.province')" name="provinceId">
-        <Input
+        <!-- <Input
           :disabled="companyId && !updateFields.includes('provinceId')"
           v-model:value="formState.provinceId"
           autoComplete="off"
+        /> -->
+        <FProvince
+          :disabledProvince="companyId && !updateFields.includes('provinceId')"
+          :provinceId="formState.provinceId"
+          @change="changeProvince"
         />
       </FormItem>
       <FormItem ref="cityId" :label="t('model.company.city')" name="cityId">
-        <Input
+        <!-- <Input
           :disabled="companyId && !updateFields.includes('cityId')"
           v-model:value="formState.cityId"
           autoComplete="off"
+        /> -->
+        <FCity
+          :disabledProvince="companyId && !updateFields.includes('cityId')"
+          :provinceId="formState.provinceId"
+          :cityId="formState.cityId"
+          @change="changeCity"
         />
       </FormItem>
       <FormItem ref="areaId" :label="t('model.company.area')" name="areaId">
-        <Input
+        <!-- <Input
           :disabled="companyId && !updateFields.includes('areaId')"
           v-model:value="formState.areaId"
           autoComplete="off"
+        /> -->
+        <FArea
+          :disabledProvince="companyId && !updateFields.includes('areaId')"
+          :cityId="formState.cityId"
+          :areaId="formState.areaId"
+          @change="changeArea"
         />
       </FormItem>
       <FormItem
@@ -170,6 +187,7 @@
     Slider,
   } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
+  import { FProvince, FCity, FArea } from '/@/components/FLocation';
 
   export default defineComponent({
     name: 'CompanyForm',
@@ -184,6 +202,9 @@
       Radio,
       DatePicker,
       Slider,
+      FProvince,
+      FCity,
+      FArea,
     },
     props: {
       id: {
@@ -203,6 +224,23 @@
       const companySizes = reactive(CompanyConst.COMPANY_SIZES);
       const stateHandleChange = async (value) => {
         formState.companySize = value;
+      };
+
+      const changeProvince = async (e) => {
+        if (e.value !== formState.provinceId) {
+          formState.cityId = '';
+          formState.areaId = '';
+        }
+        formState.provinceId = e.value || '';
+      };
+      const changeCity = async (e) => {
+        if (e.value !== formState.cityId) {
+          formState.areaId = '';
+        }
+        formState.cityId = e.value || '';
+      };
+      const changeArea = async (e) => {
+        formState.areaId = e.value || '';
       };
 
       const formState: UnwrapRef<CompanyModel> = reactive({
@@ -341,6 +379,9 @@
         companySizes,
         change,
         disabledDate,
+        changeProvince,
+        changeCity,
+        changeArea,
       };
     },
   });
