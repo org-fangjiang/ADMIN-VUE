@@ -341,7 +341,7 @@
         condition.provinceId = e.value[0] || '';
         condition.cityId = e.value[1] || '';
         condition.areaId = e.value[2] || '';
-        pageParam.number = 0;
+        pageParam.number = 1;
         const result = await getList();
         processList(result);
       };

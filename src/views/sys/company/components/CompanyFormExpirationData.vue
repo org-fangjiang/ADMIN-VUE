@@ -23,7 +23,7 @@
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-        <Button v-if="!companyId" type="primary" @click="onSubmit">{{
+        <Button v-if="!isUpdate" type="primary" @click="onSubmit">{{
           t('model.company.add')
         }}</Button>
         <Button v-else type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
@@ -67,6 +67,10 @@
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
       const companyId = ref(props.id);
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
       const loading = ref<boolean>(false);
       const tip = ref<string>('更新中...');
       const formRef = ref();
@@ -156,6 +160,7 @@
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
         companyId,
+        isUpdate,
         tip,
         rules,
         labelCol: { span: 6 },

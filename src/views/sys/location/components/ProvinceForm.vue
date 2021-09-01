@@ -9,21 +9,21 @@
     >
       <FormItem ref="id" :label="t('model.location.province.id')" name="id">
         <Input
-          :disabled="province && !updateFields.includes('id')"
+          :disabled="isUpdate && !updateFields.includes('id')"
           v-model:value="formState.id"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="name" :label="t('model.location.province.name')" name="name">
         <Input
-          :disabled="province && !updateFields.includes('name')"
+          :disabled="isUpdate && !updateFields.includes('name')"
           v-model:value="formState.name"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="state" :label="t('model.location.province.state')" name="state">
         <Select
-          :disabled="province && !updateFields.includes('state')"
+          :disabled="isUpdate && !updateFields.includes('state')"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
@@ -76,7 +76,10 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const formRef = ref();
-      const province = ref(props.id || undefined);
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
       const formState: UnwrapRef<ProvinceModel> = reactive({
         id: '',
         name: '',
@@ -165,7 +168,7 @@
         prefixCls,
         provinceConst,
         formRef,
-        province,
+        isUpdate,
         tip,
         loading,
         updateFields: ProvinceConst._UPDATE_FIELDS,

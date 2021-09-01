@@ -3,42 +3,35 @@
     <Form
       ref="formRef"
       :model="formState"
-      :rules="areaConst._RULES"
+      :rules="dictConst._DETAIL_RULES"
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
-      <FormItem ref="id" :label="t('model.location.area.id')" name="id">
+      <FormItem ref="value" :label="t('model.dict.detail.value')" name="value">
         <Input
-          :disabled="isUpdate && !updateFields.includes('id')"
-          v-model:value="formState.id"
+          :disabled="isUpdate && !updateFields.includes('value')"
+          v-model:value="formState.value"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="name" :label="t('model.location.area.name')" name="name">
-        <Input
-          :disabled="isUpdate && !updateFields.includes('name')"
-          v-model:value="formState.name"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem ref="state" :label="t('model.location.area.state')" name="state">
+      <FormItem ref="state" :label="t('model.dict.detail.state')" name="state">
         <Select
           :disabled="isUpdate && !updateFields.includes('state')"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
-          :options="areaConst.STATES"
+          :options="dictConst.STATES"
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button v-if="isUpdate" type="primary" @click="onSubmit">{{
-          t('model.location.area.updateArea')
+          t('model.dict.detail.updateDetail')
         }}</Button>
         <Button v-else type="primary" @click="onSubmit">{{
-          t('model.location.area.addArea')
+          t('model.dict.detail.addDetail')
         }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
-          t('model.location.area.cancel')
+          t('model.dict.detail.cancel')
         }}</Button>
       </FormItem>
     </Form>
@@ -48,15 +41,15 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { addArea, updateArea, getArea } from '/@/api/sys/area/area';
-  import { AreaConst, AreaModel } from '/@/api/sys/area/model/areaModel';
+  import { addSysDictDetail, UpdateSysDictDetail, getSysDictDetail } from '/@/api/sys/dict/dict';
+  import { DictConst, DictDetailModel } from '/@/api/sys/dict/model/dictModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   export default defineComponent({
-    name: 'AreaForm',
+    name: 'DetailForm',
     components: {
       Select,
       Button,
@@ -66,7 +59,8 @@
       Loading,
     },
     props: {
-      cityId: {
+      //传递过来的分组编号和当前详情的编号
+      groupId: {
         type: String,
         require: true,
       },
@@ -78,19 +72,19 @@
     setup(props) {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('location');
-      const areaConst = ref(AreaConst);
+      const { prefixCls } = useDesign('dict');
+      const dictConst = ref(DictConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      const formRef = ref();
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
-      const formRef = ref();
-      const formState: UnwrapRef<AreaModel> = reactive({
+      const formState: UnwrapRef<DictDetailModel> = reactive({
         id: '',
-        name: '',
-        cityId: props.cityId || '',
+        value: '',
+        groupId: props.groupId || '',
         state: '',
       });
 
@@ -101,46 +95,55 @@
             loading.value = true;
             if (props.id) {
               try {
-                const { content } = await updateArea(formState);
-                success(t('model.location.area.updateArea'), t('model.location.area.success'));
+                const { content } = await UpdateSysDictDetail(formState);
+                success(t('model.dict.detail.updateDetail'), t('model.dict.detail.success'));
                 Object.assign(formState, content);
               } catch (error) {
-                failed(error?.response?.data?.message, t('model.location.area.fail'));
+                failed(error?.response?.data?.message, t('model.dict.detail.fail'));
               } finally {
                 loading.value = false;
               }
             } else {
               try {
-                const { content } = await addArea(formState);
-                success(t('model.location.area.addArea'), t('model.location.area.success'));
+                const { content } = await addSysDictDetail(formState);
+                success(t('model.dict.detail.addDetail'), t('model.dict.detail.success'));
                 Object.assign(formState, content);
               } catch (error) {
-                failed(error?.response?.data?.message, t('model.location.area.fail'));
+                failed(error?.response?.data?.message, t('model.dict.detail.fail'));
               } finally {
                 loading.value = false;
               }
             }
           })
-          .catch((error: ValidateErrorEntity<AreaModel>) => {
+          .catch((error: ValidateErrorEntity<DictDetailModel>) => {
             console.log('error', error);
           });
       };
       const resetForm = async () => {
-        loading.value = true;
-        try {
-          const area = await getArea({ id: props.id });
-          Object.assign(formState, area);
-        } catch (error) {
-        } finally {
-          loading.value = false;
+        if (props.id) {
+          loading.value = true;
+          try {
+            const { content } = await getSysDictDetail({ id: props.id });
+            if (content) {
+              Object.assign(formState, content);
+            }
+          } catch (error) {
+          } finally {
+            loading.value = false;
+          }
+        } else {
+          formRef.value.resetFields();
         }
+        loading.value = false;
       };
       onMounted(async () => {
         loading.value = true;
+        console.log('id:', props.id);
+        console.log('groupid:', props.groupId);
         if (props.id) {
-          const area = await getArea({ id: props.id });
-          if (area) {
-            Object.assign(formState, area);
+          const { content } = await getSysDictDetail({ id: props.id });
+          if (content) {
+            Object.assign(formState, content);
           }
         }
         loading.value = false;
@@ -164,11 +167,12 @@
 
       return {
         t,
-        prefixCls,
-        areaConst,
-        tip,
+        props,
         isUpdate,
-        updateFields: AreaConst._UPDATE_FIELDS,
+        prefixCls,
+        dictConst,
+        tip,
+        updateFields: DictConst._UPDATE_DETAIL_FIELDS,
         loading,
         onSubmit,
         resetForm,

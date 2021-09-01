@@ -29,6 +29,10 @@ export interface BasePageResult<T extends any> {
   content: T[];
 }
 
+export interface BaseListResult<T extends any> {
+  content: T[];
+}
+
 export interface BaseResult<T extends any> {
   content: T;
 }

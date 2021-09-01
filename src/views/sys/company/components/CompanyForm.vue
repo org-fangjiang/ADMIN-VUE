@@ -10,14 +10,14 @@
     >
       <FormItem ref="name" :label="t('model.company.name')" name="name">
         <Input
-          :disabled="companyId && !updateFields.includes('name')"
+          :disabled="isUpdate && !updateFields.includes('name')"
           v-model:value="formState.name"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="managerId" :label="t('model.company.managerId')" name="managerId">
         <Input
-          :disabled="companyId && !updateFields.includes('managerId')"
+          :disabled="isUpdate && !updateFields.includes('managerId')"
           v-model:value="formState.managerId"
           autoComplete="off"
         />
@@ -29,7 +29,7 @@
           autoComplete="off"
         /> -->
         <FProvince
-          :disabledProvince="companyId && !updateFields.includes('provinceId')"
+          :disabledProvince="isUpdate && !updateFields.includes('provinceId')"
           :provinceId="formState.provinceId"
           @change="changeProvince"
         />
@@ -41,7 +41,7 @@
           autoComplete="off"
         /> -->
         <FCity
-          :disabledProvince="companyId && !updateFields.includes('cityId')"
+          :disabledProvince="isUpdate && !updateFields.includes('cityId')"
           :provinceId="formState.provinceId"
           :cityId="formState.cityId"
           @change="changeCity"
@@ -54,7 +54,7 @@
           autoComplete="off"
         /> -->
         <FArea
-          :disabledProvince="companyId && !updateFields.includes('areaId')"
+          :disabledProvince="isUpdate && !updateFields.includes('areaId')"
           :cityId="formState.cityId"
           :areaId="formState.areaId"
           @change="changeArea"
@@ -66,14 +66,14 @@
         name="companyAddress"
       >
         <Input
-          :disabled="companyId && !updateFields.includes('companyAddress')"
+          :disabled="isUpdate && !updateFields.includes('companyAddress')"
           v-model:value="formState.companyAddress"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="companyPhone" :label="t('model.company.companyPhone')" name="companyPhone">
         <Input
-          :disabled="companyId && !updateFields.includes('companyPhone')"
+          :disabled="isUpdate && !updateFields.includes('companyPhone')"
           v-model:value="formState.companyPhone"
           autoComplete="off"
         />
@@ -84,7 +84,7 @@
         name="businessLicense"
       >
         <Input
-          :disabled="companyId && !updateFields.includes('businessLicense')"
+          :disabled="isUpdate && !updateFields.includes('businessLicense')"
           v-model:value="formState.businessLicense"
           autoComplete="off"
         />
@@ -103,13 +103,13 @@
       </FormItem>
       <FormItem ref="commission" :label="t('model.company.commission')" name="commission">
         <Input
-          :disabled="companyId && !updateFields.includes('commission')"
+          :disabled="isUpdate && !updateFields.includes('commission')"
           v-if="formState.commissionMode === '1'"
           v-model:value="formState.commission"
           autoComplete="off"
         />
         <Slider
-          :disabled="companyId && !updateFields.includes('commission')"
+          :disabled="isUpdate && !updateFields.includes('commission')"
           v-else
           v-model:value="formState.commission"
         />
@@ -146,14 +146,14 @@
         <DatePicker
           showTime
           :disabled-date="disabledDate"
-          :disabled="companyId && !updateFields.includes('expirationData')"
+          :disabled="isUpdate && !updateFields.includes('expirationData')"
           format="YYYY-MM-DD HH:mm:ss"
           :value="formState.expirationData"
           @change="change"
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-        <Button v-if="!companyId" type="primary" @click="onSubmit">{{
+        <Button v-if="!isUpdate" type="primary" @click="onSubmit">{{
           t('model.company.add')
         }}</Button>
         <Button v-else type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
@@ -217,6 +217,10 @@
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
       const companyId = ref(props.id || undefined);
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
       const formRef = ref();
@@ -369,6 +373,7 @@
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
         companyId,
+        isUpdate,
         tip,
         rules,
         labelCol: { span: 6 },

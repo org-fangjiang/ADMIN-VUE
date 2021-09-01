@@ -1,7 +1,7 @@
 // 字典接口
 import { defHttp } from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
-import { BasePageResult, BaseResult } from '../../model/baseModel';
+import { BaseListResult, BasePageResult, BaseResult } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam, SortParam } from '/@/api/model/baseModel';
 import {
@@ -12,19 +12,19 @@ import {
 } from './model/dictModel';
 
 enum Api {
-  GetSysDictGroups = '/sys-service/dictGroup/getSysDictGroups',
-  GetSysDictGroup = '/sys-service/dictGroup/getSysDictGroup',
-  AddSysDictGroup = '/sys-service/dictGroup/addSysDictGroup',
-  UpdateSysDictGroup = '/sys-service/dictGroup/updateSysDictGroup',
-  DeleteSysDictGroup = '/sys-service/dictGroup/deleteSysDictGroup',
-  ReEnableSysDictGroup = '/sys-service/dictGroup/reEnableSysDictGroup',
-  GetSysDictDetailsByArray = '/sys-service/dictDetail/getSysDictDetailsByArray',
-  GetSysDictDetails = '/sys-service/dictDetail/getSysDictDetails',
-  GetSysDictDetail = '/sys-service/dictDetail/getSysDictDetail',
-  AddSysDictDetail = '/sys-service/dictDetail/addSysDictDetail',
-  UpdateSysDictDetail = '/sys-service/dictDetail/updateSysDictDetail',
-  DeleteSysDictDetail = '/sys-service/dictDetail/deleteSysDictDetail',
-  ReEnableSysDictDetail = '/sys-service/dictDetail/reEnableSysDictDetail',
+  GetSysDictGroups = '/sys-server/dictGroup/getSysDictGroups',
+  GetSysDictGroup = '/sys-server/dictGroup/getSysDictGroup',
+  AddSysDictGroup = '/sys-server/dictGroup/addSysDictGroup',
+  UpdateSysDictGroup = '/sys-server/dictGroup/updateSysDictGroup',
+  DeleteSysDictGroup = '/sys-server/dictGroup/deleteSysDictGroup',
+  ReEnableSysDictGroup = '/sys-server/dictGroup/reEnableSysDictGroup',
+  GetSysDictDetailsByArray = '/sys-server/dictDetail/getSysDictDetailsByArray',
+  GetSysDictDetails = '/sys-server/dictDetail/getSysDictDetails',
+  GetSysDictDetail = '/sys-server/dictDetail/getSysDictDetail',
+  AddSysDictDetail = '/sys-server/dictDetail/addSysDictDetail',
+  UpdateSysDictDetail = '/sys-server/dictDetail/updateSysDictDetail',
+  DeleteSysDictDetail = '/sys-server/dictDetail/deleteSysDictDetail',
+  ReEnableSysDictDetail = '/sys-server/dictDetail/reEnableSysDictDetail',
 }
 
 export function getSysDictGroups(
@@ -135,11 +135,11 @@ export function reEnableSysDictGroup(
 //////////////////
 // 分组下字典详情
 //////////////////
-export function GetSysDictDetailsByArray(ids: string[], mode: ErrorMessageMode = 'modal') {
+export function getSysDictDetailsByArray(ids: string[], mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ ids });
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<DictDetailModel>>(
+  return defHttp.post<BaseListResult<DictDetailModel>>(
     {
       url: Api.GetSysDictDetailsByArray,
       data,

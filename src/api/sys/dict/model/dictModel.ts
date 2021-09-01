@@ -21,7 +21,8 @@ export interface DetailByCondition {
 }
 
 export interface GroupByCondition {
-  id?: string; // groupId
+  id?: string;
+  groupId?: string; // groupId
   state?: string;
 }
 
@@ -29,21 +30,20 @@ export const DictConst = {
   INVALID: '0',
   EFFECTIVE: '1',
   STATES: [
-    { value: '0', label: t(''), color: 'volcano' },
-    { value: '1', label: t(''), color: 'geekblue' },
+    { value: '0', label: t('model.dict.group.invalidState'), color: 'volcano' },
+    { value: '1', label: t('model.dict.group.validState'), color: 'geekblue' },
   ],
   _ADD_GROUP_FIELDS: ['name'],
   _ADD_DETAIL_FIELDS: ['value', 'groupId'],
   _UPDATE_GROUP_FIELDS: ['name'],
   _UPDATE_DETAIL_FIELDS: ['value', 'groupId'],
   _DETAIL_RULES: {
-    value: [{ required: true, message: t(''), trigger: 'blur' }],
-    groupId: [{ required: true, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    value: [{ required: true, message: t('model.dict.detail.value'), trigger: 'blur' }],
+    groupId: [{ required: true, message: t('model.dict.detail.groupId'), trigger: 'blur' }],
   },
   _GROUP_RULES: {
-    name: [{ required: true, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    name: [{ required: true, message: t('model.dict.group.name'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.dict.group.state'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'dict:select',
@@ -55,28 +55,21 @@ export const DictConst = {
 
 export const DetailColumns = [
   {
-    title: t(''),
+    title: t('model.dict.detail.value'),
     key: 'value',
     dataIndex: 'value',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
-    key: 'groupId',
-    dataIndex: 'groupId',
-    ellipsis: 'true',
-    slots: '',
-  },
-  {
-    title: t(''),
+    title: t('model.dict.detail.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
   {
-    title: t(''),
+    title: t('model.dict.detail.action'),
     key: 'action',
     ellipsis: 'true',
     slots: { customRender: 'action' },
@@ -85,21 +78,21 @@ export const DetailColumns = [
 
 export const GroupColumns = [
   {
-    title: t(''),
+    title: t('model.dict.group.name'),
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.dict.group.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
   {
-    title: t(''),
+    title: t('model.dict.group.action'),
     key: 'action',
     ellipsis: 'true',
     slots: { customRender: 'action' },

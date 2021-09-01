@@ -9,28 +9,28 @@
     >
       <FormItem ref="id" :label="t('model.location.city.id')" name="id">
         <Input
-          :disabled="cityId && !updateFields.includes('id')"
+          :disabled="isUpdate && !updateFields.includes('id')"
           v-model:value="formState.id"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="name" :label="t('model.location.city.name')" name="name">
         <Input
-          :disabled="cityId && !updateFields.includes('name')"
+          :disabled="isUpdate && !updateFields.includes('name')"
           v-model:value="formState.name"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="firstLetter" :label="t('model.location.city.firstLetter')" name="firstLetter">
         <Input
-          :disabled="cityId && !updateFields.includes('firstLetter')"
+          :disabled="isUpdate && !updateFields.includes('firstLetter')"
           v-model:value="formState.firstLetter"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="state" :label="t('model.location.city.state')" name="state">
         <Select
-          :disabled="cityId && !updateFields.includes('state')"
+          :disabled="isUpdate && !updateFields.includes('state')"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
@@ -38,7 +38,7 @@
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-        <Button v-if="cityId" type="primary" @click="onSubmit">{{
+        <Button v-if="isUpdate" type="primary" @click="onSubmit">{{
           t('model.location.city.updateCity')
         }}</Button>
         <Button v-else type="primary" @click="onSubmit">{{
@@ -90,7 +90,10 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const formRef = ref();
-      const cityId = ref(props.id || undefined);
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
       const formState: UnwrapRef<CityModel> = reactive({
         id: '',
         name: '',
@@ -174,7 +177,7 @@
         cityConst,
         formRef,
         tip,
-        cityId,
+        isUpdate,
         loading,
         updateFields: CityConst._UPDATE_FIELDS,
         onSubmit,
