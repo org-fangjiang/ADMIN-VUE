@@ -1,19 +1,19 @@
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 export interface MenuModel {
-  id: string;
-  parentId: string;
-  menuName: string;
-  path: string;
-  component: string;
-  perms: string;
-  icon: string;
-  type: string;
-  orderNum: string;
-  createTime: string;
-  updateTime: string;
-  createBy: string;
-  state: string;
+  id?: string;
+  parentId?: string;
+  menuName?: string;
+  path?: string;
+  component?: string;
+  perms?: string;
+  icon?: string;
+  type?: string;
+  orderNum?: string;
+  createTime?: string;
+  updateTime?: string;
+  createBy?: string;
+  state?: string;
 }
 
 export interface MenuByCondition {
@@ -26,12 +26,12 @@ export const MenuConst = {
   EFFECTIVE: '1',
   INVALID: '0',
   STATES: [
-    { value: '0', label: t(''), color: 'volcano' },
-    { value: '1', label: t(''), color: 'geekblue' },
+    { value: '0', label: t('model.menu.invalid'), color: 'volcano' },
+    { value: '1', label: t('model.menu.effective'), color: 'geekblue' },
   ],
   _TYPE: [
-    { value: '0', label: t(''), color: 'volcano' }, // 菜单
-    { value: '1', label: t(''), color: 'geekblue' }, // 按钮
+    { value: '0', label: t('model.menu.menu'), color: 'volcano' }, // 菜单
+    { value: '1', label: t('model.menu.button'), color: 'geekblue' }, // 按钮
   ],
   _ADD_MENU_FIELDS: ['parentId', 'menuName', 'path', 'component', 'icon', 'type', 'orderNum'],
   _ADD_BUTTON_FIELDS: [
@@ -66,32 +66,32 @@ export const MenuConst = {
     'state',
   ],
   _MENU_RULES: {
-    parentId: [{ required: true, message: t(''), trigger: 'blur' }],
-    menuName: [{ required: true, message: t(''), trigger: 'blur' }],
-    path: [{ required: true, message: t(''), trigger: 'blur' }],
-    component: [{ required: false, message: t(''), trigger: 'blur' }],
-    perms: [{ required: false, message: t(''), trigger: 'blur' }],
-    icon: [{ required: false, message: t(''), trigger: 'blur' }],
-    type: [{ required: true, message: t(''), trigger: 'blur' }],
-    orderNum: [{ required: false, message: t(''), trigger: 'blur' }],
-    createTime: [{ required: false, message: t(''), trigger: 'blur' }],
-    updateTime: [{ required: false, message: t(''), trigger: 'blur' }],
-    createBy: [{ required: false, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    parentId: [{ required: true, message: t('model.menu.parentId'), trigger: 'blur' }],
+    menuName: [{ required: true, message: t('model.menu.menuName'), trigger: 'blur' }],
+    path: [{ required: true, message: t('model.menu.path'), trigger: 'blur' }],
+    component: [{ required: false, message: t('model.menu.component'), trigger: 'blur' }],
+    perms: [{ required: false, message: t('model.menu.perms'), trigger: 'blur' }],
+    icon: [{ required: false, message: t('model.menu.icon'), trigger: 'blur' }],
+    type: [{ required: true, message: t('model.menu.menu'), trigger: 'blur' }],
+    orderNum: [{ required: false, message: t('model.menu.orderNum'), trigger: 'blur' }],
+    createTime: [{ required: false, message: t('model.menu.createTime'), trigger: 'blur' }],
+    updateTime: [{ required: false, message: t('model.menu.updateTime'), trigger: 'blur' }],
+    createBy: [{ required: false, message: t('model.menu.createBy'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.menu.state'), trigger: 'blur' }],
   },
   _BUTTON_RULES: {
-    parentId: [{ required: true, message: t(''), trigger: 'blur' }],
-    menuName: [{ required: true, message: t(''), trigger: 'blur' }],
-    path: [{ required: true, message: t(''), trigger: 'blur' }],
-    component: [{ required: false, message: t(''), trigger: 'blur' }],
-    perms: [{ required: false, message: t(''), trigger: 'blur' }],
-    icon: [{ required: false, message: t(''), trigger: 'blur' }],
-    type: [{ required: true, message: t(''), trigger: 'blur' }],
-    orderNum: [{ required: false, message: t(''), trigger: 'blur' }],
-    createTime: [{ required: false, message: t(''), trigger: 'blur' }],
-    updateTime: [{ required: false, message: t(''), trigger: 'blur' }],
-    createBy: [{ required: false, message: t(''), trigger: 'blur' }],
-    state: [{ required: true, message: t(''), trigger: 'blur' }],
+    parentId: [{ required: true, message: t('model.menu.parentId'), trigger: 'blur' }],
+    menuName: [{ required: true, message: t('model.menu.menuName'), trigger: 'blur' }],
+    path: [{ required: true, message: t('model.menu.path'), trigger: 'blur' }],
+    component: [{ required: false, message: t('model.menu.component'), trigger: 'blur' }],
+    perms: [{ required: false, message: t('model.menu.perms'), trigger: 'blur' }],
+    icon: [{ required: false, message: t('model.menu.icon'), trigger: 'blur' }],
+    type: [{ required: true, message: t('model.menu.button'), trigger: 'blur' }],
+    orderNum: [{ required: false, message: t('model.menu.orderNum'), trigger: 'blur' }],
+    createTime: [{ required: false, message: t('model.menu.createTime'), trigger: 'blur' }],
+    updateTime: [{ required: false, message: t('model.menu.updateTime'), trigger: 'blur' }],
+    createBy: [{ required: false, message: t('model.menu.createBy'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.menu.state'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'menu:select',
@@ -101,54 +101,53 @@ export const MenuConst = {
   },
 };
 
-export const Columns = [
+export const _Columns = [
   {
-    title: t(''),
+    title: t('model.menu.menuName'),
     key: 'menuName',
     dataIndex: 'menuName',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.menu.path'),
     key: 'path',
     dataIndex: 'path',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.menu.perms'),
     key: 'perms',
     dataIndex: 'perms',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.menu.icon'),
     key: 'icon',
     dataIndex: 'icon',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.menu.type'),
     key: 'type',
     dataIndex: 'type',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'type' },
   },
   {
-    title: t(''),
+    title: t('model.menu.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
   {
-    title: t(''),
-    key: 'action',
-    ellipsis: 'true',
-    slots: { customRender: 'action' },
+    title: t('model.menu.action'),
+    key: 'operation',
+    slots: { customRender: 'operation' },
   },
 ];
 

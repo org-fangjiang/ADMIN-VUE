@@ -1,10 +1,9 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
-import { BasePageResult, BaseResult } from '../../model/baseModel';
+import { BaseListResult, BasePageResult, BaseResult } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam, SortParam } from '/@/api/model/baseModel';
 import { MenuByCondition, MenuModel } from './model/menuModel';
-import { MenuMode } from 'ant-design-vue/lib/menu/src/interface';
 
 enum Api {
   GetParentMenu = '/sys-server/menu/getParentMenu',
@@ -49,7 +48,7 @@ export function getChildMenu(
   reqParam.setPage(page);
   reqParam.setSort(sort);
   const data = reqParam.getInstance();
-  return defHttp.post<BasePageResult<MenuModel>>(
+  return defHttp.post<BaseListResult<MenuModel>>(
     {
       url: Api.GetChildMenu,
       data,
@@ -75,7 +74,7 @@ export function getMenu(condition: MenuByCondition, mode: ErrorMessageMode = 'mo
   );
 }
 
-export function addMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
+export function addMenu(menu: MenuModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(menu);
   const data = reqParam.getInstance();
@@ -90,7 +89,7 @@ export function addMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
   );
 }
 
-export function updateMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
+export function updateMenu(menu: MenuModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(menu);
   const data = reqParam.getInstance();
@@ -105,7 +104,7 @@ export function updateMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
   );
 }
 
-export function deleteMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
+export function deleteMenu(menu: MenuModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(menu);
   const data = reqParam.getInstance();
@@ -120,7 +119,7 @@ export function deleteMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
   );
 }
 
-export function reEnableMenu(menu: MenuMode, mode: ErrorMessageMode = 'modal') {
+export function reEnableMenu(menu: MenuModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(menu);
   const data = reqParam.getInstance();
