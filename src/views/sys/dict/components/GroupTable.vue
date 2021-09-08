@@ -13,7 +13,7 @@
     <Button :class="prefixCls" v-auth="dictConst._PERMS.ADD" @click="onAddGroup">{{
       t('model.dict.group.addGroup')
     }}</Button>
-    <Table :columns="groupColumns" :data-source="list" rowKey="id" size="small">
+    <Table :columns="groupColumns" :data-source="list" rowKey="id" size="small" :pagination="false">
       <template #state="{ text: state }">
         <span>
           <Tag :color="dictConst.STATES[state].color">

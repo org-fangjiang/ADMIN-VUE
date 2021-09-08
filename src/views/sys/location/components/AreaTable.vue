@@ -2,7 +2,7 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Table :columns="areaColumns" :data-source="list" rowKey="id" size="small">
+    <Table :columns="areaColumns" :data-source="list" rowKey="id" size="small" :pagination="false">
       <template #state="{ text: state }">
         <span>
           <Tag :color="areaConst.STATES[state].color">

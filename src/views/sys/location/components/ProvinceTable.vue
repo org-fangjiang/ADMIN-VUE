@@ -9,6 +9,7 @@
       style="width: 120px"
       @change="stateHandleChange"
       :options="provinceConst.STATES"
+      :pagination="false"
     />
     <Button :class="prefixCls" v-auth="provinceConst._PERMS.ADD" @click="addProvince">{{
       t('model.location.province.addProvince')

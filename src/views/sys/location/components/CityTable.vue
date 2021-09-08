@@ -2,7 +2,7 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Table :columns="cityColumns" :data-source="list" rowKey="id" size="small">
+    <Table :columns="cityColumns" :data-source="list" rowKey="id" size="small" :pagination="false">
       <template #state="{ text: state }">
         <span>
           <Tag :color="cityConst.STATES[state].color">

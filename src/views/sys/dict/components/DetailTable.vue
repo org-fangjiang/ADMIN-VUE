@@ -2,7 +2,13 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Table :columns="detailColumns" :data-source="list" rowKey="id" size="small">
+    <Table
+      :columns="detailColumns"
+      :data-source="list"
+      rowKey="id"
+      size="small"
+      :pagination="false"
+    >
       <template #state="{ text: state }">
         <span>
           <Tag :color="dictConst.STATES[state].color">
