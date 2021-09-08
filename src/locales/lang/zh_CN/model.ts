@@ -38,6 +38,7 @@ export default {
     updateState: '修改企业状态',
     updateLocked: '锁定',
     updateUnLocked: '解锁',
+    addRole: '添加角色',
     changeCreateBy: '切换负责人',
     updateRenewalData: '续期',
     add_name: '请输入企业名称',

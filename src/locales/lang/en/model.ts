@@ -38,6 +38,7 @@ export default {
     updateState: 'Update State',
     updateLocked: 'LOCKED',
     updateUnLocked: 'UNLOCKED',
+    addRole: 'ADD ROLE',
     changeCreateBy: 'Change Manage',
     updateRenewalData: 'Renew',
     add_name: 'Please enter company name',

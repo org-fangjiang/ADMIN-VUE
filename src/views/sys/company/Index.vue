@@ -16,7 +16,7 @@
         t('model.company.add')
       }}</Button>
     </div>
-    <Table :columns="columns" :data-source="list" rowKey="id">
+    <Table :columns="columns" :data-source="list" rowKey="id" :pagination="false">
       <template #companySize="{ text: size }">
         <span>
           <Tag :color="companyConst.COMPANY_SIZES[size].color">
@@ -76,6 +76,12 @@
                   {{ t('model.company.updateRenewalData') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="5" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button type="link" size="small">
+                  {{ t('model.company.addRole') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -106,6 +112,11 @@
       <CompanyForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
       <CompanyFormCreateBy v-if="drawerParam.state === '3'" :id="drawerParam.id" />
       <CompanyFormExpirationData v-if="drawerParam.state === '4'" :id="drawerParam.id" />
+      <FRoleForm
+        v-if="drawerParam.state === '5'"
+        :companyId="drawerParam.id"
+        :comanyName="drawerParam.name"
+      />
     </Drawer>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -115,7 +126,12 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getCompanies, deleteCompany, reEnableCompany } from '/@/api/sys/compnay/company';
+  import {
+    getCompanies,
+    deleteCompany,
+    reEnableCompany,
+    getCompany,
+  } from '/@/api/sys/compnay/company';
   import {
     CompanyModel,
     CompanyColumns,
@@ -127,6 +143,7 @@
   import CompanyForm from './components/CompanyForm.vue';
   import CompanyFormCreateBy from './components/CompanyFormCreateBy.vue';
   import CompanyFormExpirationData from './components/CompanyFormExpirationData.vue';
+  import FRoleForm from './components/RoleForm.vue';
   import {
     Drawer,
     Menu,
@@ -157,6 +174,7 @@
       Table,
       Pagination,
       Button,
+      FRoleForm,
     },
     setup() {
       const { t } = useI18n();
@@ -168,6 +186,7 @@
         state: '0',
         title: '',
         visible: false,
+        name: '',
       });
       const pageSizeList = ref<string[]>(PageSizeList);
       // 修改为其它对应的Const
@@ -304,6 +323,15 @@
             drawerParam.title = t('model.company.updateRenewalData');
             drawerParam.visible = true;
             break;
+          case 5:
+            // 添加角色
+            drawerParam.state = '5';
+            drawerParam.id = id;
+            drawerParam.title = t('model.company.addRole');
+            drawerParam.visible = true;
+            const { content } = await getCompany(id);
+            drawerParam.name = content.name || '';
+            break;
         }
       };
 
@@ -332,6 +360,11 @@
 
       const onClose = async () => {
         drawerParam.visible = false;
+        drawerParam.id = '';
+        drawerParam.state = '0';
+        drawerParam.title = '';
+        drawerParam.visible = false;
+        drawerParam.name = '';
         const result = await getList();
         processList(result);
       };
