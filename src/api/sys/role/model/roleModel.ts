@@ -12,6 +12,7 @@ export interface RoleModel {
   companyId?: string;
   state?: string;
   sysRoleMenusById?: MenuModel[];
+  menus?: MenuModel[];
 }
 
 export interface RoleByCondition {
@@ -21,11 +22,17 @@ export interface RoleByCondition {
 }
 
 export const RoleConst = {
+  EFFECTIVE: '1',
+  INVALID: '0',
+  STATES: [
+    { value: '0', label: t('model.role.invalid'), color: 'volcano' },
+    { value: '1', label: t('model.role.effective'), color: 'geekblue' },
+  ],
   _ADD_FIELDS: ['roleName', 'remake', 'companyId', 'sysRoleMenusById'],
   _UPDATE_FIELDS: ['roleName', 'remake'],
   _RULES: {
-    roleName: [{ required: true, message: t(''), trigger: 'blur' }],
-    remake: [{ required: false, message: t(''), trigger: 'blur' }],
+    roleName: [{ required: true, message: t('model.role.roleName'), trigger: 'blur' }],
+    remake: [{ required: false, message: t('model.role.remake'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'department:select',
@@ -37,18 +44,18 @@ export const RoleConst = {
 
 export const RoleColumns = [
   {
-    title: t(''),
-    key: 'id',
-    dataIndex: 'id',
-    ellipsis: 'true',
-    slots: '',
-  },
-  {
-    title: t(''),
+    title: t('model.role.roleName'),
     key: 'name',
     dataIndex: 'roleName',
     ellipsis: 'true',
     slots: '',
+  },
+  {
+    title: t('model.role.state'),
+    key: 'state',
+    dataIndex: 'state',
+    ellipsis: 'true',
+    slots: { customRender: 'state' },
   },
   {
     title: t('model.location.area.action'),

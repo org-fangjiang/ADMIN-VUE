@@ -25,13 +25,15 @@ export interface MenuByCondition {
 export const MenuConst = {
   EFFECTIVE: '1',
   INVALID: '0',
+  MENU: '0',
+  BUTTON: '1',
   STATES: [
-    { value: '0', label: t('model.menu.invalid'), color: 'volcano' },
-    { value: '1', label: t('model.menu.effective'), color: 'geekblue' },
+    { value: '0', label: t('model.perms.invalid'), color: 'volcano' },
+    { value: '1', label: t('model.perms.effective'), color: 'geekblue' },
   ],
   _TYPE: [
-    { value: '0', label: t('model.menu.menu'), color: 'volcano' }, // 菜单
-    { value: '1', label: t('model.menu.button'), color: 'geekblue' }, // 按钮
+    { value: '0', label: t('model.perms.menu'), color: 'volcano' }, // 菜单
+    { value: '1', label: t('model.perms.button'), color: 'geekblue' }, // 按钮
   ],
   _ADD_MENU_FIELDS: ['parentId', 'menuName', 'path', 'component', 'icon', 'type', 'orderNum'],
   _ADD_BUTTON_FIELDS: [
@@ -66,32 +68,32 @@ export const MenuConst = {
     'state',
   ],
   _MENU_RULES: {
-    parentId: [{ required: true, message: t('model.menu.parentId'), trigger: 'blur' }],
-    menuName: [{ required: true, message: t('model.menu.menuName'), trigger: 'blur' }],
-    path: [{ required: true, message: t('model.menu.path'), trigger: 'blur' }],
-    component: [{ required: false, message: t('model.menu.component'), trigger: 'blur' }],
-    perms: [{ required: false, message: t('model.menu.perms'), trigger: 'blur' }],
-    icon: [{ required: false, message: t('model.menu.icon'), trigger: 'blur' }],
-    type: [{ required: true, message: t('model.menu.menu'), trigger: 'blur' }],
-    orderNum: [{ required: false, message: t('model.menu.orderNum'), trigger: 'blur' }],
-    createTime: [{ required: false, message: t('model.menu.createTime'), trigger: 'blur' }],
-    updateTime: [{ required: false, message: t('model.menu.updateTime'), trigger: 'blur' }],
-    createBy: [{ required: false, message: t('model.menu.createBy'), trigger: 'blur' }],
-    state: [{ required: true, message: t('model.menu.state'), trigger: 'blur' }],
+    parentId: [{ required: true, message: t('model.perms.parentId'), trigger: 'blur' }],
+    menuName: [{ required: true, message: t('model.perms.menuName'), trigger: 'blur' }],
+    path: [{ required: true, message: t('model.perms.path'), trigger: 'blur' }],
+    component: [{ required: false, message: t('model.perms.component'), trigger: 'blur' }],
+    perms: [{ required: false, message: t('model.perms.perms'), trigger: 'blur' }],
+    icon: [{ required: false, message: t('model.perms.icon'), trigger: 'blur' }],
+    type: [{ required: true, message: t('model.perms.menu'), trigger: 'blur' }],
+    orderNum: [{ required: false, message: t('model.perms.orderNum'), trigger: 'blur' }],
+    createTime: [{ required: false, message: t('model.perms.createTime'), trigger: 'blur' }],
+    updateTime: [{ required: false, message: t('model.perms.updateTime'), trigger: 'blur' }],
+    createBy: [{ required: false, message: t('model.perms.createBy'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.perms.state'), trigger: 'blur' }],
   },
   _BUTTON_RULES: {
-    parentId: [{ required: true, message: t('model.menu.parentId'), trigger: 'blur' }],
-    menuName: [{ required: true, message: t('model.menu.menuName'), trigger: 'blur' }],
-    path: [{ required: true, message: t('model.menu.path'), trigger: 'blur' }],
-    component: [{ required: false, message: t('model.menu.component'), trigger: 'blur' }],
-    perms: [{ required: false, message: t('model.menu.perms'), trigger: 'blur' }],
-    icon: [{ required: false, message: t('model.menu.icon'), trigger: 'blur' }],
-    type: [{ required: true, message: t('model.menu.button'), trigger: 'blur' }],
-    orderNum: [{ required: false, message: t('model.menu.orderNum'), trigger: 'blur' }],
-    createTime: [{ required: false, message: t('model.menu.createTime'), trigger: 'blur' }],
-    updateTime: [{ required: false, message: t('model.menu.updateTime'), trigger: 'blur' }],
-    createBy: [{ required: false, message: t('model.menu.createBy'), trigger: 'blur' }],
-    state: [{ required: true, message: t('model.menu.state'), trigger: 'blur' }],
+    parentId: [{ required: true, message: t('model.perms.parentId'), trigger: 'blur' }],
+    menuName: [{ required: true, message: t('model.perms.menuName'), trigger: 'blur' }],
+    path: [{ required: true, message: t('model.perms.path'), trigger: 'blur' }],
+    component: [{ required: false, message: t('model.perms.component'), trigger: 'blur' }],
+    perms: [{ required: false, message: t('model.perms.perms'), trigger: 'blur' }],
+    icon: [{ required: false, message: t('model.perms.icon'), trigger: 'blur' }],
+    type: [{ required: true, message: t('model.perms.button'), trigger: 'blur' }],
+    orderNum: [{ required: false, message: t('model.perms.orderNum'), trigger: 'blur' }],
+    createTime: [{ required: false, message: t('model.perms.createTime'), trigger: 'blur' }],
+    updateTime: [{ required: false, message: t('model.perms.updateTime'), trigger: 'blur' }],
+    createBy: [{ required: false, message: t('model.perms.createBy'), trigger: 'blur' }],
+    state: [{ required: true, message: t('model.perms.state'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'menu:select',
@@ -101,56 +103,66 @@ export const MenuConst = {
   },
 };
 
-export const _Columns = [
+export const _Component_Columns = [
   {
-    title: t('model.menu.menuName'),
+    title: t('model.perms.menuName'),
     key: 'menuName',
+    width: '20%',
     dataIndex: 'menuName',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t('model.menu.path'),
+    title: t('model.perms.path'),
     key: 'path',
+    width: '10%',
     dataIndex: 'path',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t('model.menu.perms'),
+    title: t('model.perms.perms'),
     key: 'perms',
+    width: '10%',
     dataIndex: 'perms',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t('model.menu.icon'),
+    title: t('model.perms.icon'),
     key: 'icon',
+    width: '10%',
     dataIndex: 'icon',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t('model.menu.type'),
+    title: t('model.perms.type'),
     key: 'type',
+    width: '10%',
     dataIndex: 'type',
     ellipsis: 'true',
     slots: { customRender: 'type' },
   },
   {
-    title: t('model.menu.state'),
+    title: t('model.perms.state'),
     key: 'state',
+    width: '10%',
     dataIndex: 'state',
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _Columns = [
+  ..._Component_Columns,
   {
-    title: t('model.menu.action'),
+    title: t('model.perms.action'),
     key: 'operation',
+    width: '30%',
     slots: { customRender: 'operation' },
   },
 ];
-
 // SYS_MENU_MISS_ID(4049, "菜单权限参数错误：编号"),
 // SYS_MENU_MISS_MENU_NAME(4049, "菜单权限参数错误：名称"),
 // SYS_MENU_MISS_PATH(4049, "菜单权限参数错误：路径"),

@@ -1,15 +1,15 @@
-// 菜单信息管理页面
-
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Button @click="handleAdd">保存</Button>
     <Table
-      :columns="menuColumns"
+      :columns="_Component_Columns"
       size="middle"
       :pagination="false"
       :dataSource="list"
       :loading="loading"
+      :selectedKeys="selectedRowKeys"
       :expandedRowKeys="expandedRowKeys"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange }"
       @expandedRowsChange="handleExpandedRowsChange"
       rowKey="id"
     >
@@ -27,41 +27,17 @@
           </Tag>
         </span>
       </template>
-      <template #operation="{ record }">
-        <Button type="link" @click="handleAdd(record)">{{ t('model.perms.addMenu') }}</Button>
-        <Button type="link" @click="handleUpdate(record)">{{ t('model.perms.updateMenu') }}</Button>
-        <Button type="link" @click="handleDelete(record)">{{ t('model.perms.deleteMenu') }}</Button>
-        <Button type="link" @click="handleReEnable(record)">{{
-          t('model.perms.reEnableMenu')
-        }}</Button>
-      </template>
     </Table>
-    <Drawer
-      :zIndex="1"
-      :title="drawerParam.title"
-      :width="'100%'"
-      :destroyOnClose="true"
-      :visible="drawerParam.visible"
-      :get-container="false"
-      :wrapClassName="`${prefixCls}-drawer`"
-      :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"
-      :wrap-style="{ position: 'fixed', top: '80px', righ: '0' }"
-      @close="onClose"
-    >
-      <MenuForm :parentId="drawerParam.parentId" :id="drawerParam.id" />
-    </Drawer>
   </div>
 </template>
-
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import { Table, Tag, Drawer, Button } from 'ant-design-vue';
-  import { MenuConst, _Columns } from '/@/api/sys/menu/model/menuModel';
-  import { deleteMenu, getChildMenu, getParentMenu, reEnableMenu } from '/@/api/sys/menu/menu';
-  import MenuForm from './components/MenuForm.vue';
+  import { Table, Tag, Button } from 'ant-design-vue';
+  import { MenuConst, _Component_Columns } from '/@/api/sys/menu/model/menuModel';
+  import { getChildMenu, getParentMenu } from '/@/api/sys/menu/menu';
 
   interface Options {
     id?: string;
@@ -80,21 +56,25 @@
     children?: Options[];
   }
   export default defineComponent({
-    name: 'Menu',
+    name: 'FMenu',
     components: {
       Table,
-      MenuForm,
       Tag,
-      Drawer,
       Button,
     },
-    setup() {
+    props: {
+      expandedKeys: {
+        type: Array,
+        require: false,
+      },
+    },
+    emits: ['addMenu'],
+    setup(props, { emit }) {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('menu');
       let loading = ref<boolean>(false);
       let tip = ref<string>('加载中...');
-      const menuColumns = reactive(_Columns);
       const menuConst = ref(MenuConst);
 
       const menus: Options[] = [];
@@ -147,68 +127,20 @@
         }
       };
 
-      const drawerParam = reactive({
-        id: '',
-        parentId: '',
-        state: '', // 0: area 1: city 2: provice
-        title: '',
-        visible: false,
-      });
-      const onClose = async () => {
-        drawerParam.id = '';
-        drawerParam.parentId = '';
-        drawerParam.state = '';
-        drawerParam.title = '';
-        drawerParam.visible = false;
-        expandedRowKeys.value.splice(0);
-        selectedRowKeys.value.splice(0);
-        await loadData();
-      };
-
       let expandedRowKeys = ref<string[]>([]);
-      let selectedRowKeys = ref<string[]>([]);
+      let selectedRowKeys = ref<string[]>(props.expandedKeys as string[]);
 
-      const onSelectChange = (selectedRowKeys, _selectedRows) => {
-        if (selectedRowKeys && selectedRowKeys.length > 0) {
-          selectedRowKeys.forEach(async (element) => {
-            const { content } = await getChildMenu({ parentId: element });
-            if (content && content.length > 0) {
-              content.forEach((item) => {
-                if (!list.includes(item)) {
-                  list.push(item);
-                }
-              });
-            }
-          });
+      const onSelectChange = (record, selected) => {
+        if (selected) {
+          selectedRowKeys.value.push(record.id);
+        } else {
+          const flag = selectedRowKeys.value.indexOf(record.id);
+          selectedRowKeys.value.splice(flag, 1);
         }
       };
 
-      const handleUpdate = (record) => {
-        drawerParam.visible = true;
-        drawerParam.id = record.id;
-        drawerParam.state = '0';
-        drawerParam.title = t('model.menu.updateMenu');
-      };
-
-      const handleAdd = (record) => {
-        drawerParam.visible = true;
-        drawerParam.parentId = record.id;
-        drawerParam.state = '0';
-        drawerParam.title = t('model.menu.addMenu');
-      };
-
-      const handleDelete = async (record) => {
-        await deleteMenu({ id: record.id });
-        expandedRowKeys.value.splice(0);
-        selectedRowKeys.value.splice(0);
-        await loadData();
-      };
-
-      const handleReEnable = async (record) => {
-        await reEnableMenu({ id: record.id });
-        expandedRowKeys.value.splice(0);
-        selectedRowKeys.value.splice(0);
-        await loadData();
+      const handleAdd = () => {
+        emit('addMenu', { record: selectedRowKeys.value });
       };
 
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {
@@ -262,42 +194,17 @@
         prefixCls,
         tip,
         loading,
-        menuColumns,
         menuConst,
         list,
-        onClose,
-        handleUpdate,
         handleAdd,
-        handleDelete,
-        handleReEnable,
         handleExpandedRowsChange,
-        drawerParam,
-        expandedRowKeys,
         selectedRowKeys,
+        expandedRowKeys,
         onSelectChange,
         loadData,
+        props,
+        _Component_Columns,
       };
     },
   });
 </script>
-
-<style lang="less">
-  @prefix-cls: ~'@{namespace}-menu';
-  @dark-bg: #293146;
-
-  html[data-theme='dark'] {
-    .@{prefix-cls} {
-      background-color: @dark-bg;
-    }
-  }
-
-  .@{prefix-cls} {
-    &-drawer {
-      max-width: 500px;
-    }
-
-    &-action-menu-item {
-      text-align: center;
-    }
-  }
-</style>

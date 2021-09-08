@@ -35,6 +35,7 @@ export interface CompanyByCondition {
   provinceId?: string;
   cityId?: string;
   areaId?: string;
+  name?: string;
 }
 
 export const CompanyConst = {
