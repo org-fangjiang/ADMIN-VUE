@@ -7,56 +7,49 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
-      <FormItem ref="id" :label="t('model.menu.id')" name="id">
-        <Input
-          :disabled="isUpdate && !updateFields.includes('id')"
-          v-model:value="formState.id"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem ref="parentId" :label="t('model.menu.parentId')" name="parentId">
+      <FormItem ref="parentName" :label="t('model.perms.parentName')" name="parentName">
         <Input
           :disabled="isUpdate && !updateFields.includes('parentId')"
-          v-model:value="formState.parentId"
+          v-model:value="parentName"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="menuName" :label="t('model.menu.menuName')" name="menuName">
+      <FormItem ref="menuName" :label="t('model.perms.menuName')" name="menuName">
         <Input
           :disabled="isUpdate && !updateFields.includes('menuName')"
           v-model:value="formState.menuName"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="path" :label="t('model.menu.path')" name="path">
+      <FormItem ref="path" :label="t('model.perms.path')" name="path">
         <Input
           :disabled="isUpdate && !updateFields.includes('path')"
           v-model:value="formState.path"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="component" :label="t('model.menu.component')" name="component">
+      <FormItem ref="component" :label="t('model.perms.component')" name="component">
         <Input
           :disabled="isUpdate && !updateFields.includes('component')"
           v-model:value="formState.component"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="perms" :label="t('model.menu.perms')" name="perms">
+      <FormItem ref="perms" :label="t('model.perms.perms')" name="perms">
         <Input
           :disabled="isUpdate && !updateFields.includes('perms')"
           v-model:value="formState.perms"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="icon" :label="t('model.menu.icon')" name="icon">
+      <FormItem ref="icon" :label="t('model.perms.icon')" name="icon">
         <Input
           :disabled="isUpdate && !updateFields.includes('icon')"
           v-model:value="formState.icon"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="type" :label="t('model.menu.type')" name="type">
+      <FormItem ref="type" :label="t('model.perms.type')" name="type">
         <Select
           :disabled="isUpdate && !updateFields.includes('type')"
           ref="select"
@@ -65,14 +58,14 @@
           :options="menuConst._TYPE"
         />
       </FormItem>
-      <FormItem ref="orderNum" :label="t('model.menu.orderNum')" name="orderNum">
+      <FormItem ref="orderNum" :label="t('model.perms.orderNum')" name="orderNum">
         <Input
           :disabled="isUpdate && !updateFields.includes('orderNum')"
           v-model:value="formState.orderNum"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="createTime" :label="t('model.menu.createTime')" name="createTime">
+      <FormItem ref="createTime" :label="t('model.perms.createTime')" name="createTime">
         <DatePicker
           showTime
           :disabled="isUpdate && !updateFields.includes('createTime')"
@@ -81,12 +74,7 @@
           @change="change"
         />
       </FormItem>
-      <FormItem ref="updateTime" :label="t('model.menu.updateTime')" name="updateTime">
-        <!-- <Input
-          :disabled="isUpdate && !updateFields.includes('updateTime')"
-          v-model:value="formState.value"
-          autoComplete="off"
-        /> -->
+      <FormItem ref="updateTime" :label="t('model.perms.updateTime')" name="updateTime">
         <DatePicker
           showTime
           :disabled="isUpdate && !updateFields.includes('updateTime')"
@@ -95,14 +83,14 @@
           @change="update"
         />
       </FormItem>
-      <FormItem ref="createBy" :label="t('model.menu.createBy')" name="createBy">
+      <FormItem ref="createBy" :label="t('model.perms.createBy')" name="createBy">
         <Input
           :disabled="isUpdate && !updateFields.includes('createBy')"
           v-model:value="formState.value"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="state" :label="t('model.menu.state')" name="state">
+      <FormItem ref="state" :label="t('model.perms.state')" name="state">
         <Select
           :disabled="isUpdate && !updateFields.includes('state')"
           ref="select"
@@ -113,10 +101,10 @@
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button v-if="isUpdate" type="primary" @click="onSubmit">{{
-          t('model.menu.updateMenu')
+          t('model.perms.updateMenu')
         }}</Button>
-        <Button v-else type="primary" @click="onSubmit">{{ t('model.menu.addMenu') }}</Button>
-        <Button style="margin-left: 10px" @click="resetForm">{{ t('model.menu.reset') }}</Button>
+        <Button v-else type="primary" @click="onSubmit">{{ t('model.perms.addMenu') }}</Button>
+        <Button style="margin-left: 10px" @click="resetForm">{{ t('model.perms.reset') }}</Button>
       </FormItem>
     </Form>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -125,7 +113,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { addMenu, updateMenu, getMenu } from '/@/api/sys/menu/menu';
+  import { addMenu, updateMenu, getMenu, getParentMenu } from '/@/api/sys/menu/menu';
   import { MenuConst, MenuModel } from '/@/api/sys/menu/model/menuModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input, DatePicker } from 'ant-design-vue';
@@ -166,6 +154,7 @@
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      let parentName = ref();
       const formState: UnwrapRef<MenuModel> = reactive({
         id: '',
         // parentId: props.parentId || '',
@@ -191,20 +180,20 @@
             if (props.id) {
               try {
                 const { content } = await updateMenu(formState);
-                success(t('model.menu.updateMenu'), t('model.menu.success'));
+                success(t('model.perms.updateMenu'), t('model.perms.success'));
                 Object.assign(formState, content);
               } catch (error) {
-                failed(error?.response?.data?.message, t('model.menu.fail'));
+                failed(error?.response?.data?.message, t('model.perms.fail'));
               } finally {
                 loading.value = false;
               }
             } else {
               try {
                 const { content } = await addMenu(formState);
-                success(t('model.menu.addMenu'), t('model.menu.success'));
+                success(t('model.perms.addMenu'), t('model.perms.success'));
                 Object.assign(formState, content);
               } catch (error) {
-                failed(error?.response?.data?.message, t('model.menu.fail'));
+                failed(error?.response?.data?.message, t('model.perms.fail'));
               } finally {
                 loading.value = false;
               }
@@ -240,12 +229,39 @@
       };
       onMounted(async () => {
         loading.value = true;
-        // console.log('id:', props.id);
-        // console.log('groupid:', props.parentId);
+        //添加一级菜单
+        if (props.id === '' && props.parentId === '') {
+          parentName.value = '';
+        }
+        //更新
         if (props.id) {
           const { content } = await getMenu({ id: props.id });
           if (content) {
             Object.assign(formState, content);
+            //判断更新的是不是一级菜单，是的话，上级名称为空
+            const allMenu = await getParentMenu({});
+            const ids = [''];
+            allMenu.content.forEach((e) => {
+              if (e.id) {
+                ids.push(e.id);
+              }
+            });
+            if (content.id) {
+              if (ids.includes(content.id)) {
+                parentName.value = '';
+              } else {
+                const result = await getMenu({ id: content.parentId });
+                parentName.value = result.content.menuName;
+              }
+            }
+          }
+        }
+        // 将上级路径添加到输入框
+        if (props.parentId) {
+          const { content } = await getMenu({ id: props.parentId });
+          if (content) {
+            formState.path = content.path + '/';
+            parentName.value = content.menuName;
           }
         }
         loading.value = false;
@@ -271,6 +287,7 @@
         t,
         props,
         isUpdate,
+        parentName,
         prefixCls,
         menuConst,
         tip,

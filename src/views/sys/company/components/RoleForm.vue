@@ -22,29 +22,12 @@
           autoComplete="off"
         />
       </FormItem>
-
-      <FormItem ref="companyId" :label="t('model.role.companyId')" name="companyId">
-        <Select
-          ref="selectRef"
-          :disabled="!updateFields.includes('companyId')"
-          v-model:value="props.companyId"
-          label-in-value
-          placeholder="Select Company"
-          style="width: 100%"
-          :filter-option="false"
-          :not-found-content="null"
-          :options="options"
-          :showSearch="true"
-          :labelInValue="false"
-        />
-      </FormItem>
       <FormItem ref="companyName" :label="t('model.company.name')" name="companyName">
         <Select
           ref="selectRef"
           :disabled="!updateFields.includes('companyName')"
-          v-model:value="props.companyName"
+          v-model:value="companyName"
           label-in-value
-          placeholder="Select Company"
           style="width: 100%"
           :filter-option="false"
           :not-found-content="null"
@@ -73,11 +56,12 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { addRoles } from '/@/api/sys/role/role';
-  import { defineComponent, reactive, ref, UnwrapRef } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { RoleModel, RoleConst } from '/@/api/sys/role/model/roleModel';
   import { Loading } from '/@/components/Loading';
   import { Form, FormItem, Button, Input, Select, SelectOption } from 'ant-design-vue';
   import { MenuModel } from '/@/api/sys/menu/model/menuModel';
+  import { getCompany } from '/@/api/sys/compnay/company';
 
   interface Option {
     value: string;
@@ -96,10 +80,6 @@
     },
     props: {
       companyId: {
-        type: String,
-        require: true,
-      },
-      companyName: {
         type: String,
         require: true,
       },
@@ -127,8 +107,10 @@
         companyId: props.companyId || '',
         state: '',
         sysRoleMenusById: [],
-        companyName: props.companyName || '',
+        companyName: '',
       });
+
+      const companyName = ref();
 
       const onSubmit = () => {
         formRef.value.validate().then(async () => {
@@ -165,9 +147,17 @@
         formRef.value.resetFields();
       };
 
+      onMounted(async () => {
+        if (props.companyId) {
+          const { content } = await getCompany(props.companyId);
+          companyName.value = content.name;
+        }
+      });
+
       return {
         t,
         formRef,
+        companyName,
         sysRoleMenusById,
         formState,
         loading,

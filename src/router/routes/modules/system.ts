@@ -69,7 +69,7 @@ const system: AppRouteModule = {
       component: () => import('/@/views/sys/department/index.vue'),
       meta: {
         title: t('routes.system.dept'),
-        roles: ['/system/dept'],
+        // roles: ['/system/dept'],
       },
     },
     {

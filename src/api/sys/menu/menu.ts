@@ -3,7 +3,7 @@ import { ErrorMessageMode } from '/#/axios';
 import { BaseListResult, BasePageResult, BaseResult } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam, SortParam } from '/@/api/model/baseModel';
-import { MenuByCondition, MenuModel } from './model/menuModel';
+import { MenuByCondition, MenuModel } from './model/permsModel';
 
 enum Api {
   GetParentMenu = '/sys-server/menu/getParentMenu',

@@ -22,10 +22,10 @@ export const DepartmentConst = {
   _ADD_FIELDS: ['deptId', 'parentId', 'deptName', 'orderNum'],
   _UPDATE_FIELDS: ['parentId', 'deptName', 'orderNum'],
   _RULES: {
-    deptId: [{ required: true, message: t(''), trigger: 'blur' }],
-    parentId: [{ required: true, message: t(''), trigger: 'blur' }],
-    deptName: [{ required: true, message: t(''), trigger: 'blur' }],
-    orderNum: [{ required: false, message: t(''), trigger: 'blur' }],
+    deptId: [{ required: true, message: t('model.department.deptId'), trigger: 'blur' }],
+    parentId: [{ required: false, message: t('model.department.parentId'), trigger: 'blur' }],
+    deptName: [{ required: true, message: t('model.department.deptName'), trigger: 'blur' }],
+    orderNum: [{ required: false, message: t('model.department.orderNum'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'department:select',
@@ -37,21 +37,21 @@ export const DepartmentConst = {
 
 export const DepartmentColumns = [
   {
-    title: t(''),
+    title: t('model.department.deptId'),
     key: 'id',
     dataIndex: 'deptId',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.department.deptName'),
     key: 'name',
     dataIndex: 'deptName',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t('model.location.area.action'),
+    title: t('model.department.action'),
     key: 'action',
     ellipsis: 'true',
     slots: { customRender: 'action' },

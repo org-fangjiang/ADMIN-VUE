@@ -23,7 +23,7 @@ import { getPermCode } from '/@/api/sys/user';
 
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
-import { MenuConst } from '/@/api/sys/menu/model/menuModel';
+import { MenuConst } from '../../api/sys/menu/model/permsModel';
 
 interface PermissionState {
   // Permission code list

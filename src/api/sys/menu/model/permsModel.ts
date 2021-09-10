@@ -105,8 +105,8 @@ export const MenuConst = {
 
 export const _Component_Columns = [
   {
-    title: t('model.perms.menuName'),
-    key: 'menuName',
+    title: t('model.perms.name'),
+    key: 'name',
     width: '20%',
     dataIndex: 'menuName',
     ellipsis: 'true',

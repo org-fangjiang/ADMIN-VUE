@@ -1,4 +1,4 @@
-import { MenuModel } from '../../menu/model/menuModel';
+import { MenuModel } from '../../menu/model/permsModel';
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 export interface RoleModel {

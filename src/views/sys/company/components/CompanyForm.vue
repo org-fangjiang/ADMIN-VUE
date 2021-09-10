@@ -216,7 +216,6 @@
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
-      const companyId = ref(props.id || undefined);
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
@@ -277,7 +276,7 @@
         formRef.value
           .validate()
           .then(async () => {
-            if (companyId.value) {
+            if (props.id) {
               loading.value = true;
               try {
                 const { content } = await updateCompany(formState);
@@ -329,10 +328,10 @@
       };
 
       const resetForm = async () => {
-        if (companyId.value) {
+        if (props.id) {
           loading.value = true;
           try {
-            const { content } = await getCompany(companyId.value);
+            const { content } = await getCompany(props.id);
             Object.assign(formState, content);
             formState.commission = Number(formState.commission);
           } catch (error) {
@@ -350,10 +349,10 @@
       };
 
       onMounted(async () => {
-        if (companyId.value) {
+        if (props.id) {
           loading.value = true;
           try {
-            const { content } = await getCompany(companyId.value);
+            const { content } = await getCompany(props.id);
             Object.assign(formState, content);
             formState.commission = Number(formState.commission);
           } catch (error) {
@@ -372,7 +371,6 @@
         formState,
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
-        companyId,
         isUpdate,
         tip,
         rules,
@@ -387,6 +385,7 @@
         changeProvince,
         changeCity,
         changeArea,
+        props,
       };
     },
   });

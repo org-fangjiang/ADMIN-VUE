@@ -14,7 +14,7 @@ import { usePermissionStore } from '/@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { tokenInfoModel } from '/@/api/sys/model/tokenModel';
-import { MenuConst } from '/@/api/sys/menu/model/menuModel';
+import { MenuConst } from '../../api/sys/menu/model/permsModel';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;

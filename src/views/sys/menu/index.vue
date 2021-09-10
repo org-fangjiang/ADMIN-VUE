@@ -2,12 +2,16 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <div>
+      <Button :class="prefixCls" @click="add">{{ t('model.perms.addMenu') }}</Button>
+    </div>
     <Table
-      :columns="menuColumns"
+      :columns="columns"
       size="middle"
       :pagination="false"
       :dataSource="list"
       :loading="loading"
+      :selectedKeys="selectedRowKeys"
       :expandedRowKeys="expandedRowKeys"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       @expandedRowsChange="handleExpandedRowsChange"
@@ -48,7 +52,11 @@
       :wrap-style="{ position: 'fixed', top: '80px', righ: '0' }"
       @close="onClose"
     >
-      <MenuForm :parentId="drawerParam.parentId" :id="drawerParam.id" />
+      <MenuForm
+        v-if="drawerParam.state === '0'"
+        :parentId="drawerParam.parentId"
+        :id="drawerParam.id"
+      />
     </Drawer>
   </div>
 </template>
@@ -58,7 +66,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import { Table, Tag, Drawer, Button } from 'ant-design-vue';
+  import { Table, Tag, Drawer, Button, notification } from 'ant-design-vue';
   import { MenuConst, _Columns } from '/@/api/sys/menu/model/menuModel';
   import { deleteMenu, getChildMenu, getParentMenu, reEnableMenu } from '/@/api/sys/menu/menu';
   import MenuForm from './components/MenuForm.vue';
@@ -91,10 +99,10 @@
     setup() {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('menu');
+      const { prefixCls } = useDesign('perms');
       let loading = ref<boolean>(false);
       let tip = ref<string>('加载中...');
-      const menuColumns = reactive(_Columns);
+      const columns = reactive(_Columns);
       const menuConst = ref(MenuConst);
 
       const menus: Options[] = [];
@@ -150,7 +158,7 @@
       const drawerParam = reactive({
         id: '',
         parentId: '',
-        state: '', // 0: area 1: city 2: provice
+        state: '',
         title: '',
         visible: false,
       });
@@ -168,47 +176,80 @@
       let expandedRowKeys = ref<string[]>([]);
       let selectedRowKeys = ref<string[]>([]);
 
-      const onSelectChange = (selectedRowKeys, _selectedRows) => {
-        if (selectedRowKeys && selectedRowKeys.length > 0) {
-          selectedRowKeys.forEach(async (element) => {
-            const { content } = await getChildMenu({ parentId: element });
-            if (content && content.length > 0) {
-              content.forEach((item) => {
-                if (!list.includes(item)) {
-                  list.push(item);
-                }
-              });
-            }
-          });
+      const onSelectChange = (record, selected) => {
+        if (selected) {
+          selectedRowKeys.value.push(record.id);
+        } else {
+          const flag = selectedRowKeys.value.indexOf(record.id);
+          selectedRowKeys.value.splice(flag, 1);
         }
+      };
+
+      const add = () => {
+        drawerParam.visible = true;
+        drawerParam.parentId = '';
+        drawerParam.state = '0';
+        drawerParam.title = t('model.perms.addMenu');
       };
 
       const handleUpdate = (record) => {
         drawerParam.visible = true;
         drawerParam.id = record.id;
         drawerParam.state = '0';
-        drawerParam.title = t('model.menu.updateMenu');
+        drawerParam.title = t('model.perms.updateMenu');
       };
 
       const handleAdd = (record) => {
         drawerParam.visible = true;
         drawerParam.parentId = record.id;
         drawerParam.state = '0';
-        drawerParam.title = t('model.menu.addMenu');
+        drawerParam.title = t('model.perms.addMenu');
       };
 
       const handleDelete = async (record) => {
-        await deleteMenu({ id: record.id });
-        expandedRowKeys.value.splice(0);
-        selectedRowKeys.value.splice(0);
-        await loadData();
+        try {
+          loading.value = true;
+          await deleteMenu({ id: record.id });
+          success(t('model.perms.deleteMenu'), t('model.perms.success'));
+          expandedRowKeys.value.splice(0);
+          selectedRowKeys.value.splice(0);
+          await loadData();
+        } catch (error) {
+          failed(error?.response?.data?.message, t('model.perms.fail'));
+        } finally {
+          loading.value = false;
+        }
       };
 
       const handleReEnable = async (record) => {
-        await reEnableMenu({ id: record.id });
-        expandedRowKeys.value.splice(0);
-        selectedRowKeys.value.splice(0);
-        await loadData();
+        try {
+          loading.value = true;
+          await reEnableMenu({ id: record.id });
+          success(t('model.perms.deleteMenu'), t('model.perms.success'));
+          expandedRowKeys.value.splice(0);
+          selectedRowKeys.value.splice(0);
+          await loadData();
+        } catch (error) {
+          failed(error?.response?.data?.message, t('model.perms.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
+
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
       };
 
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {
@@ -262,11 +303,12 @@
         prefixCls,
         tip,
         loading,
-        menuColumns,
+        columns,
         menuConst,
         list,
         onClose,
         handleUpdate,
+        add,
         handleAdd,
         handleDelete,
         handleReEnable,
@@ -282,7 +324,7 @@
 </script>
 
 <style lang="less">
-  @prefix-cls: ~'@{namespace}-menu';
+  @prefix-cls: ~'@{namespace}-perms';
   @dark-bg: #293146;
 
   html[data-theme='dark'] {

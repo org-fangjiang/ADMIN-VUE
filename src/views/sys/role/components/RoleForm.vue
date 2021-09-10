@@ -22,12 +22,11 @@
           autoComplete="off"
         />
       </FormItem>
-
-      <FormItem ref="companyId" :label="t('model.role.companyId')" name="companyId">
+      <FormItem ref="companyName" :label="t('model.role.companyName')" name="companyName">
         <Select
           ref="selectRef"
           :disabled="isUpdate && !updateFields.includes('companyId')"
-          v-model:value="formState.companyId"
+          v-model:value="companyName"
           label-in-value
           placeholder="Select Company"
           style="width: 100%"
@@ -73,7 +72,7 @@
   import { Form, FormItem, Button, Input, Select, SelectOption } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { MenuModel } from '/@/api/sys/menu/model/menuModel';
-  import { getCompanies } from '/@/api/sys/compnay/company';
+  import { getCompanies, getCompany } from '/@/api/sys/compnay/company';
   import { debounce } from 'lodash-es';
 
   interface Option {
@@ -106,6 +105,7 @@
       if (currentId.value && currentId.value !== '') {
         isUpdate.value = true;
       }
+      let companyName = ref();
       const options = ref<Option[]>([]);
 
       const loading = ref<boolean>(false);
@@ -211,6 +211,8 @@
           try {
             const { content } = await getRole({ id: currentId.value });
             Object.assign(formState, content);
+            const result = await getCompany(content.companyId || '');
+            companyName.value = result.content.name;
           } catch (error) {
           } finally {
             loading.value = false;
@@ -227,6 +229,7 @@
         updateFields: RoleConst._UPDATE_FIELDS,
         currentId,
         isUpdate,
+        companyName,
         tip,
         rules,
         roleConst,
