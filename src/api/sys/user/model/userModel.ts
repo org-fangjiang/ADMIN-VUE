@@ -148,3 +148,48 @@ export const _Const = {
     DELETE: 'user:delete',
   },
 };
+
+export const _Component_Columns = [
+  {
+    title: t(''),
+    key: 'username',
+    width: '20%',
+    dataIndex: 'username',
+    ellipsis: 'true',
+    slots: '',
+  },
+  {
+    title: t(''),
+    key: 'mobile',
+    width: '10%',
+    dataIndex: 'mobile',
+    ellipsis: 'true',
+    slots: '',
+  },
+  {
+    title: t(''),
+    key: 'sysUserRolesById',
+    width: '10%',
+    dataIndex: 'sysUserRolesById',
+    ellipsis: 'true',
+    slots: '',
+  },
+  {
+    title: t(''),
+    key: 'state',
+    width: '10%',
+    dataIndex: 'state',
+    ellipsis: 'true',
+    slots: '',
+  },
+];
+
+export const _Columns = [
+  ..._Component_Columns,
+  {
+    title: t('model.perms.action'),
+    key: 'operation',
+    width: '30%',
+    slots: { customRender: 'operation' },
+  },
+];
