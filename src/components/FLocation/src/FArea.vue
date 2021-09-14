@@ -6,6 +6,7 @@
     @change="change"
     :placeholder="props.placeholder"
     change-on-select
+    :disabled="props.disabledArea"
   />
 </template>
 <script lang="ts">

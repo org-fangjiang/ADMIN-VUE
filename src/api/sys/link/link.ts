@@ -36,7 +36,7 @@ export function deleteLinks(id: string, mode: ErrorMessageMode = 'modal') {
     id,
   });
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<LinkModel>>(
+  return defHttp.delete<BaseResult<LinkModel>>(
     {
       url: Api.DeleteLinks,
       data,

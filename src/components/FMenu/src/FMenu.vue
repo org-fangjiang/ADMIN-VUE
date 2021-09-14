@@ -154,6 +154,10 @@
                 delete item.children;
               } else {
                 //遍历children，赋值给父菜单的children
+                // 判断是子节点是否存在数据
+                if (item.children && item.children.length > 0) {
+                  return;
+                }
                 children.forEach((cItem) => {
                   if (!item.children) {
                     item.children = [];
@@ -171,6 +175,7 @@
       //展开行发生改变时触发
       const handleExpandedRowsChange = async (expandedRows: string[]) => {
         if (expandedRows.length === 0) {
+          expandedRowKeys.value = expandedRows;
           return;
         }
         //获取当前要展开的节点

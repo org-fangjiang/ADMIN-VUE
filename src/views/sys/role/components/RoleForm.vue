@@ -40,7 +40,7 @@
       </FormItem>
       <FormItem ref="state" :label="t('model.role.state')" name="state">
         <Select
-          :disabled="isUpdate && !updateFields.includes('state')"
+          :disabled="!isUpdate || (isUpdate && !updateFields.includes('state'))"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
@@ -114,6 +114,11 @@
       const rules = reactive(RoleConst._RULES);
       const roleConst = ref(RoleConst);
       const sysRoleMenusById: MenuModel[] = [];
+      //状态默认值，添加时默认不能选，为有效
+      let state = '';
+      if (!isUpdate.value) {
+        state = RoleConst.EFFECTIVE;
+      }
       const formState: UnwrapRef<RoleModel> = reactive({
         id: currentId.value || '',
         roleName: '',
@@ -123,7 +128,7 @@
         createBy: '',
         updateBy: '',
         companyId: '',
-        state: '',
+        state,
         sysRoleMenusById: [],
       });
 

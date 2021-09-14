@@ -17,7 +17,7 @@
 
       <FormItem ref="state" :label="t('model.dict.group.state')" name="state">
         <Select
-          :disabled="isUpdate && !updateFields.includes('state')"
+          :disabled="!isUpdate || (isUpdate && !updateFields.includes('state'))"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
@@ -76,11 +76,15 @@
       }
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      let state;
+      if (!isUpdate.value) {
+        state = DictConst.EFFECTIVE;
+      }
       const formRef = ref();
       const formState: UnwrapRef<DictGroupModel> = reactive({
         id: '',
         name: '',
-        state: '',
+        state,
         sysDictDetails: [],
       });
 

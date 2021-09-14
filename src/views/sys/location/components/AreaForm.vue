@@ -23,7 +23,7 @@
       </FormItem>
       <FormItem ref="state" :label="t('model.location.area.state')" name="state">
         <Select
-          :disabled="isUpdate && !updateFields.includes('state')"
+          :disabled="!isUpdate || (isUpdate && !updateFields.includes('state'))"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
@@ -87,11 +87,15 @@
         isUpdate.value = true;
       }
       const formRef = ref();
+      let state;
+      if (!isUpdate.value) {
+        state = AreaConst.EFFECTIVE;
+      }
       const formState: UnwrapRef<AreaModel> = reactive({
         id: '',
         name: '',
         cityId: props.cityId || '',
-        state: '',
+        state,
       });
 
       const onSubmit = () => {

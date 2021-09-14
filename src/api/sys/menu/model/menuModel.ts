@@ -83,10 +83,10 @@ export const MenuConst = {
   },
   _BUTTON_RULES: {
     parentId: [{ required: true, message: t('model.perms.parentId'), trigger: 'blur' }],
-    menuName: [{ required: true, message: t('model.perms.menuName'), trigger: 'blur' }],
-    path: [{ required: true, message: t('model.perms.path'), trigger: 'blur' }],
+    menuName: [{ required: true, message: t('model.perms.buttonName'), trigger: 'blur' }],
+    path: [{ required: false, message: t('model.perms.path'), trigger: 'blur' }],
     component: [{ required: false, message: t('model.perms.component'), trigger: 'blur' }],
-    perms: [{ required: false, message: t('model.perms.perms'), trigger: 'blur' }],
+    perms: [{ required: true, message: t('model.perms.perms'), trigger: 'blur' }],
     icon: [{ required: false, message: t('model.perms.icon'), trigger: 'blur' }],
     type: [{ required: true, message: t('model.perms.button'), trigger: 'blur' }],
     orderNum: [{ required: false, message: t('model.perms.orderNum'), trigger: 'blur' }],

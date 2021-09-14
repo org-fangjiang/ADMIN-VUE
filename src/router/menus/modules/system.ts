@@ -42,6 +42,10 @@ const system: MenuModule = {
         path: 'user',
         name: t('routes.system.user'),
       },
+      {
+        path: 'link',
+        name: t('routes.system.link'),
+      },
     ],
   },
 };

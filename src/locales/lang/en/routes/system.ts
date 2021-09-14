@@ -9,4 +9,5 @@ export default {
   menu: 'Menu',
   role: 'Role',
   user: 'User',
+  link: 'Link',
 };

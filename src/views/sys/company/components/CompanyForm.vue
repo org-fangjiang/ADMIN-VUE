@@ -41,7 +41,7 @@
           autoComplete="off"
         /> -->
         <FCity
-          :disabledProvince="isUpdate && !updateFields.includes('cityId')"
+          :disabledCity="isUpdate && !updateFields.includes('cityId')"
           :provinceId="formState.provinceId"
           :cityId="formState.cityId"
           @change="changeCity"
@@ -54,7 +54,7 @@
           autoComplete="off"
         /> -->
         <FArea
-          :disabledProvince="isUpdate && !updateFields.includes('areaId')"
+          :disabledArea="isUpdate && !updateFields.includes('areaId')"
           :cityId="formState.cityId"
           :areaId="formState.areaId"
           @change="changeArea"

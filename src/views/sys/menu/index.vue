@@ -56,6 +56,7 @@
         v-if="drawerParam.state === '0'"
         :parentId="drawerParam.parentId"
         :id="drawerParam.id"
+        :parentName="drawerParam.parentName"
       />
     </Drawer>
   </div>
@@ -68,7 +69,13 @@
   import { defineComponent, ref, reactive, onMounted } from 'vue';
   import { Table, Tag, Drawer, Button, notification } from 'ant-design-vue';
   import { MenuConst, _Columns } from '/@/api/sys/menu/model/menuModel';
-  import { deleteMenu, getChildMenu, getParentMenu, reEnableMenu } from '/@/api/sys/menu/menu';
+  import {
+    deleteMenu,
+    getChildMenu,
+    getMenu,
+    getParentMenu,
+    reEnableMenu,
+  } from '/@/api/sys/menu/menu';
   import MenuForm from './components/MenuForm.vue';
 
   interface Options {
@@ -158,6 +165,7 @@
       const drawerParam = reactive({
         id: '',
         parentId: '',
+        parentName: '',
         state: '',
         title: '',
         visible: false,
@@ -165,6 +173,7 @@
       const onClose = async () => {
         drawerParam.id = '';
         drawerParam.parentId = '';
+        drawerParam.parentName = '';
         drawerParam.state = '';
         drawerParam.title = '';
         drawerParam.visible = false;
@@ -188,22 +197,39 @@
       const add = () => {
         drawerParam.visible = true;
         drawerParam.parentId = '';
+        drawerParam.parentName = '';
         drawerParam.state = '0';
         drawerParam.title = t('model.perms.addMenu');
       };
 
-      const handleUpdate = (record) => {
+      const handleUpdate = async (record) => {
         drawerParam.visible = true;
         drawerParam.id = record.id;
         drawerParam.state = '0';
         drawerParam.title = t('model.perms.updateMenu');
+
+        //判断更新的是不是一级菜单，是的话，上级名称为空
+        const allMenu = await getParentMenu({});
+        const ids = [''];
+        allMenu.content.forEach((e) => {
+          if (e.id) {
+            ids.push(e.id);
+          }
+        });
+        if (ids.includes(record.id)) {
+          drawerParam.parentName = '';
+        } else {
+          const { content } = await getMenu({ id: record.parentId });
+          drawerParam.parentName = content.menuName || '';
+        }
       };
 
-      const handleAdd = (record) => {
+      const handleAdd = async (record) => {
         drawerParam.visible = true;
         drawerParam.parentId = record.id;
         drawerParam.state = '0';
         drawerParam.title = t('model.perms.addMenu');
+        drawerParam.parentName = record.menuName;
       };
 
       const handleDelete = async (record) => {
@@ -263,6 +289,10 @@
                 delete item.children;
               } else {
                 //遍历children，赋值给父菜单的children
+                // 判断是子节点是否存在数据
+                if (item.children && item.children.length > 0) {
+                  return;
+                }
                 children.forEach((cItem) => {
                   if (!item.children) {
                     item.children = [];
@@ -280,6 +310,7 @@
       //展开行发生改变时触发
       const handleExpandedRowsChange = async (expandedRows: string[]) => {
         if (expandedRows.length === 0) {
+          expandedRowKeys.value = expandedRows;
           return;
         }
         //获取当前要展开的节点

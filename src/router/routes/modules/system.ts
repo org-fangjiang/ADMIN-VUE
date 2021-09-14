@@ -102,6 +102,15 @@ const system: AppRouteModule = {
         icon: 'mdi:account',
       },
     },
+    {
+      path: 'link',
+      name: 'Link',
+      component: () => import('/@/views/sys/link/index.vue'),
+      meta: {
+        title: t('routes.system.link'),
+        roles: ['/system/link'],
+      },
+    },
   ],
 };
 

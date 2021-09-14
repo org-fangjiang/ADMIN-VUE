@@ -29,18 +29,18 @@ export const _Const = {
   EFFECTIVE: '1',
   INVALID: '0',
   STATES: [
-    { value: '0', label: t('model.role.invalid'), color: 'volcano' },
+    { value: '0', label: t('model.link.invalid'), color: 'volcano' },
     { value: '1', label: t('model.role.effective'), color: 'geekblue' },
   ],
   _ADD_FIELDS: ['title', 'page', 'address', 'provinceId', 'cityId', 'areaId'],
   _UPDATE_FIELDS: ['title', 'page', 'address'],
   _RULES: {
-    title: [{ required: true, message: t(''), trigger: 'blur' }],
-    page: [{ required: false, message: t(''), trigger: 'blur' }],
-    address: [{ required: true, message: t(''), trigger: 'blur' }],
-    provinceId: [{ required: true, message: t(''), trigger: 'blur' }],
-    cityId: [{ required: true, message: t(''), trigger: 'blur' }],
-    areaId: [{ required: true, message: t(''), trigger: 'blur' }],
+    title: [{ required: true, message: t('model.link.title'), trigger: 'blur' }],
+    page: [{ required: false, message: t('model.link.page'), trigger: 'blur' }],
+    address: [{ required: true, message: t('model.link.address'), trigger: 'blur' }],
+    provinceId: [{ required: true, message: t('model.link.provinceId'), trigger: 'blur' }],
+    cityId: [{ required: true, message: t('model.link.cityId'), trigger: 'blur' }],
+    areaId: [{ required: true, message: t('model.link.areaId'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'link:select',
@@ -52,7 +52,7 @@ export const _Const = {
 
 export const _Component_Columns = [
   {
-    title: t(''),
+    title: t('model.link.title'),
     key: 'title',
     width: '20%',
     dataIndex: 'title',
@@ -60,7 +60,7 @@ export const _Component_Columns = [
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.link.page'),
     key: 'page',
     width: '10%',
     dataIndex: 'page',
@@ -68,7 +68,7 @@ export const _Component_Columns = [
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.link.address'),
     key: 'address',
     width: '10%',
     dataIndex: 'address',
@@ -76,19 +76,19 @@ export const _Component_Columns = [
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.link.state'),
     key: 'state',
     width: '10%',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
 ];
 
 export const _Columns = [
   ..._Component_Columns,
   {
-    title: t('model.perms.action'),
+    title: t('model.link.action'),
     key: 'operation',
     width: '30%',
     slots: { customRender: 'operation' },
