@@ -3,7 +3,9 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <div>
-      <Button :class="prefixCls" @click="add">{{ t('model.perms.addMenu') }}</Button>
+      <Button v-auth="menuConst._PERMS.ADD" :class="prefixCls" @click="add">{{
+        t('model.perms.addMenu')
+      }}</Button>
     </div>
     <Table
       :columns="columns"
@@ -32,10 +34,16 @@
         </span>
       </template>
       <template #operation="{ record }">
-        <Button type="link" @click="handleAdd(record)">{{ t('model.perms.addMenu') }}</Button>
-        <Button type="link" @click="handleUpdate(record)">{{ t('model.perms.updateMenu') }}</Button>
-        <Button type="link" @click="handleDelete(record)">{{ t('model.perms.deleteMenu') }}</Button>
-        <Button type="link" @click="handleReEnable(record)">{{
+        <Button v-auth="menuConst._PERMS.ADD" type="link" @click="handleAdd(record)">{{
+          t('model.perms.addMenu')
+        }}</Button>
+        <Button v-auth="menuConst._PERMS.UPDATE" type="link" @click="handleUpdate(record)">{{
+          t('model.perms.updateMenu')
+        }}</Button>
+        <Button v-auth="menuConst._PERMS.DELETE" type="link" @click="handleDelete(record)">{{
+          t('model.perms.deleteMenu')
+        }}</Button>
+        <Button v-auth="menuConst._PERMS.UPDATE" type="link" @click="handleReEnable(record)">{{
           t('model.perms.reEnableMenu')
         }}</Button>
       </template>

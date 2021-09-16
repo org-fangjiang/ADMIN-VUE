@@ -13,17 +13,13 @@
       :pagination="false"
     />
     <!-- 添加用户 -->
-    <Button :class="prefixCls" v-auth="userConst._PERMS.ADD" @click="addUser">
-      {{ t('model.user.addUser') }}
-    </Button>
+    <Button :class="prefixCls" v-auth="userConst._PERMS.ADD" @click="addUser">{{
+      t('model.company.addCompanyUser')
+    }}</Button>
 
     <Table :columns="columns" :data-source="list" rowKey="id" :pagination="false">
       <template #sysUserRolesById="{ text: sysUserRolesById }">
-        <span v-for="item in sysUserRolesById" :key="item.id">
-          <Tag :color="userConst.STATES[0].color">
-            {{ item.roleName }}
-          </Tag>
-        </span>
+        <span v-for="item in sysUserRolesById" :key="item.roleName">{{ item.roleName }}</span>
       </template>
       <template #state="{ text: state }">
         <span>
@@ -41,29 +37,7 @@
               <MenuItem :key="0" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="userConst._PERMS.DELETE" type="link" size="small"
-                  >{{ t('model.user.deleteUser') }}
-                </Button>
-              </MenuItem>
-              <MenuItem :key="1" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
-                <template #icon></template>
-                <Button
-                  v-auth="userConst._PERMS.UPDATE"
-                  type="link"
-                  size="small"
-                  :class="prefixCls"
-                >
-                  {{ t('model.user.reEnableUser') }}
-                </Button>
-              </MenuItem>
-              <MenuItem :key="2" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
-                <template #icon></template>
-                <Button
-                  v-auth="userConst._PERMS.UPDATE"
-                  type="link"
-                  size="small"
-                  :class="prefixCls"
-                >
-                  {{ t('model.user.updateUser') }}
+                  >{{ t('model.company.deleteCompanyUser') }}
                 </Button>
               </MenuItem>
             </Menu>
@@ -85,20 +59,19 @@
     <Drawer
       :title="drawerParam.title"
       :width="'100%'"
+      :height="'100%'"
       :destroyOnClose="true"
-      :get-container="false"
       :visible="drawerParam.visible"
-      :wrapClassName="`${prefixCls}-drawer`"
-      :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"
-      :wrap-style="{ position: 'absolute' }"
+      :get-container="false"
       @close="onClose"
     >
-      <AddUserForm v-if="drawerParam.state === '1'" :id="drawerParam.id" />
-      <UpdateUserForm
-        v-if="drawerParam.state === '0'"
-        :id="drawerParam.id"
-        :companyName="drawerParam.companyName"
-        :deptName="drawerParam.deptName"
+      <!-- :wrapClassName="`${prefixCls}-drawer`"
+      :maskStyle="{ background: 'rgba(0, 0, 0, 0)' }"
+      :wrap-style="{ position: 'absolute' }" -->
+      <AddAdminForm
+        v-if="drawerParam.state === '1'"
+        :companyId="drawerParam.companyId"
+        :companyName="drawerParam.comanyName"
       />
     </Drawer>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -120,19 +93,14 @@
     Select,
     Drawer,
   } from 'ant-design-vue';
-  import { BasePageResult, BaseResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { GetUserModel, _Columns, _Const } from '/@/api/sys/user/model/userModel';
-  import { deleteUser, getUsers, reEnableUser, updateUserInfo } from '/@/api/sys/user/user';
-  import AddUserForm from './components/AddUserForm.vue';
-  import UpdateUserForm from './components/UpdateUserForm.vue';
-  import { getDepartment } from '/@/api/sys/department/department';
-  import { getCompany } from '/@/api/sys/compnay/company';
-  import { DepartmentModel } from '/@/api/sys/department/model/departmentModel';
-  import { CompanyModel } from '/@/api/sys/compnay/model/companyModel';
+  import { deleteCompanyUser, getAllUsers } from '/@/api/sys/user/user';
+  import AddAdminForm from './AddAdminForm.vue';
   export default defineComponent({
-    name: 'UserTable',
+    name: 'AdminForm',
     components: {
       Table,
       Pagination,
@@ -144,13 +112,22 @@
       MenuItem,
       Loading,
       Drawer,
-      AddUserForm,
-      UpdateUserForm,
+      AddAdminForm,
     },
-    setup() {
+    props: {
+      companyId: {
+        type: String,
+        require: true,
+      },
+      comanyName: {
+        type: String,
+        require: true,
+      },
+    },
+    setup(props) {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('user');
+      const { prefixCls } = useDesign('company');
       const userConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -168,16 +145,13 @@
         state: '',
         title: '',
         visible: false,
-        companyName: '',
-        deptName: '',
+        comanyName: '',
+        companyId: '',
       });
 
       const condition = reactive({
-        deptId: '',
         state: '',
-        mobile: '',
         companyId: '',
-        roleId: '',
       });
 
       //根据状态筛选
@@ -194,7 +168,10 @@
         loading.value = true;
         let result: BasePageResult<GetUserModel> | undefined;
         try {
-          result = await getUsers(condition, {
+          if (props.companyId) {
+            condition.companyId = props.companyId;
+          }
+          result = await getAllUsers(condition, {
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
@@ -223,48 +200,14 @@
             // 删除
             try {
               loading.value = true;
-              await deleteUser(id);
-              success(t('model.user.deleteUser'), t('model.user.success'));
+              await deleteCompanyUser(id);
+              success(t('model.company.deleteCompanyUser'), t('model.user.success'));
               const result = await getList();
               processList(result);
             } catch (error) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
               loading.value = false;
-            }
-            break;
-          case 1:
-            // 恢复
-            try {
-              loading.value = true;
-              await reEnableUser(id);
-              success(t('model.user.reEnableUser'), t('model.user.success'));
-              const result = await getList();
-              processList(result);
-            } catch (error) {
-              failed(error?.response?.data?.message, t('model.user.fail'));
-            } finally {
-              loading.value = false;
-            }
-            break;
-          case 2:
-            // 更新
-            drawerParam.id = id;
-            drawerParam.state = '0';
-            drawerParam.visible = true;
-            drawerParam.title = t('model.user.updateUser');
-            drawerParam.deptName = '';
-            drawerParam.companyName = '';
-            const { content } = await updateUserInfo({ id: id });
-            let dept: BaseResult<DepartmentModel>;
-            let company: BaseResult<CompanyModel>;
-            if (content.deptId) {
-              dept = await getDepartment({ deptId: content.deptId });
-              drawerParam.deptName = dept.content.deptName || '';
-            }
-            if (content.companyId) {
-              company = await getCompany(content.companyId);
-              drawerParam.companyName = company.content.name || '';
             }
             break;
         }
@@ -273,17 +216,17 @@
       const addUser = () => {
         drawerParam.visible = true;
         drawerParam.state = '1';
-        drawerParam.id = '';
-        drawerParam.title = t('model.user.addUser');
+        drawerParam.title = t('model.company.addCompanyUser');
+        drawerParam.comanyName = props.comanyName || '';
+        drawerParam.companyId = props.companyId || '';
       };
 
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
-        drawerParam.id = '';
         drawerParam.title = '';
-        drawerParam.companyName = '';
-        drawerParam.deptName = '';
+        drawerParam.comanyName = '';
+        drawerParam.companyId = '';
         const result = await getList();
         processList(result);
       };
@@ -334,6 +277,7 @@
         prefixCls,
         userConst,
         tip,
+        props,
         columns,
         condition,
         action,
@@ -353,23 +297,3 @@
     },
   });
 </script>
-<style lang="less">
-  @prefix-cls: ~'@{namespace}-user';
-  @dark-bg: #293146;
-
-  html[data-theme='dark'] {
-    .@{prefix-cls} {
-      background-color: @dark-bg;
-    }
-  }
-
-  .@{prefix-cls} {
-    &-drawer {
-      max-width: 500px;
-    }
-
-    &-action-menu-item {
-      text-align: center;
-    }
-  }
-</style>

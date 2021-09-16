@@ -16,7 +16,7 @@ export interface AddUserModel {
   deptName?: string;
   roleId?: string;
   roleName?: string;
-  sysRoleBeans?: string[]; // roleId 集合
+  sysRoleBeans?: any[]; // roleId 集合
   type?: string;
   companyName?: string;
   companyId?: string;
@@ -41,7 +41,7 @@ export interface GetUserModel {
   createTime?: string;
   createBy?: string;
   updateTime?: string;
-  sysUserRolesById?: string;
+  sysUserRolesById?: any[];
 }
 
 // getAllUsers 接口使用 SUPER_ADMIN
@@ -100,8 +100,8 @@ export const _Const = {
   EFFECTIVE: '1',
   INVALID: '0',
   STATES: [
-    { value: '0', label: t('model.role.invalid'), color: 'volcano' },
-    { value: '1', label: t('model.role.effective'), color: 'geekblue' },
+    { value: '0', label: t('model.user.invalid'), color: 'volcano' },
+    { value: '1', label: t('model.user.effective'), color: 'geekblue' },
   ],
   MAN: '0',
   WOMAN: '1',
@@ -126,20 +126,22 @@ export const _Const = {
   ],
   _UPDATE_FIELDS: ['realName', 'nickName', 'sex', 'avatar', 'description', 'password'],
   _RULES: {
-    password: [{ required: true, message: t(''), trigger: 'blur' }],
-    realName: [{ required: true, message: t(''), trigger: 'blur' }],
-    nickName: [{ required: false, message: t(''), trigger: 'blur' }],
-    sex: [{ required: false, message: t(''), trigger: 'blur' }],
-    email: [{ required: false, message: t(''), trigger: 'blur' }],
-    mobile: [{ required: true, message: t(''), trigger: 'blur' }],
-    theme: [{ required: false, message: t(''), trigger: 'blur' }],
-    avatar: [{ required: false, message: t(''), trigger: 'blur' }],
-    description: [{ required: false, message: t(''), trigger: 'blur' }],
-    deptId: [{ required: false, message: t(''), trigger: 'blur' }],
-    deptName: [{ required: false, message: t(''), trigger: 'blur' }],
-    roleId: [{ required: false, message: t(''), trigger: 'blur' }],
-    roleName: [{ required: false, message: t(''), trigger: 'blur' }],
-    sysRoleBeans: [{ required: false, message: t(''), trigger: 'blur' }],
+    password: [{ required: true, message: t('model.user.password'), trigger: 'blur' }],
+    realName: [{ required: true, message: t('model.user.realName'), trigger: 'blur' }],
+    nickName: [{ required: true, message: t('model.user.nickName'), trigger: 'blur' }],
+    sex: [{ required: false, message: t('model.user.sex'), trigger: 'blur' }],
+    email: [{ required: false, message: t('model.user.email'), trigger: 'blur' }],
+    mobile: [
+      { pattern: '^1[0-9]{10}', required: true, message: t('model.user.mobile'), trigger: 'blur' },
+    ],
+    theme: [{ required: false, message: t('model.user.theme'), trigger: 'blur' }],
+    avatar: [{ required: false, message: t('model.user.avatar'), trigger: 'blur' }],
+    description: [{ required: false, message: t('model.user.description'), trigger: 'blur' }],
+    deptId: [{ required: false, message: t('model.user.deptId'), trigger: 'blur' }],
+    deptName: [{ required: false, message: t('model.user.deptName'), trigger: 'blur' }],
+    roleId: [{ required: false, message: t('model.user.roleId'), trigger: 'blur' }],
+    roleName: [{ required: false, message: t('model.user.roleName'), trigger: 'blur' }],
+    sysRoleBeans: [{ required: false, message: t('model.user.sysRoleBeans'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'user:select',
@@ -151,7 +153,7 @@ export const _Const = {
 
 export const _Component_Columns = [
   {
-    title: t(''),
+    title: t('model.user.userName'),
     key: 'username',
     width: '20%',
     dataIndex: 'username',
@@ -159,37 +161,37 @@ export const _Component_Columns = [
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.user.mobile'),
     key: 'mobile',
-    width: '10%',
+    width: '20%',
     dataIndex: 'mobile',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.user.sysRoleBeans'),
     key: 'sysUserRolesById',
-    width: '10%',
+    width: '30%',
     dataIndex: 'sysUserRolesById',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'sysUserRolesById' },
   },
   {
-    title: t(''),
+    title: t('model.user.state'),
     key: 'state',
     width: '10%',
     dataIndex: 'state',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'state' },
   },
 ];
 
 export const _Columns = [
   ..._Component_Columns,
   {
-    title: t('model.perms.action'),
+    title: t('model.user.action'),
     key: 'operation',
-    width: '30%',
+    width: '20%',
     slots: { customRender: 'operation' },
   },
 ];

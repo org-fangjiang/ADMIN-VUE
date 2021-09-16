@@ -40,7 +40,7 @@ export function reEnableUser(id: string, mode: ErrorMessageMode = 'modal') {
     id,
   });
   const data = reqParam.getInstance();
-  return defHttp.delete<BaseResult<AddUserModel>>(
+  return defHttp.post<BaseResult<AddUserModel>>(
     {
       url: Api.ReEnableUser,
       data,

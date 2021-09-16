@@ -37,7 +37,7 @@
         />
       </FormItem>
       <FormItem ref="state" :label="t('model.role.state')" name="state">
-        <Select ref="select" v-model:value="formState.state" style="width: 120px">
+        <Select ref="select" :disabled="true" v-model:value="formState.state" style="width: 120px">
           <SelectOption key="0">无效</SelectOption>
           <SelectOption key="1">有效</SelectOption>
         </Select>
@@ -105,7 +105,7 @@
         createBy: '',
         updateBy: '',
         companyId: props.companyId || '',
-        state: '',
+        state: '1',
         sysRoleMenusById: [],
         companyName: '',
       });

@@ -140,7 +140,9 @@
       };
 
       const handleAdd = () => {
+        loading.value = true;
         emit('addMenu', { record: selectedRowKeys.value });
+        loading.value = false;
       };
 
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {

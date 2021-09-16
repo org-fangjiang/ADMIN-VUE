@@ -82,6 +82,12 @@
                   {{ t('model.company.addRole') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="6" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button type="link" size="small">
+                  {{ t('model.company.admin') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -117,6 +123,11 @@
         :companyId="drawerParam.id"
         :comanyName="drawerParam.name"
       />
+      <AdminForm
+        v-if="drawerParam.state === '6'"
+        :companyId="drawerParam.id"
+        :comanyName="drawerParam.name"
+      />
     </Drawer>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -144,6 +155,7 @@
   import CompanyFormCreateBy from './components/CompanyFormCreateBy.vue';
   import CompanyFormExpirationData from './components/CompanyFormExpirationData.vue';
   import FRoleForm from './components/RoleForm.vue';
+  import AdminForm from './components/AdminForm.vue';
   import {
     Drawer,
     Menu,
@@ -175,6 +187,7 @@
       Pagination,
       Button,
       FRoleForm,
+      AdminForm,
     },
     setup() {
       const { t } = useI18n();
@@ -271,6 +284,7 @@
       const action = async (key) => {
         const code = key.key;
         const id = key?.item['data-id'] || undefined;
+        const { content } = await getCompany(id);
         switch (code) {
           case 0:
             // update info
@@ -329,7 +343,16 @@
             drawerParam.id = id;
             drawerParam.title = t('model.company.addRole');
             drawerParam.visible = true;
-            const { content } = await getCompany(id);
+            // const { content } = await getCompany(id);
+            drawerParam.name = content.name || '';
+            break;
+          case 6:
+            // 管理员设置
+            drawerParam.state = '6';
+            drawerParam.id = id;
+            drawerParam.title = t('model.company.admin');
+            drawerParam.visible = true;
+            // const { content } = await getCompany(id);
             drawerParam.name = content.name || '';
             break;
         }
@@ -361,10 +384,14 @@
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.id = '';
-        drawerParam.state = '0';
         drawerParam.title = '';
         drawerParam.visible = false;
         drawerParam.name = '';
+        if (drawerParam.state === '6') {
+          drawerParam.state = '0';
+          return;
+        }
+        drawerParam.state = '0';
         const result = await getList();
         processList(result);
       };
@@ -420,7 +447,7 @@
 
   .@{prefix-cls} {
     &-drawer {
-      max-width: 500px;
+      max-width: 1000px;
     }
 
     &-action-menu-item {

@@ -34,6 +34,7 @@
           @search="fetchUser"
           :showSearch="true"
           :labelInValue="false"
+          @change="changeCompany"
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
@@ -135,6 +136,10 @@
           });
         }
       }, 200);
+
+      const changeCompany = (value) => {
+        formState.companyId = value;
+      };
 
       const onSubmit = () => {
         formRef.value
@@ -256,6 +261,7 @@
         loading,
         options,
         fetchUser,
+        changeCompany,
         onSubmit,
         resetForm,
         formRef,

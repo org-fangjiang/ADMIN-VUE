@@ -186,6 +186,7 @@
 
       const companyChange = async (value) => {
         condition.companyId = value;
+        pageParam.number = 1;
         const result = await getList();
         processList(result);
       };

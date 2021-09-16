@@ -36,6 +36,7 @@
           @search="fetchUser"
           :showSearch="true"
           :labelInValue="false"
+          @change="changeCompany"
         />
       </FormItem>
       <FormItem ref="state" :label="t('model.role.state')" name="state">
@@ -146,6 +147,10 @@
         }
       }, 200);
 
+      const changeCompany = (value) => {
+        formState.companyId = value;
+      };
+
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -244,6 +249,7 @@
         resetForm,
         options,
         fetchUser,
+        changeCompany,
       };
     },
   });
