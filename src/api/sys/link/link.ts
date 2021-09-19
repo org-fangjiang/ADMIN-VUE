@@ -7,6 +7,7 @@ import { LinkCondition, LinkModel } from './model/linkModel';
 
 enum Api {
   GetLinks = '/sys-server/manageLinks/getLinks',
+  GetLink = '/sys-server/manageLinks/getLink',
   AddLinks = '/sys-server/manageLinks/addLinks',
   UpdateLinks = '/sys-server/manageLinks/updateLinks',
   DeleteLinks = '/sys-server/manageLinks/deleteLinks',
@@ -69,6 +70,21 @@ export function addLinks(link: LinkModel, mode: ErrorMessageMode = 'modal') {
   return defHttp.post<BaseResult<LinkModel>>(
     {
       url: Api.AddLinks,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getLink(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id });
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<LinkModel>>(
+    {
+      url: Api.GetLink,
       data,
     },
     {

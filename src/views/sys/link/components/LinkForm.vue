@@ -74,7 +74,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { addLinks, updateLinks } from '/@/api/sys/link/link';
+  import { addLinks, updateLinks, getLink } from '/@/api/sys/link/link';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -180,9 +180,13 @@
       const resetForm = async () => {
         loading.value = true;
         try {
-          const { content } = await updateLinks({ id: props.id });
-          if (content) {
-            Object.assign(formState, content);
+          if (props.id) {
+            const { content } = await getLink(props.id);
+            if (content) {
+              Object.assign(formState, content);
+            }
+          } else {
+            formRef.value.resetFields();
           }
         } catch (error) {
         } finally {
@@ -192,7 +196,7 @@
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
-          const { content } = await updateLinks({ id: props.id });
+          const { content } = await getLink(props.id);
           if (content) {
             Object.assign(formState, content);
           }
