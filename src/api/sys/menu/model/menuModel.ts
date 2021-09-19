@@ -96,10 +96,10 @@ export const MenuConst = {
     state: [{ required: true, message: t('model.perms.state'), trigger: 'blur' }],
   },
   _PERMS: {
-    SELECT: 'menu:select',
-    ADD: 'menu:add',
-    UPDATE: 'menu:update',
-    DELETE: 'menu:delete',
+    SELECT: 'function:select',
+    ADD: 'function:add',
+    UPDATE: 'function:update',
+    DELETE: 'function:delete',
   },
 };
 
