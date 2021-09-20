@@ -51,6 +51,7 @@ const system: AppRouteModule = {
       meta: {
         title: t('routes.system.dict'),
         roles: ['/system/dict'],
+        icon: 'fluent:library-28-filled',
       },
     },
     {
@@ -78,7 +79,7 @@ const system: AppRouteModule = {
       component: () => import('/@/views/sys/menu/index.vue'),
       meta: {
         title: t('routes.system.menu'),
-        roles: ['/system/menu'],
+        roles: ['/system/function'],
         icon: 'bx:bx-menu',
       },
     },
@@ -109,8 +110,18 @@ const system: AppRouteModule = {
       meta: {
         title: t('routes.system.link'),
         roles: ['/system/link'],
+        icon: 'carbon:text-link',
       },
     },
+    // {
+    //   path: 'aMap',
+    //   name: 'aMap',
+    //   component: () => import('/@/views/sys/aMap/index.vue'),
+    //   meta: {
+    //     title: t('routes.system.aMap'),
+    //     // roles: ['/system/aMap'],
+    //   },
+    // },
   ],
 };
 

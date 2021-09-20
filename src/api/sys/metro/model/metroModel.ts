@@ -17,7 +17,7 @@ export interface MetroLineModel {
   startStation?: MetroStationModel;
   endStation?: MetroStationModel;
   state?: string;
-  stations?: string;
+  stations?: MetroStationModel[];
 }
 
 export interface MetroLineCondition {
@@ -39,69 +39,71 @@ export const _Const = {
   EFFECTIVE: '1', // 已建成
   INVALID: '0', // 无效
   STATES: [
-    { value: '0', label: t(''), color: 'volcano' },
-    { value: '1', label: t(''), color: 'geekblue' },
-    { value: '2', label: t(''), color: 'geekblue' },
+    { value: '0', label: t('model.metro.invalid'), color: 'volcano' },
+    { value: '1', label: t('model.metro.effective'), color: 'geekblue' },
+    { value: '2', label: t('model.metro.planning'), color: 'green' },
   ],
   _PERMS: {
-    SELECT: 'link:select',
-    ADD: 'link:add',
-    UPDATE: 'link:update',
-    DELETE: 'link:delete',
+    SELECT: 'metro:select',
+    ADD: 'metro:add',
+    UPDATE: 'metro:update',
+    DELETE: 'metro:delete',
   },
 };
 
 export const _MetroStationConst = {
+  ..._Const,
   _UPDATE_FIELDS: ['name', 'longitude', 'latitude'],
   _RULES: {
-    name: [{ required: true, message: t(''), trigger: 'blur' }],
-    longitude: [{ required: true, message: t(''), trigger: 'blur' }],
-    latitude: [{ required: true, message: t(''), trigger: 'blur' }],
-    cityId: [{ required: true, message: t(''), trigger: 'blur' }],
+    name: [{ required: true, message: t('model.metroStation.form.name'), trigger: 'blur' }],
+    longitude: [
+      { required: true, message: t('model.metroStation.form.longitude'), trigger: 'blur' },
+    ],
+    latitude: [{ required: true, message: t('model.metroStation.form.latitude'), trigger: 'blur' }],
+    cityId: [{ required: true, message: t('model.metroStation.form.cityId'), trigger: 'blur' }],
   },
 };
 
 export const _MetroLineConst = {
+  ..._Const,
   _UPDATE_FIELDS: ['name', 'startStation', 'endStation'],
   _RULES: {
-    name: [{ required: true, message: t(''), trigger: 'blur' }],
-    cityId: [{ required: true, message: t(''), trigger: 'blur' }],
-    startStation: [{ required: false, message: t(''), trigger: 'blur' }],
-    endStation: [{ required: false, message: t(''), trigger: 'blur' }],
+    name: [{ required: true, message: t('model.metroLine.form.name'), trigger: 'blur' }],
+    cityId: [{ required: true, message: t('model.metroLine.form.cityId'), trigger: 'blur' }],
   },
 };
 
 export const _ColumnsMetroLine = [
   {
-    title: t(''),
+    title: t('model.metroLine.name'),
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t(''),
+    title: t('model.metroLine.name'),
     key: 'startStation',
     dataIndex: 'startStation',
     ellipsis: 'true',
     slots: { customRender: 'startStation' },
   },
   {
-    title: t(''),
+    title: t('model.metroLine.name'),
     key: 'endStation',
     dataIndex: 'endStation',
     ellipsis: 'true',
     slots: { customRender: 'endStation' },
   },
   {
-    title: t(''),
+    title: t('model.metroLine.state'),
     key: 'state',
     dataIndex: 'state',
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
   {
-    title: t(''),
+    title: t('model.metroLine.operation'),
     key: 'operation',
     width: '30%',
     slots: { customRender: 'operation' },
@@ -110,14 +112,14 @@ export const _ColumnsMetroLine = [
 
 export const _ColumnsMetroStation = [
   {
-    title: t(''),
+    title: t('model.metroStation.name'),
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
     slots: '',
   },
   {
-    title: t('model.link.state'),
+    title: t('model.metroStation.state'),
     key: 'state',
     width: '10%',
     dataIndex: 'state',
@@ -125,7 +127,7 @@ export const _ColumnsMetroStation = [
     slots: { customRender: 'state' },
   },
   {
-    title: t('model.link.action'),
+    title: t('model.metroStation.operation'),
     key: 'operation',
     width: '30%',
     slots: { customRender: 'operation' },
