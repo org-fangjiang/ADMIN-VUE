@@ -78,7 +78,6 @@
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   import { LinkModel, _Const } from '/@/api/sys/link/model/linkModel';
   import { FProvince, FCity, FArea } from '/@/components/FLocation';
@@ -173,7 +172,7 @@
               }
             }
           })
-          .catch((error: ValidateErrorEntity<LinkModel>) => {
+          .catch((error: any) => {
             console.log('error', error);
           });
       };
