@@ -42,7 +42,7 @@
         <Button v-if="!isUpdate" type="primary" @click="onSubmit">{{
           t('component.modal.okText')
         }}</Button>
-        <Button v-else type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
+        <Button v-else type="primary" @click="onSubmit">{{ t('component.action.save') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('component.cropper.btn_reset')
         }}</Button>
@@ -121,6 +121,7 @@
         name: '',
         cityId: cityId,
         startStation: {
+          id: '',
           name: '',
           longitude: '',
           latitude: '',
@@ -128,6 +129,7 @@
           state: _MetroLineConst.EFFECTIVE,
         },
         endStation: {
+          id: '',
           name: '',
           longitude: '',
           latitude: '',
@@ -175,6 +177,7 @@
           if (props.id) {
             const { content } = await getLine(props.id);
             if (content) {
+              debugger;
               Object.assign(formState, content);
             }
           } else {
@@ -235,10 +238,12 @@
       const poiChange = (result) => {
         if (result === '') {
           if (startOrEnd.value === '1') {
+            formState.startStation.id = '';
             formState.startStation.name = '';
             formState.startStation.longitude = '';
             formState.startStation.latitude = '';
           } else {
+            formState.endStation.id = '';
             formState.endStation.name = '';
             formState.endStation.longitude = '';
             formState.endStation.latitude = '';
@@ -246,10 +251,12 @@
           return;
         }
         if (startOrEnd.value === '1') {
+          formState.startStation.id = '';
           formState.startStation.name = result.value.name;
           formState.startStation.longitude = result.value.location.lng;
           formState.startStation.latitude = result.value.location.lat;
         } else {
+          formState.startStation.id = '';
           formState.endStation.name = result.value.name;
           formState.endStation.longitude = result.value.location.lng;
           formState.endStation.latitude = result.value.location.lat;

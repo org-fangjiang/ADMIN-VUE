@@ -5,7 +5,7 @@
     <!-- 添加地铁线路 -->
     <FCascader @change="locationChange" class="mr-2" />
     <Button v-auth="metroConst._PERMS.ADD" @click="addMetroLine">{{
-      t('model.metroLine.add')
+      t('component.action.add')
     }}</Button>
     <Table :columns="ColumnsMetroLine" :data-source="list" rowKey="id" :pagination="false">
       <template #startStation="{ text: startStation }">
@@ -26,6 +26,48 @@
             {{ metroConst.STATES[state].label }}
           </Tag>
         </span>
+      </template>
+      <template #operation="{ text: line }">
+        <!-- 操作下拉框 -->
+        <Dropdown placement="bottomCenter" trigger="click">
+          <Button type="link">{{ t('component.action.index') }}</Button>
+          <template #overlay>
+            <Menu mode="horizontal" @click="action">
+              <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  :class="prefixCls"
+                  v-auth="metroConst._PERMS.DELETE"
+                  type="link"
+                  size="small"
+                  >{{ t('component.action.delete') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="metroConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('component.action.reEnable') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="metroConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('component.action.update') }}
+                </Button>
+              </MenuItem>
+            </Menu>
+          </template>
+        </Dropdown>
       </template>
     </Table>
     <Pagination
@@ -65,12 +107,12 @@
     _ColumnsMetroLine as ColumnsMetroLine,
     _MetroLineConst,
   } from '/@/api/sys/metro/model/metroModel';
-  import { getLines } from '/@/api/sys/metro/metro';
+  import { getLines, deleteLine, reEnableLine } from '/@/api/sys/metro/metro';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Table, Pagination, Tag, Button, Drawer } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Button, Drawer, Dropdown, Menu, MenuItem } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import MetroLineForm from './components/MetroLineForm.vue';
@@ -83,13 +125,16 @@
       Tag,
       Button,
       Drawer,
+      Dropdown,
+      Menu,
+      MenuItem,
       Loading,
       FCascader,
       MetroLineForm,
     },
     setup() {
       const { t } = useI18n();
-      const { createErrorModal } = useMessage();
+      const { notification, createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
@@ -196,7 +241,69 @@
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
-        drawerParam.title = t('model.metroLine.add');
+        drawerParam.title = t('component.action.add');
+      };
+
+      // 地铁线路操作
+      const action = async (key) => {
+        const code = key.key;
+        const id = key?.item['data-id'] || undefined;
+        switch (code) {
+          case 0:
+            // 删除
+            try {
+              loading.value = true;
+              await deleteLine(id);
+              success(t('model.metroLine.result.delete'), t('model.metroLine.result.delete'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 1:
+            // 恢复
+            try {
+              loading.value = true;
+              await reEnableLine(id);
+              success(t('model.metroLine.result.reEnable'), t('model.metroLine.result.reEnable'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 2:
+            // 更新
+            drawerParam.visible = true;
+            drawerParam.state = '0';
+            drawerParam.id = id;
+            drawerParam.title = t('component.action.update');
+            break;
+          case 3:
+            // 添加站点
+            break;
+        }
+      };
+
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
       };
 
       return {
@@ -215,6 +322,7 @@
         locationChange,
         onClose,
         addMetroLine,
+        action,
       };
     },
   });

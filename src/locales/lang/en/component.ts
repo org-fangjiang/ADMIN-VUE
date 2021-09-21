@@ -125,4 +125,12 @@ export default {
     dragText: 'Hold down the slider and drag',
     successText: 'Verified',
   },
+  action: {
+    index: 'Action',
+    add: 'Add',
+    delete: 'Delete',
+    reEnable: 'ReEnable',
+    update: 'Update',
+    save: 'Save',
+  },
 };

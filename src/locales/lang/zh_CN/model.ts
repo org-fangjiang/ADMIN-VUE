@@ -310,7 +310,13 @@ export default {
       startStation: '请输入地铁线路startStation',
       endStation: '请输入地铁线路endStation',
     },
-    add: '添加地铁线路',
+    result: {
+      delete: '删除地铁线路成功',
+      reEnable: '恢复地铁线路成功',
+      update: '更新地铁线路成功',
+      addStation: '添加地铁站点',
+      failed: '地铁线路相关操作失败',
+    },
   },
   poi: {
     0: '全部',

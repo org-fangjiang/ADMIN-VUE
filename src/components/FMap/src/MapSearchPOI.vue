@@ -198,10 +198,10 @@
   }
 
   .search {
-    @apply absolute top-10 left-10 z-50 w-1/3;
+    @apply absolute top-10 left-10 z-50;
     @apply flex flex-col items-center pt-1;
     @apply bg-white rounded-lg;
-    @apply pb-4;
+    @apply pb-4 pl-4;
 
     .head {
       @apply flex flex-row justify-items-center;

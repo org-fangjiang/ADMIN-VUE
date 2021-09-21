@@ -311,7 +311,13 @@ export default {
       startStation: 'please enter metro line startStation',
       endStation: 'please enter metro line endStation',
     },
-    add: 'add metro line',
+    result: {
+      delete: 'Delete Metro Line Success',
+      reEnable: 'ReEnable Metro Line Success',
+      update: 'Update Metro Line Success',
+      addStation: 'AddStation Metro Line Success',
+      failed: 'Action Metro Line Failed',
+    },
   },
   poi: {
     0: 'All',

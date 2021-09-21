@@ -82,14 +82,14 @@ export const _ColumnsMetroLine = [
     slots: '',
   },
   {
-    title: t('model.metroLine.name'),
+    title: t('model.metroLine.startStation'),
     key: 'startStation',
     dataIndex: 'startStation',
     ellipsis: 'true',
     slots: { customRender: 'startStation' },
   },
   {
-    title: t('model.metroLine.name'),
+    title: t('model.metroLine.endStation'),
     key: 'endStation',
     dataIndex: 'endStation',
     ellipsis: 'true',

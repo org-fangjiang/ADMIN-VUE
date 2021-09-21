@@ -130,4 +130,12 @@ export default {
     dragText: '请按住滑块拖动',
     successText: '验证通过',
   },
+  action: {
+    index: '操作',
+    add: '添加',
+    delete: '删除',
+    reEnable: '恢复',
+    update: '更新',
+    save: '保存',
+  },
 };
