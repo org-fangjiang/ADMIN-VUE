@@ -28,12 +28,32 @@ const system: AppRouteModule = {
     {
       path: 'metro',
       name: 'Metro',
-      component: () => import('/@/views/sys/metro/index.vue'),
+      redirect: '/system/metro/line',
       meta: {
         title: t('routes.system.metro'),
         roles: ['/system/metro'],
         icon: 'maki:rail-metro',
       },
+      children: [
+        {
+          path: 'line',
+          name: 'Line',
+          component: () => import('/@/views/sys/metro/index.vue'),
+          meta: {
+            title: t('routes.system.metro'),
+            roles: ['/system/metro'],
+          },
+        },
+        {
+          path: 'station',
+          name: 'Station',
+          component: () => import('/@/views/sys/station/index.vue'),
+          meta: {
+            title: t('routes.system.station'),
+            roles: ['/system/metro'],
+          },
+        },
+      ],
     },
     {
       path: 'trading',
@@ -113,15 +133,6 @@ const system: AppRouteModule = {
         icon: 'carbon:text-link',
       },
     },
-    // {
-    //   path: 'aMap',
-    //   name: 'aMap',
-    //   component: () => import('/@/views/sys/aMap/index.vue'),
-    //   meta: {
-    //     title: t('routes.system.aMap'),
-    //     // roles: ['/system/aMap'],
-    //   },
-    // },
   ],
 };
 

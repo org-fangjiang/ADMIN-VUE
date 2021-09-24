@@ -1,29 +1,28 @@
-// 地铁信息管理页面
-
+// 站点信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <!-- 添加地铁线路 -->
     <FCascader @change="locationChange" class="mr-2" />
-    <Button v-auth="metroConst._PERMS.ADD" @click="addMetroLine">{{
+    <Select
+      ref="selectRef"
+      label-in-value
+      placeholder="Select LineId"
+      style="width: 250px"
+      :filter-option="false"
+      :not-found-content="null"
+      :options="options"
+      :showSearch="true"
+      :labelInValue="false"
+      @change="lineChange"
+      :allowClear="true"
+    />
+    <Button v-auth="stationConst._PERMS.ADD" @click="addMetroStation">{{
       t('component.action.add')
     }}</Button>
-    <Table :columns="ColumnsMetroLine" :data-source="list" rowKey="id" :pagination="false">
-      <template #startStation="{ text: startStation }">
-        <span v-if="startStation.name">
-          {{ startStation.name }}
-        </span>
-        <span v-else> 暂无 </span>
-      </template>
-      <template #endStation="{ text: endStation }">
-        <span v-if="endStation.name">
-          {{ endStation.name }}
-        </span>
-        <span v-else> 暂无 </span>
-      </template>
+    <Table :columns="ColumnsMetroStation" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
-          <Tag :color="metroConst.STATES[state].color">
-            {{ metroConst.STATES[state].label }}
+          <Tag :color="stationConst.STATES[state].color">
+            {{ stationConst.STATES[state].label }}
           </Tag>
         </span>
       </template>
@@ -37,7 +36,7 @@
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
-                  v-auth="metroConst._PERMS.DELETE"
+                  v-auth="stationConst._PERMS.DELETE"
                   type="link"
                   size="small"
                   >{{ t('component.action.delete') }}
@@ -46,7 +45,7 @@
               <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button
-                  v-auth="metroConst._PERMS.UPDATE"
+                  v-auth="stationConst._PERMS.UPDATE"
                   type="link"
                   size="small"
                   :class="prefixCls"
@@ -57,18 +56,12 @@
               <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button
-                  v-auth="metroConst._PERMS.UPDATE"
+                  v-auth="stationConst._PERMS.UPDATE"
                   type="link"
                   size="small"
                   :class="prefixCls"
                 >
                   {{ t('component.action.update') }}
-                </Button>
-              </MenuItem>
-              <MenuItem :key="3" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
-                <template #icon></template>
-                <Button v-auth="metroConst._PERMS.ADD" type="link" size="small" :class="prefixCls">
-                  {{ t('model.metroLine.result.addStation') }}
                 </Button>
               </MenuItem>
             </Menu>
@@ -98,8 +91,7 @@
       :wrap-style="{ position: 'absolute' }"
       @close="onClose"
     >
-      <MetroLineForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
-      <AddStation v-if="drawerParam.state === '1'" :id="drawerParam.id" />
+      <StationForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
     </Drawer>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -110,23 +102,42 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import {
-    MetroLineModel,
-    _ColumnsMetroLine as ColumnsMetroLine,
-    _MetroLineConst,
+    MetroStationModel,
+    _MetroStationConst,
+    _ColumnsMetroStation as ColumnsMetroStation,
   } from '/@/api/sys/metro/model/metroModel';
-  import { getLines, deleteLine, reEnableLine } from '/@/api/sys/metro/metro';
+  import {
+    deleteStation,
+    getAllStations,
+    getLines,
+    getStationsByLine,
+    reEnableStation,
+  } from '/@/api/sys/metro/metro';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Table, Pagination, Tag, Button, Drawer, Dropdown, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Drawer,
+    Dropdown,
+    Menu,
+    MenuItem,
+    Select,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
-  import MetroLineForm from './components/MetroLineForm.vue';
-  import AddStation from './components/AddStation.vue';
+  import StationForm from './components/StationForm.vue';
 
+  interface Option {
+    value: string;
+    label: string;
+  }
   export default defineComponent({
-    name: 'LinkTable',
+    name: 'StationTable',
     components: {
       Table,
       Pagination,
@@ -138,20 +149,20 @@
       MenuItem,
       Loading,
       FCascader,
-      MetroLineForm,
-      AddStation,
+      StationForm,
+      Select,
     },
     setup() {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
-      const { prefixCls } = useDesign('metro');
-      const metroConst = ref(_MetroLineConst);
+      const { prefixCls } = useDesign('station');
+      const stationConst = ref(_MetroStationConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const metroLine: MetroLineModel[] = [];
+      const metroStation: MetroStationModel[] = [];
 
       // 分页
       let pageParam = reactive({
@@ -161,13 +172,17 @@
         totalPages: 0,
         totalElements: 0,
       });
+      const options = ref<Option[]>([]);
       // 筛选条件
       const condition = reactive({
         cityId: userStore.getUserInfo.companyCityId,
         state: '',
+        lineId: '',
+        name: '',
+        id: '',
       });
       // 列表结果
-      let list = reactive(metroLine);
+      let list = reactive(metroStation);
       // 抽屉参数
       const drawerParam = reactive({
         id: '',
@@ -179,9 +194,9 @@
       // 获取list
       const getList = async () => {
         loading.value = true;
-        let result: BasePageResult<MetroLineModel> | undefined;
+        let result: BasePageResult<MetroStationModel> | undefined;
         try {
-          result = await getLines(condition, {
+          result = await getAllStations(condition, {
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
@@ -217,6 +232,17 @@
         const result = await getList();
         processList(result);
       };
+      //线路筛选
+      const lineChange = async (value) => {
+        condition.lineId = value;
+        let result2: BasePageResult<MetroStationModel> | undefined;
+        if (!condition.lineId) {
+          result2 = await getList();
+        } else {
+          result2 = await getStationsByLine({ lineId: value });
+        }
+        processList(result2);
+      };
 
       const onChange = async (page) => {
         pageParam.number = page;
@@ -234,6 +260,10 @@
       onMounted(async () => {
         const result = await getList();
         processList(result);
+        const { content } = await getLines({ cityId: condition.cityId });
+        content.forEach((item) => {
+          options.value.push({ value: item.id || '', label: item.name || '' });
+        });
       });
 
       const onClose = async () => {
@@ -246,7 +276,7 @@
       };
 
       // 添加地铁线路
-      const addMetroLine = () => {
+      const addMetroStation = () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
@@ -262,12 +292,12 @@
             // 删除
             try {
               loading.value = true;
-              await deleteLine(id);
-              success(t('model.metroLine.result.delete'), t('model.metroLine.result.delete'));
+              await deleteStation(id);
+              success(t('model.metroStation.result.delete'), t('model.metroStation.result.delete'));
               const result = await getList();
               processList(result);
             } catch (error) {
-              failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+              failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
               loading.value = false;
             }
@@ -276,12 +306,15 @@
             // 恢复
             try {
               loading.value = true;
-              await reEnableLine(id);
-              success(t('model.metroLine.result.reEnable'), t('model.metroLine.result.reEnable'));
+              await reEnableStation(id);
+              success(
+                t('model.metroStation.result.reEnable'),
+                t('model.metroStation.result.reEnable')
+              );
               const result = await getList();
               processList(result);
             } catch (error) {
-              failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+              failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
               loading.value = false;
             }
@@ -295,10 +328,6 @@
             break;
           case 3:
             // 添加站点
-            drawerParam.visible = true;
-            drawerParam.state = '1';
-            drawerParam.id = id;
-            drawerParam.title = t('model.metroLine.result.addStation');
             break;
         }
       };
@@ -322,8 +351,10 @@
       return {
         t,
         prefixCls,
-        metroConst,
-        ColumnsMetroLine,
+        stationConst,
+        options,
+        condition,
+        ColumnsMetroStation,
         loading,
         tip,
         pageSizeList,
@@ -333,8 +364,9 @@
         onChange,
         onShowSizeChange,
         locationChange,
+        lineChange,
         onClose,
-        addMetroLine,
+        addMetroStation,
         action,
       };
     },
@@ -342,7 +374,7 @@
 </script>
 
 <style lang="less">
-  @prefix-cls: ~'@{namespace}-metro';
+  @prefix-cls: ~'@{namespace}-station';
   @dark-bg: #293146;
 
   html[data-theme='dark'] {

@@ -279,6 +279,8 @@ export default {
     invalid: 'INVALID',
     effective: 'EFFECTIVE',
     planning: 'PLANNING',
+    lineName: 'lineName',
+    stationName: 'stationName',
   },
   metroStation: {
     id: 'id',
@@ -294,6 +296,13 @@ export default {
       latitude: 'please enter metro station latitude',
       state: 'please enter metro station state',
       cityId: 'please enter metro station cityId',
+    },
+    result: {
+      delete: 'Delete Station Success',
+      reEnable: 'ReEnable Station Success',
+      update: 'Update Station Success',
+      addStation: 'AddStation Metro Line Success',
+      failed: 'Action Station Failed',
     },
   },
   metroLine: {
@@ -317,6 +326,7 @@ export default {
       update: 'Update Metro Line Success',
       addStation: 'AddStation Metro Line Success',
       failed: 'Action Metro Line Failed',
+      success: 'Operation Success',
     },
   },
   poi: {

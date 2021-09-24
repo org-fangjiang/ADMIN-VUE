@@ -13,6 +13,16 @@ const system: MenuModule = {
       {
         path: 'metro',
         name: t('routes.system.metro'),
+        children: [
+          {
+            path: 'line',
+            name: t('routes.system.metro'),
+          },
+          {
+            path: 'station',
+            name: t('routes.system.station'),
+          },
+        ],
       },
       {
         path: 'trading',

@@ -278,6 +278,8 @@ export default {
     invalid: '无效',
     effective: '运营中',
     planning: '规划中',
+    lineName: '线路名称',
+    stationName: '站点名称',
   },
   metroStation: {
     id: '编号',
@@ -293,6 +295,13 @@ export default {
       latitude: '请输入地铁站latitude',
       state: '请输入地铁站state',
       cityId: '请输入地铁站cityId',
+    },
+    result: {
+      delete: '删除站点信息成功',
+      reEnable: '恢复站点信息成功',
+      update: '更新站点信息成功',
+      addStation: '添加地铁站点',
+      failed: '站点信息相关操作失败',
     },
   },
   metroLine: {
@@ -316,6 +325,7 @@ export default {
       update: '更新地铁线路成功',
       addStation: '添加地铁站点',
       failed: '地铁线路相关操作失败',
+      success: '操作成功',
     },
   },
   poi: {

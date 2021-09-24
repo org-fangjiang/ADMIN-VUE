@@ -8,44 +8,13 @@
       :wrapper-col="wrapperCol"
     >
       <FormItem ref="name" :label="t('model.metroLine.name')" name="name">
-        <Input
-          :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('name')"
-          v-model:value="formState.name"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem ref="startStation" :label="t('model.metroLine.startStation')" name="startStation">
         <div class="flex flex-row w-full h-full">
-          <Select
-            ref="selectRef"
-            label-in-value
-            :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('startStation')"
-            v-model:value="formState.startStation.name"
+          <Input
+            :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('name')"
+            v-model:value="formState.name"
             autoComplete="off"
-            :options="options"
-            :labelInValue="false"
-            @change="startChange"
-            :allowClear="true"
           />
-          <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI('1')">
-            <Icon icon="fa-solid:location-arrow" />
-          </div>
-        </div>
-      </FormItem>
-      <FormItem ref="endStation" :label="t('model.metroLine.endStation')" name="endStation">
-        <div class="flex flex-row w-full h-full">
-          <Select
-            ref="select"
-            label-in-value
-            :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('endStation')"
-            v-model:value="formState.endStation.name"
-            autoComplete="off"
-            :options="options"
-            :labelInValue="false"
-            @change="endChange"
-            :allowClear="true"
-          />
-          <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI('2')">
+          <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI">
             <Icon icon="fa-solid:location-arrow" />
           </div>
         </div>
@@ -83,22 +52,18 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { _MetroLineConst } from '/@/api/sys/metro/model/metroModel';
-  import { getLine, addLine, updateLine, getAllStations } from '/@/api/sys/metro/metro';
+  import { _MetroStationConst } from '/@/api/sys/metro/model/metroModel';
+  import { updateStation, getStation, addStation } from '/@/api/sys/metro/metro';
   import { useMessage } from '/@/hooks/web/useMessage';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Button, Form, FormItem, Input, Modal, Select } from 'ant-design-vue';
+  import { Button, Form, FormItem, Input, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { MapSearchPOI } from '/@/components/FMap';
   import { Icon } from '/@/components/Icon';
 
-  interface Option {
-    label: string;
-    value: string;
-  }
   export default defineComponent({
-    name: 'MetroLineForm',
+    name: 'StationForm',
     components: {
       Button,
       Form,
@@ -108,7 +73,6 @@
       MapSearchPOI,
       Modal,
       Icon,
-      Select,
     },
     props: {
       id: {
@@ -121,21 +85,15 @@
       const { notification, createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
-      const { prefixCls } = useDesign('metro');
-      const metroConst = ref(_MetroLineConst);
+      const { prefixCls } = useDesign('station');
+      const metroConst = ref(_MetroStationConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
-      const options = ref<Option[]>([]);
-      const startChange = async (value) => {
-        formState.startStation.id = value;
-      };
-      const endChange = async (value) => {
-        formState.endStation.id = value;
-      };
+
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       // fromRef 获取form
       const formRef = ref();
@@ -143,24 +101,10 @@
         id: props.id || '',
         name: '',
         cityId: cityId,
-        startStation: {
-          id: '',
-          name: '',
-          longitude: '',
-          latitude: '',
-          cityId: cityId,
-          state: _MetroLineConst.EFFECTIVE,
-        },
-        endStation: {
-          id: '',
-          name: '',
-          longitude: '',
-          latitude: '',
-          cityId: cityId,
-          state: _MetroLineConst.EFFECTIVE,
-        },
-        state: _MetroLineConst.EFFECTIVE,
-        stations: [],
+        state: _MetroStationConst.EFFECTIVE,
+        // address: '',
+        longitude: '',
+        latitude: '',
       });
 
       const onSubmit = () => {
@@ -170,24 +114,27 @@
             loading.value = true;
             if (props.id) {
               try {
-                const { content } = await updateLine(formState);
-                success(t('model.metroLine.result.update'), t('model.metroLine.result.update'));
+                const { content } = await updateStation(formState);
+                success(
+                  t('model.metroStation.result.update'),
+                  t('model.metroStation.result.update')
+                );
                 Object.assign(formState, content);
               } catch (error) {
-                failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+                failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
               } finally {
                 loading.value = false;
               }
             } else {
               try {
-                const { content } = await addLine(formState);
+                const { content } = await addStation(formState);
                 success(
-                  t('model.metroLine.result.addStation'),
-                  t('model.metroLine.result.addStation')
+                  t('model.metroStation.result.addStation'),
+                  t('model.metroStation.result.addStation')
                 );
                 Object.assign(formState, content);
               } catch (error) {
-                failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+                failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
               } finally {
                 loading.value = false;
               }
@@ -201,8 +148,9 @@
         loading.value = true;
         try {
           if (props.id) {
-            const { content } = await getLine(props.id);
+            const { content } = await getStation(props.id);
             if (content) {
+              debugger;
               Object.assign(formState, content);
             }
           } else {
@@ -216,15 +164,11 @@
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
-          const { content } = await getLine(props.id);
+          const { content } = await getStation(props.id);
           if (content) {
             Object.assign(formState, content);
           }
         }
-        const result = await getAllStations({ cityId: cityId.value });
-        result.content.forEach((item) => {
-          options.value.push({ value: item.id || '', label: item.name || '' });
-        });
         loading.value = false;
       });
 
@@ -245,7 +189,7 @@
       };
 
       // 是否打开，model
-      const startOrEnd = ref('');
+      // const startOrEnd = ref('');
       const visible = ref<boolean>(false);
       const handleOk = (e: MouseEvent) => {
         console.log(e);
@@ -253,43 +197,25 @@
       };
       // Poi 搜索内容
       const searchText = ref<string>('');
-      const searchPOI = (flag) => {
-        if (flag === '1') {
-          startOrEnd.value = '1';
-          searchText.value = formState.startStation.name;
-        } else {
-          startOrEnd.value = '2';
-          searchText.value = formState.endStation?.name;
-        }
+      const searchPOI = () => {
+        searchText.value = formState.name;
         visible.value = true;
       };
       // poi change
       const poiChange = (result) => {
         if (result === '') {
-          if (startOrEnd.value === '1') {
-            formState.startStation.id = '';
-            formState.startStation.name = '';
-            formState.startStation.longitude = '';
-            formState.startStation.latitude = '';
-          } else {
-            formState.endStation.id = '';
-            formState.endStation.name = '';
-            formState.endStation.longitude = '';
-            formState.endStation.latitude = '';
-          }
+          formState.id = '';
+          formState.name = '';
+          formState.longitude = '';
+          formState.latitude = '';
+          // formState.address = '';
           return;
         }
-        if (startOrEnd.value === '1') {
-          formState.startStation.id = '';
-          formState.startStation.name = result.value.name;
-          formState.startStation.longitude = result.value.location.lng;
-          formState.startStation.latitude = result.value.location.lat;
-        } else {
-          formState.startStation.id = '';
-          formState.endStation.name = result.value.name;
-          formState.endStation.longitude = result.value.location.lng;
-          formState.endStation.latitude = result.value.location.lat;
-        }
+        // formState.id = '';
+        formState.name = result.value.name;
+        formState.longitude = result.value.location.lng;
+        formState.latitude = result.value.location.lat;
+        // formState.address = result.value.location.lng + ',' + result.value.location.lat;
       };
 
       return {
@@ -299,9 +225,6 @@
         loading,
         tip,
         isUpdate,
-        options,
-        startChange,
-        endChange,
         formRef,
         formState,
         onSubmit,

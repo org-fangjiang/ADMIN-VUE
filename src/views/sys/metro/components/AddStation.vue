@@ -7,54 +7,31 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
-      <FormItem ref="name" :label="t('model.metroLine.name')" name="name">
-        <Input
-          :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('name')"
-          v-model:value="formState.name"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem ref="startStation" :label="t('model.metroLine.startStation')" name="startStation">
+      <FormItem ref="lineName" :label="t('model.metro.lineName')" name="lineName">
         <div class="flex flex-row w-full h-full">
-          <Select
-            ref="selectRef"
-            label-in-value
-            :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('startStation')"
-            v-model:value="formState.startStation.name"
-            autoComplete="off"
-            :options="options"
-            :labelInValue="false"
-            @change="startChange"
-            :allowClear="true"
-          />
-          <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI('1')">
-            <Icon icon="fa-solid:location-arrow" />
-          </div>
+          <Input v-model:value="formState.lineName" autoComplete="off" />
         </div>
       </FormItem>
-      <FormItem ref="endStation" :label="t('model.metroLine.endStation')" name="endStation">
+      <FormItem ref="name" :label="t('model.metro.stationName')" name="name">
         <div class="flex flex-row w-full h-full">
+          <!-- <Input v-model:value="formState.name" autoComplete="off" /> -->
           <Select
             ref="select"
             label-in-value
-            :disabled="isUpdate && !metroConst._UPDATE_FIELDS.includes('endStation')"
-            v-model:value="formState.endStation.name"
+            v-model:value="formState.name"
             autoComplete="off"
             :options="options"
             :labelInValue="false"
-            @change="endChange"
+            @change="stationChange"
             :allowClear="true"
           />
-          <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI('2')">
+          <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI">
             <Icon icon="fa-solid:location-arrow" />
           </div>
         </div>
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-        <Button v-if="!isUpdate" type="primary" @click="onSubmit">{{
-          t('component.modal.okText')
-        }}</Button>
-        <Button v-else type="primary" @click="onSubmit">{{ t('component.action.save') }}</Button>
+        <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('component.cropper.btn_reset')
         }}</Button>
@@ -83,8 +60,8 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { _MetroLineConst } from '/@/api/sys/metro/model/metroModel';
-  import { getLine, addLine, updateLine, getAllStations } from '/@/api/sys/metro/metro';
+  import { _MetroStationConst } from '/@/api/sys/metro/model/metroModel';
+  import { addStation, getAllStations, getLine } from '/@/api/sys/metro/metro';
   import { useMessage } from '/@/hooks/web/useMessage';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
@@ -92,13 +69,12 @@
   import { Loading } from '/@/components/Loading';
   import { MapSearchPOI } from '/@/components/FMap';
   import { Icon } from '/@/components/Icon';
-
   interface Option {
     label: string;
     value: string;
   }
   export default defineComponent({
-    name: 'MetroLineForm',
+    name: 'AddStation',
     components: {
       Button,
       Form,
@@ -122,45 +98,31 @@
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
-      const metroConst = ref(_MetroLineConst);
+      const metroConst = ref(_MetroStationConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+
       const options = ref<Option[]>([]);
-      const startChange = async (value) => {
-        formState.startStation.id = value;
+      const stationChange = async (value) => {
+        formState.id = value;
       };
-      const endChange = async (value) => {
-        formState.endStation.id = value;
-      };
+
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       // fromRef 获取form
       const formRef = ref();
       const formState = reactive({
-        id: props.id || '',
+        lineId: props.id || '',
+        lineName: '',
+        id: '',
         name: '',
         cityId: cityId,
-        startStation: {
-          id: '',
-          name: '',
-          longitude: '',
-          latitude: '',
-          cityId: cityId,
-          state: _MetroLineConst.EFFECTIVE,
-        },
-        endStation: {
-          id: '',
-          name: '',
-          longitude: '',
-          latitude: '',
-          cityId: cityId,
-          state: _MetroLineConst.EFFECTIVE,
-        },
-        state: _MetroLineConst.EFFECTIVE,
-        stations: [],
+        state: _MetroStationConst.EFFECTIVE,
+        longitude: '',
+        latitude: '',
       });
 
       const onSubmit = () => {
@@ -168,29 +130,17 @@
           .validate()
           .then(async () => {
             loading.value = true;
-            if (props.id) {
-              try {
-                const { content } = await updateLine(formState);
-                success(t('model.metroLine.result.update'), t('model.metroLine.result.update'));
-                Object.assign(formState, content);
-              } catch (error) {
-                failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
-              } finally {
-                loading.value = false;
-              }
-            } else {
-              try {
-                const { content } = await addLine(formState);
-                success(
-                  t('model.metroLine.result.addStation'),
-                  t('model.metroLine.result.addStation')
-                );
-                Object.assign(formState, content);
-              } catch (error) {
-                failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
-              } finally {
-                loading.value = false;
-              }
+            try {
+              const { content } = await addStation(formState);
+              success(
+                t('model.metroStation.result.addStation'),
+                t('model.metroLine.result.success')
+              );
+              Object.assign(formState, content);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
+            } finally {
+              loading.value = false;
             }
           })
           .catch((error: any) => {
@@ -200,14 +150,7 @@
       const resetForm = async () => {
         loading.value = true;
         try {
-          if (props.id) {
-            const { content } = await getLine(props.id);
-            if (content) {
-              Object.assign(formState, content);
-            }
-          } else {
-            formRef.value.resetFields();
-          }
+          formRef.value.resetFields();
         } catch (error) {
         } finally {
           loading.value = false;
@@ -218,7 +161,8 @@
         if (props.id) {
           const { content } = await getLine(props.id);
           if (content) {
-            Object.assign(formState, content);
+            formState.lineName = content.name || '';
+            debugger;
           }
         }
         const result = await getAllStations({ cityId: cityId.value });
@@ -245,7 +189,7 @@
       };
 
       // 是否打开，model
-      const startOrEnd = ref('');
+      // const startOrEnd = ref('');
       const visible = ref<boolean>(false);
       const handleOk = (e: MouseEvent) => {
         console.log(e);
@@ -253,43 +197,22 @@
       };
       // Poi 搜索内容
       const searchText = ref<string>('');
-      const searchPOI = (flag) => {
-        if (flag === '1') {
-          startOrEnd.value = '1';
-          searchText.value = formState.startStation.name;
-        } else {
-          startOrEnd.value = '2';
-          searchText.value = formState.endStation?.name;
-        }
+      const searchPOI = () => {
+        searchText.value = formState.name;
         visible.value = true;
       };
       // poi change
       const poiChange = (result) => {
         if (result === '') {
-          if (startOrEnd.value === '1') {
-            formState.startStation.id = '';
-            formState.startStation.name = '';
-            formState.startStation.longitude = '';
-            formState.startStation.latitude = '';
-          } else {
-            formState.endStation.id = '';
-            formState.endStation.name = '';
-            formState.endStation.longitude = '';
-            formState.endStation.latitude = '';
-          }
+          formState.id = '';
+          formState.name = '';
+          formState.longitude = '';
+          formState.latitude = '';
           return;
         }
-        if (startOrEnd.value === '1') {
-          formState.startStation.id = '';
-          formState.startStation.name = result.value.name;
-          formState.startStation.longitude = result.value.location.lng;
-          formState.startStation.latitude = result.value.location.lat;
-        } else {
-          formState.startStation.id = '';
-          formState.endStation.name = result.value.name;
-          formState.endStation.longitude = result.value.location.lng;
-          formState.endStation.latitude = result.value.location.lat;
-        }
+        formState.name = result.value.name;
+        formState.longitude = result.value.location.lng;
+        formState.latitude = result.value.location.lat;
       };
 
       return {
@@ -300,8 +223,7 @@
         tip,
         isUpdate,
         options,
-        startChange,
-        endChange,
+        stationChange,
         formRef,
         formState,
         onSubmit,

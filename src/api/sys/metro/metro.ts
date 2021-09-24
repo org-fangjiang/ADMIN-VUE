@@ -33,7 +33,7 @@ export function reEnableStation(id: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id });
   const data = reqParam.getInstance();
-  return defHttp.delete<BaseResult<MetroStationModel>>(
+  return defHttp.post<BaseResult<MetroStationModel>>(
     {
       url: ApiStation.ReEnableStation,
       data,
@@ -93,7 +93,7 @@ export function getStation(id: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id });
   const data = reqParam.getInstance();
-  return defHttp.post<BasePageResult<MetroStationModel>>(
+  return defHttp.post<BaseResult<MetroStationModel>>(
     {
       url: ApiStation.GetStation,
       data,
@@ -212,7 +212,7 @@ export function getLine(id: String, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id });
   const data = reqParam.getInstance();
-  return defHttp.post<BasePageResult<MetroLineModel>>(
+  return defHttp.post<BaseResult<MetroLineModel>>(
     {
       url: ApiLine.GetLine,
       data,
