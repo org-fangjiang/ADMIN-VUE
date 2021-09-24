@@ -17,6 +17,8 @@ enum ApiLine {
   UpdateLine = '/sys-server/metroLine/updateLine',
   DeleteLine = '/sys-server/metroLine/deleteLine',
   ReEnableLine = '/sys-server/metroLine/reEnableLine',
+  AddLineStation = '/sys-server/metroLine/addLineStation',
+  RemoveStation = '/sys-server/metroLine/removeStation',
 }
 
 enum ApiStation {
@@ -235,6 +237,49 @@ export function getLines(
   return defHttp.post<BasePageResult<MetroLineModel>>(
     {
       url: ApiLine.GetLines,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+// 地铁站点线路管理
+export function addLineStation(
+  lineId: string,
+  stationId: string,
+  orderNum: number,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({
+    lineId,
+    stationId,
+    orderNum,
+  });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<any>>(
+    {
+      url: ApiLine.AddLineStation,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function removeStation(lineId: string, stationId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({
+    lineId,
+    stationId,
+  });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<any>>(
+    {
+      url: ApiLine.RemoveStation,
       data,
     },
     {
