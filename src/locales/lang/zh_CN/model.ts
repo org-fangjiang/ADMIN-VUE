@@ -280,6 +280,8 @@ export default {
     planning: '规划中',
     lineName: '线路名称',
     stationName: '站点名称',
+    stationInfo: '站点信息',
+    orderNum: 'orderNum',
   },
   metroStation: {
     id: '编号',

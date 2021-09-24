@@ -121,7 +121,7 @@ export const _ColumnsMetroStation = [
   {
     title: t('model.metroStation.state'),
     key: 'state',
-    width: '10%',
+    width: '25%',
     dataIndex: 'state',
     ellipsis: 'true',
     slots: { customRender: 'state' },
@@ -129,7 +129,17 @@ export const _ColumnsMetroStation = [
   {
     title: t('model.metroStation.operation'),
     key: 'operation',
-    width: '30%',
+    width: '20%',
     slots: { customRender: 'operation' },
+  },
+];
+
+export const _ColumnsLineStation = [
+  ..._ColumnsMetroStation,
+  {
+    title: t('model.metro.orderNum'),
+    key: 'orderNum',
+    width: '25%',
+    slots: '',
   },
 ];

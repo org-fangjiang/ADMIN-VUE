@@ -114,7 +114,7 @@
     reEnableStation,
   } from '/@/api/sys/metro/metro';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BaseListResult, BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
   import {
@@ -224,6 +224,19 @@
         page.number = page.number + 1;
         Object.assign(pageParam, {}, page);
       }
+      function processListByLine(result: any) {
+        if (!result) {
+          return;
+        }
+        const { content } = result;
+        list.splice(0);
+        content.forEach((line) => {
+          list.push(line);
+        });
+        pageParam.number = 1;
+        pageParam.totalPages = 1;
+        pageParam.totalElements = content.length;
+      }
 
       //省市区筛选
       const locationChange = async (e) => {
@@ -236,12 +249,15 @@
       const lineChange = async (value) => {
         condition.lineId = value;
         let result2: BasePageResult<MetroStationModel> | undefined;
+        let lineResult: BaseListResult<MetroStationModel> | undefined;
         if (!condition.lineId) {
+          pageParam.number = 1;
           result2 = await getList();
+          processList(result2);
         } else {
-          result2 = await getStationsByLine({ lineId: value });
+          lineResult = await getStationsByLine({ lineId: value });
+          processListByLine(lineResult);
         }
-        processList(result2);
       };
 
       const onChange = async (page) => {

@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
-import { BasePageResult, BaseResult } from '../../model/baseModel';
+import { BaseListResult, BasePageResult, BaseResult } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam } from '/@/api/model/baseModel';
 import {
@@ -115,7 +115,7 @@ export function getStationsByLine(
   reqParam.setData(condition);
   reqParam.setPage(page);
   const data = reqParam.getInstance();
-  return defHttp.post<BasePageResult<MetroStationModel>>(
+  return defHttp.post<BaseListResult<MetroStationModel>>(
     {
       url: ApiStation.GetStationsByLine,
       data,

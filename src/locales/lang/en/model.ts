@@ -281,6 +281,8 @@ export default {
     planning: 'PLANNING',
     lineName: 'lineName',
     stationName: 'stationName',
+    stationInfo: 'stationInfo',
+    orderNum: 'orderNum',
   },
   metroStation: {
     id: 'id',

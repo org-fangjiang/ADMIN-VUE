@@ -99,7 +99,7 @@
       @close="onClose"
     >
       <MetroLineForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
-      <AddStation v-if="drawerParam.state === '1'" :id="drawerParam.id" />
+      <StationTable v-if="drawerParam.state === '1'" :lineId="drawerParam.id" />
     </Drawer>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -123,7 +123,7 @@
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import MetroLineForm from './components/MetroLineForm.vue';
-  import AddStation from './components/AddStation.vue';
+  import StationTable from './components/StationTable.vue';
 
   export default defineComponent({
     name: 'LinkTable',
@@ -139,7 +139,7 @@
       Loading,
       FCascader,
       MetroLineForm,
-      AddStation,
+      StationTable,
     },
     setup() {
       const { t } = useI18n();
@@ -238,6 +238,12 @@
 
       const onClose = async () => {
         drawerParam.visible = false;
+        if (drawerParam.state === '1') {
+          drawerParam.state = '';
+          drawerParam.id = '';
+          drawerParam.title = '';
+          return;
+        }
         drawerParam.state = '';
         drawerParam.id = '';
         drawerParam.title = '';
@@ -298,7 +304,7 @@
             drawerParam.visible = true;
             drawerParam.state = '1';
             drawerParam.id = id;
-            drawerParam.title = t('model.metroLine.result.addStation');
+            drawerParam.title = t('model.metro.stationInfo');
             break;
         }
       };
