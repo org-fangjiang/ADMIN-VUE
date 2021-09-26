@@ -6,13 +6,7 @@
     <Button v-auth="tradingConst._PERMS.ADD" @click="addMetroLine">{{
       t('component.action.add')
     }}</Button>
-    <InputSearch
-      v-model:value="condition.name"
-      placeholder="search name"
-      style="width: 200px"
-      @search="selectName"
-      :allowClear="true"
-    />
+    <FTrading @change="changeName" :cityId="cityId" :provinceId="province" />
     <Table :columns="ColumnsTrading" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -115,20 +109,11 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import {
-    Table,
-    Pagination,
-    Tag,
-    Button,
-    Drawer,
-    Dropdown,
-    Menu,
-    MenuItem,
-    InputSearch,
-  } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Button, Drawer, Dropdown, Menu, MenuItem } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import TradingForm from './components/TradingForm.vue';
+  import FTrading from '/@/components/FTrading';
   import { getCityWithAllArea } from '/@/api/sys/city/city';
 
   export default defineComponent({
@@ -145,7 +130,7 @@
       Loading,
       FCascader,
       TradingForm,
-      InputSearch,
+      FTrading,
     },
     setup() {
       const { t } = useI18n();
@@ -177,19 +162,32 @@
         id: '',
       });
       //根据名称筛选
-      const selectName = async (value) => {
-        if (!value) {
+      const changeName = async (value) => {
+        if (value.length === 0) {
           const result = await getList();
           processList(result);
         } else {
-          condition.name = value;
-          condition.state = tradingConst.value.EFFECTIVE;
-          const result = await getTradingsByName(condition, {
-            pageSize: pageParam.size,
-            pageNum: pageParam.number,
-          });
-          if (result) {
-            processList(result);
+          list.splice(0);
+          if (value.length > 0) {
+            //应该发送一次网络请求
+            value.forEach(async (element) => {
+              condition.name = element.label;
+              condition.state = tradingConst.value.EFFECTIVE;
+              const result = await getTradingsByName(condition, {
+                pageSize: pageParam.size,
+                pageNum: pageParam.number,
+              });
+              if (result) {
+                const { page, content } = result;
+                content.forEach((trading) => {
+                  if (!list.includes(trading)) {
+                    list.push(trading);
+                  }
+                });
+                page.number = page.number + 1;
+                Object.assign(pageParam, {}, page);
+              }
+            });
           }
         }
       };
@@ -363,7 +361,9 @@
         addMetroLine,
         action,
         condition,
-        selectName,
+        changeName,
+        cityId,
+        province,
       };
     },
   });

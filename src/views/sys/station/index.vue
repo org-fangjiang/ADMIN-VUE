@@ -18,6 +18,7 @@
     <Button v-auth="stationConst._PERMS.ADD" @click="addMetroStation">{{
       t('component.action.add')
     }}</Button>
+    <FMetro :cityId="cityId" @change="changeStation" />
     <Table :columns="ColumnsMetroStation" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -110,9 +111,11 @@
     deleteStation,
     getAllStations,
     getLines,
+    getStation,
     getStationsByLine,
     reEnableStation,
   } from '/@/api/sys/metro/metro';
+  import FMetro from '/@/components/FMetro';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BaseListResult, BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
@@ -151,6 +154,7 @@
       FCascader,
       StationForm,
       Select,
+      FMetro,
     },
     setup() {
       const { t } = useI18n();
@@ -173,6 +177,7 @@
         totalElements: 0,
       });
       const options = ref<Option[]>([]);
+      const cityId = userStore.getUserInfo.companyCityId;
       // 筛选条件
       const condition = reactive({
         cityId: userStore.getUserInfo.companyCityId,
@@ -257,6 +262,27 @@
         } else {
           lineResult = await getStationsByLine({ lineId: value });
           processListByLine(lineResult);
+        }
+      };
+
+      const changeStation = async (e) => {
+        if (e.length === 0) {
+          const result = await getList();
+          processList(result);
+          return;
+        }
+        condition.lineId = e[0] || '';
+        condition.id = e[1] || '';
+        if (e.length === 1) {
+          const lineResult = await getStationsByLine({ lineId: condition.lineId });
+          processListByLine(lineResult);
+        } else {
+          const result = await getStation(e[1]);
+          pageParam.number = 1;
+          pageParam.totalPages = 1;
+          pageParam.totalElements = 1;
+          list.splice(0);
+          list.push(result.content);
         }
       };
 
@@ -384,6 +410,8 @@
         onClose,
         addMetroStation,
         action,
+        cityId,
+        changeStation,
       };
     },
   });
