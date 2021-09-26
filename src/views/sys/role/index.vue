@@ -88,7 +88,6 @@
         v-if="drawerParam.state === '1'"
         :expandedKeys="drawerParam.checkedKeys"
         :roleId="drawerParam.id"
-        @addMenu="updateMenu"
       />
     </Drawer>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -99,7 +98,7 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { deleteRole, getRole, getRoles, reEnableRole, setRoleMenu } from '/@/api/sys/role/role';
+  import { deleteRole, getRole, getRoles, reEnableRole } from '/@/api/sys/role/role';
   import { RoleModel, RoleColumns, RoleConst } from '/@/api/sys/role/model/roleModel';
   import { Loading } from '/@/components/Loading';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
@@ -332,26 +331,6 @@
         processList(result);
       });
 
-      //保存修改的权限列表
-      const updateMenu = async (e) => {
-        try {
-          loading.value = true;
-          const menus: any[] = [];
-          e.record.forEach((item) => {
-            menus.push({ id: item });
-          });
-          await setRoleMenu({
-            id: drawerParam.id,
-            menus,
-          });
-          success(t('model.role.setRoleMenu'), t('model.role.success'));
-        } catch (error) {
-          failed(error?.response?.data?.message, t('model.role.fail'));
-        } finally {
-          loading.value = false;
-        }
-      };
-
       return {
         t,
         prefixCls,
@@ -370,7 +349,6 @@
         action,
         add,
         onClose,
-        updateMenu,
         options,
         fetchUser,
       };

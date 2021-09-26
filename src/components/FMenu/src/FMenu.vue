@@ -2,7 +2,7 @@
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <Button @click="handleAdd">保存</Button>
     <Table
-      :columns="_Component_Columns"
+      :columns="Component_Columns"
       size="middle"
       :pagination="false"
       :dataSource="list"
@@ -28,6 +28,7 @@
         </span>
       </template>
     </Table>
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 <script lang="ts">
@@ -35,9 +36,15 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import { Table, Tag, Button } from 'ant-design-vue';
-  import { MenuConst, _Component_Columns } from '/@/api/sys/menu/model/menuModel';
+  import { Table, Tag, Button, notification } from 'ant-design-vue';
+  import {
+    MenuConst,
+    _Component_Columns as Component_Columns,
+  } from '/@/api/sys/menu/model/menuModel';
   import { getChildMenu, getParentMenu } from '/@/api/sys/menu/menu';
+  import { Loading } from '/@/components/Loading';
+  import { setRoleMenu } from '/@/api/sys/role/role';
+  import { RoleModel } from '/@/api/sys/role/model/roleModel';
 
   interface Options {
     id?: string;
@@ -61,15 +68,19 @@
       Table,
       Tag,
       Button,
+      Loading,
     },
     props: {
       expandedKeys: {
         type: Array,
         require: false,
       },
+      roleId: {
+        type: String,
+        require: false,
+      },
     },
-    emits: ['addMenu'],
-    setup(props, { emit }) {
+    setup(props) {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('menu');
@@ -139,10 +150,39 @@
         }
       };
 
-      const handleAdd = () => {
-        loading.value = true;
-        emit('addMenu', { record: selectedRowKeys.value });
-        loading.value = false;
+      const handleAdd = async () => {
+        try {
+          loading.value = true;
+          const updatemenus: RoleModel[] = [];
+          selectedRowKeys.value.forEach((item) => {
+            updatemenus.push({ id: item });
+          });
+          await setRoleMenu({
+            id: props.roleId,
+            menus: updatemenus,
+          });
+          success(t('model.role.setRoleMenu'), t('model.role.success'));
+        } catch (error) {
+          failed(error?.response?.data?.message, t('model.role.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
+
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
       };
 
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {
@@ -210,7 +250,7 @@
         onSelectChange,
         loadData,
         props,
-        _Component_Columns,
+        Component_Columns,
       };
     },
   });

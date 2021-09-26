@@ -203,9 +203,11 @@
       let menuType = ref();
       const changeMenu = () => {
         menuType.value = '1';
+        formState.type = '0';
       };
       const changeButton = () => {
         menuType.value = '0';
+        formState.type = '1';
       };
       //状态默认值，添加时默认不能选，为有效
       let state = '';

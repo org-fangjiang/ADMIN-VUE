@@ -334,4 +334,17 @@ export default {
     0: '全部',
     150500: '地铁',
   },
+  trading: {
+    name: '名称',
+    description: '描述',
+    longitude: '经度',
+    latitude: '纬度',
+    state: '状态',
+    invalid: '无效',
+    effective: '有效',
+    radius: '角度',
+    provinceId: '省份',
+    cityId: '城市',
+    areaId: '地区',
+  },
 };

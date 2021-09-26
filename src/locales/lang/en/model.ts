@@ -335,4 +335,17 @@ export default {
     0: 'All',
     150500: 'metro',
   },
+  trading: {
+    name: 'name',
+    description: 'description',
+    longitude: 'longitude',
+    latitude: 'latitude',
+    state: 'state',
+    invalid: 'invalid',
+    effective: 'effective',
+    radius: 'radius',
+    provinceId: 'provinceId',
+    cityId: 'cityId',
+    areaId: 'areaId',
+  },
 };
