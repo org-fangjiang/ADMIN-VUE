@@ -90,42 +90,42 @@
     >
       <FormItem ref="parentName" :label="t('model.perms.parentName')" name="parentName">
         <Input
-          :disabled="isUpdate && !updateFields.includes('parentId')"
+          :disabled="isUpdate && !updateButtonFields.includes('parentId')"
           v-model:value="props.parentName"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="menuName" :label="t('model.perms.buttonName')" name="menuName">
         <Input
-          :disabled="isUpdate && !updateFields.includes('menuName')"
+          :disabled="isUpdate && !updateButtonFields.includes('menuName')"
           v-model:value="formState.menuName"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="component" :label="t('model.perms.component')" name="component">
         <Input
-          :disabled="isUpdate && !updateFields.includes('component')"
+          :disabled="isUpdate && !updateButtonFields.includes('component')"
           v-model:value="formState.component"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="perms" :label="t('model.perms.perms')" name="perms">
         <Input
-          :disabled="isUpdate && !updateFields.includes('perms')"
+          :disabled="isUpdate && !updateButtonFields.includes('perms')"
           v-model:value="formState.perms"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="icon" :label="t('model.perms.icon')" name="icon">
         <Input
-          :disabled="isUpdate && !updateFields.includes('icon')"
+          :disabled="isUpdate && !updateButtonFields.includes('icon')"
           v-model:value="formState.icon"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="type" :label="t('model.perms.type')" name="type">
         <Select
-          :disabled="isUpdate && !updateFields.includes('type')"
+          :disabled="isUpdate && !updateButtonFields.includes('type')"
           ref="select"
           v-model:value="formState.type"
           style="width: 120px"
@@ -134,7 +134,7 @@
       </FormItem>
       <FormItem ref="state" :label="t('model.perms.state')" name="state">
         <Select
-          :disabled="!isUpdate || (isUpdate && !updateFields.includes('state'))"
+          :disabled="!isUpdate || (isUpdate && !updateButtonFields.includes('state'))"
           ref="select"
           v-model:value="formState.state"
           style="width: 120px"
@@ -162,6 +162,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
+  import { useUserStore } from '/@/store/modules/user';
   export default defineComponent({
     name: 'MenuForm',
     components: {
@@ -292,6 +293,10 @@
         }
         loading.value = false;
       };
+
+      const userStore = useUserStore();
+      const companyId = userStore.getUserInfo.companyId;
+
       onMounted(async () => {
         loading.value = true;
         //更新
@@ -303,9 +308,11 @@
         }
         // 将上级路径添加到输入框
         if (props.parentId) {
-          const { content } = await getMenu({ id: props.parentId });
-          if (content) {
-            formState.path = content.path + '/';
+          if (props.parentId !== companyId) {
+            const { content } = await getMenu({ id: props.parentId });
+            if (content) {
+              formState.path = content.path + '/';
+            }
           }
         }
         loading.value = false;
@@ -338,6 +345,7 @@
         menuConst,
         tip,
         updateFields: MenuConst._UPDATE_MENU_FIELDS,
+        updateButtonFields: MenuConst._UPDATE_BUTTON_FIELDS,
         loading,
         onSubmit,
         resetForm,

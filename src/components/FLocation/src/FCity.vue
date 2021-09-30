@@ -12,7 +12,7 @@
 </template>
 <script lang="ts">
   import { Select } from 'ant-design-vue';
-  import { defineComponent, ref, watch } from 'vue';
+  import { defineComponent, onMounted, ref, watch } from 'vue';
   import { getAllCities } from '/@/api/sys/city/city';
   import { basicProps } from './props';
   import { Option } from './types/Option';
@@ -44,10 +44,16 @@
             content.forEach((item) => {
               options.value?.push({ value: item.id, label: item.name });
             });
-            console.log(' props.provinceId: ', props.provinceId);
           }
         }
       );
+
+      onMounted(async () => {
+        const { content } = await getAllCities({ id: props.provinceId });
+        content.forEach((item) => {
+          options.value?.push({ value: item.id, label: item.name });
+        });
+      });
       return {
         selectRef,
         change,

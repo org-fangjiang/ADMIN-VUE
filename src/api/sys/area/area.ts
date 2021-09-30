@@ -1,7 +1,7 @@
 // 区级接口
 import { defHttp } from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
-import { BasePageResult, BaseResult } from '../../model/baseModel';
+import { BaseListResult, BasePageResult, BaseResult } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam, SortParam } from '/@/api/model/baseModel';
 import { AreaByCondition, AreaModel } from './model/areaModel';
@@ -42,7 +42,7 @@ export function getAllAreas(condition: AreaByCondition, mode: ErrorMessageMode =
   const reqParam = new RequestParam();
   reqParam.setData(condition);
   const data = reqParam.getInstance();
-  return defHttp.post<BasePageResult<AreaModel>>(
+  return defHttp.post<BaseListResult<AreaModel>>(
     {
       url: Api.GetAllAreas,
       data,

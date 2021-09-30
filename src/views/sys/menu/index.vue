@@ -85,6 +85,7 @@
     reEnableMenu,
   } from '/@/api/sys/menu/menu';
   import MenuForm from './components/MenuForm.vue';
+  import { useUserStore } from '/@/store/modules/user';
 
   interface Options {
     id?: string;
@@ -201,10 +202,11 @@
           selectedRowKeys.value.splice(flag, 1);
         }
       };
-
+      const userStore = useUserStore();
+      const companyId = userStore.getUserInfo.companyId;
       const add = () => {
         drawerParam.visible = true;
-        drawerParam.parentId = '';
+        drawerParam.parentId = companyId;
         drawerParam.parentName = '';
         drawerParam.state = '0';
         drawerParam.title = t('model.perms.addMenu');

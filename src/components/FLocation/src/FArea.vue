@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
   import { Select } from 'ant-design-vue';
-  import { defineComponent, watch, ref } from 'vue';
+  import { defineComponent, watch, ref, onMounted } from 'vue';
   import { getAllAreas } from '/@/api/sys/area/area';
   import { basicProps } from './props';
   import { Option } from './types/Option';
@@ -45,6 +45,13 @@
           }
         }
       );
+
+      onMounted(async () => {
+        const { content } = await getAllAreas({ id: props.cityId });
+        content.forEach((item) => {
+          options.value?.push({ value: item.id, label: item.name });
+        });
+      });
 
       return {
         change,
