@@ -56,6 +56,7 @@ export interface UserInfo {
   companyName: string;
   companyId: string;
   companyCityId?: string;
+  companyProvinceId?: string;
 }
 
 export interface BeforeMiniState {
