@@ -12,6 +12,7 @@ import {
 } from './model/dictModel';
 
 enum Api {
+  GetAllSysDictGroups = '/sys-server/dictGroup/getAllSysDictGroups',
   GetSysDictGroups = '/sys-server/dictGroup/getSysDictGroups',
   GetSysDictGroup = '/sys-server/dictGroup/getSysDictGroup',
   AddSysDictGroup = '/sys-server/dictGroup/addSysDictGroup',
@@ -25,6 +26,20 @@ enum Api {
   UpdateSysDictDetail = '/sys-server/dictDetail/updateSysDictDetail',
   DeleteSysDictDetail = '/sys-server/dictDetail/deleteSysDictDetail',
   ReEnableSysDictDetail = '/sys-server/dictDetail/reEnableSysDictDetail',
+}
+
+export function getAllSysDictGroups(mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseListResult<DictGroupModel>>(
+    {
+      url: Api.GetAllSysDictGroups,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getSysDictGroups(
