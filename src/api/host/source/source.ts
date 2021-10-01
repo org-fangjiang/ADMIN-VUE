@@ -5,7 +5,7 @@ import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam } from '/@/api/model/baseModel';
 import { SourceCondition, SourceModel } from './model/sourceModel';
 
-enum ApiSource {
+export enum ApiSource {
   GetResourcesList = '/nhouse-server/manageResource/getResourcesList', //必选参数：projectId
   GetResources = '/nhouse-server/manageResource/getResources', //必选参数：projectId  分页
   GetResource = '/nhouse-server/resource/getResource', //id
@@ -15,6 +15,7 @@ enum ApiSource {
   ReEnableResource = '/nhouse-server/manageResource/reEnableResource',
   SetSandImg = '/nhouse-server/manageResource/setSandImg', //沙盘图，必选参数：resourceId, projectId
   SetFirstImg = '/nhouse-server/manageResource/setFirstImg', //项目首图，
+  Upload = '/sys-server/file/upload',
 }
 
 export function getResourcesList(condition: SourceCondition, mode: ErrorMessageMode = 'modal') {

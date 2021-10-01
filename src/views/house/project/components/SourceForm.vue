@@ -8,41 +8,29 @@
       :wrapper-col="wrapperCol"
     >
       <FormItem ref="title" :label="t('host.source.title')" name="title">
-        <div>
-          <Input
-            :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('title')"
-            v-model:value="formState.title"
-            autoComplete="off"
-          />
-          <!-- <Upload name="file" action="" @change="handleChange">
-            <Button> <UploadOutlined />Click to Upload </Button>
-          </Upload> -->
-        </div>
+        <Input
+          :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('title')"
+          v-model:value="formState.title"
+          autoComplete="off"
+        />
       </FormItem>
       <FormItem ref="keyword" :label="t('host.source.keyword')" name="keyword">
         <Input
-          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('keyword')"
+          :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('keyword')"
           v-model:value="formState.keyword"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="description" :label="t('host.source.description')" name="description">
         <Input
-          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('description')"
+          :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('description')"
           v-model:value="formState.description"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem ref="address" :label="t('host.source.address')" name="address">
-        <Input
-          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('address')"
-          v-model:value="formState.address"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="sort" :label="t('host.source.sort')" name="sort">
         <Select
-          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('sort')"
+          :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('sort')"
           ref="select"
           :allowClear="true"
           v-model:value="formState.sort"
@@ -51,6 +39,22 @@
           :options="sourceConst.SORTS"
           :pagination="false"
         />
+      </FormItem>
+      <FormItem ref="address" :label="t('host.source.address')" name="address">
+        <Upload
+          :data="{
+            projectId: props.projectId,
+            provinceId: props.provinceId,
+            cityId: props.cityId,
+            areaId: props.areaId,
+            type: formState.sort,
+          }"
+          :action="ApiSource.Upload"
+          :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('address')"
+          @change="changeFile"
+        >
+          <Button> Upload </Button>
+        </Upload>
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
@@ -68,15 +72,11 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { Button, Form, FormItem, Input, Select } from 'ant-design-vue';
-  // import { UploadOutlined } from '@ant-design/icons-vue';
+  import { Button, Form, FormItem, Input, Select, Upload } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { SourceModel, _SourceConst } from '/@/api/host/source/model/sourceModel';
-  import { updateResource, addResource, getResource } from '/@/api/host/source/source';
-  interface Option {
-    label: string;
-    value: string;
-  }
+  import { updateResource, addResource, getResource, ApiSource } from '/@/api/host/source/source';
+
   export default defineComponent({
     name: 'SourceForm',
     components: {
@@ -86,11 +86,26 @@
       Input,
       Loading,
       Select,
-      // Upload,
-      // UploadOutlined,
+      Upload,
     },
     props: {
       id: {
+        type: String,
+        require: true,
+      },
+      provinceId: {
+        type: String,
+        require: true,
+      },
+      cityId: {
+        type: String,
+        require: true,
+      },
+      areaId: {
+        type: String,
+        require: true,
+      },
+      projectId: {
         type: String,
         require: true,
       },
@@ -108,7 +123,15 @@
         isUpdate.value = true;
       }
 
-      const options = ref<Option[]>([]);
+      const changeFile = async (info) => {
+        if (info.file.status === 'done') {
+          formState.title = info.file.name;
+          formState.projectId = props.projectId;
+          formState.address = info.file.response.data;
+          debugger;
+        }
+      };
+
       const sortChange = async (value) => {
         formState.sort = value;
       };
@@ -189,7 +212,6 @@
         sourceConst,
         loading,
         tip,
-        options,
         sortChange,
         formRef,
         formState,
@@ -198,6 +220,9 @@
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         isUpdate,
+        changeFile,
+        ApiSource,
+        props,
       };
     },
   });

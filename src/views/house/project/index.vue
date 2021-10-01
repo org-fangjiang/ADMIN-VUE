@@ -103,7 +103,13 @@
       :footer="null"
     >
       <ProjectForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
-      <SourceTable v-if="drawerParam.state === '1'" :id="drawerParam.id" />
+      <SourceTable
+        v-if="drawerParam.state === '1'"
+        :id="drawerParam.id"
+        :provinceId="drawerParam.provinceId"
+        :cityId="drawerParam.cityId"
+        :areaId="drawerParam.areaId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -130,7 +136,12 @@
   import { HostModel, _ColumnsHost, _HostConst } from '/@/api/host/project/model/projectModel';
   import ProjectForm from './components/ProjectForm.vue';
   import SourceTable from './components/SourceTable.vue';
-  import { deleteProject, reEnableProject, searchWithCondition } from '/@/api/host/project/project';
+  import {
+    deleteProject,
+    getProject,
+    reEnableProject,
+    searchWithCondition,
+  } from '/@/api/host/project/project';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
 
@@ -181,6 +192,9 @@
         state: '',
         title: '',
         visible: false,
+        provinceId: '',
+        cityId: '',
+        areaId: '',
       });
 
       //根据状态筛选
@@ -261,6 +275,20 @@
           case 3:
             // 设置资源
             drawerParam.id = id;
+            debugger;
+            const { content } = await getProject(id);
+            if (!content.sysAreaByAreaId) {
+              content.sysAreaByAreaId = {};
+            }
+            if (!content.sysProvinceByProvinceId) {
+              content.sysProvinceByProvinceId = {};
+            }
+            if (!content.sysCityByCityId) {
+              content.sysCityByCityId = {};
+            }
+            drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
+            drawerParam.cityId = content.sysCityByCityId.id || '';
+            drawerParam.areaId = content.sysAreaByAreaId.id || '';
             drawerParam.state = '1';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setResource');

@@ -29,6 +29,15 @@
         </Button>
         <Button
           :class="prefixCls"
+          v-auth="sourceConst._PERMS.UPDATE"
+          type="link"
+          size="small"
+          @click="reEnableOneSource(line)"
+        >
+          {{ t('host.action.reEnable') }}
+        </Button>
+        <Button
+          :class="prefixCls"
           v-auth="sourceConst._PERMS.ADD"
           type="link"
           size="small"
@@ -47,7 +56,14 @@
       :footer="null"
       :destroyOnClose="true"
     >
-      <SourceForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+      <SourceForm
+        v-if="drawerParam.state === '0'"
+        :id="drawerParam.id"
+        :provinceId="props.provinceId"
+        :cityId="props.cityId"
+        :areaId="props.areaId"
+        :projectId="props.id"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -66,7 +82,7 @@
     _SourceConst,
     _ColumnsHost as ColumnsHost,
   } from '/@/api/host/source/model/sourceModel';
-  import { deleteResource, getResourcesList } from '/@/api/host/source/source';
+  import { deleteResource, getResourcesList, reEnableResource } from '/@/api/host/source/source';
   import SourceForm from './SourceForm.vue';
 
   interface Option {
@@ -85,6 +101,18 @@
     },
     props: {
       id: {
+        type: String,
+        require: true,
+      },
+      provinceId: {
+        type: String,
+        require: true,
+      },
+      cityId: {
+        type: String,
+        require: true,
+      },
+      areaId: {
         type: String,
         require: true,
       },
@@ -150,23 +178,17 @@
         }
         const { content } = result;
         list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
+        if (content) {
+          content.forEach((line) => {
+            list.push(line);
+          });
+        }
       }
 
       onMounted(async () => {
         const result = await getList();
         processListByLine(result);
       });
-
-      // 添加
-      const addSource = () => {
-        drawerParam.visible = true;
-        drawerParam.state = '0';
-        drawerParam.id = '';
-        drawerParam.title = t('host.action.add');
-      };
 
       const deleteOneSource = async (line) => {
         try {
@@ -180,6 +202,26 @@
         } finally {
           loading.value = false;
         }
+      };
+      const reEnableOneSource = async (line) => {
+        try {
+          loading.value = true;
+          await reEnableResource(line.id);
+          success(t('host.action.reEnable'), t('host.action.success'));
+          const result = await getList();
+          processListByLine(result);
+        } catch (error) {
+          failed(error?.response?.data?.message, t('host.action.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
+
+      const addSource = async (line) => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = line.id;
+        drawerParam.title = t('host.action.update');
       };
 
       const updateResource = async (line) => {
@@ -217,10 +259,12 @@
         pageSizeList,
         list,
         drawerParam,
-        addSource,
         deleteOneSource,
+        reEnableOneSource,
         updateResource,
         onClose,
+        addSource,
+        props,
       };
     },
   });
