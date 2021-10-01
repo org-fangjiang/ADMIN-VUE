@@ -76,6 +76,17 @@
                   {{ t('host.action.setResource') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="4" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="hostConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.setLayout') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -110,6 +121,7 @@
         :cityId="drawerParam.cityId"
         :areaId="drawerParam.areaId"
       />
+      <LayoutTable v-if="drawerParam.state === '2'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -136,6 +148,7 @@
   import { HostModel, _ColumnsHost, _HostConst } from '/@/api/host/project/model/projectModel';
   import ProjectForm from './components/ProjectForm.vue';
   import SourceTable from './components/SourceTable.vue';
+  import LayoutTable from './components/LayoutTable.vue';
   import {
     deleteProject,
     getProject,
@@ -160,6 +173,7 @@
       Modal,
       ProjectForm,
       SourceTable,
+      LayoutTable,
     },
     setup() {
       const { t } = useI18n();
@@ -275,7 +289,6 @@
           case 3:
             // 设置资源
             drawerParam.id = id;
-            debugger;
             const { content } = await getProject(id);
             if (!content.sysAreaByAreaId) {
               content.sysAreaByAreaId = {};
@@ -292,6 +305,13 @@
             drawerParam.state = '1';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setResource');
+            break;
+          case 4:
+            // 户型
+            drawerParam.id = id;
+            drawerParam.state = '2';
+            drawerParam.visible = true;
+            drawerParam.title = t('host.action.setLayout');
             break;
         }
       };

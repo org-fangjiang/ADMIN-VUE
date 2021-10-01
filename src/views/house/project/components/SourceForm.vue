@@ -113,7 +113,7 @@
     setup(props) {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('metro');
+      const { prefixCls } = useDesign('project');
       const sourceConst = ref(_SourceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -128,7 +128,6 @@
           formState.title = info.file.name;
           formState.projectId = props.projectId;
           formState.address = info.file.response.data;
-          debugger;
         }
       };
 

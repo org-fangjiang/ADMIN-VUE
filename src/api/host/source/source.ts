@@ -130,7 +130,7 @@ export function reEnableResource(id: string, mode: ErrorMessageMode = 'modal') {
 
 export function setSandImg(id: string, projectId: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
-  reqParam.setData({ id, projectId });
+  reqParam.setData({ resourceId: id, projectId });
   const data = reqParam.getInstance();
   return defHttp.post<BaseResult<SourceModel>>(
     {
@@ -143,9 +143,9 @@ export function setSandImg(id: string, projectId: string, mode: ErrorMessageMode
   );
 }
 
-export function setFirstImg(id: string, resourceId: string, mode: ErrorMessageMode = 'modal') {
+export function setFirstImg(id: string, projectId: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
-  reqParam.setData({ id, resourceId });
+  reqParam.setData({ resourceId: id, projectId });
   const data = reqParam.getInstance();
   return defHttp.post<BaseResult<SourceModel>>(
     {

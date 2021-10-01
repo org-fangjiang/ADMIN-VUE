@@ -53,7 +53,7 @@ export const _SourceConst = {
   },
 };
 
-export const _ColumnsHost = [
+export const _CSource = [
   {
     title: t('host.source.title'),
     key: 'title',
@@ -73,7 +73,7 @@ export const _ColumnsHost = [
     key: 'address',
     dataIndex: 'address',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'address' },
   },
   {
     title: t('host.source.keyword'),
@@ -96,8 +96,13 @@ export const _ColumnsHost = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _ColumnsHost = [
+  ..._CSource,
   {
     title: t('host.operation'),
+    width: '30%',
     key: 'operation',
     ellipsis: 'true',
     slots: { customRender: 'operation' },

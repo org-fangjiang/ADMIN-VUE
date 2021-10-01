@@ -1,71 +1,79 @@
-// 资源信息管理页面
+// 户型信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button v-auth="sourceConst._PERMS.ADD" @click="addSource">{{ t('host.action.add') }}</Button>
-    <Table :columns="ColumnsHost" :data-source="list" rowKey="id" :pagination="false">
-      <template #sort="{ text: sort }">
+    <Button v-auth="layoutConst._PERMS.ADD" @click="addLayout">{{ t('host.action.add') }}</Button>
+    <!-- 状态筛选 -->
+    <Select
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="layoutConst.STATES"
+      :pagination="false"
+    />
+    <Table :columns="ColumnsLayout" :data-source="list" rowKey="id" :pagination="false">
+      <template #hResourceByResourceId="{ text: hResourceByResourceId }">
+        <Image
+          v-if="hResourceByResourceId.sort !== '6' && type !== '7'"
+          :src="hResourceByResourceId.address"
+          width="100px"
+        />
+        <div v-else>{{ hResourceByResourceId.address }}</div>
+      </template>
+      <template #face="{ text: face }">
         <span>
-          <Tag :color="sourceConst.SORTS[sort].color">
-            {{ sourceConst.SORTS[sort].label }}
+          <Tag :color="layoutConst.FACES[face - 1].color">
+            {{ layoutConst.FACES[face - 1].label }}
+          </Tag>
+        </span>
+      </template>
+      <template #saleState="{ text: saleState }">
+        <span>
+          <Tag :color="layoutConst.SALE_STATES[saleState - 1].color">
+            {{ layoutConst.SALE_STATES[saleState - 1].label }}
           </Tag>
         </span>
       </template>
       <template #state="{ text: state }">
         <span>
-          <Tag :color="sourceConst.STATES[state].color">
-            {{ sourceConst.STATES[state].label }}
+          <Tag :color="layoutConst.STATES[state].color">
+            {{ layoutConst.STATES[state].label }}
           </Tag>
         </span>
       </template>
       <template #operation="{ text: line }">
         <Button
           :class="prefixCls"
-          v-auth="sourceConst._PERMS.DELETE"
+          v-auth="layoutConst._PERMS.DELETE"
           type="link"
           size="small"
-          @click="deleteOneSource(line)"
+          @click="deleteOneLayout(line)"
         >
           {{ t('host.action.delete') }}
         </Button>
         <Button
           :class="prefixCls"
-          v-auth="sourceConst._PERMS.UPDATE"
+          v-auth="layoutConst._PERMS.UPDATE"
           type="link"
           size="small"
-          @click="reEnableOneSource(line)"
+          @click="reEnableOneLayout(line)"
         >
           {{ t('host.action.reEnable') }}
         </Button>
         <Button
           :class="prefixCls"
-          v-auth="sourceConst._PERMS.ADD"
+          v-auth="layoutConst._PERMS.ADD"
           type="link"
           size="small"
-          @click="updateResource(line)"
+          @click="updateLayout(line)"
         >
           {{ t('host.action.update') }}
-        </Button>
-        <Button
-          :class="prefixCls"
-          v-auth="sourceConst._PERMS.ADD"
-          type="link"
-          size="small"
-          @click="setSand(line)"
-        >
-          {{ t('host.action.setSandImg') }}
-        </Button>
-        <Button
-          :class="prefixCls"
-          v-auth="sourceConst._PERMS.ADD"
-          type="link"
-          size="small"
-          @click="setFirst(line)"
-        >
-          {{ t('host.action.setFirstImg') }}
         </Button>
       </template>
     </Table>
     <Modal
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
@@ -74,14 +82,7 @@
       :footer="null"
       :destroyOnClose="true"
     >
-      <SourceForm
-        v-if="drawerParam.state === '0'"
-        :id="drawerParam.id"
-        :provinceId="props.provinceId"
-        :cityId="props.cityId"
-        :areaId="props.areaId"
-        :projectId="props.id"
-      />
+      <LayoutForm v-if="drawerParam.state === '0'" :id="drawerParam.id" :projectId="props.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -93,35 +94,27 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BaseListResult, PageSizeList } from '/@/api/model/baseModel';
-  import { Table, Tag, Button, Modal } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Image, Select } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
-    SourceModel,
-    _SourceConst,
-    _ColumnsHost as ColumnsHost,
-  } from '/@/api/host/source/model/sourceModel';
-  import {
-    deleteResource,
-    getResources,
-    reEnableResource,
-    setFirstImg,
-    setSandImg,
-  } from '/@/api/host/source/source';
-  import SourceForm from './SourceForm.vue';
+    LayoutModel,
+    _LayoutConst,
+    _ColumnsLayout as ColumnsLayout,
+  } from '/@/api/host/layout/model/layoutModel';
+  import { deleteLayout, getLayoutList, reEnableLayout } from '/@/api/host/layout/layout';
+  import LayoutForm from './LayoutForm.vue';
 
-  interface Option {
-    value: string;
-    label: string;
-  }
   export default defineComponent({
-    name: 'SourceTable',
+    name: 'LayoutTable',
     components: {
       Table,
       Tag,
       Button,
       Modal,
       Loading,
-      SourceForm,
+      LayoutForm,
+      Image,
+      Select,
     },
     props: {
       id: {
@@ -145,23 +138,20 @@
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
-      const sourceConst = ref(_SourceConst);
+      const layoutConst = ref(_LayoutConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const source: SourceModel[] = [];
+      const layout: LayoutModel[] = [];
 
-      const options = ref<Option[]>([]);
       // 筛选条件
       const condition = reactive({
         state: '',
         projectId: props.id || '',
-        title: '',
         id: '',
-        sort: '',
       });
       // 列表结果
-      let list = reactive(source);
+      let list = reactive(layout);
       // 抽屉参数
       const drawerParam = reactive({
         id: '',
@@ -181,9 +171,9 @@
       // 获取list
       const getList = async () => {
         loading.value = true;
-        let result: BaseListResult<SourceModel> | undefined;
+        let result: BaseListResult<LayoutModel> | undefined;
         try {
-          result = await getResources(condition);
+          result = await getLayoutList(condition);
         } catch (error) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -214,10 +204,10 @@
         processListByLine(result);
       });
 
-      const deleteOneSource = async (line) => {
+      const deleteOneLayout = async (line) => {
         try {
           loading.value = true;
-          await deleteResource(line.id);
+          await deleteLayout(line.id);
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
           processListByLine(result);
@@ -227,10 +217,10 @@
           loading.value = false;
         }
       };
-      const reEnableOneSource = async (line) => {
+      const reEnableOneLayout = async (line) => {
         try {
           loading.value = true;
-          await reEnableResource(line.id);
+          await reEnableLayout(line.id);
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
           processListByLine(result);
@@ -241,46 +231,24 @@
         }
       };
 
-      const addSource = async (line) => {
+      const addLayout = async (line) => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = line.id;
+        drawerParam.title = t('host.action.add');
+      };
+
+      const updateLayout = async (line) => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.update');
       };
 
-      const updateResource = async (line) => {
-        drawerParam.visible = true;
-        drawerParam.state = '0';
-        drawerParam.id = line.id;
-        drawerParam.title = t('host.action.update');
-      };
-
-      const setSand = async (line) => {
-        try {
-          loading.value = true;
-          await setSandImg(line.id, props.id || '');
-          success(t('host.action.setSandImg'), t('host.action.success'));
-          const result = await getList();
-          processListByLine(result);
-        } catch (error) {
-          failed(error?.response?.data?.message, t('host.action.fail'));
-        } finally {
-          loading.value = false;
-        }
-      };
-
-      const setFirst = async (line) => {
-        try {
-          loading.value = true;
-          await setFirstImg(line.id, props.id || '');
-          success(t('host.action.setFirstImg'), t('host.action.success'));
-          const result = await getList();
-          processListByLine(result);
-        } catch (error) {
-          failed(error?.response?.data?.message, t('host.action.fail'));
-        } finally {
-          loading.value = false;
-        }
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        const result = await getList();
+        processListByLine(result);
       };
 
       const success = (message: any, description: any) => {
@@ -302,22 +270,20 @@
       return {
         t,
         prefixCls,
-        sourceConst,
-        options,
+        layoutConst,
         condition,
-        ColumnsHost,
+        ColumnsLayout,
         loading,
         tip,
         pageSizeList,
         list,
         drawerParam,
-        deleteOneSource,
-        reEnableOneSource,
-        updateResource,
-        setSand,
-        setFirst,
+        deleteOneLayout,
+        reEnableOneLayout,
+        stateHandleChange,
+        updateLayout,
         onClose,
-        addSource,
+        addLayout,
         props,
       };
     },
