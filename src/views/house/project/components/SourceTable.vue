@@ -3,6 +3,10 @@
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
     <Button v-auth="sourceConst._PERMS.ADD" @click="addSource">{{ t('host.action.add') }}</Button>
     <Table :columns="ColumnsHost" :data-source="list" rowKey="id" :pagination="false">
+      <template #address="{ text: address }">
+        <Image v-if="sort !== '6' && sort !== '7'" :src="address" width="100px" />
+        <div v-else>{{ address }}</div>
+      </template>
       <template #sort="{ text: sort }">
         <span>
           <Tag :color="sourceConst.SORTS[sort].color">
@@ -93,7 +97,7 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BaseListResult, PageSizeList } from '/@/api/model/baseModel';
-  import { Table, Tag, Button, Modal } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
     SourceModel,
@@ -122,6 +126,7 @@
       Modal,
       Loading,
       SourceForm,
+      Image,
     },
     props: {
       id: {

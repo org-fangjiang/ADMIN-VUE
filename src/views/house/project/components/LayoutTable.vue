@@ -15,7 +15,7 @@
     <Table :columns="ColumnsLayout" :data-source="list" rowKey="id" :pagination="false">
       <template #hResourceByResourceId="{ text: hResourceByResourceId }">
         <Image
-          v-if="hResourceByResourceId.sort !== '6' && type !== '7'"
+          v-if="hResourceByResourceId.sort !== '6' && hResourceByResourceId.sort !== '7'"
           :src="hResourceByResourceId.address"
           width="100px"
         />
