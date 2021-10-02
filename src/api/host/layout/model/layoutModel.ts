@@ -80,7 +80,7 @@ export const _LayoutConst = {
   },
 };
 
-export const _ColumnsLayout = [
+export const _Columns = [
   {
     title: t('host.layout.resourceId'),
     key: 'hResourceByResourceId',
@@ -137,6 +137,10 @@ export const _ColumnsLayout = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _ColumnsLayout = [
+  ..._Columns,
   {
     title: t('host.operation'),
     key: 'operation',

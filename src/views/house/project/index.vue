@@ -87,6 +87,17 @@
                   {{ t('host.action.setLayout') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="5" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="hostConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.setBuild') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -122,6 +133,13 @@
         :areaId="drawerParam.areaId"
       />
       <LayoutTable v-if="drawerParam.state === '2'" :id="drawerParam.id" />
+      <BuildTable
+        v-if="drawerParam.state === '3'"
+        :id="drawerParam.id"
+        :provinceId="drawerParam.provinceId"
+        :cityId="drawerParam.cityId"
+        :areaId="drawerParam.areaId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -149,6 +167,7 @@
   import ProjectForm from './components/ProjectForm.vue';
   import SourceTable from './components/SourceTable.vue';
   import LayoutTable from './components/LayoutTable.vue';
+  import BuildTable from './components/BuildTable.vue';
   import {
     deleteProject,
     getProject,
@@ -174,6 +193,7 @@
       ProjectForm,
       SourceTable,
       LayoutTable,
+      BuildTable,
     },
     setup() {
       const { t } = useI18n();
@@ -250,6 +270,19 @@
       const action = async (key) => {
         const code = key.key;
         const id = key?.item['data-id'] || undefined;
+        const { content } = await getProject(id);
+        if (!content.sysAreaByAreaId) {
+          content.sysAreaByAreaId = {};
+        }
+        if (!content.sysProvinceByProvinceId) {
+          content.sysProvinceByProvinceId = {};
+        }
+        if (!content.sysCityByCityId) {
+          content.sysCityByCityId = {};
+        }
+        drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
+        drawerParam.cityId = content.sysCityByCityId.id || '';
+        drawerParam.areaId = content.sysAreaByAreaId.id || '';
         switch (code) {
           case 0:
             // 删除
@@ -289,19 +322,19 @@
           case 3:
             // 设置资源
             drawerParam.id = id;
-            const { content } = await getProject(id);
-            if (!content.sysAreaByAreaId) {
-              content.sysAreaByAreaId = {};
-            }
-            if (!content.sysProvinceByProvinceId) {
-              content.sysProvinceByProvinceId = {};
-            }
-            if (!content.sysCityByCityId) {
-              content.sysCityByCityId = {};
-            }
-            drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
-            drawerParam.cityId = content.sysCityByCityId.id || '';
-            drawerParam.areaId = content.sysAreaByAreaId.id || '';
+            // const { content } = await getProject(id);
+            // if (!content.sysAreaByAreaId) {
+            //   content.sysAreaByAreaId = {};
+            // }
+            // if (!content.sysProvinceByProvinceId) {
+            //   content.sysProvinceByProvinceId = {};
+            // }
+            // if (!content.sysCityByCityId) {
+            //   content.sysCityByCityId = {};
+            // }
+            // drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
+            // drawerParam.cityId = content.sysCityByCityId.id || '';
+            // drawerParam.areaId = content.sysAreaByAreaId.id || '';
             drawerParam.state = '1';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setResource');
@@ -312,6 +345,13 @@
             drawerParam.state = '2';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setLayout');
+            break;
+          case 5:
+            // 户型
+            drawerParam.id = id;
+            drawerParam.state = '3';
+            drawerParam.visible = true;
+            drawerParam.title = t('host.action.setBuild');
             break;
         }
       };
