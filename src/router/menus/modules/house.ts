@@ -10,6 +10,10 @@ const house: MenuModule = {
         path: 'project',
         name: t('routes.house.property'),
       },
+      {
+        path: 'news',
+        name: t('routes.house.news'),
+      },
     ],
   },
 };

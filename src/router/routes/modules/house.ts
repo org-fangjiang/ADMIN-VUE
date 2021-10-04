@@ -23,6 +23,15 @@ const house: AppRouteModule = {
         roles: ['/house/project'],
       },
     },
+    {
+      path: 'news',
+      name: 'news',
+      component: () => import('/@/views/house/news/index.vue'),
+      meta: {
+        title: t('routes.house.news'),
+        roles: ['/house/news'],
+      },
+    },
   ],
 };
 

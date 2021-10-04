@@ -253,7 +253,7 @@ export const _HostConst = {
   },
 };
 
-export const _ColumnsHost = [
+export const _Columns = [
   {
     title: t('host.name'),
     key: 'name',
@@ -289,6 +289,10 @@ export const _ColumnsHost = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _ColumnsHost = [
+  ..._Columns,
   {
     title: t('host.operation'),
     key: 'operation',
