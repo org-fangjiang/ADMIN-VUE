@@ -72,7 +72,7 @@ export const _BuildConst = {
   },
 };
 
-export const _ColumnsBuild = [
+export const _Columns = [
   {
     title: t('host.build.number'),
     key: 'number',
@@ -115,6 +115,10 @@ export const _ColumnsBuild = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _ColumnsBuild = [
+  ..._Columns,
   {
     title: t('host.operation'),
     key: 'operation',

@@ -246,11 +246,11 @@
         }
       };
 
-      const addSource = async (line) => {
+      const addSource = async () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
-        drawerParam.id = line.id;
-        drawerParam.title = t('host.action.update');
+        drawerParam.id = '';
+        drawerParam.title = t('host.action.add');
       };
 
       const updateResource = async (line) => {

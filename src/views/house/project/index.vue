@@ -76,6 +76,17 @@
                   {{ t('host.action.setResource') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="6" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="hostConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.setLicense') }}
+                </Button>
+              </MenuItem>
               <MenuItem :key="4" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button
@@ -140,6 +151,13 @@
         :cityId="drawerParam.cityId"
         :areaId="drawerParam.areaId"
       />
+      <LicenseTable
+        v-if="drawerParam.state === '4'"
+        :id="drawerParam.id"
+        :provinceId="drawerParam.provinceId"
+        :cityId="drawerParam.cityId"
+        :areaId="drawerParam.areaId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -168,6 +186,7 @@
   import SourceTable from './components/SourceTable.vue';
   import LayoutTable from './components/LayoutTable.vue';
   import BuildTable from './components/BuildTable.vue';
+  import LicenseTable from './components/LicenseTable.vue';
   import {
     deleteProject,
     getProject,
@@ -194,6 +213,7 @@
       SourceTable,
       LayoutTable,
       BuildTable,
+      LicenseTable,
     },
     setup() {
       const { t } = useI18n();
@@ -322,19 +342,6 @@
           case 3:
             // 设置资源
             drawerParam.id = id;
-            // const { content } = await getProject(id);
-            // if (!content.sysAreaByAreaId) {
-            //   content.sysAreaByAreaId = {};
-            // }
-            // if (!content.sysProvinceByProvinceId) {
-            //   content.sysProvinceByProvinceId = {};
-            // }
-            // if (!content.sysCityByCityId) {
-            //   content.sysCityByCityId = {};
-            // }
-            // drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
-            // drawerParam.cityId = content.sysCityByCityId.id || '';
-            // drawerParam.areaId = content.sysAreaByAreaId.id || '';
             drawerParam.state = '1';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setResource');
@@ -352,6 +359,13 @@
             drawerParam.state = '3';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setBuild');
+            break;
+          case 6:
+            // 预售证
+            drawerParam.id = id;
+            drawerParam.state = '4';
+            drawerParam.visible = true;
+            drawerParam.title = t('host.action.setLicense');
             break;
         }
       };

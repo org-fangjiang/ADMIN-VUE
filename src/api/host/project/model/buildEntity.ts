@@ -5,7 +5,7 @@ export interface BuildEntity {
   number?: string;
   floors?: number;
   price?: number;
-  priceDescription;
+  priceDescription?: string;
   description?: string;
   saleState?: string;
   projectId?: string;
