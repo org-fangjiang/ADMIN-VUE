@@ -19,6 +19,9 @@
       <template #img="{ text: img }">
         <Image :src="img" width="100px" />
       </template>
+      <template #projects="{ text: projects }">
+        <span v-for="item in projects" :key="item.id">{{ item.name }},</span>
+      </template>
       <template #inMobile="{ text: inMobile }">
         <span>
           <Tag :color="newsConst.IN_MOBILES[inMobile].color">

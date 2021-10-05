@@ -23,10 +23,14 @@
         />
       </FormItem>
       <FormItem ref="keywords" :label="t('host.news.keywords')" name="keywords">
-        <Input
+        <Select
+          v-model:value="tags"
+          mode="tags"
+          style="width: 100%"
+          :token-separators="[',']"
+          :options="options"
           :disabled="isUpdate && !newsConst._UPDATE_FIELDS.includes('keywords')"
-          v-model:value="formState.keywords"
-          autoComplete="off"
+          @change="tagsChange"
         />
       </FormItem>
       <FormItem ref="projects" :label="t('host.news.projects')" name="projects">
@@ -34,11 +38,6 @@
         <Button @click="changeModal">{{ t('host.news.setProject') }}</Button>
       </FormItem>
       <FormItem ref="content" :label="t('host.news.content')" name="content">
-        <!-- <Textarea
-          :disabled="isUpdate && !newsConst._UPDATE_FIELDS.includes('content')"
-          v-model:value="formState.content"
-          autoComplete="off"
-        /> -->
         <FTinymce
           :disabled="isUpdate && !newsConst._UPDATE_FIELDS.includes('content')"
           v-model="formState.content"
@@ -149,6 +148,11 @@
   import { ApiSource } from '/@/api/host/source/source';
   import FProject from '/@/components/FProject';
   import FTinymce from '/@/components/FTinymce';
+
+  interface Option {
+    value: string;
+    label: string;
+  }
   export default defineComponent({
     name: 'NewsForm',
     components: {
@@ -216,7 +220,24 @@
       const formState: UnwrapRef<NewsModel> = reactive({
         provinceId: props.provinceId,
         cityId: props.cityId,
+        keywords: '',
       });
+
+      const options = ref<Option[]>([]);
+      let tags = ref<string[]>([]);
+
+      const tagsChange = async (value) => {
+        debugger;
+        let selectTags = '';
+        if (value && value.length > 0) {
+          value.forEach((item: string) => {
+            selectTags = selectTags + ',' + item;
+          });
+        }
+        const x = selectTags.indexOf(',');
+        selectTags = selectTags.substring(x + 1);
+        formState.keywords = selectTags;
+      };
 
       function handleChange(value: string) {
         formState.content = value;
@@ -306,6 +327,14 @@
         if (props.id) {
           const { content } = await getNews(props.id);
           Object.assign(formState, content);
+          if (!formState.keywords) {
+            formState.keywords = '';
+          }
+          const deTag: string[] = formState.keywords.split(',');
+          deTag.forEach((tag) => {
+            options.value.push({ value: tag, label: tag });
+            tags.value.push(tag);
+          });
         }
         loading.value = false;
       });
@@ -351,6 +380,9 @@
         selected,
         area,
         handleChange,
+        options,
+        tags,
+        tagsChange,
       };
     },
   });

@@ -118,7 +118,7 @@ export const _ColumnsNews = [
     key: 'projects',
     dataIndex: 'projects',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'projects' },
   },
   {
     title: t('host.news.inMobile'),

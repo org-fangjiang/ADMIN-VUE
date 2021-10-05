@@ -137,6 +137,8 @@ export default {
   description: 'description',
   lookTime: 'lookTime',
   orderNum: 'orderNum',
+  hLayoutsById: 'hLayoutsById',
+  firstImg: 'firstImg',
   action: {
     add: 'add',
     update: 'update',

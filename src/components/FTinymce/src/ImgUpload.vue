@@ -1,6 +1,6 @@
 <template>
   <div :class="[prefixCls, { fullscreen }]">
-    <a-button type="primary" @click="onOK" v-bind="{ ...getButtonProps }">
+    <!-- <a-button type="primary" @click="onOK" v-bind="{ ...getButtonProps }">
       {{ t('component.upload.imgUpload') }}
     </a-button>
     <Modal :visible="isOk" @cancel="onClose" :footer="null">
@@ -21,7 +21,22 @@
           {{ t('component.upload.imgUpload') }}
         </a-button>
       </Upload>
-    </Modal>
+    </Modal> -->
+    <Upload
+      name="file"
+      multiple
+      :data="{
+        provinceId: props.provinceId,
+        cityId: props.cityId,
+      }"
+      :action="ApiSource.UploadNews"
+      @change="handleChange"
+      :showUploadList="false"
+    >
+      <a-button type="primary">
+        {{ t('component.upload.imgUpload') }}
+      </a-button>
+    </Upload>
   </div>
 </template>
 <script lang="ts">
@@ -31,11 +46,10 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useGlobSetting } from '/@/hooks/setting';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { Slider, Modal } from 'ant-design-vue';
 
   export default defineComponent({
     name: 'TinymceImageUpload',
-    components: { Upload, Slider, Modal },
+    components: { Upload },
     props: {
       fullscreen: {
         type: Boolean,

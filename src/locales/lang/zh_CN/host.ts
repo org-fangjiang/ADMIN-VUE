@@ -137,6 +137,8 @@ export default {
   description: '描述',
   lookTime: '项目被浏览次数',
   orderNum: '排序',
+  hLayoutsById: '户型',
+  firstImg: '项目首图',
   action: {
     add: '添加',
     update: '更新',
