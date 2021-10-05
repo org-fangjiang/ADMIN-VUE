@@ -54,6 +54,15 @@
         >
           {{ t('host.build.addLayout') }}
         </Button>
+        <Button
+          :class="prefixCls"
+          v-auth="buildConst._PERMS.ADD"
+          type="link"
+          size="small"
+          @click="setLicense(line)"
+        >
+          {{ t('host.action.setLicense') }}
+        </Button>
       </template>
     </Table>
     <Modal
@@ -81,6 +90,12 @@
         :selected="drawerParam.selected"
         @setBuildLayout="setBuildLayout"
       />
+      <FLicense
+        v-if="drawerParam.state === '2'"
+        :projectId="props.id"
+        :buildId="drawerParam.id"
+        @setBuildLicense="setBuildLicense"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -89,7 +104,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
@@ -102,6 +117,7 @@
   import { addBuildLayout, deleteBuild, getBuilds, reEnableBuild } from '/@/api/host/build/build';
   import BuildForm from './BuildForm.vue';
   import FLayout from '/@/components/FLayout';
+  import FLicense from '/@/components/FLicense';
   import { BuildLayoutBean } from '/@/api/host/build/model/BuildLayoutEntity';
 
   export default defineComponent({
@@ -114,6 +130,7 @@
       Loading,
       BuildForm,
       FLayout,
+      FLicense,
     },
     props: {
       id: {
@@ -271,6 +288,26 @@
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.update');
       };
+      //打开许可证设置
+      const setLicense = async (line) => {
+        drawerParam.visible = true;
+        drawerParam.state = '2';
+        drawerParam.id = line.id;
+        drawerParam.title = t('host.action.setLicense');
+      };
+
+      const formState: UnwrapRef<BuildModel> = reactive({
+        projectId: props.id || '',
+      });
+      //设置许可证
+      const setBuildLicense = async () => {
+        // formState.licenseId = value.value;
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        const result = await getList();
+        processList(result);
+      };
+
       //打开设置户型
       const setLayout = async (line) => {
         drawerParam.visible = true;
@@ -347,6 +384,9 @@
         props,
         setLayout,
         setBuildLayout,
+        setLicense,
+        setBuildLicense,
+        formState,
       };
     },
   });
