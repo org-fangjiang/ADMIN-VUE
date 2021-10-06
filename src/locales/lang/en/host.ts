@@ -245,4 +245,9 @@ export default {
     author: 'author',
     projectId: 'projectId',
   },
+  recommend: {
+    cityId: 'cityId',
+    projectId: 'projectId',
+    projectName: 'ProjectName',
+  },
 };

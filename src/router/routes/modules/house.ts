@@ -32,6 +32,15 @@ const house: AppRouteModule = {
         roles: ['/house/news'],
       },
     },
+    {
+      path: 'recommend',
+      name: 'recommend',
+      component: () => import('/@/views/house/recommend/index.vue'),
+      meta: {
+        title: t('routes.house.recommend'),
+        roles: ['/house/recommend'],
+      },
+    },
   ],
 };
 

@@ -246,4 +246,9 @@ export default {
     author: '作者',
     projectId: '项目',
   },
+  recommend: {
+    cityId: '市',
+    projectId: '项目编号',
+    projectName: '项目名称',
+  },
 };

@@ -14,6 +14,10 @@ const house: MenuModule = {
         path: 'news',
         name: t('routes.house.news'),
       },
+      {
+        path: 'recommend',
+        name: t('routes.house.recommend'),
+      },
     ],
   },
 };
