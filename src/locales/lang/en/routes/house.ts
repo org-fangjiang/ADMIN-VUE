@@ -5,4 +5,5 @@ export default {
   recommend: 'recommend',
   estateCompany: 'estateCompany',
   brand: 'Brand',
+  developer: 'Developer',
 };

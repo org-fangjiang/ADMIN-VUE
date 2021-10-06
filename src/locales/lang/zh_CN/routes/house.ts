@@ -5,4 +5,5 @@ export default {
   recommend: '热门楼盘',
   estateCompany: '物业公司管理',
   brand: '品牌商管理',
+  developer: '开发商管理',
 };
