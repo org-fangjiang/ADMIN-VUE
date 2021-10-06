@@ -3,4 +3,5 @@ export default {
   property: 'Property',
   news: 'News',
   recommend: 'recommend',
+  estateCompany: 'estateCompany',
 };

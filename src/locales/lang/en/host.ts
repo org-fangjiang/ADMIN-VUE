@@ -150,6 +150,7 @@ export default {
   orderNum: 'orderNum',
   hLayoutsById: 'hLayoutsById',
   firstImg: 'firstImg',
+  link: 'link',
   action: {
     add: 'add',
     update: 'update',

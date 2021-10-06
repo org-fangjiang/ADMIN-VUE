@@ -18,6 +18,10 @@ const house: MenuModule = {
         path: 'recommend',
         name: t('routes.house.recommend'),
       },
+      {
+        path: 'estateCompany',
+        name: t('routes.house.estateCompany'),
+      },
     ],
   },
 };

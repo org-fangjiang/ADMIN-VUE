@@ -3,4 +3,5 @@ export default {
   property: '楼盘管理',
   news: '文章管理',
   recommend: '热门楼盘',
+  estateCompany: '物业公司管理',
 };

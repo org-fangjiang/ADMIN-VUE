@@ -150,6 +150,7 @@ export default {
   orderNum: '排序',
   hLayoutsById: '户型',
   firstImg: '项目首图',
+  link: '链接',
   action: {
     add: '添加',
     update: '更新',

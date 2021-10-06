@@ -32,7 +32,7 @@ export const _EstateCompanyConst = {
     UPDATE: 'estateCompany:update',
     DELETE: 'estateCompany:delete',
   },
-  _UPDATE_fIELDS: ['name', 'description', 'link'],
+  _UPDATE_FIELDS: ['name', 'description', 'link'],
   _RULES: {
     name: [{ required: true, message: t('host.name'), trigger: 'blur' }],
   },
@@ -66,5 +66,11 @@ export const _EstateCompanyColumns = [
     dataIndex: 'state',
     ellipsis: 'true',
     slots: { customRender: 'state' },
+  },
+  {
+    title: t('host.operation'),
+    key: 'operation',
+    ellipsis: 'true',
+    slots: { customRender: 'operation' },
   },
 ];
