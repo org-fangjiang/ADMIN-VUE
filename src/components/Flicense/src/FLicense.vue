@@ -59,7 +59,7 @@
       });
 
       const change = (value) => {
-        formState.licenseId = value.value;
+        formState.licenseId = value.label;
         formState.projectId = props.projectId;
         formState.id = props.buildId;
       };
