@@ -50,6 +50,15 @@ const house: AppRouteModule = {
         roles: ['/house/estateCompany'],
       },
     },
+    {
+      path: 'brand',
+      name: 'brand',
+      component: () => import('/@/views/house/brand/index.vue'),
+      meta: {
+        title: t('routes.house.brand'),
+        roles: ['/house/brand'],
+      },
+    },
   ],
 };
 

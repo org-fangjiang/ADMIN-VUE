@@ -22,6 +22,10 @@ const house: MenuModule = {
         path: 'estateCompany',
         name: t('routes.house.estateCompany'),
       },
+      {
+        path: 'brand',
+        name: t('routes.house.brand'),
+      },
     ],
   },
 };
