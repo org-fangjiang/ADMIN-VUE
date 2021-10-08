@@ -49,12 +49,12 @@
           />
         </FormItem>
         <FormItem ref="property" :label="t('host.property')" name="property">
-          <Input
+          <InputNumber
             :disabled="isUpdate && !updateFields.includes('property')"
             v-model:value="formState.property"
-            type="number"
+            :type="'number'"
             autoComplete="off"
-          />
+          />&nbsp;&nbsp;年
         </FormItem>
         <FormItem ref="decorationType" :label="t('host.decorationType')" name="decorationType">
           <Select
@@ -92,6 +92,7 @@
             :disabled="isUpdate && !updateFields.includes('locationScore')"
             v-model:value="formState.locationScore"
             autoComplete="off"
+            placeholder="1.0～5.0"
           />
         </FormItem>
         <FormItem ref="educationScore" :label="t('host.educationScore')" name="educationScore">
@@ -99,6 +100,7 @@
             :disabled="isUpdate && !updateFields.includes('educationScore')"
             v-model:value="formState.educationScore"
             autoComplete="off"
+            placeholder="1.0～5.0"
           />
         </FormItem>
         <FormItem ref="medicalScore" :label="t('host.medicalScore')" name="medicalScore">
@@ -106,6 +108,7 @@
             :disabled="isUpdate && !updateFields.includes('medicalScore')"
             v-model:value="formState.medicalScore"
             autoComplete="off"
+            placeholder="1.0～5.0"
           />
         </FormItem>
         <FormItem ref="trafficScore" :label="t('host.trafficScore')" name="trafficScore">
@@ -113,6 +116,7 @@
             :disabled="isUpdate && !updateFields.includes('trafficScore')"
             v-model:value="formState.trafficScore"
             autoComplete="off"
+            placeholder="1.0～5.0"
           />
         </FormItem>
         <FormItem ref="matchingScore" :label="t('host.matchingScore')" name="matchingScore">
@@ -120,6 +124,7 @@
             :disabled="isUpdate && !updateFields.includes('matchingScore')"
             v-model:value="formState.matchingScore"
             autoComplete="off"
+            placeholder="1.0～5.0"
           />
         </FormItem>
         <FormItem ref="address" :label="t('host.address')" name="address">
@@ -193,6 +198,7 @@
             :disabled="isUpdate && !updateFields.includes('price')"
             v-model:value="formState.price"
             autoComplete="off"
+            suffix="元/m²"
           />
         </FormItem>
         <FormItem ref="priceDays" :label="t('host.priceDays')" name="priceDays">
@@ -200,6 +206,7 @@
             :disabled="isUpdate && !updateFields.includes('priceDays')"
             v-model:value="formState.priceDays"
             autoComplete="off"
+            suffix="天"
           />
         </FormItem>
         <FormItem ref="lowTotalPrice" :label="t('host.lowTotalPrice')" name="lowTotalPrice">
@@ -207,6 +214,7 @@
             :disabled="isUpdate && !updateFields.includes('lowTotalPrice')"
             v-model:value="formState.lowTotalPrice"
             autoComplete="off"
+            suffix="万元/套"
           />
         </FormItem>
 
@@ -215,6 +223,7 @@
             :disabled="isUpdate && !updateFields.includes('highTotalPrice')"
             v-model:value="formState.highTotalPrice"
             autoComplete="off"
+            suffix="万元/套"
           />
         </FormItem>
 
@@ -229,7 +238,7 @@
             autoComplete="off"
           />
         </FormItem>
-        <FormItem ref="updatePriceTime" :label="t('host.updatePriceTime')" name="updatePriceTime">
+        <!-- <FormItem ref="updatePriceTime" :label="t('host.updatePriceTime')" name="updatePriceTime">
           <DatePicker
             showTime
             :disabled="isUpdate && !updateFields.includes('updatePriceTime')"
@@ -237,7 +246,7 @@
             :value="formState.updatePriceTime"
             @change="updatePriceTimechange"
           />
-        </FormItem>
+        </FormItem> -->
         <FormItem ref="loanType" :label="t('host.loanType')" name="loanType">
           <Select
             ref="select"
@@ -254,6 +263,7 @@
             :disabled="isUpdate && !updateFields.includes('landArea')"
             v-model:value="formState.landArea"
             autoComplete="off"
+            suffix="m²"
           />
         </FormItem>
         <FormItem ref="buildArea" :label="t('host.buildArea')" name="buildArea">
@@ -261,6 +271,7 @@
             :disabled="isUpdate && !updateFields.includes('buildArea')"
             v-model:value="formState.buildArea"
             autoComplete="off"
+            suffix="m²"
           />
         </FormItem>
         <FormItem ref="volumeRate" :label="t('host.volumeRate')" name="volumeRate">
@@ -275,6 +286,7 @@
             :disabled="isUpdate && !updateFields.includes('greenRate')"
             v-model:value="formState.greenRate"
             autoComplete="off"
+            suffix="%"
           />
         </FormItem>
         <FormItem ref="parking" :label="t('host.parking')" name="parking">
@@ -285,17 +297,18 @@
           />
         </FormItem>
         <FormItem ref="buildingTotal" :label="t('host.buildingTotal')" name="buildingTotal">
-          <Input
+          <InputNumber
             :disabled="isUpdate && !updateFields.includes('buildingTotal')"
             v-model:value="formState.buildingTotal"
             autoComplete="off"
-          />
+          />&nbsp;&nbsp;栋
         </FormItem>
         <FormItem ref="houseTotal" :label="t('host.houseTotal')" name="houseTotal">
           <Input
             :disabled="isUpdate && !updateFields.includes('houseTotal')"
             v-model:value="formState.houseTotal"
             autoComplete="off"
+            suffix="户"
           />
         </FormItem>
         <FormItem ref="elevatorInfo" :label="t('host.elevatorInfo')" name="elevatorInfo">
@@ -305,11 +318,23 @@
             autoComplete="off"
           />
         </FormItem>
-        <FormItem ref="estateCompany" :label="t('host.estateCompany')" name="estateCompany">
-          <Input
-            :disabled="isUpdate && !updateFields.includes('estateCompany')"
-            v-model:value="formState.estateCompany"
-            autoComplete="off"
+        <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
+          <FBrand :id="formState.brandId" @setProjectBrand="setProjectBrand" />
+        </FormItem>
+        <FormItem
+          ref="hDeveloperByDeveloperId"
+          :label="t('host.hDeveloperByDeveloperId')"
+          name="hDeveloperByDeveloperId"
+        >
+          <FDeveloper
+            :id="formState.hDeveloperByDeveloperId"
+            @setProjectDevelop="setProjectDevelop"
+          />
+        </FormItem>
+        <FormItem ref="estateCompanyById" :label="t('host.estateCompany')" name="estateCompanyById">
+          <FEstateCompany
+            :id="formState.estateCompany"
+            @setProjectEstateCompany="setProjectEstateCompany"
           />
         </FormItem>
         <FormItem ref="estatePrice" :label="t('host.estatePrice')" name="estatePrice">
@@ -317,6 +342,7 @@
             :disabled="isUpdate && !updateFields.includes('estatePrice')"
             v-model:value="formState.estatePrice"
             autoComplete="off"
+            suffix="元/m²"
           />
         </FormItem>
         <FormItem
@@ -435,12 +461,14 @@
             type="number"
             v-if="formState.commissionMode === '1'"
             v-model:value="formState.commission"
+            suffix="元/套"
           />
           <Slider
             :disabled="isUpdate && !updateFields.includes('commission')"
             v-if="formState.commissionMode === '2'"
             v-model:value="formState.commission"
             autoComplete="off"
+            :marks="marks"
           />
         </FormItem>
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
@@ -481,6 +509,7 @@
     FormItem,
     Button,
     Input,
+    InputNumber,
     Select,
     RadioGroup,
     Radio,
@@ -497,6 +526,9 @@
   import { Persistent } from '/@/utils/cache/persistent';
   import { HOUSE_PROJECT } from '/@/enums/cacheEnum';
   import { FGroup } from '/@/components/FGroup';
+  import FDeveloper from '/@/components/FDeveloper';
+  import FBrand from '/@/components/FBrand';
+  import FEstateCompany from '/@/components/FEstateCompany';
 
   export default defineComponent({
     name: 'ProjectForm',
@@ -506,6 +538,7 @@
       FormItem,
       Button,
       Input,
+      InputNumber,
       Select,
       RadioGroup,
       Radio,
@@ -519,6 +552,9 @@
       FCity,
       FArea,
       FGroup,
+      FDeveloper,
+      FBrand,
+      FEstateCompany,
     },
     props: {
       id: {
@@ -537,12 +573,20 @@
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
       const formRef = ref();
+
+      const marks = ref<Record<number, any>>({
+        0: '0%',
+        100: '100%',
+      });
+
       const rules = reactive(_HostConst._RULES);
       const hostConst = ref(_HostConst);
 
       const userStore = useUserStore();
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       let provinceId = ref<string>(userStore.getUserInfo.companyProvinceId || '');
+
+      const formState: UnwrapRef<HostModel> = reactive(Persistent.getLocal(HOUSE_PROJECT) || {});
 
       const changeLabels = async (e) => {
         if (e && e.length > 0) {
@@ -551,6 +595,30 @@
             formState.labels = item.key + ',' + formState.labels;
           });
         }
+      };
+
+      const setProjectBrand = async (value) => {
+        if (!formState.brandId) {
+          formState.brandId = {};
+        }
+        formState.brandId.id = value.value;
+        formState.brandId.name = value.label;
+      };
+
+      const setProjectDevelop = async (value) => {
+        if (!formState.hDeveloperByDeveloperId) {
+          formState.hDeveloperByDeveloperId = {};
+        }
+        formState.hDeveloperByDeveloperId.id = value.value;
+        formState.hDeveloperByDeveloperId.name = value.label;
+      };
+
+      const setProjectEstateCompany = async (value) => {
+        if (!formState.estateCompanyById) {
+          formState.estateCompanyById = {};
+        }
+        formState.estateCompanyById.id = value.value;
+        formState.estateCompanyById.name = value.label;
       };
 
       const typeChange = async (e) => {
@@ -612,7 +680,6 @@
         formState.commissionMode = e;
       };
 
-      const formState: UnwrapRef<HostModel> = reactive(Persistent.getLocal(HOUSE_PROJECT) || {});
       watch(
         () => formState,
         (_v1, _v2) => {
@@ -796,6 +863,10 @@
         searchText,
         area,
         changeLabels,
+        setProjectDevelop,
+        setProjectBrand,
+        setProjectEstateCompany,
+        marks,
       };
     },
   });
