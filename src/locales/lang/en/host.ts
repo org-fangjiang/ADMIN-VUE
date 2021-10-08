@@ -151,6 +151,8 @@ export default {
   hLayoutsById: 'hLayoutsById',
   firstImg: 'firstImg',
   link: 'link',
+  brandId: 'brandId',
+  hDeveloperByDeveloperId: 'hDeveloperByDeveloperId',
   action: {
     add: 'add',
     update: 'update',

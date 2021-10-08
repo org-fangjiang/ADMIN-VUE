@@ -329,7 +329,7 @@
           />
         </FormItem>
         <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
-          <FBrand :id="formState.brandId" @setProjectBrand="setProjectBrand" />
+          <FBrand :brandId="formState.brandId.id" @setProjectBrand="setProjectBrand" />
         </FormItem>
         <FormItem
           ref="hDeveloperByDeveloperId"
@@ -337,13 +337,13 @@
           name="hDeveloperByDeveloperId"
         >
           <FDeveloper
-            :id="formState.hDeveloperByDeveloperId"
+            :developerId="formState.hDeveloperByDeveloperId?.id"
             @setProjectDevelop="setProjectDevelop"
           />
         </FormItem>
         <FormItem ref="estateCompanyById" :label="t('host.estateCompany')" name="estateCompanyById">
           <FEstateCompany
-            :id="formState.estateCompany"
+            :estateCompany="formState.estateCompany"
             @setProjectEstateCompany="setProjectEstateCompany"
           />
         </FormItem>
@@ -608,27 +608,16 @@
       };
 
       const setProjectBrand = async (value) => {
-        if (!formState.brandId) {
-          formState.brandId = {};
-        }
-        formState.brandId.id = value.value;
-        formState.brandId.name = value.label;
+        formState.brandIdS = value.value;
       };
 
       const setProjectDevelop = async (value) => {
-        if (!formState.hDeveloperByDeveloperId) {
-          formState.hDeveloperByDeveloperId = {};
-        }
-        formState.hDeveloperByDeveloperId.id = value.value;
-        formState.hDeveloperByDeveloperId.name = value.label;
+        debugger;
+        formState.developerId = value.value;
       };
 
       const setProjectEstateCompany = async (value) => {
-        if (!formState.estateCompanyById) {
-          formState.estateCompanyById = {};
-        }
-        formState.estateCompanyById.id = value.value;
-        formState.estateCompanyById.name = value.label;
+        formState.estateCompany = value.value;
       };
 
       const typeChange = async (e) => {

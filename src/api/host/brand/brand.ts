@@ -91,7 +91,7 @@ export function getBrand(id: string, mode: ErrorMessageMode = 'modal') {
 
 export function getBrands(
   condition: BrandCondition,
-  page: PageParam,
+  page?: PageParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();

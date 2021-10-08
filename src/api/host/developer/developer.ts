@@ -91,7 +91,7 @@ export function getDeveloper(id: string, mode: ErrorMessageMode = 'modal') {
 
 export function getDevelopers(
   condition: DeveloperCondition,
-  page: PageParam,
+  page?: PageParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();

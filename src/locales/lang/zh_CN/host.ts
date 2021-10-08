@@ -115,7 +115,7 @@ export default {
   operation: '操作',
   aliasName: '别名',
   labels: '标签',
-  decorationStandard: '元/平方',
+  decorationStandard: '装修标准',
   getLandTime: '拿地时间',
   locationScore: '位置评分',
   educationScore: '教育评分',
@@ -151,6 +151,8 @@ export default {
   hLayoutsById: '户型',
   firstImg: '项目首图',
   link: '链接',
+  brandId: '品牌商',
+  hDeveloperByDeveloperId: '开发商',
   action: {
     add: '添加',
     update: '更新',

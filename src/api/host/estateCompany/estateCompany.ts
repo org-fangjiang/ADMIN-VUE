@@ -97,7 +97,7 @@ export function getEstateCompany(id: string, mode: ErrorMessageMode = 'modal') {
 
 export function getEstateCompanies(
   condition: EstateCompanyCondition,
-  page: PageParam,
+  page?: PageParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();

@@ -21,6 +21,8 @@ export interface HostModel {
   type?: string;
   buildType?: string;
   property?: number;
+  brandIdS?: string;
+  developerId?: string;
   decorationType?: string;
   decorationStandard?: number;
   getLandTime?: string;
