@@ -88,7 +88,9 @@
           />
         </FormItem>
         <FormItem ref="locationScore" :label="t('host.locationScore')" name="locationScore">
-          <Input
+          <InputNumber
+            min="1.0"
+            max="5.0"
             :disabled="isUpdate && !updateFields.includes('locationScore')"
             v-model:value="formState.locationScore"
             autoComplete="off"
@@ -96,7 +98,9 @@
           />
         </FormItem>
         <FormItem ref="educationScore" :label="t('host.educationScore')" name="educationScore">
-          <Input
+          <InputNumber
+            min="1.0"
+            max="5.0"
             :disabled="isUpdate && !updateFields.includes('educationScore')"
             v-model:value="formState.educationScore"
             autoComplete="off"
@@ -104,7 +108,9 @@
           />
         </FormItem>
         <FormItem ref="medicalScore" :label="t('host.medicalScore')" name="medicalScore">
-          <Input
+          <InputNumber
+            min="1.0"
+            max="5.0"
             :disabled="isUpdate && !updateFields.includes('medicalScore')"
             v-model:value="formState.medicalScore"
             autoComplete="off"
@@ -112,7 +118,9 @@
           />
         </FormItem>
         <FormItem ref="trafficScore" :label="t('host.trafficScore')" name="trafficScore">
-          <Input
+          <InputNumber
+            min="1.0"
+            max="5.0"
             :disabled="isUpdate && !updateFields.includes('trafficScore')"
             v-model:value="formState.trafficScore"
             autoComplete="off"
@@ -120,7 +128,9 @@
           />
         </FormItem>
         <FormItem ref="matchingScore" :label="t('host.matchingScore')" name="matchingScore">
-          <Input
+          <InputNumber
+            min="1.0"
+            max="5.0"
             :disabled="isUpdate && !updateFields.includes('matchingScore')"
             v-model:value="formState.matchingScore"
             autoComplete="off"
