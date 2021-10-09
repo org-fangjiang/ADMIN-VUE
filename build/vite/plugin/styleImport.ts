@@ -13,6 +13,18 @@ export function configStyleImportPlugin(isBuild: boolean) {
         libraryName: 'ant-design-vue',
         esModule: true,
         resolveStyle: (name) => {
+          const item = [
+            'input-search',
+            'menu-item',
+            'form-item',
+            'input-password',
+            'textarea',
+            'radio-group',
+            'select-option',
+          ];
+          if (item.includes(name)) {
+            return '';
+          }
           return `ant-design-vue/es/${name}/style/index`;
         },
       },
