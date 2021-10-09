@@ -17,7 +17,6 @@
       <Spin size="small" />
     </template>
   </Select>
-  {{ id }}
 </template>
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref, watch } from 'vue';

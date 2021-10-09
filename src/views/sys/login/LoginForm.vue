@@ -138,8 +138,8 @@
       const rememberMe = ref(false);
 
       const formData = reactive({
-        account: '15612077790',
-        password: '123456',
+        account: '',
+        password: '',
         code: '',
         key: '',
         codeUrl: '',
