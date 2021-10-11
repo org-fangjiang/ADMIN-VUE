@@ -178,9 +178,10 @@
             try {
               // formState.sysRoleBeans?.push({ id: formState.roleId, roleName: formState.roleName });
               // formState.roleId = '';
-              const { content } = await addUser(formState);
+              // const { content } =
+              await addUser(formState);
               success(t('model.user.addUser'), t('model.user.success'));
-              Object.assign(formState, content);
+              // Object.assign(formState, content);
             } catch (error) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {

@@ -217,9 +217,10 @@
           .then(async () => {
             loading.value = true;
             try {
-              const { content } = await updateUserInfo({ id: props.id || '' });
+              // const { content } =
+              await updateUserInfo({ id: props.id || '' });
               success(t('model.user.updateUser'), t('model.user.success'));
-              Object.assign(formState, content);
+              // Object.assign(formState, content);
             } catch (error) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
