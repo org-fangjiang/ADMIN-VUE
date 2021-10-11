@@ -23,6 +23,22 @@
     >
       <ProjectForm @projectInfo="projectInfo" />
     </Modal>
+    <Modal
+      title="设置图片alt"
+      :visible="isShow"
+      ok-text="保存"
+      cancel-text="取消"
+      @ok="setAltText"
+      @cancel="onCloseImg"
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :destroyOnClose="true"
+    >
+      <Input
+        v-model:value="curAlt"
+        style="width: 60%; height: 128; margin-left: 20%; margin-bottom: 16px"
+        placeholder="请输入图片alt"
+      />
+    </Modal>
   </div>
 </template>
 
@@ -76,13 +92,14 @@
   import { bindHandlers } from './helper';
   import { onMountedOrActivated } from '/@/hooks/core/onMountedOrActivated';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { useMessage } from '/@/hooks/web/useMessage';
   import { isNumber } from '/@/utils/is';
   import { useLocale } from '/@/locales/useLocale';
   import { useAppStore } from '/@/store/modules/app';
   import { ApiSource } from '/@/api/host/source/source';
   import ImgUpload from './ImgUpload.vue';
   import ProjectForm from './ProjectForm.vue';
-  import { Modal } from 'ant-design-vue';
+  import { Modal, Input } from 'ant-design-vue';
 
   const tinymceProps = {
     provinceId: {
@@ -130,18 +147,19 @@
 
   export default defineComponent({
     name: 'FTinymce',
-    components: { ImgUpload, ProjectForm, Modal },
+    components: { ImgUpload, ProjectForm, Modal, Input },
     inheritAttrs: false,
     props: tinymceProps,
     emits: ['change', 'update:modelValue'],
     setup(props, { emit, attrs }) {
-      debugger;
+      const { notification, createErrorModal } = useMessage();
       const editorRef = ref();
       const fullscreen = ref(false);
       const tinymceId = ref<string>(buildShortUUID('tiny-vue'));
       const elRef = ref<Nullable<HTMLElement>>(null);
 
       const { prefixCls } = useDesign('tinymce-container');
+      const curAlt = ref<string>('');
 
       const appStore = useAppStore();
 
@@ -171,14 +189,17 @@
       const imgRef = ref('');
 
       //上传图片
-      function handleImageUploading(name: string, data: string) {
+      function handleImageUploading(name: string) {
         const editor = unref(editorRef);
         if (!editor) {
           return;
         }
-        const content = editor?.getContent() ?? '';
-        setValue(editor, `${content}\n${getUploadingImgName(name)}`);
-        setValue(imgRef, data);
+        // const content = editor?.getContent() ?? '';
+        const element = editor.getDoc().createElement('div');
+        element.innerText = `${getUploadingImgName(name)}`;
+        editor.selection.getRng().insertNode(element);
+        // setValue(editor, `${content}\n${getUploadingImgName(name)}`);
+        // setValue(imgRef, data);
       }
       function handleDone(name: string, url: string) {
         const editor = unref(editorRef);
@@ -186,7 +207,6 @@
           return;
         }
         const content = editor?.getContent() ?? '';
-        debugger;
         const val =
           content?.replace(getUploadingImgName(name), `<img style="width:30%" src="${url}"/>`) ??
           '';
@@ -239,6 +259,14 @@
               tooltip: '缩小图片',
               onAction: () => {
                 zoomOut();
+              },
+            });
+
+            editor.ui.registry.addButton('setImgAlt', {
+              icon: 'comment-add',
+              tooltip: '设置图片alt',
+              onAction: () => {
+                setImgAlt();
               },
             });
           },
@@ -294,15 +322,33 @@
         isOk.value = false;
       };
 
+      let isShow = ref<boolean>(false);
+      const onCloseImg = () => {
+        isShow.value = false;
+      };
+
       function addProject() {
         isOk.value = true;
       }
 
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title,
+          content: content,
+        });
+      };
+
       const projectInfo = async (value) => {
-        console.log('value', value);
         const editor = unref(editorRef);
         const element = editor.getDoc().createElement('div');
-        debugger;
         const html = `<div style="width:75%;margin:auto;background-color:#fff;margin-top:16px">
           <div style="width:100%;height:192px;margin:auto;">
             <div style="display:flex;flex-direction:row;width:100%;height:100%">
@@ -338,10 +384,13 @@
       };
 
       function zoomIn() {
-        debugger;
-        console.log('zoom-in');
         const editor = unref(editorRef);
-        let curWidth: string = editor.selection.getNode().style.width;
+        const element = editor.selection.getNode();
+        if (element.tagName !== 'IMG') {
+          failed('设置图片alt', '未选择的图片标签');
+          return;
+        }
+        let curWidth: string = element.style.width;
         if (!curWidth || curWidth === '' || !curWidth.endsWith('%')) {
           curWidth = '30%';
         }
@@ -353,10 +402,13 @@
       }
 
       function zoomOut() {
-        debugger;
-        console.log('zoom-out');
         const editor = unref(editorRef);
-        let curWidth: string = editor.selection.getNode().style.width;
+        const element = editor.selection.getNode();
+        if (element.tagName !== 'IMG') {
+          failed('设置图片alt', '未选择的图片标签');
+          return;
+        }
+        let curWidth: string = element.style.width;
         if (!curWidth || curWidth === '' || !curWidth.endsWith('%')) {
           curWidth = '30%';
         }
@@ -368,6 +420,28 @@
           const result = Number(curWidth) - 5;
           editor.selection.getNode().style.width = result + '%';
         }
+      }
+
+      function setImgAlt() {
+        const editor = unref(editorRef);
+        const element = editor.selection.getNode();
+        if (element.tagName !== 'IMG') {
+          failed('设置图片alt', '未选择的图片标签');
+          return;
+        }
+        curAlt.value = element.alt;
+        isShow.value = true;
+      }
+      function setAltText() {
+        debugger;
+        const editor = unref(editorRef);
+        const element = editor.selection.getNode();
+        if (element.tagName !== 'IMG') {
+          failed('设置图片alt', '未选择的图片标签');
+          return;
+        }
+        element.alt = curAlt.value;
+        success('设置图片alt', '设置alt成功');
       }
 
       function initEditor() {
@@ -449,8 +523,12 @@
         handleDone,
         imgRef,
         onClose,
+        isShow,
+        onCloseImg,
+        setAltText,
         isOk,
         projectInfo,
+        curAlt,
       };
     },
   });
