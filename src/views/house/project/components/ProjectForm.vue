@@ -89,8 +89,8 @@
         </FormItem>
         <FormItem ref="locationScore" :label="t('host.locationScore')" name="locationScore">
           <InputNumber
-            min="1.0"
-            max="5.0"
+            :min="1.0"
+            :max="5.0"
             :disabled="isUpdate && !updateFields.includes('locationScore')"
             v-model:value="formState.locationScore"
             autoComplete="off"
@@ -99,8 +99,8 @@
         </FormItem>
         <FormItem ref="educationScore" :label="t('host.educationScore')" name="educationScore">
           <InputNumber
-            min="1.0"
-            max="5.0"
+            :min="1.0"
+            :max="5.0"
             :disabled="isUpdate && !updateFields.includes('educationScore')"
             v-model:value="formState.educationScore"
             autoComplete="off"
@@ -109,8 +109,8 @@
         </FormItem>
         <FormItem ref="medicalScore" :label="t('host.medicalScore')" name="medicalScore">
           <InputNumber
-            min="1.0"
-            max="5.0"
+            :min="1.0"
+            :max="5.0"
             :disabled="isUpdate && !updateFields.includes('medicalScore')"
             v-model:value="formState.medicalScore"
             autoComplete="off"
@@ -119,8 +119,8 @@
         </FormItem>
         <FormItem ref="trafficScore" :label="t('host.trafficScore')" name="trafficScore">
           <InputNumber
-            min="1.0"
-            max="5.0"
+            :min="1.0"
+            :max="5.0"
             :disabled="isUpdate && !updateFields.includes('trafficScore')"
             v-model:value="formState.trafficScore"
             autoComplete="off"
@@ -129,8 +129,8 @@
         </FormItem>
         <FormItem ref="matchingScore" :label="t('host.matchingScore')" name="matchingScore">
           <InputNumber
-            min="1.0"
-            max="5.0"
+            :min="1.0"
+            :max="5.0"
             :disabled="isUpdate && !updateFields.includes('matchingScore')"
             v-model:value="formState.matchingScore"
             autoComplete="off"
@@ -260,6 +260,7 @@
         <FormItem ref="loanType" :label="t('host.loanType')" name="loanType">
           <Select
             ref="select"
+            mode="multiple"
             :allowClear="true"
             v-model:value="formState.loanType"
             style="width: 120px"
@@ -329,7 +330,7 @@
           />
         </FormItem>
         <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
-          <FBrand :brandId="formState.brandId.id" @setProjectBrand="setProjectBrand" />
+          <FBrand :brandId="formState.brandId?.id || ''" @setProjectBrand="setProjectBrand" />
         </FormItem>
         <FormItem
           ref="hDeveloperByDeveloperId"
@@ -337,13 +338,13 @@
           name="hDeveloperByDeveloperId"
         >
           <FDeveloper
-            :developerId="formState.hDeveloperByDeveloperId?.id"
+            :developerId="formState.hDeveloperByDeveloperId?.id || ''"
             @setProjectDevelop="setProjectDevelop"
           />
         </FormItem>
         <FormItem ref="estateCompanyById" :label="t('host.estateCompany')" name="estateCompanyById">
           <FEstateCompany
-            :estateCompany="formState.estateCompany"
+            :estateCompany="formState.estateCompany || ''"
             @setProjectEstateCompany="setProjectEstateCompany"
           />
         </FormItem>
@@ -466,16 +467,16 @@
           </RadioGroup>
         </FormItem>
         <FormItem ref="commission" :label="t('host.commission')" name="commission">
-          <Input
+          <InputNumber
             :disabled="isUpdate && !updateFields.includes('commission')"
             type="number"
-            v-if="formState.commissionMode === '1'"
+            v-show="formState.commissionMode === '1'"
             v-model:value="formState.commission"
-            suffix="元/套"
           />
+          <span v-show="formState.commissionMode === '1'">元/套</span>
           <Slider
             :disabled="isUpdate && !updateFields.includes('commission')"
-            v-if="formState.commissionMode === '2'"
+            v-show="formState.commissionMode === '2'"
             v-model:value="formState.commission"
             autoComplete="off"
             :marks="marks"
@@ -612,7 +613,6 @@
       };
 
       const setProjectDevelop = async (value) => {
-        debugger;
         formState.developerId = value.value;
       };
 
@@ -677,6 +677,7 @@
 
       const commissionModeChange = async (e) => {
         formState.commissionMode = e;
+        formState.commission = Number(formState.commission);
       };
 
       watch(
@@ -699,8 +700,8 @@
               try {
                 const { content } = await updateProject(formState);
                 success(t('host.action.update'), t('host.action.success'));
-                Persistent.removeLocal(HOUSE_PROJECT, true);
                 Object.assign(formState, content);
+                Persistent.removeLocal(HOUSE_PROJECT, true);
               } catch (error) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
@@ -711,8 +712,8 @@
               try {
                 const { content } = await addProject(formState);
                 success(t('host.action.add'), t('host.action.success'));
-                Persistent.removeLocal(HOUSE_PROJECT, true);
                 Object.assign(formState, content);
+                Persistent.removeLocal(HOUSE_PROJECT, true);
               } catch (error) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
@@ -771,6 +772,7 @@
         } else {
           // 如果是添加时，默认设置为百分比
           formState.commissionMode = '0';
+          formState.commission = 0;
         }
         if (!formState.sysCityByCityId) {
           formState.sysCityByCityId = {};
