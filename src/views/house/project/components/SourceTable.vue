@@ -2,7 +2,13 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
     <Button v-auth="sourceConst._PERMS.ADD" @click="addSource">{{ t('host.action.add') }}</Button>
-    <Table :columns="ColumnsHost" :data-source="list" rowKey="id" :pagination="false">
+    <Table
+      :columns="ColumnsHost"
+      :data-source="list"
+      rowKey="id"
+      :pagination="pagination"
+      @change="handleTableChange"
+    >
       <template #address="{ text: address }">
         <Image v-if="sort !== '6' && sort !== '7'" :src="address" width="100px" />
         <div v-else>{{ address }}</div>
@@ -94,9 +100,9 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BaseListResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -155,6 +161,22 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const source: SourceModel[] = [];
+      const pageParam: PageParam = reactive({
+        pageNum: 1,
+        pageSize: 10,
+      });
+      const total = ref<number>(0);
+      const pagination = computed(() => ({
+        total: total,
+        current: pageParam.pageNum,
+        pageSize: pageParam.pageSize,
+      }));
+      const handleTableChange = async (pag: any) => {
+        pageParam.pageSize = pag!.pageSize!;
+        pageParam.pageNum = pag?.current;
+        const result = await getList();
+        processListByLine(result);
+      };
 
       const options = ref<Option[]>([]);
       // 筛选条件
@@ -186,9 +208,9 @@
       // 获取list
       const getList = async () => {
         loading.value = true;
-        let result: BaseListResult<SourceModel> | undefined;
+        let result: BasePageResult<SourceModel> | undefined;
         try {
-          result = await getResources(condition);
+          result = await getResources(condition, pageParam);
         } catch (error) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -205,13 +227,14 @@
         if (!result) {
           return;
         }
-        const { content } = result;
+        const { content, page } = result;
         list.splice(0);
         if (content) {
           content.forEach((line) => {
             list.push(line);
           });
         }
+        total.value = page.totalElements;
       }
 
       onMounted(async () => {
@@ -265,8 +288,8 @@
           loading.value = true;
           await setSandImg(line.id, props.id || '');
           success(t('host.action.setSandImg'), t('host.action.success'));
-          const result = await getList();
-          processListByLine(result);
+          // const result = await getList();
+          // processListByLine(result);
         } catch (error) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
@@ -279,8 +302,8 @@
           loading.value = true;
           await setFirstImg(line.id, props.id || '');
           success(t('host.action.setFirstImg'), t('host.action.success'));
-          const result = await getList();
-          processListByLine(result);
+          // const result = await getList();
+          // processListByLine(result);
         } catch (error) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
@@ -314,6 +337,8 @@
         loading,
         tip,
         pageSizeList,
+        pagination,
+        handleTableChange,
         list,
         drawerParam,
         deleteOneSource,

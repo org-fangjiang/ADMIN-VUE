@@ -4,7 +4,13 @@
     <Button v-auth="dynamicNewsConst._PERMS.ADD" @click="addDynamicNew">{{
       t('host.action.add')
     }}</Button>
-    <Table :columns="ColumnsDynamicNews" :data-source="list" rowKey="id" :pagination="false">
+    <Table
+      :columns="ColumnsDynamicNews"
+      :data-source="list"
+      rowKey="id"
+      :pagination="pagination"
+      @change="handleTableChange"
+    >
       <template #sort="{ text: sort }">
         <span>
           <Tag :color="dynamicNewsConst.dynamicSort[sort].color">
@@ -75,9 +81,9 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -130,13 +136,23 @@
       const pageSizeList = ref<string[]>(PageSizeList);
       const dynamicNews: DynamicNewsModel[] = [];
 
-      let pageParam = reactive({
-        size: 10,
-        number: 1,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
+      // 添加分页
+      const pageParam: PageParam = reactive({
+        pageNum: 0,
+        pageSize: 10,
       });
+      const total = ref<number>(0);
+      const pagination = computed(() => ({
+        total: total,
+        current: pageParam.pageNum,
+        pageSize: pageParam.pageSize,
+      }));
+      const handleTableChange = async (pag: any) => {
+        pageParam.pageSize = pag!.pageSize!;
+        pageParam.pageNum = pag?.current;
+        const result = await getList();
+        processList(result);
+      };
 
       // 筛选条件
       const condition = reactive({
@@ -168,10 +184,7 @@
         loading.value = true;
         let result: BasePageResult<DynamicNewsModel> | undefined;
         try {
-          result = await getDynamicNews(condition, {
-            pageSize: pageParam.size,
-            pageNum: pageParam.number,
-          });
+          result = await getDynamicNews(condition, pageParam);
         } catch (error) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -195,22 +208,8 @@
             list.push(line);
           });
         }
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
+        total.value = page.totalElements;
       }
-
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
-      };
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
-      };
 
       onMounted(async () => {
         const result = await getList();
@@ -280,18 +279,17 @@
         dynamicNewsConst,
         condition,
         ColumnsDynamicNews,
-        pageParam,
         processList,
         loading,
         tip,
         pageSizeList,
+        pagination,
+        handleTableChange,
         list,
         drawerParam,
         deleteOneDynamicNew,
         reEnableOneDynamicNew,
         updateDynamicNew,
-        onShowSizeChange,
-        onChange,
         onClose,
         addDynamicNew,
         props,
