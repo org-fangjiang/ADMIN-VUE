@@ -17,7 +17,7 @@ export enum PageSizeEnum {
   F = 100,
 }
 
-export const PageSizeList: string[] = ['2', '10', '20', '30', '50', '80', '100'];
+export const PageSizeList: string[] = ['10', '20', '30', '50', '80', '100'];
 export interface BasePageResult<T extends any> {
   page: {
     size: number;
