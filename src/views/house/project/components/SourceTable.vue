@@ -15,8 +15,8 @@
       </template>
       <template #sort="{ text: sort }">
         <span>
-          <Tag :color="sourceConst.SORTS[sort].color">
-            {{ sourceConst.SORTS[sort].label }}
+          <Tag :color="sourceConst.SORTS[sort - 1].color">
+            {{ sourceConst.SORTS[sort - 1].label }}
           </Tag>
         </span>
       </template>
@@ -234,7 +234,7 @@
             list.push(line);
           });
         }
-        total.value = page.totalElements;
+        total.value = Number(page.totalElements);
       }
 
       onMounted(async () => {
