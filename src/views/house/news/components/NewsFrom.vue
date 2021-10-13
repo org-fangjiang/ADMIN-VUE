@@ -40,7 +40,7 @@
       <FormItem ref="content" :label="t('host.news.content')" name="content">
         <FTinymce
           :disabled="isUpdate && !newsConst._UPDATE_FIELDS.includes('content')"
-          v-model="formState.content"
+          v-model:value="formState.content"
           @change="handleChange"
           width="100%"
           :provinceId="props.provinceId"
@@ -280,6 +280,7 @@
       };
 
       const onSubmit = () => {
+        debugger;
         formRef.value
           .validate()
           .then(async () => {

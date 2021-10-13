@@ -387,7 +387,7 @@
         const editor = unref(editorRef);
         const element = editor.selection.getNode();
         if (element.tagName !== 'IMG') {
-          failed('设置图片alt', '未选择的图片标签');
+          failed('放大图片', '未选择的图片标签');
           return;
         }
         let curWidth: string = element.style.width;
@@ -397,7 +397,10 @@
         if (curWidth.endsWith('%')) {
           curWidth = curWidth.replace('%', '');
           const result = Number(curWidth) + 5;
-          editor.selection.getNode().style.width = result + '%';
+          element.style.width = result + '%';
+          editor.dom.setStyles(editor.selection.getNode(), {
+            width: result + '%',
+          });
         }
       }
 
@@ -405,7 +408,7 @@
         const editor = unref(editorRef);
         const element = editor.selection.getNode();
         if (element.tagName !== 'IMG') {
-          failed('设置图片alt', '未选择的图片标签');
+          failed('缩小图片', '未选择的图片标签');
           return;
         }
         let curWidth: string = element.style.width;
@@ -418,7 +421,10 @@
             return;
           }
           const result = Number(curWidth) - 5;
-          editor.selection.getNode().style.width = result + '%';
+          element.style.width = result + '%';
+          editor.dom.setStyles(editor.selection.getNode(), {
+            width: result + '%',
+          });
         }
       }
 
@@ -441,6 +447,7 @@
           return;
         }
         element.alt = curAlt.value;
+        editor.dom.setAttribs(editor.selection.getNode(), { alt: curAlt.value });
         success('设置图片alt', '设置alt成功');
       }
 
