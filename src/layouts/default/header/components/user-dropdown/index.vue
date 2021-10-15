@@ -12,6 +12,7 @@
     <template #overlay>
       <Menu @click="handleMenuClick">
         <MenuDivider v-if="getShowDoc" />
+        <MenuItem key="updateInfo" :text="t('layout.header.updateUserInfo')" icon="ion:md-paper" />
         <MenuItem
           v-if="getUseLockPage"
           key="lock"
@@ -27,14 +28,13 @@
     </template>
   </Dropdown>
   <LockAction @register="register" />
+  <!-- 修改个人信息 -->
 </template>
 <script lang="ts">
   // components
   import { Dropdown, Menu } from 'ant-design-vue';
 
   import { defineComponent, computed } from 'vue';
-
-  import { DOC_URL } from '/@/settings/siteSetting';
 
   import { useUserStore } from '/@/store/modules/user';
   import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
@@ -44,11 +44,10 @@
 
   import headerImg from '/@/assets/images/header.jpg';
   import { propTypes } from '/@/utils/propTypes';
-  import { openWindow } from '/@/utils';
 
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
 
-  type MenuEvent = 'logout' | 'doc' | 'lock';
+  type MenuEvent = 'logout' | 'updateInfo' | 'lock';
 
   export default defineComponent({
     name: 'UserDropdown',
@@ -69,8 +68,8 @@
       const userStore = useUserStore();
 
       const getUserInfo = computed(() => {
-        const { realName = '', avatar, desc } = userStore.getUserInfo || {};
-        return { realName, avatar: avatar || headerImg, desc };
+        const { realName = '', avatar, description } = userStore.getUserInfo || {};
+        return { realName, avatar: avatar || headerImg, description };
       });
 
       const [register, { openModal }] = useModal();
@@ -85,16 +84,14 @@
       }
 
       // open doc
-      function openDoc() {
-        openWindow(DOC_URL);
-      }
+      function openDoc() {}
 
       function handleMenuClick(e: { key: MenuEvent }) {
         switch (e.key) {
           case 'logout':
             handleLoginOut();
             break;
-          case 'doc':
+          case 'updateInfo':
             openDoc();
             break;
           case 'lock':

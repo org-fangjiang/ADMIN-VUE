@@ -9,8 +9,12 @@
       :pagination="pagination"
       @change="handleTableChange"
     >
-      <template #address="{ text: address }">
-        <Image v-if="sort !== '6' && sort !== '7'" :src="address" width="100px" />
+      <template #address="scope">
+        <Image
+          v-if="scope.record.sort !== '6' && scope.record.sort !== '7'"
+          :src="scope.text"
+          width="100px"
+        />
         <div v-else>{{ address }}</div>
       </template>
       <template #sort="{ text: sort }">
@@ -167,7 +171,7 @@
       });
       const total = ref<number>(0);
       const pagination = computed(() => ({
-        total: total,
+        total: total.value,
         current: pageParam.pageNum,
         pageSize: pageParam.pageSize,
       }));
@@ -215,7 +219,7 @@
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
-            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+            // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
           });
         } finally {
           loading.value = false;
@@ -323,7 +327,7 @@
         createErrorModal({
           title: title || t('sys.api.errorTip'),
           content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
 

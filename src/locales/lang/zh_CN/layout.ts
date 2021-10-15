@@ -18,6 +18,9 @@ export default {
     lockScreen: '锁定屏幕',
     lockScreenBtn: '锁定',
 
+    // update userinfo
+    updateUserInfo: '修改个人信息',
+
     home: '首页',
   },
   multipleTab: {

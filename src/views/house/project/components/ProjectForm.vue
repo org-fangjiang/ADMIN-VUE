@@ -738,7 +738,7 @@
         createErrorModal({
           title: title || t('sys.api.errorTip'),
           content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
 
@@ -771,7 +771,7 @@
           }
         } else {
           // 如果是添加时，默认设置为百分比
-          formState.commissionMode = '0';
+          formState.commissionMode = '2';
           formState.commission = 0;
         }
         if (!formState.sysCityByCityId) {
@@ -827,6 +827,7 @@
 
       return {
         t,
+        prefixCls,
         formRef,
         formState,
         loading,

@@ -9,14 +9,13 @@
       style="width: 120px"
       @change="sortChange"
       :options="sourceConst.SORTS"
-      :pagination="false"
     />
     <Table
       hideDefaultSelections="true"
       :columns="ColumnsHost"
       :data-source="list"
       rowKey="id"
-      :pagination="false"
+      :pagination="pagination"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange, type: 'radio' }"
     >
       <template #address="{ text: address }">
@@ -25,8 +24,8 @@
       </template>
       <template #sort="{ text: sort }">
         <span>
-          <Tag :color="sourceConst.SORTS[sort].color">
-            {{ sourceConst.SORTS[sort].label }}
+          <Tag :color="sourceConst.SORTS[sort - 1].color">
+            {{ sourceConst.SORTS[sort - 1].label }}
           </Tag>
         </span>
       </template>
@@ -45,9 +44,9 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BaseListResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BaseListResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
   import { Table, Tag, Select, Button, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -89,6 +88,24 @@
       const pageSizeList = ref<string[]>(PageSizeList);
       const source: SourceModel[] = [];
 
+      // 添加分页
+      const pageParam: PageParam = reactive({
+        pageNum: 0,
+        pageSize: 10,
+      });
+      const total = ref<number>(0);
+      const pagination = computed(() => ({
+        total: total.value,
+        current: pageParam.pageNum,
+        pageSize: pageParam.pageSize,
+      }));
+      const handleTableChange = async (pag: any) => {
+        pageParam.pageSize = pag!.pageSize!;
+        pageParam.pageNum = pag?.current;
+        const result = await getList();
+        processList(result);
+      };
+
       // const formRef = ref();
       const formState: UnwrapRef<LayoutModel> = reactive({});
 
@@ -108,7 +125,7 @@
         loading.value = true;
         let result: BaseListResult<SourceModel> | undefined;
         try {
-          result = await getResources(condition);
+          result = await getResources(condition, pageParam);
         } catch (error) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -121,28 +138,30 @@
         return result;
       };
 
-      function processListByLine(result: any) {
+      function processList(result: any) {
         if (!result) {
           return;
         }
-        const { content } = result;
+        const { page, content } = result;
         list.splice(0);
         if (content) {
           content.forEach((line) => {
             list.push(line);
           });
         }
+        page.number = page.number + 1;
+        Object.assign(pageParam, {}, page);
       }
 
       onMounted(async () => {
         const result = await getList();
-        processListByLine(result);
+        processList(result);
       });
 
       const sortChange = async (value) => {
         condition.sort = value;
         const result = await getList();
-        processListByLine(result);
+        processList(result);
       };
 
       let selectedRowKeys = ref<string>(props.checkedKeys || '');
@@ -196,6 +215,9 @@
         props,
         formState,
         selectedRowKeys,
+        type,
+        handleTableChange,
+        pagination,
       };
     },
   });

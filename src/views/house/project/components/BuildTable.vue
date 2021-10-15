@@ -173,7 +173,7 @@
       });
       const total = ref<number>(0);
       const pagination = computed(() => ({
-        total: total,
+        total: total.value,
         current: pageParam.pageNum,
         pageSize: pageParam.pageSize,
       }));
@@ -220,7 +220,7 @@
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
-            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+            // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
           });
         } finally {
           loading.value = false;
@@ -359,7 +359,7 @@
         createErrorModal({
           title: title || t('sys.api.errorTip'),
           content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
 

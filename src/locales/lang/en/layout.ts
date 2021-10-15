@@ -17,6 +17,8 @@ export default {
     lockScreen: 'Lock screen',
     lockScreenBtn: 'Locking',
 
+    updateUserInfo: 'Update My Info',
+
     home: 'Home',
   },
   multipleTab: {

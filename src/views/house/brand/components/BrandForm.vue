@@ -69,7 +69,7 @@
       debugger;
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('news');
+      const { prefixCls } = useDesign('brand');
       const brandConst = ref(_BrandConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -146,7 +146,7 @@
         createErrorModal({
           title: title || t('sys.api.errorTip'),
           content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
 

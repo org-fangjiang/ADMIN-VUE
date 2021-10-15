@@ -82,6 +82,7 @@
       </FormItem>
     </Form>
     <Modal
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
       :visible="isModal"
       title=""
       @cancel="onClose"
@@ -264,7 +265,7 @@
         createErrorModal({
           title: title || t('sys.api.errorTip'),
           content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
 

@@ -130,7 +130,7 @@
     setup() {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('news');
+      const { prefixCls } = useDesign('developer');
       const developerConst = ref(_DeveloperConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -314,7 +314,7 @@
 </script>
 
 <style lang="less">
-  @prefix-cls: ~'@{namespace}-news';
+  @prefix-cls: ~'@{namespace}-developer';
   @dark-bg: #293146;
 
   html[data-theme='dark'] {
