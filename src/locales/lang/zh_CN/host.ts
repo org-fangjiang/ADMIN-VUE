@@ -268,4 +268,12 @@ export default {
     likeNum: '点赞',
     questionId: '问题',
   },
+  banner: {
+    title: '标题',
+    keyword: '关键词',
+    description: '描述',
+    address: '图片',
+    cityId: '市',
+    hProjectId: '项目',
+  },
 };

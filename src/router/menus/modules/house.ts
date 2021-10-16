@@ -30,6 +30,10 @@ const house: MenuModule = {
         path: 'developer',
         name: t('routes.house.developer'),
       },
+      {
+        path: 'banner',
+        name: t('routes.house.banner'),
+      },
     ],
   },
 };

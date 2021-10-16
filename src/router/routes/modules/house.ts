@@ -68,6 +68,15 @@ const house: AppRouteModule = {
         roles: ['/house/developer'],
       },
     },
+    {
+      path: 'banner',
+      name: 'banner',
+      component: () => import('/@/views/house/banner/index.vue'),
+      meta: {
+        title: t('routes.house.banner'),
+        roles: ['/house/banner'],
+      },
+    },
   ],
 };
 

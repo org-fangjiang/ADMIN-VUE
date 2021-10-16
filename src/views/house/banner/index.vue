@@ -1,0 +1,357 @@
+//轮播图管理
+<template>
+  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+    <Button :class="prefixCls" v-auth="bannerConst._PERMS.ADD" @click="addBanner">{{
+      t('host.action.add')
+    }}</Button>
+    <Table :columns="bannerColumns" :data-source="list" rowKey="id" :pagination="false">
+      <template #address="{ text: address }">
+        <Image :src="address" width="150px" />
+      </template>
+      <template #state="{ text: state }">
+        <span>
+          <Tag :color="bannerConst.STATES[state].color">
+            {{ bannerConst.STATES[state].label }}
+          </Tag>
+        </span>
+      </template>
+      <template #operation="{ text: operation }">
+        <!-- 操作下拉框 -->
+        <Dropdown placement="bottomCenter" trigger="click">
+          <Button type="link">{{ t('host.operation') }}</Button>
+          <template #overlay>
+            <Menu mode="horizontal" @click="action">
+              <MenuItem :key="0" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  :class="prefixCls"
+                  v-auth="bannerConst._PERMS.DELETE"
+                  type="link"
+                  size="small"
+                  >{{ t('host.action.delete') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="1" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="bannerConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.reEnable') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="2" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="bannerConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.update') }}
+                </Button>
+              </MenuItem>
+            </Menu>
+          </template>
+        </Dropdown>
+      </template>
+    </Table>
+    <Pagination
+      show-size-changer
+      size="large"
+      :show-total="(total) => t('component.table.total', { total })"
+      :pageSizeOptions="pageSizeList"
+      :current="pageParam.number"
+      :pageSize="pageParam.size"
+      :total="pageParam.totalElements"
+      @change="onChange"
+      @showSizeChange="onShowSizeChange"
+    />
+    <Modal
+      :visible="drawerParam.visible"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      width="100%"
+      wrapClassName="full-modal"
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :destroyOnClose="true"
+      :footer="null"
+    >
+      <BannerForm v-if="drawerParam.state === '0'" :id="drawerParam.id" :companyCityId="cityId" />
+    </Modal>
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
+  </div>
+</template>
+
+<script lang="ts">
+  import { useI18n } from '/@/hooks/web/useI18n';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
+  // 用户store
+  import { useUserStore } from '/@/store/modules/user';
+  import {
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Dropdown,
+    notification,
+    Menu,
+    MenuItem,
+    Modal,
+    Image,
+  } from 'ant-design-vue';
+  import { Loading } from '/@/components/Loading';
+  import { deleteBanner, getBanners, reEnableBanner } from '/@/api/host/banner/banner';
+  import { BannerModel, _BannerColumns, _BannerConst } from '/@/api/host/banner/model/bannerModel';
+  import BannerForm from './components/BannerForm.vue';
+
+  export default defineComponent({
+    name: 'BannerTable',
+    components: {
+      Table,
+      Pagination,
+      Tag,
+      Button,
+      Dropdown,
+      Loading,
+      Menu,
+      MenuItem,
+      Modal,
+      BannerForm,
+      Image,
+    },
+    setup() {
+      const { t } = useI18n();
+      const { createErrorModal } = useMessage();
+      // 获取用户store
+      const userStore = useUserStore();
+      const { prefixCls } = useDesign('banner');
+      let loading = ref<boolean>(true);
+      let tip = ref<string>('加载中...');
+      const pageSizeList = ref<string[]>(PageSizeList);
+
+      const bannerColumns = reactive(_BannerColumns);
+      const bannerConst = ref(_BannerConst);
+
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
+      // 分页
+      let pageParam = reactive({
+        size: 10,
+        number: 1,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+      });
+      const cityId = userStore.getUserInfo.companyCityId;
+      // 筛选条件
+      const condition = reactive({
+        state: '',
+        id: '',
+        cityId: cityId || '',
+      });
+
+      const banner: BannerModel[] = [];
+      // 列表结果
+      let list = reactive(banner);
+      //关闭抽屉
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processList(result);
+      };
+      //添加轮播图
+      const addBanner = async () => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = '';
+        drawerParam.title = t('host.action.add');
+      };
+
+      // 操作
+      const action = async (key) => {
+        debugger;
+        const code = key.key;
+        const id = key?.item['data-id'] || undefined;
+        debugger;
+        switch (code) {
+          case 0:
+            // 删除
+            try {
+              loading.value = true;
+              await deleteBanner(id);
+              success(t('host.action.delete'), t('host.action.success'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('host.action.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 1:
+            // 恢复
+            try {
+              loading.value = true;
+              await reEnableBanner(id);
+              success(t('host.action.reEnable'), t('host.action.success'));
+              const result = await getList();
+              processList(result);
+            } catch (error) {
+              failed(error?.response?.data?.message, t('host.action.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 2:
+            //更新
+            drawerParam.visible = true;
+            drawerParam.state = '0';
+            drawerParam.id = id;
+            drawerParam.title = t('host.action.update');
+            break;
+        }
+      };
+
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
+      };
+
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
+      };
+
+      // 获取list
+      const getList = async () => {
+        loading.value = true;
+        let result: BasePageResult<BannerModel> | undefined;
+        try {
+          result = await getBanners(condition, {
+            pageSize: pageParam.size,
+            pageNum: pageParam.number,
+          });
+        } catch (error) {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
+            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          });
+        } finally {
+          loading.value = false;
+        }
+        return result;
+      };
+
+      function processList(result: any) {
+        if (!result) {
+          return;
+        }
+        const { page, content } = result;
+        list.splice(0);
+        content.forEach((line) => {
+          list.push(line);
+        });
+        page.number = page.number + 1;
+        Object.assign(pageParam, {}, page);
+      }
+
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result);
+      };
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result);
+      };
+
+      onMounted(async () => {
+        const result = await getList();
+        processList(result);
+      });
+
+      return {
+        t,
+        prefixCls,
+        bannerConst,
+        condition,
+        bannerColumns,
+        loading,
+        tip,
+        pageSizeList,
+        list,
+        pageParam,
+        onChange,
+        addBanner,
+        onShowSizeChange,
+        onClose,
+        cityId,
+        drawerParam,
+        failed,
+        success,
+        action,
+      };
+    },
+  });
+</script>
+
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-banner';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-action-menu-item {
+      text-align: center;
+    }
+  }
+
+  .full-modal {
+    .ant-modal {
+      max-width: 100%;
+      top: 0;
+      padding-bottom: 0;
+      margin: 0;
+    }
+
+    .ant-modal-content {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh);
+    }
+
+    .ant-modal-body {
+      flex: 1;
+    }
+  }
+</style>

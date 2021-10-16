@@ -6,4 +6,5 @@ export default {
   estateCompany: '物业公司管理',
   brand: '品牌商管理',
   developer: '开发商管理',
+  banner: '轮播图管理',
 };

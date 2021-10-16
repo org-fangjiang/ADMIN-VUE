@@ -267,4 +267,12 @@ export default {
     likeNum: 'likeNum',
     questionId: 'questionId',
   },
+  banner: {
+    title: 'title',
+    keyword: 'keyword',
+    description: 'description',
+    address: 'address',
+    cityId: 'cityId',
+    hProjectId: 'hProjectId',
+  },
 };

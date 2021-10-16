@@ -6,4 +6,5 @@ export default {
   estateCompany: 'estateCompany',
   brand: 'Brand',
   developer: 'Developer',
+  banner: 'Banner',
 };

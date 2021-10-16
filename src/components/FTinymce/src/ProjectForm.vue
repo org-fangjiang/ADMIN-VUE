@@ -136,7 +136,7 @@
           }
         }
         fetching.value = false;
-      }, 2000);
+      }, 200);
 
       let areaId = ref<string>('');
       const nameSelect = async (value) => {
