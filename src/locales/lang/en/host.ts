@@ -169,6 +169,7 @@ export default {
     setFirstImg: 'setFirstImg',
     setLicense: 'setLicense',
     setDynamicNews: 'setDynamicNews',
+    setQuestion: 'setQuestion',
   },
   layout: {
     room: 'room',
@@ -252,5 +253,18 @@ export default {
     cityId: 'cityId',
     projectId: 'projectId',
     projectName: 'ProjectName',
+  },
+  question: {
+    content: 'content',
+    projectId: 'projectId',
+    lookTimes: 'lookTimes',
+    setAnswer: 'setAnswer',
+  },
+  answer: {
+    content: 'content',
+    author: 'author',
+    avatar: 'avatar',
+    likeNum: 'likeNum',
+    questionId: 'questionId',
   },
 };

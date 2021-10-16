@@ -109,6 +109,17 @@
                   {{ t('host.action.setBuild') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="8" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="hostConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.setQuestion') }}
+                </Button>
+              </MenuItem>
               <MenuItem :key="7" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button
@@ -176,6 +187,7 @@
         :cityId="drawerParam.cityId"
         :areaId="drawerParam.areaId"
       />
+      <QuestionTable v-if="drawerParam.state === '6'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -206,6 +218,7 @@
   import BuildTable from './components/BuildTable.vue';
   import LicenseTable from './components/LicenseTable.vue';
   import DynamicNewsTable from './components/DynamicNewsTable.vue';
+  import QuestionTable from './components/QuestionTable.vue';
   import {
     deleteProject,
     getProject,
@@ -234,6 +247,7 @@
       BuildTable,
       LicenseTable,
       DynamicNewsTable,
+      QuestionTable,
     },
     setup() {
       const { t } = useI18n();
@@ -393,6 +407,13 @@
             drawerParam.state = '5';
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setDynamicNews');
+            break;
+          case 8:
+            // 动态文章
+            drawerParam.id = id;
+            drawerParam.state = '6';
+            drawerParam.visible = true;
+            drawerParam.title = t('host.action.setQuestion');
             break;
         }
       };

@@ -169,6 +169,7 @@ export default {
     setFirstImg: '设置项目首图',
     setLicense: '设置许可证',
     setDynamicNews: '设置动态文章',
+    setQuestion: '设置问答',
   },
   layout: {
     room: '卧室',
@@ -253,5 +254,18 @@ export default {
     cityId: '市',
     projectId: '项目编号',
     projectName: '项目名称',
+  },
+  question: {
+    content: '问题',
+    projectId: '项目',
+    lookTimes: '浏览次数',
+    setAnswer: '设置回答',
+  },
+  answer: {
+    content: '回复',
+    author: '作者',
+    avatar: '头像',
+    likeNum: '点赞',
+    questionId: '问题',
   },
 };
