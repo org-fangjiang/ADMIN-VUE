@@ -41,18 +41,22 @@
           if (props.provinceId) {
             options.value.splice(0);
             const { content } = await getAllCities({ id: props.provinceId });
-            content.forEach((item) => {
-              options.value?.push({ value: item.id, label: item.name });
-            });
+            if (content && content.length > 0) {
+              content.forEach((item) => {
+                options.value?.push({ value: item.id, label: item.name });
+              });
+            }
           }
         }
       );
 
       onMounted(async () => {
         const { content } = await getAllCities({ id: props.provinceId });
-        content.forEach((item) => {
-          options.value?.push({ value: item.id, label: item.name });
-        });
+        if (content && content.length > 0) {
+          content.forEach((item) => {
+            options.value?.push({ value: item.id, label: item.name });
+          });
+        }
       });
       return {
         selectRef,

@@ -37,7 +37,7 @@
           if (props.cityId) {
             options.value.splice(0);
             const { content } = await getAllAreas({ id: props.cityId });
-            if (content) {
+            if (content && content.length > 0) {
               content.forEach((item) => {
                 options.value?.push({ value: item.id, label: item.name });
               });
@@ -48,9 +48,11 @@
 
       onMounted(async () => {
         const { content } = await getAllAreas({ id: props.cityId });
-        content.forEach((item) => {
-          options.value?.push({ value: item.id, label: item.name });
-        });
+        if (content && content.length > 0) {
+          content.forEach((item) => {
+            options.value?.push({ value: item.id, label: item.name });
+          });
+        }
       });
 
       return {
