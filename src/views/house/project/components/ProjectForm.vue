@@ -1,4 +1,4 @@
-// 企业信息表单
+// 楼盘信息表单
 <template>
   <div>
     <Form
@@ -8,6 +8,7 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
+      <Divider>基本信息</Divider>
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="name" :label="t('host.name')" name="name">
           <Input
@@ -78,15 +79,9 @@
             autoComplete="off"
           />
         </FormItem>
-        <FormItem ref="getLandTime" :label="t('host.getLandTime')" name="getLandTime">
-          <DatePicker
-            showTime
-            :disabled="isUpdate && !updateFields.includes('getLandTime')"
-            format="YYYY-MM-DD HH:mm:ss"
-            :value="formState.getLandTime"
-            @change="getLandTimechange"
-          />
-        </FormItem>
+      </div>
+      <Divider>周围设施评分</Divider>
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="locationScore" :label="t('host.locationScore')" name="locationScore">
           <InputNumber
             :min="1.0"
@@ -137,6 +132,9 @@
             placeholder="1.0～5.0"
           />
         </FormItem>
+      </div>
+      <Divider>出售信息</Divider>
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="address" :label="t('host.address')" name="address">
           <div class="flex flex-row w-full h-full">
             <Input
@@ -262,13 +260,25 @@
             ref="select"
             mode="multiple"
             :allowClear="true"
-            v-model:value="formState.loanType"
+            v-model:value="selected"
             style="width: 120px"
             @change="loanTypeChange"
             :options="hostConst.LOAN_METHODS"
             :pagination="false"
           />
         </FormItem>
+        <FormItem ref="getLandTime" :label="t('host.getLandTime')" name="getLandTime">
+          <DatePicker
+            showTime
+            :disabled="isUpdate && !updateFields.includes('getLandTime')"
+            format="YYYY-MM-DD HH:mm:ss"
+            :value="formState.getLandTime"
+            @change="getLandTimechange"
+          />
+        </FormItem>
+      </div>
+      <Divider>小区规划</Divider>
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="landArea" :label="t('host.landArea')" name="landArea">
           <Input
             :disabled="isUpdate && !updateFields.includes('landArea')"
@@ -342,6 +352,9 @@
             @setProjectDevelop="setProjectDevelop"
           />
         </FormItem>
+      </div>
+      <Divider>其他信息</Divider>
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="estateCompanyById" :label="t('host.estateCompany')" name="estateCompanyById">
           <FEstateCompany
             :estateCompany="formState.estateCompany || ''"
@@ -460,6 +473,9 @@
             autoComplete="off"
           />
         </FormItem>
+      </div>
+      <Divider>抽成方式</Divider>
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="commissionMode" :label="t('host.commissionMode')" name="commissionMode">
           <RadioGroup v-model:value="formState.commissionMode">
             <Radio value="2">百分比</Radio>
@@ -482,6 +498,7 @@
             :marks="marks"
           />
         </FormItem>
+        <br />
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
           <Button type="primary" @click="onSubmit">{{ t('host.action.onSubmit') }}</Button>
           <Button style="margin-left: 10px" @click="resetForm">{{ t('host.action.reset') }}</Button>
@@ -528,6 +545,7 @@
     Slider,
     Modal,
     Textarea,
+    Divider,
   } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { HostModel, _HostConst } from '/@/api/host/project/model/projectModel';
@@ -566,6 +584,7 @@
       FDeveloper,
       FBrand,
       FEstateCompany,
+      Divider,
     },
     props: {
       id: {
@@ -652,8 +671,16 @@
         formState.updatePriceTime = dateString;
       };
 
-      const loanTypeChange = async (e) => {
-        formState.loanType = e;
+      const loanTypeChange = async (value) => {
+        let selectType = '';
+        if (value && value.length > 0) {
+          value.forEach((item: string) => {
+            selectType = selectType + ',' + item;
+          });
+        }
+        const x = selectType.indexOf(',');
+        selectType = selectType.substring(x + 1);
+        formState.loanType = selectType;
       };
 
       const waterMethodChange = async (e) => {
@@ -702,7 +729,7 @@
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
                 Persistent.removeLocal(HOUSE_PROJECT, true);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -714,7 +741,7 @@
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
                 Persistent.removeLocal(HOUSE_PROJECT, true);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -759,17 +786,27 @@
       };
 
       let area = ref('');
+      let selected = ref<String[]>([]);
       onMounted(async () => {
         if (props.id) {
           loading.value = true;
           try {
             const { content } = await getProject(props.id);
             Object.assign(formState, content);
+            if (formState.loanType) {
+              const loanTypes = formState.loanType.split(',');
+              selected.value = loanTypes;
+            }
           } catch (error) {
           } finally {
             loading.value = false;
           }
         } else {
+          //本地存储的数据进行赋值
+          if (formState.loanType) {
+            const loanTypes = formState.loanType.split(',');
+            selected.value = loanTypes;
+          }
           // 如果是添加时，默认设置为百分比
           formState.commissionMode = '2';
           formState.commission = 0;
@@ -869,6 +906,7 @@
         setProjectBrand,
         setProjectEstateCompany,
         marks,
+        selected,
       };
     },
   });

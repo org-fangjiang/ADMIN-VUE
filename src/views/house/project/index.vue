@@ -227,6 +227,8 @@
   } from '/@/api/host/project/project';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
+  import { Persistent } from '/@/utils/cache/persistent';
+  import { HOUSE_PROJECT } from '/@/enums/cacheEnum';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -303,7 +305,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -346,7 +348,7 @@
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
@@ -360,7 +362,7 @@
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
@@ -426,6 +428,10 @@
       };
 
       const onClose = async () => {
+        debugger;
+        if (drawerParam.id != '') {
+          Persistent.removeLocal(HOUSE_PROJECT, true);
+        }
         drawerParam.visible = false;
         drawerParam.state = '';
         drawerParam.id = '';
