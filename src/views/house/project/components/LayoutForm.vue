@@ -9,35 +9,35 @@
     >
       <FormItem ref="room" :label="t('host.layout.room')" name="room">
         <Input
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('room')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('room')"
           v-model:value="formState.room"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="hall" :label="t('host.layout.hall')" name="hall">
         <Input
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('hall')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('hall')"
           v-model:value="formState.hall"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="toilet" :label="t('host.layout.toilet')" name="toilet">
         <Input
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('toilet')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('toilet')"
           v-model:value="formState.toilet"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="area" :label="t('host.layout.area')" name="area">
         <Input
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('area')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('area')"
           v-model:value="formState.area"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="saleState" :label="t('host.layout.saleState')" name="saleState">
         <Select
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('saleState')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('saleState')"
           ref="select"
           :allowClear="true"
           v-model:value="formState.saleState"
@@ -48,11 +48,15 @@
         />
       </FormItem>
       <FormItem ref="labels" :label="t('host.layout.labels')" name="labels">
-        <FGroup @change="changeLabels" :detialsId="formState.sysDictDetailBeans" />
+        <FGroup
+          @change="changeLabels"
+          :detialsId="formState.sysDictDetailBeans"
+          :selectedLabel="selectLabel"
+        />
       </FormItem>
       <FormItem ref="face" :label="t('host.layout.face')" name="face">
         <Select
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('face')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('face')"
           ref="select"
           :allowClear="true"
           v-model:value="formState.face"
@@ -64,7 +68,7 @@
       </FormItem>
       <FormItem ref="description" :label="t('host.layout.description')" name="description">
         <Textarea
-          :disabled="isUpdate && !layoutConst.UPDATE_FIELDS.includes('description')"
+          :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('description')"
           v-model:value="formState.description"
           autoComplete="off"
         />
@@ -170,8 +174,18 @@
           formState.labels = '';
           e.forEach((item) => {
             formState.labels = item.key + ',' + formState.labels;
+            if (!formState.sysDictDetailBeans) {
+              formState.sysDictDetailBeans = [];
+            }
+            formState.sysDictDetailBeans.push({
+              id: item.key,
+              value: item.key,
+              groupId: item.label,
+            });
           });
+          formState.labels = formState.labels.substring(0, formState.labels.length - 1);
         }
+        console.log(formState.labels);
       };
 
       const saleStateChange = async (value) => {
@@ -193,7 +207,7 @@
           address.value = value.address;
           type.value = value.type;
           success(t('host.layout.setSource'), t('host.action.success'));
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -211,7 +225,7 @@
                 const { content } = await updateLayout(formState);
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -222,7 +236,7 @@
                 const { content } = await addLayout(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -244,11 +258,18 @@
         }
       };
 
+      let selectLabel = ref<String[]>([]);
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
           const { content } = await getLayout(props.id);
           Object.assign(formState, content);
+          if (formState.labels) {
+            if (formState.labels.length > 0) {
+              selectLabel.value = formState.labels.split(',');
+            }
+          }
+          console.log('selectLabel', selectLabel);
         }
         loading.value = false;
       });
@@ -292,6 +313,7 @@
         onClose,
         address,
         type,
+        selectLabel,
       };
     },
   });

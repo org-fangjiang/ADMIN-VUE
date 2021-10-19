@@ -27,6 +27,10 @@
         type: Array as PropType<SysDictDetailBean[]>,
         require: false,
       },
+      selectedLabel: {
+        type: Array,
+        require: false,
+      },
     },
     emits: ['change'],
     setup(props, { emit }) {
@@ -45,6 +49,12 @@
             }
             const option = { label: item.name, options: opt.value };
             data.value.push(option);
+          });
+        }
+        if (props.selectedLabel) {
+          debugger;
+          props.selectedLabel.forEach((item) => {
+            result.value.push({ value: item, key: item });
           });
         }
         if (props.detialsId) {
