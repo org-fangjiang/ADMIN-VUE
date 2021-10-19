@@ -465,7 +465,7 @@
           return;
         }
         const value = props.modelValue || '';
-
+        editor.getBody().style.fontSize = '14pt';
         editor.setContent(value);
         bindModelHandlers(editor);
         bindHandlers(e, attrs, unref(editorRef));
