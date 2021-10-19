@@ -60,8 +60,9 @@
         />
       </FormItem>
       <FormItem ref="licenseId" :label="t('host.build.licenseId')" name="licenseId">
-        <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
-        <div v-else>{{ address }}</div>
+        <!-- <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
+        <div v-else>{{ address }}</div> -->
+        <div else>{{ licenseName }}</div>
         <Button @click="changeModal">{{ t('host.action.setResource') }}</Button>
       </FormItem>
       <FormItem ref="locationX" :label="t('host.build.locationX')" name="locationX">
@@ -107,11 +108,12 @@
       :footer="null"
       :destroyOnClose="true"
     >
-      <FSource
+      <FLicense
         v-if="isModal"
         :projectId="props.projectId"
-        :checkedKeys="formState.licenseId"
-        @setSource="setSource"
+        :licenseId="formState.licenseId || ''"
+        :buildId="props.id"
+        @setBuildLicense="setBuildLicense"
       />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -123,11 +125,11 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { Button, Form, FormItem, Input, Select, Textarea, Image, Modal } from 'ant-design-vue';
+  import { Button, Form, FormItem, Input, Select, Textarea, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BuildModel, _BuildConst } from '/@/api/host/build/model/buildModel';
   import { addBuild, updateBuild, getBuild } from '/@/api/host/build/build';
-  import FSource from '/@/components/FSource';
+  import FLicense from '/@/components/Flicense';
   export default defineComponent({
     name: 'BuildForm',
     components: {
@@ -138,9 +140,9 @@
       Loading,
       Select,
       Textarea,
-      Image,
+      // Image,
       Modal,
-      FSource,
+      FLicense,
     },
     props: {
       id: {
@@ -202,19 +204,26 @@
       let address = ref<string>();
       let type = ref<string>();
 
-      const setSource = async (value) => {
-        loading.value = true;
-        try {
-          formState.licenseId = value.id;
-          address.value = value.address;
-          type.value = value.type;
-          success(t('host.layout.setSource'), t('host.action.success'));
-        } catch (error) {
-          failed(error?.response?.data?.message, t('host.action.fail'));
-        } finally {
-          loading.value = false;
-        }
+      // const setSource = async (value) => {
+      //   loading.value = true;
+      //   try {
+      //     formState.licenseId = value.id;
+      //     address.value = value.address;
+      //     type.value = value.type;
+      //     success(t('host.layout.setSource'), t('host.action.success'));
+      //   } catch (error: any) {
+      //     failed(error?.response?.data?.message, t('host.action.fail'));
+      //   } finally {
+      //     loading.value = false;
+      //   }
+      //   isModal.value = false;
+      // };
+      let licenseName = ref('');
+      const setBuildLicense = (value) => {
         isModal.value = false;
+        debugger;
+        formState.licenseId = value.formState.licenseId;
+        licenseName.value = value.licenseName.value;
       };
 
       const onSubmit = () => {
@@ -227,7 +236,7 @@
                 const { content } = await updateBuild(formState);
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -238,7 +247,7 @@
                 const { content } = await addBuild(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -301,12 +310,14 @@
         wrapperCol: { span: 14 },
         isUpdate,
         props,
-        setSource,
+        // setSource,
         changeModal,
         isModal,
         onClose,
         address,
         type,
+        setBuildLicense,
+        licenseName,
       };
     },
   });

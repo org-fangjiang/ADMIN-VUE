@@ -48,6 +48,7 @@
       const data = ref<Option[]>([]);
 
       const formState: UnwrapRef<BuildModel> = reactive({});
+      let licenseName = ref('');
 
       onMounted(async () => {
         const { content } = await getLicensesAll({ projectId: props.projectId });
@@ -59,14 +60,20 @@
       });
 
       const change = (value) => {
-        formState.licenseId = value.label;
+        licenseName.value = value.label;
+        formState.licenseId = value.value;
         formState.projectId = props.projectId;
         formState.id = props.buildId;
       };
 
       const save = async () => {
-        await updateBuild(formState);
-        emit('setBuildLicense', formState);
+        if (formState.id) {
+          await updateBuild(formState);
+          emit('setBuildLicense', formState);
+        } else {
+          debugger;
+          emit('setBuildLicense', { formState, licenseName });
+        }
       };
 
       return {
@@ -74,6 +81,7 @@
         data,
         props,
         save,
+        licenseName,
       };
     },
   });
