@@ -248,7 +248,7 @@
                 const { content } = await updateMenu(formState);
                 success(t('model.perms.updateMenu'), t('model.perms.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.perms.fail'));
               } finally {
                 loading.value = false;
@@ -258,7 +258,7 @@
                 const { content } = await addMenu(formState);
                 success(t('model.perms.addMenu'), t('model.perms.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.perms.fail'));
               } finally {
                 loading.value = false;
@@ -304,6 +304,11 @@
           const { content } = await getMenu({ id: props.id });
           if (content) {
             Object.assign(formState, content);
+            if (formState.type === '0') {
+              menuType.value = '1';
+            } else if (formState.type === '1') {
+              menuType.value = '0';
+            }
           }
         }
         // 将上级路径添加到输入框

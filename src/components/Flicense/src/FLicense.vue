@@ -36,7 +36,7 @@
       },
       licenseId: {
         type: String,
-        required: true,
+        required: false,
       },
       buildId: {
         type: String,
