@@ -200,6 +200,8 @@ export default {
       REAL_SCENE: 'REAL_SCENE',
       VIDEO: 'VIDEO',
       VR: 'VR',
+      Model_Room: 'Model_Room',
+      Sales_Department: 'Sales_Department',
     },
   },
   build: {

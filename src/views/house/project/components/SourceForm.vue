@@ -15,10 +15,14 @@
         />
       </FormItem>
       <FormItem ref="keyword" :label="t('host.source.keyword')" name="keyword">
-        <Input
+        <Select
+          v-model:value="tags"
+          mode="tags"
+          style="width: 100%"
+          :token-separators="[',']"
+          :options="options"
           :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('keyword')"
-          v-model:value="formState.keyword"
-          autoComplete="off"
+          @change="tagsChange"
         />
       </FormItem>
       <FormItem ref="description" :label="t('host.source.description')" name="description">
@@ -77,6 +81,11 @@
   import { SourceModel, _SourceConst } from '/@/api/host/source/model/sourceModel';
   import { updateResource, addResource, getResource, ApiSource } from '/@/api/host/source/source';
 
+  interface Option {
+    value: string;
+    label: string;
+  }
+
   export default defineComponent({
     name: 'SourceForm',
     components: {
@@ -123,6 +132,22 @@
         isUpdate.value = true;
       }
 
+      //关键词
+      const options = ref<Option[]>([]);
+      let tags = ref<string[]>([]);
+      const tagsChange = async (value) => {
+        debugger;
+        let selectTags = '';
+        if (value && value.length > 0) {
+          value.forEach((item: string) => {
+            selectTags = selectTags + ',' + item;
+          });
+        }
+        const x = selectTags.indexOf(',');
+        selectTags = selectTags.substring(x + 1);
+        formState.keyword = selectTags;
+      };
+      //上传资源
       const changeFile = async (info) => {
         if (info.file.status === 'done') {
           formState.title = info.file.name;
@@ -149,7 +174,7 @@
                 const { content } = await updateResource(formState);
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -160,7 +185,7 @@
                 const { content } = await addResource(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -185,6 +210,14 @@
         if (props.id) {
           const { content } = await getResource(props.id);
           Object.assign(formState, content);
+          //关键词赋值
+          if (formState.keyword) {
+            const detags = formState.keyword.split(',');
+            detags.forEach((tag) => {
+              options.value.push({ value: tag, label: tag });
+              tags.value.push(tag);
+            });
+          }
         }
         loading.value = false;
       });
@@ -222,6 +255,9 @@
         changeFile,
         ApiSource,
         props,
+        tagsChange,
+        tags,
+        options,
       };
     },
   });

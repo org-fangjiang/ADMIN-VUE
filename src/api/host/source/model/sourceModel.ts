@@ -39,6 +39,8 @@ export const _SourceConst = {
     { value: '5', label: t('host.source.sorts.REAL_SCENE'), color: 'volcano' },
     { value: '6', label: t('host.source.sorts.VIDEO'), color: 'geekblue' },
     { value: '7', label: t('host.source.sorts.VR'), color: 'volcano' },
+    { value: '8', label: t('host.source.sorts.Model_Room'), color: 'geekblue' },
+    { value: '9', label: t('host.source.sorts.Sales_Department'), color: 'volcano' },
   ],
   _PERMS: {
     SELECT: 'resource:select',

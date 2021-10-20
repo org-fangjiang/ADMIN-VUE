@@ -201,6 +201,8 @@ export default {
       REAL_SCENE: '实景图',
       VIDEO: '视频',
       VR: 'VR',
+      Model_Room: '样板间',
+      Sales_Department: '售楼部',
     },
   },
   build: {
