@@ -26,7 +26,7 @@
         <Select
           ref="selectRef"
           :disabled="isUpdate && !updateFields.includes('companyId')"
-          v-model:value="companyName"
+          v-model:value="onecompanyName"
           label-in-value
           placeholder="Select Company"
           style="width: 100%"
@@ -106,7 +106,7 @@
       if (currentId.value && currentId.value !== '') {
         isUpdate.value = true;
       }
-      let companyName = ref();
+      let onecompanyName = ref();
       const options = ref<Option[]>([]);
 
       const loading = ref<boolean>(false);
@@ -161,7 +161,7 @@
                 const { content } = await updateRole(formState);
                 success(t('model.role.updateRole'), t('model.role.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.role.fail'));
               } finally {
                 loading.value = false;
@@ -172,7 +172,7 @@
                 const { content } = await addRoles(formState);
                 success(t('model.role.addRole'), t('model.role.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.role.fail'));
               } finally {
                 loading.value = false;
@@ -222,7 +222,7 @@
             const { content } = await getRole({ id: currentId.value });
             Object.assign(formState, content);
             const result = await getCompany(content.companyId || '');
-            companyName.value = result.content.name;
+            onecompanyName.value = result.content.name;
           } catch (error) {
           } finally {
             loading.value = false;
@@ -239,7 +239,7 @@
         updateFields: RoleConst._UPDATE_FIELDS,
         currentId,
         isUpdate,
-        companyName,
+        onecompanyName,
         tip,
         rules,
         roleConst,

@@ -114,6 +114,7 @@
       wrapClassName="full-modal"
       :footer="null"
       :destroyOnClose="true"
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
     >
       <FProject
         v-if="isModal"
@@ -274,8 +275,6 @@
           });
           success(t('host.news.setProject'), t('host.action.success'));
         }
-        debugger;
-        console.log(',,,,,,,,,,,,,,', formState.projects);
         loading.value = false;
       };
 
@@ -290,7 +289,7 @@
                 const { content } = await updateNews(formState);
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -301,7 +300,7 @@
                 const { content } = await addNews(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;

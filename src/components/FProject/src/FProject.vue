@@ -24,6 +24,17 @@
         </span>
       </template>
     </Table>
+    <Pagination
+      show-size-changer
+      size="large"
+      :show-total="(total) => t('component.table.total', { total })"
+      :pageSizeOptions="pageSizeList"
+      :current="pageParam.number"
+      :pageSize="pageParam.size"
+      :total="pageParam.totalElements"
+      @change="onChange"
+      @showSizeChange="onShowSizeChange"
+    />
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -34,7 +45,7 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
-  import { Table, Tag, Button } from 'ant-design-vue';
+  import { Table, Tag, Button, Pagination } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { HostModel, _Columns, _HostConst } from '/@/api/host/project/model/projectModel';
   import { useUserStore } from '/@/store/modules/user';
@@ -46,6 +57,7 @@
       Tag,
       Loading,
       Button,
+      Pagination,
     },
     props: {
       id: {
@@ -65,7 +77,7 @@
       const hostConst = ref(_HostConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-
+      //设置分页
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -73,6 +85,19 @@
         totalPages: 0,
         totalElements: 0,
       });
+
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result);
+      };
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result);
+      };
 
       const pageSizeList = ref<string[]>(PageSizeList);
       const project: HostModel[] = [];
@@ -100,7 +125,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -179,6 +204,8 @@
         selectedRowKeys,
         pageParam,
         projects,
+        onChange,
+        onShowSizeChange,
       };
     },
   });
