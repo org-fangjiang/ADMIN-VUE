@@ -16,7 +16,7 @@
         />
       </FormItem>
       <FormItem ref="resourceId" :label="t('host.license.resourceId')" name="resourceId">
-        <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
+        <Image v-if="type !== '6' && type !== '7'" :src="address || updateAddress" width="100px" />
         <div v-else>{{ address }}</div>
         <Button @click="changeModal">{{ t('host.action.setResource') }}</Button>
       </FormItem>
@@ -58,6 +58,7 @@
   import FSource from '/@/components/FSource';
   import { LicenseModel, _LicenseConst } from '/@/api/host/license/model/licenseModel';
   import { addLicense, getLicense, updateLicense } from '/@/api/host/license/license';
+  import { getResource } from '/@/api/host/source/source';
   export default defineComponent({
     name: 'LicenseForm',
     components: {
@@ -129,7 +130,7 @@
           address.value = value.address;
           type.value = value.type;
           success(t('host.layout.setSource'), t('host.action.success'));
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -147,7 +148,7 @@
                 const { content } = await updateLicense(formState);
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -158,7 +159,7 @@
                 const { content } = await addLicense(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -180,11 +181,19 @@
         }
       };
 
+      let updateAddress = ref<string>('');
+
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
           const { content } = await getLicense(props.id);
           Object.assign(formState, content);
+          if (content.resourceId) {
+            const result = await getResource(content.resourceId);
+            if (result.content.sort !== '6' && result.content.sort !== '7') {
+              updateAddress.value = result.content.address || '';
+            }
+          }
         }
         loading.value = false;
       });
@@ -225,6 +234,7 @@
         onClose,
         address,
         type,
+        updateAddress,
       };
     },
   });

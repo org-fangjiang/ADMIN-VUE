@@ -83,10 +83,10 @@
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
+      width=""
       :footer="null"
       :destroyOnClose="true"
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
     >
       <SourceForm
         v-if="drawerParam.state === '0'"
@@ -215,7 +215,7 @@
         let result: BasePageResult<SourceModel> | undefined;
         try {
           result = await getResources(condition, pageParam);
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -253,7 +253,7 @@
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
           processListByLine(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -266,7 +266,7 @@
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
           processListByLine(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -294,7 +294,7 @@
           success(t('host.action.setSandImg'), t('host.action.success'));
           // const result = await getList();
           // processListByLine(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -308,7 +308,7 @@
           success(t('host.action.setFirstImg'), t('host.action.success'));
           // const result = await getList();
           // processListByLine(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
