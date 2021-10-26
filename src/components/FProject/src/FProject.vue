@@ -156,31 +156,22 @@
       });
 
       let selectedRowKeys = ref<string[]>((props.selected as string[]) || []); //将之前选中的值展示
-      let areaId = ref<string[]>([]);
-      let names = ref<string[]>([]);
       const onSelectChange = (record, selected) => {
         if (selected) {
           selectedRowKeys.value.push(record.id);
-          names.value.push(record.name);
-          areaId.value.push(record.sysAreaByAreaId.id);
         } else {
           const flag = selectedRowKeys.value.indexOf(record.id);
           selectedRowKeys.value.splice(flag, 1);
-          areaId.value.splice(flag, 1);
-          names.value.splice(flag, 1);
         }
       };
 
-      let projects = ref([{ id: '', name: '', area: '' }]);
+      let projects = ref([{ id: '' }]);
       const handleAdd = async () => {
         if (selectedRowKeys.value && selectedRowKeys.value.length > 0) {
           let length = selectedRowKeys.value.length;
-          debugger;
           while (length > 0) {
             projects.value.push({
               id: selectedRowKeys.value[length - 1],
-              name: names.value[length - 1],
-              area: areaId.value[length - 1],
             });
             length = length - 1;
           }

@@ -34,7 +34,7 @@
         />
       </FormItem>
       <FormItem ref="projects" :label="t('host.news.projects')" name="projects">
-        <span v-for="item in formState.projects" :key="item.id">{{ item.name }}</span>
+        <span v-for="item in formState.projects" :key="item.id">{{ item.name }}，</span>
         <Button @click="changeModal">{{ t('host.news.setProject') }}</Button>
       </FormItem>
       <FormItem ref="content" :label="t('host.news.content')" name="content">
@@ -119,7 +119,7 @@
       <FProject
         v-if="isModal"
         :id="props.id"
-        :checkedKeys="selected"
+        :selected="selected"
         @setNewsProject="setNewsProject"
       />
     </Modal>
@@ -149,6 +149,7 @@
   import { ApiSource } from '/@/api/host/source/source';
   import FProject from '/@/components/FProject';
   import FTinymce from '/@/components/FTinymce';
+  import { getProject } from '/@/api/host/project/project';
 
   interface Option {
     value: string;
@@ -189,7 +190,6 @@
       },
     },
     setup(props) {
-      debugger;
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('news');
@@ -228,7 +228,6 @@
       let tags = ref<string[]>([]);
 
       const tagsChange = async (value) => {
-        debugger;
         let selectTags = '';
         if (value && value.length > 0) {
           value.forEach((item: string) => {
@@ -264,14 +263,14 @@
         loading.value = true;
         if (value.projects && value.projects.length > 0) {
           formState.projects = [];
-          value.projects.forEach((item) => {
-            if (!item.id || !item.name) {
-              return;
-            }
+          value.projects.forEach(async (item) => {
             if (!formState.projects) {
               formState.projects = [];
             }
-            formState.projects.push({ id: item.id, name: item.name });
+            if (item.id) {
+              const { content } = await getProject(item.id);
+              formState.projects.push({ id: item.id, name: content.name });
+            }
           });
           success(t('host.news.setProject'), t('host.action.success'));
         }
@@ -279,7 +278,6 @@
       };
 
       const onSubmit = () => {
-        debugger;
         formRef.value
           .validate()
           .then(async () => {
