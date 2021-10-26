@@ -8,7 +8,8 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
-      <Divider>基本信息</Divider>
+      <Divider orientation="left">基本信息</Divider>
+      <br />
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="name" :label="t('host.name')" name="name">
           <Input
@@ -24,8 +25,21 @@
             autoComplete="off"
           />
         </FormItem>
-        <FormItem ref="labels" :label="t('host.labels')" name="labels">
-          <FGroup @change="changeLabels" :detialsId="formState.sysDictDetailBeans" />
+        <FormItem ref="price" :label="t('host.price')" name="price">
+          <Input
+            :disabled="isUpdate && !updateFields.includes('price')"
+            v-model:value="formState.price"
+            autoComplete="off"
+            suffix="元/m²"
+          />
+        </FormItem>
+        <FormItem ref="priceDays" :label="t('host.priceDays')" name="priceDays">
+          <Input
+            :disabled="isUpdate && !updateFields.includes('priceDays')"
+            v-model:value="formState.priceDays"
+            autoComplete="off"
+            suffix="天"
+          />
         </FormItem>
         <FormItem ref="type" :label="t('host.type')" name="type">
           <Select
@@ -79,9 +93,15 @@
             autoComplete="off"
           />
         </FormItem>
-      </div>
-      <Divider>周围设施评分</Divider>
-      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
+        <FormItem ref="getLandTime" :label="t('host.getLandTime')" name="getLandTime">
+          <DatePicker
+            showTime
+            :disabled="isUpdate && !updateFields.includes('getLandTime')"
+            format="YYYY-MM-DD HH:mm:ss"
+            :value="formState.getLandTime"
+            @change="getLandTimechange"
+          />
+        </FormItem>
         <FormItem ref="locationScore" :label="t('host.locationScore')" name="locationScore">
           <InputNumber
             :min="1.0"
@@ -132,21 +152,6 @@
             placeholder="1.0～5.0"
           />
         </FormItem>
-      </div>
-      <Divider>出售信息</Divider>
-      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
-        <FormItem ref="address" :label="t('host.address')" name="address">
-          <div class="flex flex-row w-full h-full">
-            <Input
-              :disabled="isUpdate && !updateFields.includes('address')"
-              v-model:value="formState.address"
-              autoComplete="off"
-            />
-            <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI">
-              <Icon icon="fa-solid:location-arrow" />
-            </div>
-          </div>
-        </FormItem>
         <FormItem
           ref="sysProvinceByProvinceId.id"
           :label="t('host.province')"
@@ -165,6 +170,36 @@
             @change="areaChange"
           />
         </FormItem>
+        <FormItem ref="address" :label="t('host.address')" name="address">
+          <div class="flex flex-row w-full h-full">
+            <Input
+              :disabled="isUpdate && !updateFields.includes('address')"
+              v-model:value="formState.address"
+              autoComplete="off"
+            />
+            <div style="padding-top: 6px; padding-left: 8px" @click="searchPOI">
+              <Icon icon="fa-solid:location-arrow" />
+            </div>
+          </div>
+        </FormItem>
+        <FormItem
+          ref="hDeveloperByDeveloperId"
+          :label="t('host.hDeveloperByDeveloperId')"
+          name="hDeveloperByDeveloperId"
+        >
+          <FDeveloper
+            :developerId="formState.hDeveloperByDeveloperId?.id || ''"
+            @setProjectDevelop="setProjectDevelop"
+          />
+        </FormItem>
+        <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
+          <FBrand :brandId="formState.brandId?.id || ''" @setProjectBrand="setProjectBrand" />
+        </FormItem>
+      </div>
+      <br />
+      <Divider orientation="left">销售信息</Divider>
+      <br />
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="saleState" :label="t('host.saleState')" name="saleState">
           <Select
             ref="select"
@@ -174,6 +209,13 @@
             @change="saleStateChange"
             :options="hostConst.SALE_STATES"
             :pagination="false"
+          />
+        </FormItem>
+        <FormItem ref="saleAddress" :label="t('host.saleAddress')" name="saleAddress">
+          <Input
+            :disabled="isUpdate && !updateFields.includes('saleAddress')"
+            v-model:value="formState.saleAddress"
+            autoComplete="off"
           />
         </FormItem>
         <FormItem ref="openTime" :label="t('host.openTime')" name="openTime">
@@ -194,29 +236,6 @@
             @change="payTimechange"
           />
         </FormItem>
-        <FormItem ref="saleAddress" :label="t('host.saleAddress')" name="saleAddress">
-          <Input
-            :disabled="isUpdate && !updateFields.includes('saleAddress')"
-            v-model:value="formState.saleAddress"
-            autoComplete="off"
-          />
-        </FormItem>
-        <FormItem ref="price" :label="t('host.price')" name="price">
-          <Input
-            :disabled="isUpdate && !updateFields.includes('price')"
-            v-model:value="formState.price"
-            autoComplete="off"
-            suffix="元/m²"
-          />
-        </FormItem>
-        <FormItem ref="priceDays" :label="t('host.priceDays')" name="priceDays">
-          <Input
-            :disabled="isUpdate && !updateFields.includes('priceDays')"
-            v-model:value="formState.priceDays"
-            autoComplete="off"
-            suffix="天"
-          />
-        </FormItem>
         <FormItem ref="lowTotalPrice" :label="t('host.lowTotalPrice')" name="lowTotalPrice">
           <Input
             :disabled="isUpdate && !updateFields.includes('lowTotalPrice')"
@@ -234,7 +253,6 @@
             suffix="万元/套"
           />
         </FormItem>
-
         <FormItem
           ref="priceDescription"
           :label="t('host.priceDescription')"
@@ -246,15 +264,6 @@
             autoComplete="off"
           />
         </FormItem>
-        <!-- <FormItem ref="updatePriceTime" :label="t('host.updatePriceTime')" name="updatePriceTime">
-          <DatePicker
-            showTime
-            :disabled="isUpdate && !updateFields.includes('updatePriceTime')"
-            format="YYYY-MM-DD HH:mm:ss"
-            :value="formState.updatePriceTime"
-            @change="updatePriceTimechange"
-          />
-        </FormItem> -->
         <FormItem ref="loanType" :label="t('host.loanType')" name="loanType">
           <Select
             ref="select"
@@ -267,17 +276,13 @@
             :pagination="false"
           />
         </FormItem>
-        <FormItem ref="getLandTime" :label="t('host.getLandTime')" name="getLandTime">
-          <DatePicker
-            showTime
-            :disabled="isUpdate && !updateFields.includes('getLandTime')"
-            format="YYYY-MM-DD HH:mm:ss"
-            :value="formState.getLandTime"
-            @change="getLandTimechange"
-          />
+        <FormItem ref="labels" :label="t('host.labels')" name="labels">
+          <FGroup @change="changeLabels" :detialsId="formState.sysDictDetailBeans" />
         </FormItem>
       </div>
-      <Divider>小区规划</Divider>
+      <br />
+      <Divider orientation="left">规划信息</Divider>
+      <br />
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="landArea" :label="t('host.landArea')" name="landArea">
           <Input
@@ -339,22 +344,6 @@
             autoComplete="off"
           />
         </FormItem>
-        <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
-          <FBrand :brandId="formState.brandId?.id || ''" @setProjectBrand="setProjectBrand" />
-        </FormItem>
-        <FormItem
-          ref="hDeveloperByDeveloperId"
-          :label="t('host.hDeveloperByDeveloperId')"
-          name="hDeveloperByDeveloperId"
-        >
-          <FDeveloper
-            :developerId="formState.hDeveloperByDeveloperId?.id || ''"
-            @setProjectDevelop="setProjectDevelop"
-          />
-        </FormItem>
-      </div>
-      <Divider>其他信息</Divider>
-      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="estateCompanyById" :label="t('host.estateCompany')" name="estateCompanyById">
           <FEstateCompany
             :estateCompany="formState.estateCompany || ''"
@@ -380,6 +369,11 @@
             autoComplete="off"
           />
         </FormItem>
+      </div>
+      <br />
+      <Divider orientation="left">其他信息</Divider>
+      <br />
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="waterMethod" :label="t('host.waterMethod')" name="waterMethod">
           <Select
             ref="select"
@@ -459,6 +453,11 @@
             autoComplete="off"
           />
         </FormItem>
+      </div>
+      <br />
+      <Divider />
+      <br />
+      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="number" :label="t('host.number')" name="number">
           <Input
             :disabled="isUpdate && !updateFields.includes('number')"
@@ -473,9 +472,6 @@
             autoComplete="off"
           />
         </FormItem>
-      </div>
-      <Divider>抽成方式</Divider>
-      <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="commissionMode" :label="t('host.commissionMode')" name="commissionMode">
           <RadioGroup v-model:value="formState.commissionMode">
             <Radio value="2">百分比</Radio>
@@ -498,7 +494,6 @@
             :marks="marks"
           />
         </FormItem>
-        <br />
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
           <Button type="primary" @click="onSubmit">{{ t('host.action.onSubmit') }}</Button>
           <Button style="margin-left: 10px" @click="resetForm">{{ t('host.action.reset') }}</Button>
