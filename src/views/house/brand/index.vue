@@ -71,8 +71,7 @@
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
+      width=""
       :footer="null"
       :destroyOnClose="true"
     >
@@ -167,7 +166,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -240,7 +239,7 @@
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
@@ -254,7 +253,7 @@
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
