@@ -28,13 +28,14 @@
     </template>
   </Dropdown>
   <LockAction @register="register" />
+  <MyInfo :visible="update" @handleCancel="handleCancel" />
   <!-- 修改个人信息 -->
 </template>
 <script lang="ts">
   // components
   import { Dropdown, Menu } from 'ant-design-vue';
 
-  import { defineComponent, computed } from 'vue';
+  import { defineComponent, computed, ref } from 'vue';
 
   import { useUserStore } from '/@/store/modules/user';
   import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
@@ -57,6 +58,7 @@
       MenuItem: createAsyncComponent(() => import('./DropMenuItem.vue')),
       MenuDivider: Menu.Divider,
       LockAction: createAsyncComponent(() => import('../lock/LockModal.vue')),
+      MyInfo: createAsyncComponent(() => import('../myInfo/MyInfo.vue')),
     },
     props: {
       theme: propTypes.oneOf(['dark', 'light']),
@@ -83,8 +85,16 @@
         userStore.confirmLoginOut();
       }
 
+      let update = ref<boolean>(false);
+      let islock = ref<boolean>(false);
       // open doc
-      function openDoc() {}
+      function openDoc() {
+        update.value = true;
+      }
+
+      const handleCancel = () => {
+        update.value = false;
+      };
 
       function handleMenuClick(e: { key: MenuEvent }) {
         switch (e.key) {
@@ -108,6 +118,9 @@
         getShowDoc,
         register,
         getUseLockPage,
+        islock,
+        update,
+        handleCancel,
       };
     },
   });
