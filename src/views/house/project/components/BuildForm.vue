@@ -63,7 +63,7 @@
         <!-- <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
         <div v-else>{{ address }}</div> -->
         <div else>{{ licenseName }}</div>
-        <Button @click="changeModal">{{ t('host.action.setResource') }}</Button>
+        <Button @click="changeModal">{{ t('host.action.setLicense') }}</Button>
       </FormItem>
       <FormItem ref="locationX" :label="t('host.build.locationX')" name="locationX">
         <Input
@@ -99,12 +99,15 @@
       </FormItem>
     </Form>
     <Modal
-      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :bodyStyle="{
+        overflow: 'auto',
+        'margin-top': '16px',
+        'margin-left': '50px',
+        height: '100px',
+      }"
       :visible="isModal"
-      title=""
+      title="设置预售证"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
       :footer="null"
       :destroyOnClose="true"
     >

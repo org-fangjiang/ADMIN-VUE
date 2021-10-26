@@ -43,6 +43,9 @@
           </Tag>
         </span>
       </template>
+      <template #createBy="scope">
+        <span>{{ createBy[scope.index] }}</span>
+      </template>
       <template #operation="{ text: line }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
@@ -142,6 +145,7 @@
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import NewsForm from './components/NewsFrom.vue';
+  import { updateUserInfo } from '/@/api/sys/user/user';
 
   export default defineComponent({
     name: 'NewsTable',
@@ -199,7 +203,7 @@
         title: '',
         visible: false,
       });
-
+      let createBy = ref<string[]>([]);
       // 获取list
       const getList = async () => {
         loading.value = true;
@@ -209,7 +213,15 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+          if (result.content) {
+            result.content.forEach(async (item) => {
+              if (item.createBy) {
+                const create = await updateUserInfo({ id: item.createBy });
+                createBy.value.push(create.content.username || '');
+              }
+            });
+          }
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -300,7 +312,7 @@
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
@@ -314,7 +326,7 @@
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
@@ -375,6 +387,7 @@
         action,
         cityId,
         provinceId,
+        createBy,
       };
     },
   });

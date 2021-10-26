@@ -242,6 +242,8 @@ export default {
     province: 'province',
     city: 'city',
     setProject: 'setProject',
+    createBy: 'createBy',
+    createTime: 'createTIme',
   },
   dynamicNews: {
     title: 'title',
