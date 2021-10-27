@@ -214,6 +214,7 @@
       };
       const onClose = () => {
         isModal.value = false;
+        selected.value.splice(0);
       };
 
       // fromRef 获取form
