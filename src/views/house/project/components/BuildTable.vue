@@ -216,7 +216,7 @@
         let result: BasePageResult<BuildModel> | undefined;
         try {
           result = await getBuilds(condition, pageParam);
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -239,8 +239,7 @@
             list.push(line);
           });
         }
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
+        total.value = Number(page.totalElements);
       }
 
       onMounted(async () => {
@@ -255,7 +254,7 @@
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
           processList(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -268,7 +267,7 @@
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
           processList(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
@@ -340,7 +339,7 @@
           }
           await addBuildLayout(value.buildId, layouts);
           success(t('host.build.addLayout'), t('host.action.success'));
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
