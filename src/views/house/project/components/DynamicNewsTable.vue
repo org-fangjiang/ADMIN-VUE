@@ -13,8 +13,8 @@
     >
       <template #sort="{ text: sort }">
         <span>
-          <Tag :color="dynamicNewsConst.dynamicSort[sort].color">
-            {{ dynamicNewsConst.dynamicSort[sort].label }}
+          <Tag :color="dynamicNewsConst.dynamicSort[sort - 1].color">
+            {{ dynamicNewsConst.dynamicSort[sort - 1].label }}
           </Tag>
         </span>
       </template>
