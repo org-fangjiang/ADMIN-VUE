@@ -8,28 +8,28 @@
       :wrapper-col="wrapperCol"
     >
       <FormItem ref="room" :label="t('host.layout.room')" name="room">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('room')"
           v-model:value="formState.room"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="hall" :label="t('host.layout.hall')" name="hall">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('hall')"
           v-model:value="formState.hall"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="toilet" :label="t('host.layout.toilet')" name="toilet">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('toilet')"
           v-model:value="formState.toilet"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="area" :label="t('host.layout.area')" name="area">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !layoutConst._UPDATE_FIELDS.includes('area')"
           v-model:value="formState.area"
           autoComplete="off"
@@ -74,7 +74,7 @@
         />
       </FormItem>
       <FormItem ref="resourceId" :label="t('host.action.setResource')" name="resourceId">
-        <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
+        <Image v-if="type !== '6' && type !== '7'" :src="address || updateAddress" width="100px" />
         <div v-else>{{ address }}</div>
         <Button @click="changeModal">{{ t('host.action.setResource') }}</Button>
       </FormItem>
@@ -111,7 +111,16 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { Button, Form, FormItem, Input, Select, Textarea, Modal, Image } from 'ant-design-vue';
+  import {
+    Button,
+    Form,
+    FormItem,
+    InputNumber,
+    Select,
+    Textarea,
+    Modal,
+    Image,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { LayoutModel, _LayoutConst } from '/@/api/host/layout/model/layoutModel';
   import { updateLayout, addLayout, getLayout } from '/@/api/host/layout/layout';
@@ -123,7 +132,7 @@
       Button,
       Form,
       FormItem,
-      Input,
+      InputNumber,
       Loading,
       Select,
       FSource,
@@ -258,6 +267,8 @@
         }
       };
 
+      let updateAddress = ref<string>('');
+
       let selectLabel = ref<String[]>([]);
       onMounted(async () => {
         loading.value = true;
@@ -269,7 +280,17 @@
               selectLabel.value = formState.labels.split(',');
             }
           }
-          console.log('selectLabel', selectLabel);
+          debugger;
+          if (content.hResourceByResourceId) {
+            debugger;
+            // const result = await getResource(content.resourceId);
+            if (
+              content.hResourceByResourceId.sort !== '6' &&
+              content.hResourceByResourceId.sort !== '7'
+            ) {
+              updateAddress.value = content.hResourceByResourceId.address || '';
+            }
+          }
         }
         loading.value = false;
       });
@@ -314,6 +335,7 @@
         address,
         type,
         selectLabel,
+        updateAddress,
       };
     },
   });
