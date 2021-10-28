@@ -473,7 +473,7 @@
           />
         </FormItem>
         <FormItem ref="commissionMode" :label="t('host.commissionMode')" name="commissionMode">
-          <RadioGroup v-model:value="formState.commissionMode">
+          <RadioGroup v-model:value="formState.commissionMode" @change="commissionModeChange">
             <Radio value="2">百分比</Radio>
             <Radio value="1">固定金额</Radio>
           </RadioGroup>
@@ -697,9 +697,12 @@
         formState.sysAreaByAreaId.id = e || '';
       };
 
-      const commissionModeChange = async (e) => {
-        formState.commissionMode = e;
-        formState.commission = Number(formState.commission);
+      const commissionModeChange = async () => {
+        if (formState.commissionMode === '2') {
+          if (formState.commission && formState.commission > 100) {
+            formState.commission = 100;
+          }
+        }
       };
 
       watch(
