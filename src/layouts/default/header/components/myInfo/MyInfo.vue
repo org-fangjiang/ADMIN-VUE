@@ -8,12 +8,6 @@
   >
     <div>
       <Form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <FormItem ref="username" :label="t('model.user.userName')" name="userName">
-          <Input v-model:value="formState.username" autoComplete="off" />
-        </FormItem>
-        <FormItem ref="password" :label="t('model.user.password')" name="password">
-          <Input v-model:value="formState.password" autoComplete="off" />
-        </FormItem>
         <FormItem ref="realName" :label="t('model.user.realName')" name="realName">
           <Input v-model:value="formState.realName" autoComplete="off" />
         </FormItem>
@@ -31,41 +25,19 @@
             <SelectOption key="1">女</SelectOption>
           </Select>
         </FormItem>
-        <FormItem ref="email" :label="t('model.user.email')" name="email">
-          <Input v-model:value="formState.email" autoComplete="off" />
-        </FormItem>
-        <FormItem ref="mobile" :label="t('model.user.mobile')" name="mobile">
-          <Input v-model:value="formState.mobile" autoComplete="off" />
-        </FormItem>
-        <FormItem ref="theme" :label="t('model.user.theme')" name="theme">
-          <Input v-model:value="formState.theme" autoComplete="off" />
-        </FormItem>
         <FormItem ref="avatar" :label="t('model.user.avatar')" name="avatar">
           <Input v-model:value="formState.avatar" autoComplete="off" />
         </FormItem>
         <FormItem ref="description" :label="t('model.user.description')" name="description">
           <Input v-model:value="formState.description" autoComplete="off" />
         </FormItem>
-        <FormItem ref="roleName" :label="t('model.user.roleName')" name="roleName">
-          <Select
-            ref="selectRef"
-            v-model:value="formState.roleName"
-            :options="roleOptions"
-            @change="changeRole"
-            change-on-select
-          />
-        </FormItem>
-        <!-- <FormItem ref="deptId" :label="t('model.user.deptName')" name="deptId">
-          <Select
-            ref="selectRef"
-            v-model:value="formState.deptId"
-            :options="deptOptions"
-            @change="changeDept"
-            change-on-select
-          />
-        </FormItem> -->
-        <FormItem ref="companyName" :label="t('model.user.companyName')" name="companyName">
-          <Input v-model:value="formState.companyName" autoComplete="off" />
+        <FormItem :wrapper-col="{ span: 14, offset: 4 }">
+          <Button style="margin-left: 10px" @click="setMobile">{{
+            t('model.user.setMobile')
+          }}</Button>
+          <Button style="margin-left: 10px" @click="setEmail">{{
+            t('model.user.setEmail')
+          }}</Button>
         </FormItem>
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
           <Button type="primary" @click="onSubmit">{{ t('layout.header.updateUserInfo') }}</Button>
@@ -74,6 +46,8 @@
       </Form>
     </div>
   </BasicModal>
+  <SetMobileTable :visible="isMobile" />
+  <SetEmailTable :visible="isEmail" />
   <Loading :loading="loading" :absolute="false" :tip="tip" />
 </template>
 <script lang="ts">
@@ -84,22 +58,30 @@
   import { useUserStore } from '/@/store/modules/user';
 
   import { BasicModal } from '/@/components/Modal/index';
-  import type { UserInfo } from '/#/store';
   import { Select, Button, Form, FormItem, Input, SelectOption } from 'ant-design-vue';
-  import { updateUserInfo } from '/@/api/sys/user/user';
-  import { getRoles } from '/@/api/sys/role/role';
+  // import { updateUserInfo } from '/@/api/sys/user/user';
+  // import { getRoles } from '/@/api/sys/role/role';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { updateMyInfo } from '/@/api/sys/user/user';
-
-  interface Option {
-    value: string;
-    label: string;
-  }
+  import { UpdateMyInfo } from '/@/api/sys/user/model/userModel';
+  import SetMobileTable from './SetMobileTable.vue';
+  import SetEmailTable from './SetEmailTable.vue';
 
   export default defineComponent({
     name: 'MyInfo',
-    components: { BasicModal, Select, Button, Form, FormItem, Input, SelectOption, Loading },
+    components: {
+      SetEmailTable,
+      SetMobileTable,
+      BasicModal,
+      Select,
+      Button,
+      Form,
+      FormItem,
+      Input,
+      SelectOption,
+      Loading,
+    },
     emits: ['handleCancel'],
     setup(_props, { emit }) {
       const { t } = useI18n();
@@ -110,42 +92,30 @@
       //获取当前用户信息
       const userStore = useUserStore();
       const userInfo = userStore.getUserInfo;
-      //角色下拉
-      const roleOptions = ref<Option[]>([]);
-      const deptOptions = ref<Option[]>([]);
 
       // fromRef 获取form
       const formRef = ref();
-      let formState: UnwrapRef<UserInfo> = reactive({
+      let formState: UnwrapRef<UpdateMyInfo> = reactive({
         id: '',
-        username: '',
-        password: '',
         realName: '',
         nickName: '',
         sex: '',
-        email: '',
-        mobile: '',
-        state: '',
-        theme: '',
         avatar: '',
         description: '',
-        lastLoginTime: '',
-        createTime: '',
-        createBy: '',
-        updateTime: '',
-        deptId: '',
-        deptName: '',
-        roleId: '',
-        roleName: '',
-        sysRoleBeans: [],
-        type: '',
-        companyName: '',
-        companyId: '',
-        companyCityId: '',
-        companyProvinceId: '',
       });
       //将用户信息赋值到表单
       formState = userInfo;
+
+      let isMobile = ref(false);
+      let isEmail = ref(false);
+
+      //设置手机号
+      const setMobile = async () => {
+        isMobile.value = true;
+      };
+      const setEmail = async () => {
+        isEmail.value = true;
+      };
       //提交
       const onSubmit = () => {
         formRef.value
@@ -175,26 +145,9 @@
           loading.value = false;
         }
       };
-      //修改角色
-      const changeRole = (value) => {
-        formState.roleId = value;
-      };
-      const changeDept = (value) => {
-        formState.deptId = value;
-      };
 
       onMounted(async () => {
         loading.value = true;
-        const { content } = await updateUserInfo({ id: userStore.getUserInfo.id || '' });
-        if (content) {
-          Object.assign(formState, content);
-        }
-        const result = await getRoles({ companyId: userInfo.companyId });
-        if (result.content) {
-          result.content.forEach((role) => {
-            roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
-          });
-        }
         loading.value = false;
       });
 
@@ -224,16 +177,16 @@
         formRef,
         formState,
         onSubmit,
-        roleOptions,
-        deptOptions,
-        changeRole,
-        changeDept,
         resetForm,
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         loading,
         tip,
         handleCancel,
+        setMobile,
+        setEmail,
+        isMobile,
+        isEmail,
       };
     },
   });
