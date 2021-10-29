@@ -46,8 +46,8 @@
       </Form>
     </div>
   </BasicModal>
-  <SetMobileTable :visible="isMobile" />
-  <SetEmailTable :visible="isEmail" />
+  <SetMobileTable :visible="isMobile" @handleCancel="isCancel" />
+  <SetEmailTable :visible="isEmail" @handleCancel="isCancel" />
   <Loading :loading="loading" :absolute="false" :tip="tip" />
 </template>
 <script lang="ts">
@@ -170,6 +170,11 @@
       const handleCancel = () => {
         emit('handleCancel');
       };
+
+      const isCancel = () => {
+        isMobile.value = false;
+        isEmail.value = false;
+      };
       return {
         t,
         prefixCls,
@@ -187,6 +192,7 @@
         setEmail,
         isMobile,
         isEmail,
+        isCancel,
       };
     },
   });

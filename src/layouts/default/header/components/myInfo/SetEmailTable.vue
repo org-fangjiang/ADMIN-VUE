@@ -1,5 +1,11 @@
 <template>
-  <BasicModal :footer="null" :title="t('model.user.setEmail')" v-bind="$attrs" width="800px">
+  <BasicModal
+    @cancel="handleCancel"
+    :footer="null"
+    :title="t('model.user.setEmail')"
+    v-bind="$attrs"
+    width="800px"
+  >
     <div>
       <Form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
         <FormItem ref="email" :label="t('model.user.email')" name="email">
@@ -30,7 +36,8 @@
   export default defineComponent({
     name: 'SetEmailTable',
     components: { BasicModal, Button, Form, FormItem, Input, Loading },
-    setup() {
+    emits: ['handleCancel'],
+    setup(_props, { emit }) {
       const { t } = useI18n();
       const { prefixCls } = useDesign('header-lock-modal');
       const { notification, createErrorModal } = useMessage();
@@ -99,6 +106,12 @@
           // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
+
+      //关闭Modal
+      const handleCancel = () => {
+        emit('handleCancel');
+      };
+
       return {
         t,
         prefixCls,
@@ -111,6 +124,7 @@
         wrapperCol: { span: 14 },
         loading,
         tip,
+        handleCancel,
       };
     },
   });
