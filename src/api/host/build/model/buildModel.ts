@@ -43,9 +43,9 @@ export const _BuildConst = {
     { value: '1', label: t('host.REMARK_STATES.REMARK_ON'), color: 'geekblue' },
   ],
   SALE_STATES: [
-    { value: '0', label: t('host.SALE.ON'), color: 'volcano' }, //SALE_ON在售
-    { value: '1', label: t('host.SALE.OFF'), color: 'geekblue' }, //待售
-    { value: '2', label: t('host.SALE.SALE_OVER'), color: 'volcano' }, //SALE_OVER售罄
+    { value: '1', label: t('host.SALE.ON'), color: 'volcano' }, //SALE_ON在售
+    { value: '2', label: t('host.SALE.OFF'), color: 'geekblue' }, //待售
+    { value: '3', label: t('host.SALE.SALE_OVER'), color: 'green' }, //SALE_OVER售罄
   ],
   _PERMS: {
     SELECT: 'build:select',

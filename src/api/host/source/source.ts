@@ -17,7 +17,7 @@ export enum ApiSource {
   SetFirstImg = '/nhouse-server/manageResource/setFirstImg', //项目首图，
   Upload = '/api/sys-server/file/upload',
   UploadNews = '/api/sys-server/file/uploadNews',
-  UploadBanner = '/sys-server/file/uploadBanner',
+  UploadBanner = '/api/sys-server/file/uploadBanner',
 }
 
 export function getResourcesList(condition: SourceCondition, mode: ErrorMessageMode = 'modal') {

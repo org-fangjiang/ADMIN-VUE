@@ -11,8 +11,8 @@
     >
       <template #saleState="{ text: saleState }">
         <span>
-          <Tag :color="buildConst.SALE_STATES[saleState].color">
-            {{ buildConst.SALE_STATES[saleState].label }}
+          <Tag :color="buildConst.SALE_STATES[saleState - 1].color">
+            {{ buildConst.SALE_STATES[saleState - 1].label }}
           </Tag>
         </span>
       </template>

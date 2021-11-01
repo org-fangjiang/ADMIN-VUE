@@ -43,8 +43,11 @@
           </Tag>
         </span>
       </template>
-      <template #createBy="scope">
-        <span>{{ createBy[scope.index] }}</span>
+      <template #createByUser="{ text: createByUser }">
+        <span>{{ createByUser.realName }}</span>
+      </template>
+      <template #createTime="{ text: createTime }">
+        <span>{{ createTime.replace('T', ' ').replace('.000+08:00', '') }}</span>
       </template>
       <template #operation="{ text: line }">
         <!-- 操作下拉框 -->
@@ -145,7 +148,6 @@
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import NewsForm from './components/NewsFrom.vue';
-  import { updateUserInfo } from '/@/api/sys/user/user';
 
   export default defineComponent({
     name: 'NewsTable',
@@ -213,14 +215,14 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-          if (result.content) {
-            result.content.forEach(async (item) => {
-              if (item.createBy) {
-                const create = await updateUserInfo({ id: item.createBy });
-                createBy.value.push(create.content.username || '');
-              }
-            });
-          }
+          // if (result.content) {
+          //   result.content.forEach(async (item) => {
+          //     if (item.createBy) {
+          //       const create = await updateUserInfo({ id: item.createBy });
+          //       createBy.value.push(create.content.username || '');
+          //     }
+          //   });
+          // }
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
