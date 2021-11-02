@@ -28,8 +28,8 @@
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      width=""
       :footer="null"
       :destroyOnClose="true"
     >
@@ -122,7 +122,7 @@
         let result: BaseListResult<MetroStationModel> | undefined;
         try {
           result = await getStationsByLine(condition);
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -165,7 +165,7 @@
           success(t('model.metroStation.result.delete'), t('model.metroStation.result.delete'));
           const result = await getList();
           processListByLine(result);
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
         } finally {
           loading.value = false;

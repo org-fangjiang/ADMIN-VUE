@@ -27,6 +27,7 @@
             :labelInValue="false"
             @change="stationChange"
             :allowClear="true"
+            @popupScroll="onScroll"
           />
         </div>
       </FormItem>
@@ -88,9 +89,30 @@
       let tip = ref<string>('加载中...');
       let disable = ref<boolean>(true);
 
+      // 分页
+      let pageParam = reactive({
+        size: 10,
+        number: 1,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+      });
+
       const options = ref<Option[]>([]);
       const stationChange = async (value) => {
         formState.id = value;
+      };
+      const onScroll = async () => {
+        if (pageParam.number <= result.page.totalPages) {
+          pageParam.number = pageParam.number + 1;
+          result = await getAllStations(
+            { cityId: cityId.value },
+            { pageSize: pageParam.size, pageNum: pageParam.number }
+          );
+          result.content.forEach((item) => {
+            options.value.push({ value: item.id || '', label: item.name || '' });
+          });
+        }
       };
 
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
@@ -117,7 +139,7 @@
                 t('model.metroStation.result.addStation'),
                 t('model.metroLine.result.success')
               );
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
               loading.value = false;
@@ -136,6 +158,8 @@
           loading.value = false;
         }
       };
+
+      let result;
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -144,7 +168,10 @@
             formState.lineName = content.name || '';
           }
         }
-        const result = await getAllStations({ cityId: cityId.value });
+        result = await getAllStations(
+          { cityId: cityId.value },
+          { pageSize: pageParam.size, pageNum: pageParam.number }
+        );
         result.content.forEach((item) => {
           options.value.push({ value: item.id || '', label: item.name || '' });
         });
@@ -183,6 +210,8 @@
         wrapperCol: { span: 14 },
         cityId,
         disable,
+        result,
+        onScroll,
       };
     },
   });
