@@ -1,6 +1,35 @@
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 
+export interface SysUserBean {
+  id: string;
+  username?: string;
+  password?: string;
+  realName?: string;
+  nickName?: string;
+  sex?: string;
+  email?: string;
+  mobile?: string;
+  state?: string;
+  theme?: string;
+  avatar?: string;
+  description?: string;
+  lastLoginTime?: string;
+  createTime?: string;
+  createBy?: string;
+  updateTime?: string;
+  deptId?: string;
+  deptName?: string;
+  roleId?: string;
+  roleName?: string;
+  sysRoleBeans?: any[]; // roleId 集合
+  type?: string;
+  companyName?: string;
+  companyId?: string;
+  companyCityId?: string;
+  companyProvinceId?: string;
+}
+
 export interface AddUserModel {
   username?: string;
   password?: string;

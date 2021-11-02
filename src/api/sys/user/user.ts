@@ -11,7 +11,7 @@ import {
   GetUsersByMobileCondition,
   GetUsersByRoleCondition,
   GetUsersCondition,
-  UpdateMyInfo,
+  SysUserBean,
   UpdateUserInfo,
 } from './model/userModel';
 
@@ -32,6 +32,25 @@ enum Api {
   SetUserMobile = '/sys-server/user/setUserMobile', // user:update
   SetUserEmail = '/sys-server/user/setUserEmail', // user:update
   ReEnableUser = '/sys-server/user/reEnableUser', // user:update
+  GetUserInfo = '/api/auth/getUserInfo',
+}
+
+//获取用户信息
+export function getUserInfo(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({
+    id,
+  });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<SysUserBean>>(
+    {
+      url: Api.GetUserInfo,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 // 恢复用户信息
 export function reEnableUser(id: string, mode: ErrorMessageMode = 'modal') {
@@ -155,7 +174,7 @@ export function updateUserInfo(user: UpdateUserInfo, mode: ErrorMessageMode = 'm
   );
 }
 // 更新个人信息
-export function updateMyInfo(user: UpdateMyInfo, mode: ErrorMessageMode = 'modal') {
+export function updateMyInfo(user: SysUserBean, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(user);
   const data = reqParam.getInstance();

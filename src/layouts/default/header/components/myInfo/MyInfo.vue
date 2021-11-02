@@ -8,8 +8,14 @@
   >
     <div>
       <Form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <FormItem ref="username" :label="t('model.user.userName')" name="userName">
+          <Input v-model:value="formState.username" autoComplete="off" />
+        </FormItem>
         <FormItem ref="realName" :label="t('model.user.realName')" name="realName">
           <Input v-model:value="formState.realName" autoComplete="off" />
+        </FormItem>
+        <FormItem ref="password" :label="t('model.user.password')" name="password">
+          <InputPassword v-model:value="formState.password" autoComplete="off" />
         </FormItem>
         <FormItem ref="nickName" :label="t('model.user.nickName')" name="nickName">
           <Input v-model:value="formState.nickName" autoComplete="off" />
@@ -26,18 +32,26 @@
           </Select>
         </FormItem>
         <FormItem ref="avatar" :label="t('model.user.avatar')" name="avatar">
-          <Input v-model:value="formState.avatar" autoComplete="off" />
+          <!-- <Input v-model:value="formState.avatar" autoComplete="off" /> -->
+          <Upload
+            list-type="picture-card"
+            :show-upload-list="false"
+            :data="{
+              provinceId: formState.companyProvinceId,
+              cityId: formState.companyCityId,
+            }"
+            :action="ApiSource.UploadNews"
+            @change="changeFile"
+          >
+            <img v-if="formState.avatar" :src="formState.avatar" />
+            <div v-else>Upload</div>
+          </Upload>
         </FormItem>
         <FormItem ref="description" :label="t('model.user.description')" name="description">
           <Input v-model:value="formState.description" autoComplete="off" />
         </FormItem>
-        <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-          <Button style="margin-left: 10px" @click="setMobile">{{
-            t('model.user.setMobile')
-          }}</Button>
-          <Button style="margin-left: 10px" @click="setEmail">{{
-            t('model.user.setEmail')
-          }}</Button>
+        <FormItem ref="companyName" :label="t('model.user.companyName')" name="companyName">
+          <Input v-model:value="formState.companyName" autoComplete="off" />
         </FormItem>
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
           <Button type="primary" @click="onSubmit">{{ t('layout.header.updateUserInfo') }}</Button>
@@ -46,8 +60,6 @@
       </Form>
     </div>
   </BasicModal>
-  <SetMobileTable :visible="isMobile" @handleCancel="isCancel" />
-  <SetEmailTable :visible="isEmail" @handleCancel="isCancel" />
   <Loading :loading="loading" :absolute="false" :tip="tip" />
 </template>
 <script lang="ts">
@@ -58,21 +70,25 @@
   import { useUserStore } from '/@/store/modules/user';
 
   import { BasicModal } from '/@/components/Modal/index';
-  import { Select, Button, Form, FormItem, Input, SelectOption } from 'ant-design-vue';
-  // import { updateUserInfo } from '/@/api/sys/user/user';
-  // import { getRoles } from '/@/api/sys/role/role';
+  import {
+    Select,
+    Button,
+    Form,
+    FormItem,
+    Input,
+    SelectOption,
+    Upload,
+    InputPassword,
+  } from 'ant-design-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
-  import { updateMyInfo } from '/@/api/sys/user/user';
-  import { UpdateMyInfo } from '/@/api/sys/user/model/userModel';
-  import SetMobileTable from './SetMobileTable.vue';
-  import SetEmailTable from './SetEmailTable.vue';
+  import { updateMyInfo, getUserInfo } from '/@/api/sys/user/user';
+  import { SysUserBean } from '/@/api/sys/user/model/userModel';
+  import { ApiSource } from '/@/api/host/source/source';
 
   export default defineComponent({
     name: 'MyInfo',
     components: {
-      SetEmailTable,
-      SetMobileTable,
       BasicModal,
       Select,
       Button,
@@ -81,6 +97,8 @@
       Input,
       SelectOption,
       Loading,
+      Upload,
+      InputPassword,
     },
     emits: ['handleCancel'],
     setup(_props, { emit }) {
@@ -91,30 +109,17 @@
       let tip = ref<string>('加载中...');
       //获取当前用户信息
       const userStore = useUserStore();
-      const userInfo = userStore.getUserInfo;
 
       // fromRef 获取form
       const formRef = ref();
-      let formState: UnwrapRef<UpdateMyInfo> = reactive({
-        id: '',
-        realName: '',
-        nickName: '',
-        sex: '',
-        avatar: '',
-        description: '',
+      let formState: UnwrapRef<SysUserBean> = reactive({
+        id: userStore.getUserInfo.id,
       });
-      //将用户信息赋值到表单
-      formState = userInfo;
-
-      let isMobile = ref(false);
-      let isEmail = ref(false);
-
-      //设置手机号
-      const setMobile = async () => {
-        isMobile.value = true;
-      };
-      const setEmail = async () => {
-        isEmail.value = true;
+      //上传头像
+      const changeFile = async (info) => {
+        if (info.file.status === 'done') {
+          formState.avatar = info.file.response.data;
+        }
       };
       //提交
       const onSubmit = () => {
@@ -148,6 +153,9 @@
 
       onMounted(async () => {
         loading.value = true;
+        const result = await getUserInfo(userStore.getUserInfo.id);
+        debugger;
+        Object.assign(formState, result);
         loading.value = false;
       });
 
@@ -171,14 +179,10 @@
         emit('handleCancel');
       };
 
-      const isCancel = () => {
-        isMobile.value = false;
-        isEmail.value = false;
-      };
       return {
         t,
         prefixCls,
-        userInfo,
+        // userInfo,
         formRef,
         formState,
         onSubmit,
@@ -188,11 +192,8 @@
         loading,
         tip,
         handleCancel,
-        setMobile,
-        setEmail,
-        isMobile,
-        isEmail,
-        isCancel,
+        ApiSource,
+        changeFile,
       };
     },
   });
