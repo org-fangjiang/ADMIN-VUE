@@ -55,7 +55,7 @@
                   {{ t('model.user.reEnableUser') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <!-- <MenuItem :key="2" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button
                   v-auth="userConst._PERMS.UPDATE"
@@ -64,6 +64,28 @@
                   :class="prefixCls"
                 >
                   {{ t('model.user.updateUser') }}
+                </Button>
+              </MenuItem> -->
+              <MenuItem :key="3" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="userConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.user.setEmail') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="4" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="userConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.user.setMobile') }}
                 </Button>
               </MenuItem>
             </Menu>
@@ -101,6 +123,8 @@
         :deptName="drawerParam.deptName"
       />
     </Drawer>
+    <SetMobileTable :visible="isMobile" @handleCancel="isCancel" />
+    <SetEmailTable :visible="isEmail" @handleCancel="isCancel" />
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -131,6 +155,8 @@
   import { getCompany } from '/@/api/sys/compnay/company';
   import { DepartmentModel } from '/@/api/sys/department/model/departmentModel';
   import { CompanyModel } from '/@/api/sys/compnay/model/companyModel';
+  import SetMobileTable from './components/SetMobileTable.vue';
+  import SetEmailTable from './components/SetEmailTable.vue';
   export default defineComponent({
     name: 'UserTable',
     components: {
@@ -146,6 +172,8 @@
       Drawer,
       AddUserForm,
       UpdateUserForm,
+      SetMobileTable,
+      SetEmailTable,
     },
     setup() {
       const { t } = useI18n();
@@ -198,7 +226,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -214,6 +242,9 @@
         const result = await getList();
         processList(result);
       });
+      //设置手机号和邮箱
+      let isMobile = ref(false);
+      let isEmail = ref(false);
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -227,7 +258,7 @@
               success(t('model.user.deleteUser'), t('model.user.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
               loading.value = false;
@@ -241,7 +272,7 @@
               success(t('model.user.reEnableUser'), t('model.user.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
               loading.value = false;
@@ -267,6 +298,11 @@
               drawerParam.companyName = company.content.name || '';
             }
             break;
+          case 3:
+            isEmail.value = true;
+            break;
+          case 4:
+            isMobile.value = true;
         }
       };
 
@@ -286,6 +322,11 @@
         drawerParam.deptName = '';
         const result = await getList();
         processList(result);
+      };
+      //关闭
+      const isCancel = () => {
+        isMobile.value = false;
+        isEmail.value = false;
       };
 
       const success = (message: any, description: any) => {
@@ -349,6 +390,9 @@
         drawerParam,
         addUser,
         onClose,
+        isMobile,
+        isEmail,
+        isCancel,
       };
     },
   });

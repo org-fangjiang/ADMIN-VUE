@@ -182,7 +182,7 @@
               await addUser(formState);
               success(t('model.user.addUser'), t('model.user.success'));
               // Object.assign(formState, content);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
               loading.value = false;
