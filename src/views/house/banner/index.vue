@@ -6,7 +6,7 @@
     }}</Button>
     <Table :columns="bannerColumns" :data-source="list" rowKey="id" :pagination="false">
       <template #address="{ text: address }">
-        <Image :src="address" width="150px" />
+        <Image :src="address" width="63px" />
       </template>
       <template #state="{ text: state }">
         <span>

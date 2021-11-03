@@ -72,12 +72,11 @@
       </template>
     </Table>
     <Modal
-      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :bodyStyle="{ overflow: 'auto', margin: '16px' }"
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
+      width="70%"
       :footer="null"
       :destroyOnClose="true"
     >
@@ -96,12 +95,12 @@
         :selected="drawerParam.selected"
         @setBuildLayout="setBuildLayout"
       />
-      <FLicense
+      <!-- <FLicense
         v-if="drawerParam.state === '2'"
         :projectId="props.id"
         :buildId="drawerParam.id"
         @setBuildLicense="setBuildLicense"
-      />
+      /> -->
     </Modal>
     <Modal
       :bodyStyle="{ overflow: 'auto', margin: '16px', height: '100px' }"

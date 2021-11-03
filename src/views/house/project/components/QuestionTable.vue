@@ -62,7 +62,7 @@
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width=""
+      width="50%"
       :footer="null"
       :destroyOnClose="true"
     >

@@ -6,7 +6,8 @@
       :columns="ColumnsLayout"
       :data-source="list"
       rowKey="id"
-      :pagination="false"
+      :pagination="pagination"
+      @change="handleTableChange"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange }"
     >
       <template #hResourceByResourceId="{ text: hResourceByResourceId }">
@@ -46,9 +47,9 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BaseListResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -91,6 +92,24 @@
       const pageSizeList = ref<string[]>(PageSizeList);
       const source: LayoutModel[] = [];
 
+      // 添加分页
+      const pageParam: PageParam = reactive({
+        pageNum: 0,
+        pageSize: 10,
+      });
+      const total = ref<number>(0);
+      const pagination = computed(() => ({
+        total: total.value,
+        current: pageParam.pageNum,
+        pageSize: pageParam.pageSize,
+      }));
+      const handleTableChange = async (pag: any) => {
+        pageParam.pageSize = pag!.pageSize!;
+        pageParam.pageNum = pag?.current;
+        const result = await getList();
+        processListByLine(result);
+      };
+
       // const formRef = ref();
       const formState: UnwrapRef<LayoutModel> = reactive({});
 
@@ -106,10 +125,10 @@
       // 获取list
       const getList = async () => {
         loading.value = true;
-        let result: BaseListResult<LayoutModel> | undefined;
+        let result: BasePageResult<LayoutModel> | undefined;
         try {
-          result = await getLayoutList(condition);
-        } catch (error) {
+          result = await getLayoutList(condition, pageParam);
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -125,13 +144,14 @@
         if (!result) {
           return;
         }
-        const { content } = result;
+        const { content, page } = result;
         list.splice(0);
         if (content) {
           content.forEach((line) => {
             list.push(line);
           });
         }
+        total.value = Number(page.totalElements);
       }
 
       onMounted(async () => {
@@ -173,6 +193,8 @@
         props,
         formState,
         selectedRowKeys,
+        handleTableChange,
+        pagination,
       };
     },
   });

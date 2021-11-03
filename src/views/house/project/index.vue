@@ -149,11 +149,10 @@
     />
     <Modal
       v-model:visible="drawerParam.visible"
-      title=""
+      :title="drawerParam.title"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
-      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      width="80%"
+      :bodyStyle="{ overflow: 'auto', margin: '16px' }"
       :destroyOnClose="true"
       :footer="null"
     >

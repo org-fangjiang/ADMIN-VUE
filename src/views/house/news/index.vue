@@ -17,7 +17,7 @@
     <Button v-auth="newsConst._PERMS.ADD" @click="addNews">{{ t('host.action.add') }}</Button>
     <Table :columns="ColumnsNews" :data-source="list" rowKey="id" :pagination="false">
       <template #img="{ text: img }">
-        <Image :src="img" width="100px" />
+        <Image :src="img" width="63px" />
       </template>
       <template #projects="{ text: projects }">
         <span v-for="item in projects" :key="item.id">{{ item.name }},</span>
@@ -100,12 +100,11 @@
       @showSizeChange="onShowSizeChange"
     />
     <Modal
-      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :bodyStyle="{ overflow: 'auto', margin: '16px' }"
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
+      width="50%"
       :footer="null"
       :destroyOnClose="true"
     >

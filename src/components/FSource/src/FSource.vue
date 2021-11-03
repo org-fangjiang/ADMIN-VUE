@@ -20,7 +20,7 @@
       :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange, type: 'radio' }"
     >
       <template #address="{ text: address }">
-        <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
+        <Image v-if="type !== '6' && type !== '7'" :src="address" width="70px" />
         <div v-else>{{ address }}</div>
       </template>
       <template #sort="{ text: sort }">
