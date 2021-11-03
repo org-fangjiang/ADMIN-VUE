@@ -33,7 +33,7 @@ export const _DeveloperConst = {
   },
 };
 
-export const _DeveloperColumns = [
+export const _Columns = [
   {
     title: t('host.name'),
     key: 'name',
@@ -62,6 +62,10 @@ export const _DeveloperColumns = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _DeveloperColumns = [
+  ..._Columns,
   {
     title: t('host.operation'),
     key: 'operation',

@@ -33,7 +33,7 @@ export const _BrandConst = {
   },
 };
 
-export const _BrandColumns = [
+export const _Columns = [
   {
     title: t('host.name'),
     key: 'name',
@@ -62,6 +62,10 @@ export const _BrandColumns = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _BrandColumns = [
+  ..._Columns,
   {
     title: t('host.operation'),
     key: 'operation',

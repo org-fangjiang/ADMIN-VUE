@@ -38,7 +38,7 @@ export const _EstateCompanyConst = {
   },
 };
 
-export const _EstateCompanyColumns = [
+export const _Columns = [
   {
     title: t('host.name'),
     key: 'name',
@@ -67,6 +67,10 @@ export const _EstateCompanyColumns = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _EstateCompanyColumns = [
+  ..._Columns,
   {
     title: t('host.operation'),
     key: 'operation',

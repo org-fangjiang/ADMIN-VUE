@@ -187,13 +187,19 @@
           :label="t('host.hDeveloperByDeveloperId')"
           name="hDeveloperByDeveloperId"
         >
-          <FDeveloper
+          <Button @click="setDevelop">设置开发商</Button>
+          <br />
+          <span>{{ developerName }}</span>
+          <!-- <FDeveloper
             :developerId="formState.hDeveloperByDeveloperId?.id || ''"
             @setProjectDevelop="setProjectDevelop"
-          />
+          /> -->
         </FormItem>
         <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
-          <FBrand :brandId="formState.brandId?.id || ''" @setProjectBrand="setProjectBrand" />
+          <Button @click="setBrand">设置品牌商</Button>
+          <br />
+          <span>{{ brandName }}</span>
+          <!-- <FBrand :brandId="formState.brandId?.id || ''" @setProjectBrand="setProjectBrand" /> -->
         </FormItem>
       </div>
       <br />
@@ -345,10 +351,13 @@
           />
         </FormItem>
         <FormItem ref="estateCompanyById" :label="t('host.estateCompany')" name="estateCompanyById">
-          <FEstateCompany
+          <Button @click="setEstate">设置物业公司</Button>
+          <br />
+          <span>{{ estateName }}</span>
+          <!-- <FEstateCompany
             :estateCompany="formState.estateCompany || ''"
             @setProjectEstateCompany="setProjectEstateCompany"
-          />
+          /> -->
         </FormItem>
         <FormItem ref="estatePrice" :label="t('host.estatePrice')" name="estatePrice">
           <Input
@@ -515,6 +524,18 @@
         @change="poiChange"
       />
     </Modal>
+    <Modal
+      v-model:visible="isSet"
+      title=""
+      width="800px"
+      :footer="null"
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :destroyOnClose="true"
+    >
+      <DeveloperTable v-if="state === 1" @setDeveloper="setDeveloper" :checkedKeys="selectedRow" />
+      <BrandTable v-if="state === 2" @setBrandName="setBrandName" :checkedKeys="selectedRow" />
+      <EstateTable v-if="state === 3" @setEstateName="setEstateName" :checkedKeys="selectedRow" />
+    </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -550,9 +571,12 @@
   import { Persistent } from '/@/utils/cache/persistent';
   import { HOUSE_PROJECT } from '/@/enums/cacheEnum';
   import { FGroup } from '/@/components/FGroup';
-  import FDeveloper from '/@/components/FDeveloper';
-  import FBrand from '/@/components/FBrand';
-  import FEstateCompany from '/@/components/FEstateCompany';
+  import DeveloperTable from '/@/components/FDeveloper/src/DeveloperTable.vue';
+  import BrandTable from '/@/components/FBrand/src/BrandTable.vue';
+  import EstateTable from '/@/components/FEstateCompany/src/EstateTable.vue';
+  import { getDeveloper } from '/@/api/host/developer/developer';
+  import { getBrand } from '/@/api/host/brand/brand';
+  import { getEstateCompany } from '/@/api/host/estateCompany/estateCompany';
 
   export default defineComponent({
     name: 'ProjectForm',
@@ -576,9 +600,9 @@
       FCity,
       FArea,
       FGroup,
-      FDeveloper,
-      FBrand,
-      FEstateCompany,
+      DeveloperTable,
+      BrandTable,
+      EstateTable,
       Divider,
     },
     props: {
@@ -621,18 +645,74 @@
           });
         }
       };
-
-      const setProjectBrand = async (value) => {
-        formState.brandIdS = value.value;
+      //设置开发商
+      let isSet = ref(false);
+      let state = ref(0);
+      let selectedRow = ref('');
+      let developerName = ref('');
+      const setDevelop = async () => {
+        isSet.value = true;
+        state.value = 1;
+        if (formState.developerId) {
+          selectedRow.value = formState.developerId;
+        }
+      };
+      const setDeveloper = async (value) => {
+        formState.developerId = value.id;
+        const { content } = await getDeveloper(value.id);
+        developerName.value = content.name || '';
+        isSet.value = false;
+        state.value = 0;
+        selectedRow.value = '';
+      };
+      //设置品牌商
+      let brandName = ref('');
+      const setBrand = async () => {
+        isSet.value = true;
+        state.value = 2;
+        if (formState.brandIdS) {
+          selectedRow.value = formState.brandIdS;
+        }
+      };
+      const setBrandName = async (value) => {
+        formState.brandIdS = value.id;
+        const { content } = await getBrand(value.id);
+        formState.brandId = content;
+        brandName.value = content.name || '';
+        isSet.value = false;
+        state.value = 0;
+        selectedRow.value = '';
+      };
+      //设置物业公司
+      let estateName = ref('');
+      const setEstate = async () => {
+        isSet.value = true;
+        state.value = 3;
+        if (formState.estateCompany) {
+          selectedRow.value = formState.estateCompany;
+        }
+      };
+      const setEstateName = async (value) => {
+        formState.estateCompany = value.id;
+        const { content } = await getEstateCompany(value.id);
+        formState.estateCompanyById = content;
+        estateName.value = content.name || '';
+        isSet.value = false;
+        state.value = 0;
+        selectedRow.value = '';
       };
 
-      const setProjectDevelop = async (value) => {
-        formState.developerId = value.value;
-      };
+      // const setProjectBrand = async (value) => {
+      //   formState.brandIdS = value.value;
+      // };
 
-      const setProjectEstateCompany = async (value) => {
-        formState.estateCompany = value.value;
-      };
+      // const setProjectDevelop = async (value) => {
+      //   formState.developerId = value.value;
+      // };
+
+      // const setProjectEstateCompany = async (value) => {
+      //   formState.estateCompany = value.value;
+      // };
 
       const typeChange = async (e) => {
         formState.type = e || '';
@@ -795,6 +875,19 @@
               const loanTypes = formState.loanType.split(',');
               selected.value = loanTypes;
             }
+            //获取物业开发商和品牌商的名称并展示
+            if (formState.developerId) {
+              const { content } = await getDeveloper(formState.developerId);
+              developerName.value = content.name || '';
+            }
+            if (formState.brandIdS) {
+              const { content } = await getBrand(formState.brandIdS);
+              brandName.value = content.name || '';
+            }
+            if (formState.estateCompany) {
+              const { content } = await getEstateCompany(formState.estateCompany);
+              estateName.value = content.name || '';
+            }
           } catch (error) {
           } finally {
             loading.value = false;
@@ -900,11 +993,23 @@
         searchText,
         area,
         changeLabels,
-        setProjectDevelop,
-        setProjectBrand,
-        setProjectEstateCompany,
+        // setProjectDevelop,
+        // setProjectBrand,
+        // setProjectEstateCompany,
         marks,
         selected,
+        setDevelop,
+        isSet,
+        state,
+        setDeveloper,
+        developerName,
+        brandName,
+        setBrand,
+        setBrandName,
+        setEstateName,
+        setEstate,
+        estateName,
+        selectedRow,
       };
     },
   });

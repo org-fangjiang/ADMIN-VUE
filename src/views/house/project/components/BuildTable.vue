@@ -103,6 +103,21 @@
         @setBuildLicense="setBuildLicense"
       />
     </Modal>
+    <Modal
+      :bodyStyle="{ overflow: 'auto', margin: '16px', height: '100px' }"
+      :visible="isVisible"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      :footer="null"
+      :destroyOnClose="true"
+    >
+      <FLicense
+        v-if="drawerParam.state === '2'"
+        :projectId="props.id"
+        :buildId="drawerParam.id"
+        @setBuildLicense="setBuildLicense"
+      />
+    </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -201,6 +216,7 @@
         selected: [''],
       });
       const onClose = async () => {
+        isVisible.value = false;
         drawerParam.visible = false;
         drawerParam.state = '';
         drawerParam.id = '';
@@ -288,8 +304,9 @@
         drawerParam.title = t('host.action.update');
       };
       //打开许可证设置
+      let isVisible = ref(false);
       const setLicense = async (line) => {
-        drawerParam.visible = true;
+        isVisible.value = true;
         drawerParam.state = '2';
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.setLicense');
@@ -301,8 +318,9 @@
       //设置许可证
       const setBuildLicense = async () => {
         // formState.licenseId = value.value;
-        drawerParam.visible = false;
+        isVisible.value = false;
         drawerParam.state = '';
+        drawerParam.title = '';
         const result = await getList();
         processList(result);
       };
@@ -386,6 +404,7 @@
         setLicense,
         setBuildLicense,
         formState,
+        isVisible,
       };
     },
   });
