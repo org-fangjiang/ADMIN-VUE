@@ -13,7 +13,7 @@
         <Image
           v-if="scope.record.sort !== '6' && scope.record.sort !== '7'"
           :src="scope.text"
-          width="100px"
+          width="60px"
         />
         <div v-else>{{ address }}</div>
       </template>
