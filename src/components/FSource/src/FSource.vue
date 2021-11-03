@@ -16,6 +16,7 @@
       :data-source="list"
       rowKey="id"
       :pagination="pagination"
+      @change="handleTableChange"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange, type: 'radio' }"
     >
       <template #address="{ text: address }">
@@ -126,7 +127,7 @@
         let result: BaseListResult<SourceModel> | undefined;
         try {
           result = await getResources(condition, pageParam);
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -149,8 +150,7 @@
             list.push(line);
           });
         }
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
+        total.value = Number(page.totalElements);
       }
 
       onMounted(async () => {
