@@ -130,17 +130,17 @@ export const _HostConst = {
     { value: '5', label: t('host.BUILD_TYPE.PART_POURING'), color: 'volcano' }, //BUILD_TYPE_PART_POURING 部分浇筑
   ],
   WATER_METHOD: [
-    { value: '3', label: t('host.WATER.UNKNOWN'), color: 'volcano' }, //WATER_UNKNOWN 未知
+    { value: '0', label: t('host.WATER.UNKNOWN'), color: 'volcano' }, //WATER_UNKNOWN 未知
     { value: '1', label: t('host.WATER.CIVIL'), color: 'geekblue' }, //WATER_CIVIL 民用水
     { value: '2', label: t('host.WATER.COMMERCIAL'), color: 'volcano' }, //WATER_COMMERCIAL商用水
   ],
   ELECTRICITY_METHOD: [
-    { value: '3', label: t('host.WATER.UNKNOWN'), color: 'volcano' }, //ELECTRICITY_UNKNOWN 未知
+    { value: '0', label: t('host.WATER.UNKNOWN'), color: 'volcano' }, //ELECTRICITY_UNKNOWN 未知
     { value: '1', label: t('host.WATER.CIVIL'), color: 'geekblue' }, //ELECTRICITY_CIVIL 民用水
     { value: '2', label: t('host.WATER.COMMERCIAL'), color: 'volcano' }, //ELECTRICITY_COMMERCIAL
   ],
   HEAT_METHOD: [
-    { value: '3', label: t('host.HEAT.UNKNOWN'), color: 'volcano' }, // 未知
+    { value: '0', label: t('host.HEAT.UNKNOWN'), color: 'volcano' }, // 未知
     { value: '1', label: t('host.HEAT.MUNICIPAL'), color: 'geekblue' }, //HEAT_MUNICIPAL 市政供暖
     { value: '2', label: t('host.HEAT.CONCENTRATED'), color: 'volcano' }, //HEAT_CONCENTRATED 集体供暖
   ],
