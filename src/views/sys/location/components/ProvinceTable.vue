@@ -3,6 +3,7 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <Select
+      :class="`${prefixCls}-select`"
       ref="select"
       :allowClear="true"
       v-model:value="condition.state"
@@ -11,9 +12,9 @@
       :options="provinceConst.STATES"
       :pagination="false"
     />
-    <Button :class="prefixCls" v-auth="provinceConst._PERMS.ADD" @click="addProvince">{{
-      t('model.location.province.addProvince')
-    }}</Button>
+    <Button v-auth="provinceConst._PERMS.ADD" @click="addProvince" :class="`${prefixCls}-select`">
+      {{ t('model.location.province.addProvince') }}</Button
+    >
     <Table :columns="provinceColumns" :data-source="list" rowKey="id">
       <template #state="{ text: state }">
         <span>
@@ -158,7 +159,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -190,7 +191,7 @@
               );
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.province.fail'));
             } finally {
               loading.value = false;
@@ -208,7 +209,7 @@
               );
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.province.fail'));
             } finally {
               loading.value = false;
@@ -303,3 +304,21 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-location';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

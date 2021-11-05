@@ -1,7 +1,7 @@
 //关联户型信息列表
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button @click="handleAdd">保存</Button>
+  <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Button @click="handleAdd" :class="`${prefixCls}-sel`">保存</Button>
     <Table
       :columns="ColumnsLayout"
       :data-source="list"
@@ -199,3 +199,20 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-project';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-sel {
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

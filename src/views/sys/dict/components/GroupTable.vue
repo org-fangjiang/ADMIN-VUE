@@ -9,8 +9,9 @@
       style="width: 120px"
       @change="stateHandleChange"
       :options="dictConst.STATES"
+      :class="`${prefixCls}-select`"
     />
-    <Button :class="prefixCls" v-auth="dictConst._PERMS.ADD" @click="onAddGroup">{{
+    <Button :class="`${prefixCls}-select`" v-auth="dictConst._PERMS.ADD" @click="onAddGroup">{{
       t('model.dict.group.addGroup')
     }}</Button>
     <Table :columns="groupColumns" :data-source="list" rowKey="id" size="small" :pagination="false">
@@ -146,7 +147,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -190,7 +191,7 @@
               success(t('model.dict.group.deleteGroup'), t('model.dict.group.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.dict.group.fail'));
             } finally {
               loading.value = false;
@@ -205,7 +206,7 @@
               success(t('model.dict.group.recoveryGroup'), t('model.dict.group.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.dict.group.fail'));
             } finally {
               loading.value = false;
@@ -293,3 +294,21 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-dict';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

@@ -3,7 +3,7 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <div>
-      <Button v-auth="menuConst._PERMS.ADD" :class="prefixCls" @click="add">{{
+      <Button v-auth="menuConst._PERMS.ADD" :class="`${prefixCls}-add`" @click="add">{{
         t('model.perms.addMenu')
       }}</Button>
     </div>
@@ -133,7 +133,7 @@
             list.push(Object.assign(item, { children: [] }));
             //将数据赋值给list，并给children一个初始的空数组
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -159,7 +159,7 @@
               }
             });
           }
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -250,7 +250,7 @@
           expandedRowKeys.value.splice(0);
           selectedRowKeys.value.splice(0);
           await loadData();
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('model.perms.fail'));
         } finally {
           loading.value = false;
@@ -265,7 +265,7 @@
           expandedRowKeys.value.splice(0);
           selectedRowKeys.value.splice(0);
           await loadData();
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('model.perms.fail'));
         } finally {
           loading.value = false;
@@ -381,6 +381,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-add {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

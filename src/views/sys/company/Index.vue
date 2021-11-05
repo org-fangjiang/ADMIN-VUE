@@ -4,6 +4,7 @@
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <div class="container flex-row">
       <Select
+        :class="`${prefixCls}-select`"
         ref="select"
         :allowClear="true"
         v-model:value="condition.state"
@@ -11,8 +12,8 @@
         @change="stateHandleChange"
         :options="companyConst.STATES"
       />
-      <FCascader @change="locationChange" />
-      <Button :class="prefixCls" v-auth="companyConst.COMPANY_PERMS.ADD" @click="add">{{
+      <FCascader @change="locationChange" :class="`${prefixCls}-select`" />
+      <Button :class="`${prefixCls}-select`" v-auth="companyConst.COMPANY_PERMS.ADD" @click="add">{{
         t('model.company.add')
       }}</Button>
     </div>
@@ -241,7 +242,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -302,7 +303,7 @@
               success(t('model.company.updateInfo'), t('model.company.update_success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.company.update_failed'));
             } finally {
               loading.value = false;
@@ -317,7 +318,7 @@
               success(t('model.company.updateInfo'), t('model.company.update_success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.company.update_failed'));
             } finally {
               loading.value = false;
@@ -452,6 +453,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

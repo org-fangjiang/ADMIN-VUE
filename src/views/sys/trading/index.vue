@@ -2,11 +2,16 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <FCascader @change="locationChange" class="mr-2" />
-    <Button v-auth="tradingConst._PERMS.ADD" @click="addMetroLine">{{
+    <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
+    <Button v-auth="tradingConst._PERMS.ADD" @click="addMetroLine" :class="`${prefixCls}-select`">{{
       t('component.action.add')
     }}</Button>
-    <FTrading @change="changeName" :cityId="cityId" :provinceId="province" />
+    <FTrading
+      @change="changeName"
+      :cityId="cityId"
+      :provinceId="province"
+      :class="`${prefixCls}-select`"
+    />
     <Table :columns="ColumnsTrading" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -211,7 +216,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -296,7 +301,7 @@
               success(t('model.metroLine.result.delete'), t('model.metroLine.result.delete'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
             } finally {
               loading.value = false;
@@ -310,7 +315,7 @@
               success(t('model.metroLine.result.reEnable'), t('model.metroLine.result.reEnable'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
             } finally {
               loading.value = false;
@@ -386,6 +391,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

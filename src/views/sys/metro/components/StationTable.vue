@@ -1,9 +1,9 @@
 // 站点信息管理页面
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button v-auth="stationConst._PERMS.ADD" @click="addMetroStation">{{
-      t('component.action.add')
-    }}</Button>
+  <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Button v-auth="stationConst._PERMS.ADD" @click="addMetroStation" :class="`${prefixCls}-sel`">
+      {{ t('component.action.add') }}
+    </Button>
     <Table :columns="ColumnsLineStation" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -225,6 +225,11 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-sel {
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

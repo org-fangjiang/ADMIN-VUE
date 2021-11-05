@@ -3,9 +3,10 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <!-- 省市区筛选 -->
-    <FCascader @change="locationChange" />
+    <FCascader @change="locationChange" :class="`${prefixCls}-select`" />
     <!-- 状态筛选 -->
     <Select
+      :class="`${prefixCls}-select`"
       ref="select"
       :allowClear="true"
       v-model:value="condition.state"
@@ -16,6 +17,7 @@
     />
     <!-- 标题筛选 -->
     <InputSearch
+      :class="`${prefixCls}-select`"
       v-model:value="condition.title"
       placeholder="search title"
       style="width: 200px"
@@ -23,6 +25,7 @@
       :allowClear="true"
     />
     <InputSearch
+      :class="`${prefixCls}-select`"
       v-model:value="condition.page"
       placeholder="search page"
       style="width: 200px"
@@ -218,7 +221,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -247,7 +250,7 @@
               success(t('model.link.deleteLink'), t('model.link.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.link.fail'));
             } finally {
               loading.value = false;
@@ -261,7 +264,7 @@
               success(t('model.link.reEnableLink'), t('model.link.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.link.fail'));
             } finally {
               loading.value = false;
@@ -378,6 +381,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

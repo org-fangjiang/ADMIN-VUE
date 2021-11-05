@@ -3,7 +3,7 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <div class="container flex-row">
-      <Button :class="prefixCls" v-auth="roleConst._PERMS.ADD" @click="add">{{
+      <Button :class="`${prefixCls}-select`" v-auth="roleConst._PERMS.ADD" @click="add">{{
         t('model.role.addRole')
       }}</Button>
       <Select
@@ -202,7 +202,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -261,7 +261,7 @@
               success(t('model.role.deleteRole'), t('model.role.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.role.fail'));
             } finally {
               loading.value = false;
@@ -274,7 +274,7 @@
               success(t('model.role.reEnableRole'), t('model.role.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.role.fail'));
             } finally {
               loading.value = false;
@@ -373,6 +373,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

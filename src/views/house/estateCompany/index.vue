@@ -1,9 +1,13 @@
 // 物业公司管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button v-auth="estateCompanyConst._PERMS.ADD" @click="addEstateCompany">{{
-      t('host.action.add')
-    }}</Button>
+    <Button
+      v-auth="estateCompanyConst._PERMS.ADD"
+      @click="addEstateCompany"
+      :class="`${prefixCls}-add`"
+    >
+      {{ t('host.action.add') }}</Button
+    >
     <Table :columns="estateCompanyColumns" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -325,6 +329,12 @@
   .@{prefix-cls} {
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-add {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 

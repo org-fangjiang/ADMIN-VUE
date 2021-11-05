@@ -4,6 +4,7 @@
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <!-- 状态筛选 -->
     <Select
+      :class="`${prefixCls}-sel`"
       ref="select"
       :allowClear="true"
       v-model:value="condition.state"
@@ -13,7 +14,7 @@
       :pagination="false"
     />
     <!-- 添加用户 -->
-    <Button :class="prefixCls" v-auth="userConst._PERMS.ADD" @click="addUser">{{
+    <Button :class="`${prefixCls}-sel`" v-auth="userConst._PERMS.ADD" @click="addUser">{{
       t('model.company.addCompanyUser')
     }}</Button>
 
@@ -175,7 +176,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -204,7 +205,7 @@
               success(t('model.company.deleteCompanyUser'), t('model.user.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
               loading.value = false;
@@ -297,3 +298,20 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-company';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-sel {
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

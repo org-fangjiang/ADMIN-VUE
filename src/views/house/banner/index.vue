@@ -1,7 +1,7 @@
 //轮播图管理
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button :class="prefixCls" v-auth="bannerConst._PERMS.ADD" @click="addBanner">{{
+    <Button v-auth="bannerConst._PERMS.ADD" @click="addBanner" :class="`${prefixCls}-add`">{{
       t('host.action.add')
     }}</Button>
     <Table :columns="bannerColumns" :data-source="list" rowKey="id" :pagination="false">
@@ -332,6 +332,12 @@
   .@{prefix-cls} {
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-add {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 

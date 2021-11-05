@@ -1,9 +1,9 @@
 //热门楼盘
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button :class="prefixCls" v-auth="recommendConst._PERMS.ADD" @click="addProject">{{
-      t('host.action.add')
-    }}</Button>
+    <Button :class="`${prefixCls}-add`" v-auth="recommendConst._PERMS.ADD" @click="addProject">
+      {{ t('host.action.add') }}</Button
+    >
     <Table :columns="columnsRecommend" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -320,7 +320,7 @@
 </script>
 
 <style lang="less">
-  @prefix-cls: ~'@{namespace}-news';
+  @prefix-cls: ~'@{namespace}-recommend';
   @dark-bg: #293146;
 
   html[data-theme='dark'] {
@@ -332,6 +332,12 @@
   .@{prefix-cls} {
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-add {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 

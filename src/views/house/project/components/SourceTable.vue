@@ -1,7 +1,9 @@
 // 资源信息管理页面
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button v-auth="sourceConst._PERMS.ADD" @click="addSource">{{ t('host.action.add') }}</Button>
+  <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Button v-auth="sourceConst._PERMS.ADD" @click="addSource" :class="`${prefixCls}-sel`">
+      {{ t('host.action.add') }}
+    </Button>
     <Table
       :columns="ColumnsHost"
       :data-source="list"
@@ -357,3 +359,22 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-project';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-sel {
+      margin-top: 4px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+      margin-left: 0;
+    }
+  }
+</style>

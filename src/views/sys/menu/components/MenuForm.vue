@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Button @click="changeMenu">菜单</Button>
-    <Button @click="changeButton">按钮</Button>
+    <Button @click="changeMenu" :class="`${prefixCls}-add`">菜单</Button>
+    <Button @click="changeButton" :class="`${prefixCls}-add`">按钮</Button>
     <!-- 添加编辑 菜单 页面 -->
     <Form
       v-if="menuType === '1'"
@@ -363,3 +363,13 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-menu';
+  @dark-bg: #293146;
+  .@{prefix-cls} {
+    &-add {
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

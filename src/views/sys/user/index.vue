@@ -11,9 +11,10 @@
       @change="stateHandleChange"
       :options="userConst.STATES"
       :pagination="false"
+      :class="`${prefixCls}-select`"
     />
     <!-- 添加用户 -->
-    <Button :class="prefixCls" v-auth="userConst._PERMS.ADD" @click="addUser">
+    <Button v-auth="userConst._PERMS.ADD" @click="addUser" :class="`${prefixCls}-select`">
       {{ t('model.user.addUser') }}
     </Button>
 
@@ -414,6 +415,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

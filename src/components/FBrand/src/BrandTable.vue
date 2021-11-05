@@ -1,7 +1,7 @@
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button @click="handleAdd">保存</Button>
-    <Button @click="handleNew">添加</Button>
+  <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Button @click="handleAdd" :class="`${prefixCls}-add`">保存</Button>
+    <Button @click="handleNew" :class="`${prefixCls}-add`">添加</Button>
     <Table
       hideDefaultSelections="true"
       :columns="Columns"
@@ -188,3 +188,20 @@
     },
   });
 </script>
+<style lang="less">
+  @prefix-cls: ~'@{namespace}-project';
+  @dark-bg: #293146;
+
+  html[data-theme='dark'] {
+    .@{prefix-cls} {
+      background-color: @dark-bg;
+    }
+  }
+
+  .@{prefix-cls} {
+    &-add {
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

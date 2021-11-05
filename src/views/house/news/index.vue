@@ -14,7 +14,9 @@
       @change="projectChange"
       :allowClear="true"
     /> -->
-    <Button v-auth="newsConst._PERMS.ADD" @click="addNews">{{ t('host.action.add') }}</Button>
+    <Button v-auth="newsConst._PERMS.ADD" @click="addNews" :class="`${prefixCls}-add`">
+      {{ t('host.action.add') }}
+    </Button>
     <Table :columns="ColumnsNews" :data-source="list" rowKey="id" :pagination="false">
       <template #img="{ text: img }">
         <Image :src="img" width="63px" />
@@ -407,6 +409,12 @@
   .@{prefix-cls} {
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-add {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 

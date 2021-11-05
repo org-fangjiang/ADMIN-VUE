@@ -4,6 +4,7 @@
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <!-- 状态筛选 -->
     <Select
+      :class="`${prefixCls}-add`"
       ref="select"
       :allowClear="true"
       v-model:value="condition.state"
@@ -13,9 +14,9 @@
       :pagination="false"
     />
     <!-- 添加 -->
-    <Button :class="prefixCls" v-auth="hostConst._PERMS.ADD" @click="addProject">{{
-      t('host.action.add')
-    }}</Button>
+    <Button :class="`${prefixCls}-add`" v-auth="hostConst._PERMS.ADD" @click="addProject">
+      {{ t('host.action.add') }}</Button
+    >
     <Table :columns="columns" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -518,6 +519,12 @@
   .@{prefix-cls} {
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-add {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>

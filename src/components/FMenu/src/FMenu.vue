@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Button @click="handleAdd">保存</Button>
+    <Button @click="handleAdd" class="setMargin">保存</Button>
     <Table
       :columns="Component_Columns"
       size="middle"
@@ -100,7 +100,7 @@
             list.push(Object.assign(item, { children: [] }));
             //将数据赋值给list，并给children一个初始的空数组
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -126,7 +126,7 @@
               }
             });
           }
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -162,7 +162,7 @@
             menus: updatemenus,
           });
           success(t('model.role.setRoleMenu'), t('model.role.success'));
-        } catch (error) {
+        } catch (error: any) {
           failed(error?.response?.data?.message, t('model.role.fail'));
         } finally {
           loading.value = false;
@@ -255,3 +255,8 @@
     },
   });
 </script>
+<style lang="less">
+  .setMargin {
+    @apply mb-5;
+  }
+</style>

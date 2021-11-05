@@ -1,8 +1,9 @@
 // 站点信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <FCascader @change="locationChange" class="mr-2" />
+    <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
     <Select
+      :class="`${prefixCls}-select`"
       ref="selectRef"
       label-in-value
       placeholder="Select LineId"
@@ -15,10 +16,14 @@
       @change="lineChange"
       :allowClear="true"
     />
-    <Button v-auth="stationConst._PERMS.ADD" @click="addMetroStation">{{
-      t('component.action.add')
-    }}</Button>
-    <FMetro :cityId="cityId" @change="changeStation" />
+    <Button
+      v-auth="stationConst._PERMS.ADD"
+      @click="addMetroStation"
+      :class="`${prefixCls}-select`"
+    >
+      {{ t('component.action.add') }}</Button
+    >
+    <FMetro :cityId="cityId" @change="changeStation" :class="`${prefixCls}-select`" />
     <Table :columns="ColumnsMetroStation" :data-source="list" rowKey="id" :pagination="false">
       <template #state="{ text: state }">
         <span>
@@ -205,7 +210,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -338,7 +343,7 @@
               success(t('model.metroStation.result.delete'), t('model.metroStation.result.delete'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
               loading.value = false;
@@ -355,7 +360,7 @@
               );
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
               loading.value = false;
@@ -434,6 +439,12 @@
 
     &-action-menu-item {
       text-align: center;
+    }
+
+    &-select {
+      margin-top: 20px;
+      margin-right: 10px;
+      margin-bottom: 20px;
     }
   }
 </style>
