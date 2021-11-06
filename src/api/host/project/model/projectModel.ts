@@ -296,6 +296,13 @@ export const _Columns = [
 export const _ColumnsHost = [
   ..._Columns,
   {
+    title: t('host.news.createTime'),
+    key: 'createTime',
+    dataIndex: 'createTime',
+    ellipsis: 'false',
+    slots: { customRender: 'createTime' },
+  },
+  {
     title: t('host.operation'),
     key: 'operation',
     ellipsis: 'true',

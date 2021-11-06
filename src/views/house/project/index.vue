@@ -13,6 +13,8 @@
       :options="hostConst.STATES"
       :pagination="false"
     />
+    <!-- 根据名称筛选 -->
+    <FProjectSelect @setProject="setProject" :class="`${prefixCls}-add`" />
     <!-- 添加 -->
     <Button :class="`${prefixCls}-add`" v-auth="hostConst._PERMS.ADD" @click="addProject">
       {{ t('host.action.add') }}</Button
@@ -31,6 +33,9 @@
             {{ hostConst.TYPES[type - 1].label }}
           </Tag>
         </span>
+      </template>
+      <template #createTime="{ text: createTime }">
+        <span>{{ createTime.replace('T', ' ').replace('.000+08:00', '') }}</span>
       </template>
       <template #operation="{ text: link }">
         <!-- 操作下拉框 -->
@@ -223,12 +228,14 @@
     deleteProject,
     getProject,
     reEnableProject,
+    search,
     searchWithCondition,
   } from '/@/api/host/project/project';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
   import { Persistent } from '/@/utils/cache/persistent';
   import { HOUSE_PROJECT } from '/@/enums/cacheEnum';
+  import FProjectSelect from '/@/components/FProjectSelect';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -250,6 +257,7 @@
       LicenseTable,
       DynamicNewsTable,
       QuestionTable,
+      FProjectSelect,
     },
     setup() {
       const { t } = useI18n();
@@ -286,6 +294,17 @@
         cityId: '',
         areaId: '',
       });
+      //根据名称筛选
+      const setProject = async (value) => {
+        let result: BasePageResult<HostModel> | undefined;
+        if (value) {
+          condition.name = value.label;
+          result = await search(condition);
+        } else {
+          result = await getList();
+        }
+        processList(result);
+      };
 
       //根据状态筛选
       const stateHandleChange = async (value) => {
@@ -301,6 +320,7 @@
         loading.value = true;
         let result: BasePageResult<HostModel> | undefined;
         try {
+          debugger;
           result = await searchWithCondition(condition, {
             pageSize: pageParam.size,
             pageNum: pageParam.number,
@@ -502,6 +522,7 @@
         addProject,
         onClose,
         provinceId,
+        setProject,
       };
     },
   });

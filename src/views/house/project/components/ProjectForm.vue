@@ -307,10 +307,12 @@
           />
         </FormItem>
         <FormItem ref="volumeRate" :label="t('host.volumeRate')" name="volumeRate">
-          <Input
+          <InputNumber
             :disabled="isUpdate && !updateFields.includes('volumeRate')"
             v-model:value="formState.volumeRate"
             autoComplete="off"
+            :formatter="(value) => `${value}%`"
+            :parser="(value) => value.replace('%', '')"
           />
         </FormItem>
         <FormItem ref="greenRate" :label="t('host.greenRate')" name="greenRate">
