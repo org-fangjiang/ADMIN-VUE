@@ -14,7 +14,7 @@
       :pagination="false"
     />
     <!-- 根据名称筛选 -->
-    <FProjectSelect @setProject="setProject" :class="`${prefixCls}-add`" />
+    <FProjectSelect @setProject="setProject" @onClear="onClear" :class="`${prefixCls}-add`" />
     <!-- 添加 -->
     <Button :class="`${prefixCls}-add`" v-auth="hostConst._PERMS.ADD" @click="addProject">
       {{ t('host.action.add') }}</Button
@@ -305,6 +305,14 @@
         }
         processList(result);
       };
+      const onClear = async () => {
+        let result: BasePageResult<HostModel> | undefined;
+        result = await searchWithCondition(condition, {
+          pageSize: pageParam.size,
+          pageNum: pageParam.number,
+        });
+        processList(result);
+      };
 
       //根据状态筛选
       const stateHandleChange = async (value) => {
@@ -523,6 +531,7 @@
         onClose,
         provinceId,
         setProject,
+        onClear,
       };
     },
   });

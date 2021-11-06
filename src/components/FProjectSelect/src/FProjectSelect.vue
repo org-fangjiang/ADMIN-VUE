@@ -12,6 +12,7 @@
     label-in-value
     :filter-option="false"
     :not-found-content="fetching ? undefined : null"
+    @clear="onClear"
   >
     <template v-if="fetching" #notFoundContent>
       <Spin size="small" />
@@ -40,7 +41,7 @@
         require: true,
       },
     },
-    emits: ['setProject'],
+    emits: ['setProject', 'onClear'],
     setup(props, { emit }) {
       const data = ref<Option[]>([]);
       const selected = ref({});
@@ -55,6 +56,10 @@
         provinceId: provinceId,
         cityId: cityId,
       });
+
+      const onClear = async () => {
+        emit('onClear');
+      };
 
       watch(
         () => props.projectId,
@@ -125,6 +130,7 @@
         nameSelect,
         fetching,
         selected,
+        onClear,
       };
     },
   });
