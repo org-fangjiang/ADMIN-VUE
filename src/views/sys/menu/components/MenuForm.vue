@@ -39,13 +39,6 @@
           autoComplete="off"
         />
       </FormItem>
-      <!-- <FormItem ref="perms" :label="t('model.perms.perms')" name="perms">
-        <Input
-          :disabled="isUpdate && !updateFields.includes('perms')"
-          v-model:value="formState.perms"
-          autoComplete="off"
-        />
-      </FormItem> -->
       <FormItem ref="icon" :label="t('model.perms.icon')" name="icon">
         <Input
           :disabled="isUpdate && !updateFields.includes('icon')"
@@ -195,12 +188,16 @@
       const menuConst = ref(MenuConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //按钮
       const formRef0 = ref();
+      //菜单
       const formRef1 = ref();
+      //判断更新还是新增
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //判断类型，菜单或者按钮
       let menuType = ref();
       const changeMenu = () => {
         menuType.value = '1';
@@ -217,7 +214,6 @@
       }
       const formState: UnwrapRef<MenuModel> = reactive({
         id: '',
-        // parentId: props.parentId || '',
         parentId: props.parentId || '',
         menuName: '',
         path: '',
@@ -231,9 +227,10 @@
         createBy: '',
         state,
       });
-
+      //提交
       const onSubmit = () => {
         let formRef;
+        //根据类型，获取相应表单数据
         if (menuType.value === '1') {
           formRef = formRef1;
         } else {
@@ -269,7 +266,7 @@
             console.log('error', error);
           });
       };
-
+      //重置
       const resetForm = async () => {
         let formRef;
         if (menuType.value === '1') {

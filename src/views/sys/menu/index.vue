@@ -120,10 +120,11 @@
       let tip = ref<string>('加载中...');
       const columns = reactive(_Columns);
       const menuConst = ref(MenuConst);
-
+      //数据类型
       const menus: Options[] = [];
+      //列表数据
       let list = reactive(menus);
-
+      //获取最外层数据
       const loadData = async () => {
         loading.value = true;
         try {
@@ -170,7 +171,7 @@
           return result;
         }
       };
-
+      //抽屉
       const drawerParam = reactive({
         id: '',
         parentId: '',
@@ -179,6 +180,7 @@
         title: '',
         visible: false,
       });
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.id = '';
         drawerParam.parentId = '';
@@ -191,9 +193,10 @@
         await loadData();
       };
 
-      let expandedRowKeys = ref<string[]>([]);
-      let selectedRowKeys = ref<string[]>([]);
+      let expandedRowKeys = ref<string[]>([]); //展开行
+      let selectedRowKeys = ref<string[]>([]); //选中行
 
+      //选中行发生改变
       const onSelectChange = (record, selected) => {
         if (selected) {
           selectedRowKeys.value.push(record.id);
@@ -204,6 +207,7 @@
       };
       const userStore = useUserStore();
       const companyId = userStore.getUserInfo.companyId;
+      //添加一级菜单
       const add = () => {
         drawerParam.visible = true;
         drawerParam.parentId = companyId;
@@ -211,7 +215,7 @@
         drawerParam.state = '0';
         drawerParam.title = t('model.perms.addMenu');
       };
-
+      //更新
       const handleUpdate = async (record) => {
         drawerParam.visible = true;
         drawerParam.id = record.id;
@@ -233,7 +237,7 @@
           drawerParam.parentName = content.menuName || '';
         }
       };
-
+      //添加子菜单
       const handleAdd = async (record) => {
         drawerParam.visible = true;
         drawerParam.parentId = record.id;
@@ -241,7 +245,7 @@
         drawerParam.title = t('model.perms.addMenu');
         drawerParam.parentName = record.menuName;
       };
-
+      //删除
       const handleDelete = async (record) => {
         try {
           loading.value = true;
@@ -256,7 +260,7 @@
           loading.value = false;
         }
       };
-
+      //恢复
       const handleReEnable = async (record) => {
         try {
           loading.value = true;
