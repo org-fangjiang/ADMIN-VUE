@@ -9,21 +9,21 @@
     >
       <FormItem ref="password" :label="t('model.user.password')" name="password">
         <InputPassword
-          :disabled="isUpdate && !updateFields.includes('password')"
+          :disabled="!updateFields.includes('password')"
           v-model:value="formState.password"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="realName" :label="t('model.user.realName')" name="realName">
         <Input
-          :disabled="isUpdate && !updateFields.includes('realName')"
+          :disabled="!updateFields.includes('realName')"
           v-model:value="formState.realName"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="nickName" :label="t('model.user.nickName')" name="nickName">
         <Input
-          :disabled="isUpdate && !updateFields.includes('nickName')"
+          :disabled="!updateFields.includes('nickName')"
           v-model:value="formState.nickName"
           autoComplete="off"
         />
@@ -36,35 +36,43 @@
       </FormItem>
       <FormItem ref="email" :label="t('model.user.email')" name="email">
         <Input
-          :disabled="isUpdate && !updateFields.includes('email')"
+          :disabled="!updateFields.includes('email')"
           v-model:value="formState.email"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="mobile" :label="t('model.user.mobile')" name="mobile">
         <Input
-          :disabled="isUpdate && !updateFields.includes('mobile')"
+          :disabled="!updateFields.includes('mobile')"
           v-model:value="formState.mobile"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="theme" :label="t('model.user.theme')" name="theme">
         <Input
-          :disabled="isUpdate && !updateFields.includes('theme')"
+          :disabled="!updateFields.includes('theme')"
           v-model:value="formState.theme"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="avatar" :label="t('model.user.avatar')" name="avatar">
-        <Input
-          :disabled="isUpdate && !updateFields.includes('avatar')"
-          v-model:value="formState.avatar"
-          autoComplete="off"
-        />
+        <Upload
+          list-type="picture-card"
+          :show-upload-list="false"
+          :data="{
+            provinceId: userStore.getUserInfo.companyProvinceId,
+            cityId: userStore.getUserInfo.companyCityId,
+          }"
+          :action="ApiSource.UploadNews"
+          @change="changeFile"
+        >
+          <img v-if="formState.avatar" :src="formState.avatar" />
+          <div v-else>Upload</div>
+        </Upload>
       </FormItem>
       <FormItem ref="description" :label="t('model.user.description')" name="description">
         <Input
-          :disabled="isUpdate && !updateFields.includes('description')"
+          :disabled="!updateFields.includes('description')"
           v-model:value="formState.description"
           autoComplete="off"
         />
@@ -101,6 +109,7 @@
     Select,
     InputPassword,
     SelectOption,
+    Upload,
   } from 'ant-design-vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
@@ -109,6 +118,7 @@
   import { addUser } from '/@/api/sys/user/user';
   import { getRoles } from '/@/api/sys/role/role';
   import { useUserStore } from '/@/store/modules/user';
+  import { ApiSource } from '/@/api/host/source/source';
   interface Option {
     value: string;
     label: string;
@@ -124,6 +134,7 @@
       Select,
       InputPassword,
       SelectOption,
+      Upload,
     },
     setup() {
       const { t } = useI18n();
@@ -134,9 +145,9 @@
       let tip = ref<string>('加载中...');
       let isUpdate = ref<boolean>(false);
       const formRef = ref();
+      //角色下拉
       const roleOptions = ref<Option[]>([]);
-      const companyOptions = ref<Option[]>([]);
-
+      //用户信息
       const userStore = useUserStore();
 
       const formState: UnwrapRef<AddUserModel> = reactive({
@@ -160,28 +171,27 @@
         companyId: '',
       });
 
-      const changeDept = (value) => {
-        formState.deptId = value;
+      //上传头像
+      const changeFile = async (info) => {
+        if (info.file.status === 'done') {
+          formState.avatar = info.file.response.data;
+        }
       };
+      //选择角色
       const changeRole = (value: string[]) => {
-        // formState.roleId = value;
         value.forEach((item) => {
           formState.sysRoleBeans?.push({ id: item });
         });
       };
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
           .then(async () => {
             loading.value = true;
             try {
-              // formState.sysRoleBeans?.push({ id: formState.roleId, roleName: formState.roleName });
-              // formState.roleId = '';
-              // const { content } =
               await addUser(formState);
               success(t('model.user.addUser'), t('model.user.success'));
-              // Object.assign(formState, content);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
@@ -192,7 +202,7 @@
             console.log('error', error);
           });
       };
-
+      //重置
       const resetForm = async () => {
         formRef.value.resetFields();
       };
@@ -203,12 +213,13 @@
         const result = await getRoles({ companyId: userInfo.companyId });
         if (result.content) {
           result.content.forEach((role) => {
+            //角色下拉信息
             roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
           });
         }
         loading.value = false;
       });
-
+      //操作成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -231,8 +242,6 @@
         userConst,
         tip,
         roleOptions,
-        companyOptions,
-        changeDept,
         changeRole,
         isUpdate,
         updateFields: _Const._ADD_FIELDS,
@@ -243,6 +252,9 @@
         formState,
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
+        userStore,
+        ApiSource,
+        changeFile,
       };
     },
   });

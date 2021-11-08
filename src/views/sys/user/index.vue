@@ -56,17 +56,6 @@
                   {{ t('model.user.reEnableUser') }}
                 </Button>
               </MenuItem>
-              <!-- <MenuItem :key="2" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
-                <template #icon></template>
-                <Button
-                  v-auth="userConst._PERMS.UPDATE"
-                  type="link"
-                  size="small"
-                  :class="prefixCls"
-                >
-                  {{ t('model.user.updateUser') }}
-                </Button>
-              </MenuItem> -->
               <MenuItem :key="3" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button
@@ -117,12 +106,6 @@
       @close="onClose"
     >
       <AddUserForm v-if="drawerParam.state === '1'" :id="drawerParam.id" />
-      <UpdateUserForm
-        v-if="drawerParam.state === '0'"
-        :id="drawerParam.id"
-        :companyName="drawerParam.companyName"
-        :deptName="drawerParam.deptName"
-      />
     </Drawer>
     <SetMobileTable :visible="isMobile" @handleCancel="isCancel" />
     <SetEmailTable :visible="isEmail" @handleCancel="isCancel" />
@@ -145,17 +128,12 @@
     Select,
     Drawer,
   } from 'ant-design-vue';
-  import { BasePageResult, BaseResult, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { GetUserModel, _Columns, _Const } from '/@/api/sys/user/model/userModel';
-  import { deleteUser, getUsers, reEnableUser, updateUserInfo } from '/@/api/sys/user/user';
+  import { deleteUser, getUsers, reEnableUser } from '/@/api/sys/user/user';
   import AddUserForm from './components/AddUserForm.vue';
-  import UpdateUserForm from './components/UpdateUserForm.vue';
-  import { getDepartment } from '/@/api/sys/department/department';
-  import { getCompany } from '/@/api/sys/compnay/company';
-  import { DepartmentModel } from '/@/api/sys/department/model/departmentModel';
-  import { CompanyModel } from '/@/api/sys/compnay/model/companyModel';
   import SetMobileTable from './components/SetMobileTable.vue';
   import SetEmailTable from './components/SetEmailTable.vue';
   export default defineComponent({
@@ -172,7 +150,6 @@
       Loading,
       Drawer,
       AddUserForm,
-      UpdateUserForm,
       SetMobileTable,
       SetEmailTable,
     },
@@ -197,8 +174,6 @@
         state: '',
         title: '',
         visible: false,
-        companyName: '',
-        deptName: '',
       });
 
       const condition = reactive({
@@ -218,8 +193,9 @@
 
       const users: GetUserModel[] = [];
       let list = reactive(users);
-
+      //获取列表数据
       const getList = async () => {
+        debugger;
         loading.value = true;
         let result: BasePageResult<GetUserModel> | undefined;
         try {
@@ -279,57 +255,37 @@
               loading.value = false;
             }
             break;
-          case 2:
-            // 更新
-            drawerParam.id = id;
-            drawerParam.state = '0';
-            drawerParam.visible = true;
-            drawerParam.title = t('model.user.updateUser');
-            drawerParam.deptName = '';
-            drawerParam.companyName = '';
-            const { content } = await updateUserInfo({ id: id });
-            let dept: BaseResult<DepartmentModel>;
-            let company: BaseResult<CompanyModel>;
-            if (content.deptId) {
-              dept = await getDepartment({ deptId: content.deptId });
-              drawerParam.deptName = dept.content.deptName || '';
-            }
-            if (content.companyId) {
-              company = await getCompany(content.companyId);
-              drawerParam.companyName = company.content.name || '';
-            }
-            break;
           case 3:
+            //设置邮箱
             isEmail.value = true;
             break;
           case 4:
+            //设置手机号
             isMobile.value = true;
         }
       };
-
+      //添加新用户
       const addUser = () => {
         drawerParam.visible = true;
         drawerParam.state = '1';
         drawerParam.id = '';
         drawerParam.title = t('model.user.addUser');
       };
-
+      //关闭抽屉，清空
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
         drawerParam.id = '';
         drawerParam.title = '';
-        drawerParam.companyName = '';
-        drawerParam.deptName = '';
         const result = await getList();
         processList(result);
       };
-      //关闭
+      //关闭邮箱和手机的modal
       const isCancel = () => {
         isMobile.value = false;
         isEmail.value = false;
       };
-
+      //发送请求成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -345,7 +301,7 @@
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
-
+      //将获取到的数据，分页放到列表中
       function processList(result: any) {
         if (!result) {
           return;
@@ -358,11 +314,13 @@
         page.number = page.number + 1;
         Object.assign(pageParam, {}, page);
       }
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
