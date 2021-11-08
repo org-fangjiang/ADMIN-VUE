@@ -87,13 +87,15 @@
       const userStore = useUserStore();
       const { prefixCls } = useDesign('station');
       const metroConst = ref(_MetroStationConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //判断是否为更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
-
+      //获取城市id
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       // fromRef 获取form
       const formRef = ref();
@@ -102,11 +104,11 @@
         name: '',
         cityId: cityId,
         state: _MetroStationConst.EFFECTIVE,
-        // address: '',
         longitude: '',
         latitude: '',
       });
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -120,7 +122,7 @@
                   t('model.metroStation.result.update')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
               } finally {
                 loading.value = false;
@@ -133,7 +135,7 @@
                   t('model.metroStation.result.addStation')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
               } finally {
                 loading.value = false;
@@ -144,13 +146,15 @@
             console.log('error', error);
           });
       };
+
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
           if (props.id) {
+            //如果是更新，获取原本的数据填入表单
             const { content } = await getStation(props.id);
             if (content) {
-              debugger;
               Object.assign(formState, content);
             }
           } else {
@@ -161,6 +165,8 @@
           loading.value = false;
         }
       };
+
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -172,6 +178,7 @@
         loading.value = false;
       });
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -208,14 +215,11 @@
           formState.name = '';
           formState.longitude = '';
           formState.latitude = '';
-          // formState.address = '';
           return;
         }
-        // formState.id = '';
         formState.name = result.value.name;
         formState.longitude = result.value.location.lng;
         formState.latitude = result.value.location.lat;
-        // formState.address = result.value.location.lng + ',' + result.value.location.lat;
       };
 
       return {

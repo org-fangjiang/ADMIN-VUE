@@ -1,6 +1,6 @@
 // 站点信息管理页面
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+  <div :class="prefixCls" class="relative w-full h-full px-4">
     <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
     <Select
       :class="`${prefixCls}-select`"
@@ -168,6 +168,7 @@
       const userStore = useUserStore();
       const { prefixCls } = useDesign('station');
       const stationConst = ref(_MetroStationConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
@@ -181,7 +182,9 @@
         totalPages: 0,
         totalElements: 0,
       });
+      //下拉列表的数据
       const options = ref<Option[]>([]);
+      //获取城市id
       const cityId = userStore.getUserInfo.companyCityId;
       // 筛选条件
       const condition = reactive({
@@ -222,6 +225,7 @@
         return result;
       };
 
+      //获取到的所有数据分页存放到列表
       function processList(result: any) {
         if (!result) {
           return;
@@ -234,6 +238,8 @@
         page.number = page.number + 1;
         Object.assign(pageParam, {}, page);
       }
+
+      //将通过线路筛选出来的站点放入列表中
       function processListByLine(result: any) {
         if (!result) {
           return;
@@ -257,6 +263,7 @@
       };
       //线路筛选
       const lineChange = async (value) => {
+        //根据选中的线路，筛选站点，value没有值表示为清空
         condition.lineId = value;
         let result2: BasePageResult<MetroStationModel> | undefined;
         let lineResult: BaseListResult<MetroStationModel> | undefined;
@@ -270,12 +277,15 @@
         }
       };
 
+      //地铁线路以及站点筛选
       const changeStation = async (e) => {
+        //清空筛选框内容
         if (e.length === 0) {
           const result = await getList();
           processList(result);
           return;
         }
+        //e为选中的数据，第一个数据线路，第二个数据站点
         condition.lineId = e[0] || '';
         condition.id = e[1] || '';
         if (e.length === 1) {
@@ -291,11 +301,14 @@
         }
       };
 
+      //页码修改
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+
+      //页面条数修改
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -304,6 +317,7 @@
         processList(result);
       };
 
+      //页面加载
       onMounted(async () => {
         const result = await getList();
         processList(result);
@@ -313,6 +327,7 @@
         });
       });
 
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';

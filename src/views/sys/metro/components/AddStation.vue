@@ -97,11 +97,13 @@
         totalPages: 0,
         totalElements: 0,
       });
-
+      //站点信息下拉
       const options = ref<Option[]>([]);
+      //选择站点
       const stationChange = async (value) => {
         formState.id = value;
       };
+      //将站点信息，通过滚动触发加载
       const onScroll = async () => {
         if (pageParam.number <= result.page.totalPages) {
           pageParam.number = pageParam.number + 1;
@@ -114,7 +116,7 @@
           });
         }
       };
-
+      //城市id
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       // fromRef 获取form
       const formRef = ref();
@@ -127,7 +129,7 @@
         state: _MetroStationConst.EFFECTIVE,
         orderNum: 1,
       });
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -149,6 +151,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -158,7 +161,7 @@
           loading.value = false;
         }
       };
-
+      //初始加载
       let result;
       onMounted(async () => {
         loading.value = true;

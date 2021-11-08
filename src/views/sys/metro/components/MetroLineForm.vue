@@ -123,12 +123,15 @@
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
       const metroConst = ref(_MetroLineConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //判断是否是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //始发站/终点站选择
       const options = ref<Option[]>([]);
       const startChange = async (value) => {
         formState.startStation.id = value;
@@ -136,6 +139,7 @@
       const endChange = async (value) => {
         formState.endStation.id = value;
       };
+      //城市id
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       // fromRef 获取form
       const formRef = ref();
@@ -173,7 +177,7 @@
                 const { content } = await updateLine(formState);
                 success(t('model.metroLine.result.update'), t('model.metroLine.result.update'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
               } finally {
                 loading.value = false;
@@ -186,7 +190,7 @@
                   t('model.metroLine.result.addStation')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
               } finally {
                 loading.value = false;
@@ -197,6 +201,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -213,6 +218,7 @@
           loading.value = false;
         }
       };
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -221,6 +227,7 @@
             Object.assign(formState, content);
           }
         }
+        //获取站点信息，填入下拉
         const result = await getAllStations({ cityId: cityId.value });
         result.content.forEach((item) => {
           options.value.push({ value: item.id || '', label: item.name || '' });

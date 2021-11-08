@@ -2,8 +2,9 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <!-- 添加地铁线路 -->
+    <!-- 根据地区进行筛选 -->
     <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
+    <!-- 添加地铁线路 -->
     <Button v-auth="metroConst._PERMS.ADD" @click="addMetroLine" :class="`${prefixCls}-select`">{{
       t('component.action.add')
     }}</Button>
@@ -148,6 +149,7 @@
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
       const metroConst = ref(_MetroLineConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
@@ -197,11 +199,13 @@
         return result;
       };
 
+      //将获取到的数据按照分页展示列表中
       function processList(result: any) {
         if (!result) {
           return;
         }
         const { page, content } = result;
+        //每次先将列表清空，在进行赋值
         list.splice(0);
         content.forEach((line) => {
           list.push(line);
@@ -218,11 +222,13 @@
         processList(result);
       };
 
+      //页面修改
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数修改
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -231,14 +237,17 @@
         processList(result);
       };
 
+      //页面初始加载
       onMounted(async () => {
         const result = await getList();
         processList(result);
       });
 
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.visible = false;
         if (drawerParam.state === '1') {
+          //如果是添加站点信息，和主页面没有关系，不需要重新加载
           drawerParam.state = '';
           drawerParam.id = '';
           drawerParam.title = '';

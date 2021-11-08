@@ -107,6 +107,7 @@
         title: '',
         visible: false,
       });
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
@@ -133,7 +134,7 @@
         }
         return result;
       };
-
+      //将获取到的数据存到列表
       function processListByLine(result: any) {
         if (!result) {
           return;
@@ -157,7 +158,7 @@
         drawerParam.id = props.lineId || '';
         drawerParam.title = t('component.action.add');
       };
-
+      //删除站点
       const deleteStation = async (line) => {
         try {
           loading.value = true;
@@ -171,7 +172,7 @@
           loading.value = false;
         }
       };
-
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
