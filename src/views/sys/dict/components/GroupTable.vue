@@ -2,6 +2,7 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
     <Select
       ref="select"
       :allowClear="true"
@@ -11,6 +12,7 @@
       :options="dictConst.STATES"
       :class="`${prefixCls}-select`"
     />
+    <!-- 添加分组 -->
     <Button :class="`${prefixCls}-select`" v-auth="dictConst._PERMS.ADD" @click="onAddGroup">{{
       t('model.dict.group.addGroup')
     }}</Button>
@@ -118,7 +120,9 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
+      //列
       const groupColumns = reactive(GroupColumns);
+      //分页参数
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -126,11 +130,12 @@
         totalPages: 0,
         totalElements: 0,
       });
+      //获取数据的条件
       const condition = reactive({
         state: '',
         detailId: '',
       });
-
+      //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
@@ -138,7 +143,7 @@
       };
       const groups: DictGroupModel[] = [];
       let list = reactive(groups);
-
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<DictGroupModel> | undefined;
@@ -158,12 +163,12 @@
         }
         return result;
       };
-
+      //初始加载
       onMounted(async () => {
         const result = await getList();
         processList(result);
       });
-
+      //根据分页，将数据赋值到表格
       function processList(result: any) {
         if (!result) {
           return;
@@ -220,6 +225,8 @@
             break;
         }
       };
+
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -236,14 +243,13 @@
         });
       };
 
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
-
-      const changedict = async (_e) => {};
-
+      //每页条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -281,7 +287,6 @@
         stateHandleChange,
         list,
         onChange,
-        changedict,
         onShowSizeChange,
         action,
         addDetail,

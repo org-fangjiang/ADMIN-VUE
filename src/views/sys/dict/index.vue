@@ -61,6 +61,7 @@
 
       const groupRefObject = reactive<any>([]);
       const detailRefObject = reactive<any>([]);
+      //抽屉
       const drawerParam = reactive({
         id: '', //当前数据项的编号
         groupId: '', //根据传入的分组id进行添加和修改字典详情
@@ -68,10 +69,11 @@
         title: '',
         visible: false,
       });
-
+      //关闭抽屉
       const onClose = () => {
         try {
           switch (drawerParam.state) {
+            //刷新组件
             case '1':
               groupRefObject[0].refresh();
               break;
@@ -91,27 +93,29 @@
         drawerParam.title = '';
         drawerParam.visible = false;
       };
+
+      //添加分组
       const addGroup = () => {
         drawerParam.visible = true;
         drawerParam.id = '';
         drawerParam.state = '1';
         drawerParam.title = t('model.dict.group.addGroup');
       };
-
+      //更新分组
       const updateGroup = (e) => {
         drawerParam.visible = true;
         drawerParam.id = e.groupId;
         drawerParam.state = '1';
         drawerParam.title = t('model.dict.group.updateGroup');
       };
-
+      //添加详情
       const addDetail = (e) => {
         drawerParam.visible = true;
         drawerParam.groupId = e.groupId;
         drawerParam.state = '0';
         drawerParam.title = t('model.dict.detail.addDetail');
       };
-
+      //更新详情
       const updateDetail = (e) => {
         debugger;
         drawerParam.visible = true;
