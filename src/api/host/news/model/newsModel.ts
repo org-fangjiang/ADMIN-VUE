@@ -158,7 +158,8 @@ export const _ColumnsNews = [
     // sorter: (a, b) => (a.createTime > b.createTime ? 1 : -1),
     // sortOrder: 'descend',
     // sortDirections: '[descend]',
-    // defaultSortOrder: 'descend',
+    defaultSortOrder: 'descend',
+    sorter: true,
   },
   {
     title: t('host.operation'),

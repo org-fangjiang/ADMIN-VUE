@@ -301,6 +301,8 @@ export const _ColumnsHost = [
     dataIndex: 'createTime',
     ellipsis: 'false',
     slots: { customRender: 'createTime' },
+    defaultSortOrder: 'descend',
+    sorter: true,
   },
   {
     title: t('host.operation'),

@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
-import { BasePageResult, BaseResult } from '../../model/baseModel';
+import { BasePageResult, BaseResult, SortParam } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam } from '/@/api/model/baseModel';
 import { HostCondition, HostModel } from './model/projectModel';
@@ -96,11 +96,13 @@ export function addProject(project: HostModel, mode: ErrorMessageMode = 'modal')
 export function searchWithCondition(
   condition: HostCondition,
   page?: PageParam,
+  sort?: SortParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();
   reqParam.setData(condition);
   reqParam.setPage(page);
+  reqParam.setSort(sort);
   const data = reqParam.getInstance();
   return defHttp.post<BasePageResult<HostModel>>(
     {

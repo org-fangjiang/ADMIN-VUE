@@ -17,7 +17,13 @@
     <Button v-auth="newsConst._PERMS.ADD" @click="addNews" :class="`${prefixCls}-add`">
       {{ t('host.action.add') }}
     </Button>
-    <Table :columns="ColumnsNews" :data-source="list" rowKey="id" :pagination="false">
+    <Table
+      :columns="ColumnsNews"
+      :data-source="list"
+      rowKey="id"
+      :pagination="false"
+      @change="sortChange"
+    >
       <template #img="{ text: img }">
         <Image :src="img" width="63px" />
       </template>
@@ -212,10 +218,14 @@
         loading.value = true;
         let result: BasePageResult<NewsModel> | undefined;
         try {
-          result = await getNewsByCity(condition, {
-            pageSize: pageParam.size,
-            pageNum: pageParam.number,
-          });
+          result = await getNewsByCity(
+            condition,
+            {
+              pageSize: pageParam.size,
+              pageNum: pageParam.number,
+            },
+            sortParam
+          );
           // if (result.content) {
           //   result.content.forEach(async (item) => {
           //     if (item.createBy) {
@@ -266,6 +276,29 @@
       //     condition.projectId = '';
       //   }
       // };
+
+      //根据创建时间排序，默认降序
+      const sortParam = reactive({
+        asc: [''],
+        desc: ['createTime'],
+      });
+      const sortChange = async (pagination, filters, sorter) => {
+        //打印可以分别得到上下箭头的数据
+        console.log(pagination, filters, sorter);
+        sortParam.asc.splice(0);
+        sortParam.desc.splice(0);
+        if (sorter.order === 'ascend') {
+          sortParam.asc.push('createTime');
+        } else if (sorter.order === 'descend') {
+          sortParam.desc.push('createTime');
+        } else if (sorter.order === undefined) {
+          sortParam.asc.splice(0);
+          sortParam.desc.splice(0);
+        }
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result);
+      };
 
       const onChange = async (page) => {
         pageParam.number = page;
@@ -391,6 +424,8 @@
         cityId,
         provinceId,
         createBy,
+        sortChange,
+        sortParam,
       };
     },
   });

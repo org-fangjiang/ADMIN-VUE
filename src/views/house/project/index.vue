@@ -19,7 +19,13 @@
     <Button :class="`${prefixCls}-add`" v-auth="hostConst._PERMS.ADD" @click="addProject">
       {{ t('host.action.add') }}</Button
     >
-    <Table :columns="columns" :data-source="list" rowKey="id" :pagination="false">
+    <Table
+      :columns="columns"
+      :data-source="list"
+      rowKey="id"
+      :pagination="false"
+      @change="sortChange"
+    >
       <template #state="{ text: state }">
         <span>
           <Tag :color="hostConst.STATES[state].color">
@@ -320,6 +326,28 @@
         const result = await getList();
         processList(result);
       };
+      //根据创建时间排序，默认降序
+      const sortParam = reactive({
+        asc: [''],
+        desc: ['createTime'],
+      });
+      const sortChange = async (pagination, filters, sorter) => {
+        //打印可以分别得到上下箭头的数据
+        console.log(pagination, filters, sorter);
+        sortParam.asc.splice(0);
+        sortParam.desc.splice(0);
+        if (sorter.order === 'ascend') {
+          sortParam.asc.push('createTime');
+        } else if (sorter.order === 'descend') {
+          sortParam.desc.push('createTime');
+        } else if (sorter.order === undefined) {
+          sortParam.asc.splice(0);
+          sortParam.desc.splice(0);
+        }
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result);
+      };
 
       const projects: HostModel[] = [];
       let list = reactive(projects);
@@ -329,10 +357,14 @@
         let result: BasePageResult<HostModel> | undefined;
         try {
           debugger;
-          result = await searchWithCondition(condition, {
-            pageSize: pageParam.size,
-            pageNum: pageParam.number,
-          });
+          result = await searchWithCondition(
+            condition,
+            {
+              pageSize: pageParam.size,
+              pageNum: pageParam.number,
+            },
+            sortParam
+          );
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -532,6 +564,8 @@
         provinceId,
         setProject,
         onClear,
+        sortChange,
+        sortParam,
       };
     },
   });
