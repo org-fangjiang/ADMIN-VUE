@@ -110,6 +110,7 @@
       const { prefixCls } = useDesign('location');
       const cityConst = ref(CityConst);
       const areaConst = ref(AreaConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const formRef = ref();
@@ -122,7 +123,9 @@
         state: '',
       });
       const pageSizeList = ref<string[]>(PageSizeList);
+      //列
       const cityColumns = reactive(CityColumns);
+      //分页
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -130,6 +133,7 @@
         totalPages: 0,
         totalElements: 0,
       });
+      //获取数据参数
       const condition = reactive({
         id: props.provinceId,
         state: '',
@@ -137,7 +141,7 @@
 
       const cities: CityModel[] = [];
       let list = reactive(cities);
-
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<CityModel> | undefined;
@@ -146,7 +150,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -167,7 +171,7 @@
               const { content } = await addCity(formState);
               success(t('model.location.city.addCity'), t('model.location.city.success'));
               Object.assign(formState, content);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.city.fail'));
             } finally {
               loading.value = false;
@@ -177,11 +181,12 @@
             console.log('error', error);
           });
       };
+      //初始加载
       onMounted(async () => {
         const result = await getList();
         processList(result);
       });
-
+      //按照分页，将数据放到表格中
       function processList(result: any) {
         if (!result) {
           return;
@@ -209,7 +214,7 @@
               success(t('model.location.city.deleteCity'), t('model.location.city.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.city.fail'));
             } finally {
               loading.value = false;
@@ -224,7 +229,7 @@
               success(t('model.location.city.recoveryCity'), t('model.location.city.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.city.fail'));
             } finally {
               loading.value = false;
@@ -238,6 +243,8 @@
             break;
         }
       };
+
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -253,12 +260,13 @@
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
-
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数修改
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;

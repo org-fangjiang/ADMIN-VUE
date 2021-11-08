@@ -132,7 +132,9 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
+      //列
       const provinceColumns = reactive(ProvinceColumns);
+      //分页
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -140,8 +142,9 @@
         totalPages: 0,
         totalElements: 0,
       });
+      //加载条件
       const condition = reactive({ state: '' });
-
+      //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
@@ -150,7 +153,7 @@
 
       const provinces: ProvinceModel[] = [];
       let list = reactive(provinces);
-
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<ProvinceModel> | undefined;
@@ -170,6 +173,7 @@
         }
         return result;
       };
+      //初始加载
       onMounted(async () => {
         const result = await getList();
         processList(result);
@@ -240,6 +244,7 @@
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
+      //数据按照分页，放置到表格
       function processList(result: any) {
         if (!result) {
           return;
@@ -252,11 +257,13 @@
         page.number = page.number + 1;
         Object.assign(pageParam, {}, page);
       }
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;

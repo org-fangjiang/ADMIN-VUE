@@ -87,13 +87,16 @@
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
       const cityConst = ref(CityConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const formRef = ref();
+      //判断是否为更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //状态初始为有效
       let state;
       if (!isUpdate.value) {
         state = CityConst.EFFECTIVE;
@@ -105,7 +108,7 @@
         firstLetter: '',
         state,
       });
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -116,7 +119,7 @@
                 const { content } = await addCity(formState);
                 success(t('model.location.city.addCity'), t('model.location.city.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.location.city.fail'));
               } finally {
                 loading.value = false;
@@ -126,7 +129,7 @@
                 const { content } = await updateCity(formState);
                 success(t('model.location.city.updateCity'), t('model.location.city.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.location.city.fail'));
               } finally {
                 loading.value = false;
@@ -137,6 +140,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -147,6 +151,7 @@
           loading.value = false;
         }
       };
+      //初始加载
       onMounted(async () => {
         if (props.id) {
           loading.value = true;
@@ -159,6 +164,7 @@
         loading.value = false;
       });
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,

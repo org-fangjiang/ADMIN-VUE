@@ -101,7 +101,6 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const formRef = ref();
-      const rules = reactive(AreaConst._RULES);
       const pageSizeList = ref<string[]>(PageSizeList);
       const areaColumns = reactive(AreaColumns);
       let pageParam = reactive({
@@ -133,7 +132,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -178,7 +177,7 @@
               success(t('model.location.area.deleteArea'), t('model.location.area.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.area.fail'));
             } finally {
               loading.value = false;
@@ -193,7 +192,7 @@
               success(t('model.location.area.recoveryArea'), t('model.location.area.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.area.fail'));
             } finally {
               loading.value = false;
@@ -208,7 +207,7 @@
       const updateArea = (areaId) => {
         emit('onUpdateArea', { areaId });
       };
-
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -224,11 +223,13 @@
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -246,7 +247,6 @@
         prefixCls,
         areaConst,
         tip,
-        rules,
         formRef,
         areaColumns,
         loading,

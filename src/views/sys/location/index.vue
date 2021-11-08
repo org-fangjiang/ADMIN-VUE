@@ -79,6 +79,7 @@
       const cityRefObject = reactive<any>([]);
       const areaRefObject = reactive<any>([]);
       const provinceRef = ref();
+      //抽屉
       const drawerParam = reactive({
         id: '',
         provinceId: '',
@@ -87,7 +88,7 @@
         title: '',
         visible: false,
       });
-
+      //关闭抽屉
       const onClose = () => {
         try {
           switch (drawerParam.state) {
@@ -106,7 +107,7 @@
         } catch (e) {
           console.error(e);
         }
-
+        //刷新组件，清空信息
         drawerParam.id = '';
         drawerParam.provinceId = '';
         drawerParam.cityId = '';
@@ -114,39 +115,42 @@
         drawerParam.title = '';
         drawerParam.visible = false;
       };
+      //添加省
       const addProvince = () => {
         drawerParam.visible = true;
         drawerParam.state = '2';
         drawerParam.id = '';
         drawerParam.title = t('model.location.province.addProvince');
       };
+      //添加市
       const addCity = (e) => {
         drawerParam.visible = true;
         drawerParam.provinceId = e.provinceId;
         drawerParam.state = '1';
         drawerParam.title = t('model.location.city.addCity');
       };
-
+      //更新省
       const updateProvince = (e) => {
         drawerParam.visible = true;
         drawerParam.id = e.provinceId;
         drawerParam.state = '2';
         drawerParam.title = t('model.location.province.updateProvince');
       };
-
+      //添加区
       const addArea = (e) => {
         drawerParam.visible = true;
         drawerParam.cityId = e.cityId;
         drawerParam.state = '0';
         drawerParam.title = t('model.location.area.addArea');
       };
+      //更新市
       const updateCity = (e) => {
         drawerParam.visible = true;
         drawerParam.id = e.cityId;
         drawerParam.state = '1';
         drawerParam.title = t('model.location.city.updateCity');
       };
-
+      //更新区
       const updateArea = (e) => {
         drawerParam.visible = true;
         drawerParam.id = e.areaId;
@@ -195,10 +199,6 @@
   .@{prefix-cls} {
     &-drawer {
       max-width: 500px;
-    }
-
-    &-action-menu-item {
-      text-align: center;
     }
   }
 </style>

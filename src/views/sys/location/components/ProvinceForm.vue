@@ -75,11 +75,14 @@
       const provinceConst = ref(ProvinceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //获取表单数据
       const formRef = ref();
+      //判断是否是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //初始默认有效
       let state;
       if (!isUpdate.value) {
         state = ProvinceConst.EFFECTIVE;
@@ -89,7 +92,7 @@
         name: '',
         state,
       });
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -103,7 +106,7 @@
                   t('model.location.province.success')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.location.province.fail'));
               } finally {
                 loading.value = false;
@@ -116,7 +119,7 @@
                   t('model.location.province.success')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.location.province.fail'));
               } finally {
                 loading.value = false;
@@ -127,6 +130,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         if (props.id) {
@@ -141,6 +145,7 @@
           formRef.value.resetFields();
         }
       };
+      //初始加载
       onMounted(async () => {
         if (props.id) {
           const { content } = await getProvince({ id: props.id });
@@ -150,7 +155,7 @@
         }
         loading.value = false;
       });
-
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
