@@ -157,10 +157,14 @@
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('link');
       const linkConst = ref(_Const);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //分页条数
       const pageSizeList = ref<string[]>(PageSizeList);
+      //列
       const columns = reactive(_Columns);
+      //分页参数
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -168,6 +172,7 @@
         totalPages: 0,
         totalElements: 0,
       });
+      //获取数据参数
       const condition = reactive({
         state: '',
         title: '',
@@ -176,6 +181,7 @@
         cityId: '',
         areaId: '',
       });
+      //抽屉
       const drawerParam = reactive({
         id: '',
         state: '',
@@ -189,12 +195,13 @@
         const result = await getList();
         processList(result);
       };
-
+      //根据标题搜索
       const selectTitle = async (value) => {
         condition.title = value;
         const result = await getList();
         processList(result);
       };
+      //根据页码搜索
       const selectPage = async (value) => {
         condition.page = value;
         const result = await getList();
@@ -212,7 +219,7 @@
 
       const links: LinkModel[] = [];
       let list = reactive(links);
-
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<LinkModel> | undefined;
@@ -279,14 +286,14 @@
             break;
         }
       };
-
+      //添加链接
       const addLink = () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
         drawerParam.title = t('model.link.addLink');
       };
-
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
@@ -295,7 +302,7 @@
         const result = await getList();
         processList(result);
       };
-
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -312,6 +319,7 @@
         });
       };
 
+      //按照分页将数据放到表格中
       function processList(result: any) {
         if (!result) {
           return;
@@ -324,11 +332,13 @@
         page.number = page.number + 1;
         Object.assign(pageParam, {}, page);
       }
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;

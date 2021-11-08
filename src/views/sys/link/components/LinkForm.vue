@@ -107,6 +107,7 @@
       const linkConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //判断是不是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
@@ -127,7 +128,7 @@
         areaId: '',
         state,
       });
-
+      //选择省，如果是更新，新选择之后，将市和区清空
       const changeProvince = async (e) => {
         if (e.value !== formState.provinceId) {
           formState.cityId = '';
@@ -135,16 +136,19 @@
         }
         formState.provinceId = e.value || '';
       };
+      //选择市，如果是更新，新选择之后，将区清空
       const changeCity = async (e) => {
         if (e.value !== formState.cityId) {
           formState.areaId = '';
         }
         formState.cityId = e.value || '';
       };
+      //选择区
       const changeArea = async (e) => {
         formState.areaId = e.value || '';
       };
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -155,7 +159,7 @@
                 const { content } = await updateLinks(formState);
                 success(t('model.link.updateLink'), t('model.link.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.link.fail'));
               } finally {
                 loading.value = false;
@@ -165,7 +169,7 @@
                 const { content } = await addLinks(formState);
                 success(t('model.link.addLink'), t('model.link.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.link.fail'));
               } finally {
                 loading.value = false;
@@ -176,6 +180,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -192,6 +197,7 @@
           loading.value = false;
         }
       };
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -203,6 +209,7 @@
         loading.value = false;
       });
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
