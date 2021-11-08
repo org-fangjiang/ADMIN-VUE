@@ -1,7 +1,7 @@
 // 商圈信息管理页面
 
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+  <div :class="prefixCls" class="relative w-full h-full px-4">
     <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
     <Button v-auth="tradingConst._PERMS.ADD" @click="addMetroLine" :class="`${prefixCls}-select`">{{
       t('component.action.add')
@@ -148,6 +148,7 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const tradingArea: TradingModel[] = [];
+      //省市
       const cityId = userStore.getUserInfo.companyCityId;
       let province = ref('');
       // 分页
@@ -166,12 +167,14 @@
         name: '',
         id: '',
       });
-      //根据名称筛选
+      //根据名称筛选，选中并返回的方法
       const changeName = async (value) => {
         if (value.length === 0) {
+          //没有选中数据时
           const result = await getList();
           processList(result);
         } else {
+          //先将列表信息清空
           list.splice(0);
           if (value.length > 0) {
             //应该发送一次网络请求
@@ -227,7 +230,7 @@
         }
         return result;
       };
-
+      //获取的数据分页放到列表中
       function processList(result: any) {
         if (!result) {
           return;
@@ -248,12 +251,13 @@
         const result = await getList();
         processList(result);
       };
-
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -261,14 +265,14 @@
         const result = await getList();
         processList(result);
       };
-
+      //页面初始化加载
       onMounted(async () => {
         const { content } = await getCityWithAllArea({ id: cityId });
         province.value = content.provinceId || '';
         const result = await getList();
         processList(result);
       });
-
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';

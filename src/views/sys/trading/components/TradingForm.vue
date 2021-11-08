@@ -117,16 +117,13 @@
       const tradingConst = ref(_TradingConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      let disable = ref<boolean>(true);
+      //判断更新还是新增
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
 
       const options = ref<Option[]>([]);
-      const stationChange = async (value) => {
-        formState.id = value;
-      };
 
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       // fromRef 获取form
@@ -143,11 +140,11 @@
         provinceId: props.provinceId || '',
         areaId: '',
       });
-
+      //选择地区
       const change = async (e) => {
         formState.areaId = e.value || '';
       };
-
+      //确认
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -161,7 +158,7 @@
                   t('model.metroStation.result.update')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
               } finally {
                 loading.value = false;
@@ -174,7 +171,7 @@
                   t('model.metroStation.result.addStation')
                 );
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
               } finally {
                 loading.value = false;
@@ -185,6 +182,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -194,6 +192,7 @@
           loading.value = false;
         }
       };
+      //加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -262,7 +261,6 @@
         loading,
         tip,
         options,
-        stationChange,
         change,
         formRef,
         formState,
@@ -271,7 +269,6 @@
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         cityId,
-        disable,
         isUpdate,
         visible,
         handleOk,
