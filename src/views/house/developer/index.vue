@@ -1,6 +1,6 @@
 // 物业公司管理页面
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+  <div :class="prefixCls" class="relative w-full h-full px-4">
     <Button
       v-auth="developerConst._PERMS.ADD"
       @click="addEstateCompany"

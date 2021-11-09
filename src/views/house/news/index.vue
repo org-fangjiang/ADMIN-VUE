@@ -1,6 +1,6 @@
 // 文章信息管理页面
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+  <div :class="prefixCls" class="relative w-full h-full px-4">
     <!-- <Select
       ref="selectRef"
       label-in-value

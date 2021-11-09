@@ -1,6 +1,6 @@
 //热门楼盘
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+  <div :class="prefixCls" class="relative w-full h-full px-4">
     <Button :class="`${prefixCls}-add`" v-auth="recommendConst._PERMS.ADD" @click="addProject">
       {{ t('host.action.add') }}</Button
     >

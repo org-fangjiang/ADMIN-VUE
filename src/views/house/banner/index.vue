@@ -1,6 +1,6 @@
 //轮播图管理
 <template>
-  <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
+  <div :class="prefixCls" class="relative w-full h-full px-4">
     <Button v-auth="bannerConst._PERMS.ADD" @click="addBanner" :class="`${prefixCls}-add`">{{
       t('host.action.add')
     }}</Button>
