@@ -70,12 +70,15 @@
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
+      //判断是否为更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      //状态初始为有效
       let state;
       if (!isUpdate.value) {
         state = DictConst.EFFECTIVE;
@@ -87,7 +90,7 @@
         state,
         sysDictDetails: [],
       });
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -98,7 +101,7 @@
                 const { content } = await addSysDictGroup(formState); //返回的是一个content
                 success(t('model.dict.group.addGroup'), t('model.dict.group.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.dict.group.fail'));
               } finally {
                 loading.value = false;
@@ -108,7 +111,7 @@
                 const { content } = await UpdateSysDictGroup(formState);
                 success(t('model.dict.group.updateGroup'), t('model.dict.group.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.dict.group.fail'));
               } finally {
                 loading.value = false;
@@ -119,6 +122,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         if (props.id) {
           loading.value = true;
@@ -134,11 +138,14 @@
         }
         loading.value = false;
       };
+      //初始加载
       onMounted(async () => {
+        //更新
         if (props.id) {
           loading.value = true;
           const { content } = await GetSysDictGroup({ id: props.id });
           if (content) {
+            //把数据赋值到页面中
             Object.assign(formState, content);
           }
           loading.value = false;
@@ -146,6 +153,7 @@
         loading.value = false;
       });
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,

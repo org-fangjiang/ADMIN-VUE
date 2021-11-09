@@ -106,14 +106,17 @@
     setup(props, { emit }) {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
+      //样式前缀
       const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
+      //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const formRef = ref();
-      const rules = reactive(DictConst._DETAIL_RULES);
+      //分页大小
       const pageSizeList = ref<string[]>(PageSizeList);
+      //列
       const detailColumns = reactive(DetailColumns);
+      //分页参数
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -127,6 +130,7 @@
         groupId: '',
         state: '',
       });
+      //查询参数
       const condition = reactive({
         state: '',
         groupId: props.groupId,
@@ -134,7 +138,7 @@
 
       const detailModels: DictDetailModel[] = [];
       let list = reactive(detailModels);
-
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<DictDetailModel> | undefined;
@@ -143,7 +147,7 @@
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -154,6 +158,8 @@
         }
         return result;
       };
+
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         const result = await getList();
@@ -161,6 +167,7 @@
         loading.value = false;
       });
 
+      //按照分页，将数据赋值到表格
       function processList(result: any) {
         if (!result) {
           return;
@@ -188,7 +195,7 @@
               success(t('model.dict.detail.deleteDetail'), t('model.dict.detail.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.dict.detail.fail'));
             } finally {
               loading.value = false;
@@ -203,7 +210,7 @@
               success(t('model.dict.detail.recoveryDetail'), t('model.dict.detail.success'));
               const result = await getList();
               processList(result);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.dict.detail.fail'));
             } finally {
               loading.value = false;
@@ -218,7 +225,7 @@
       const updateDetail = (detailId) => {
         emit('onUpdateDetail', { detailId });
       };
-
+      //成功失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -234,11 +241,13 @@
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //每页条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -256,8 +265,6 @@
         prefixCls,
         dictConst,
         tip,
-        rules,
-        formRef,
         detailColumns,
         loading,
         pageSizeList,

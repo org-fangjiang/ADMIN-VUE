@@ -72,47 +72,53 @@
     setup(props) {
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
+      //样式前缀
       const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const formRef = ref();
+      //判断更新还是新增
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //新增状态默认为有效
       let state;
       if (!isUpdate.value) {
         state = DictConst.EFFECTIVE;
       }
+      //表单数据
       const formState: UnwrapRef<DictDetailModel> = reactive({
         id: '',
         value: '',
         groupId: props.groupId || '',
         state,
       });
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
           .then(async () => {
             loading.value = true;
             if (props.id) {
+              //更新
               try {
                 const { content } = await UpdateSysDictDetail(formState);
                 success(t('model.dict.detail.updateDetail'), t('model.dict.detail.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.dict.detail.fail'));
               } finally {
                 loading.value = false;
               }
             } else {
+              //新增
               try {
                 const { content } = await addSysDictDetail(formState);
                 success(t('model.dict.detail.addDetail'), t('model.dict.detail.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.dict.detail.fail'));
               } finally {
                 loading.value = false;
@@ -123,8 +129,10 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         if (props.id) {
+          //更新 ，根据id将数据赋值到表单
           loading.value = true;
           try {
             const { content } = await getSysDictDetail({ id: props.id });
@@ -136,14 +144,15 @@
             loading.value = false;
           }
         } else {
+          //清空重置表单
           formRef.value.resetFields();
         }
         loading.value = false;
       };
+
+      //初始加载
       onMounted(async () => {
         loading.value = true;
-        console.log('id:', props.id);
-        console.log('groupid:', props.groupId);
         if (props.id) {
           const { content } = await getSysDictDetail({ id: props.id });
           if (content) {
@@ -153,6 +162,7 @@
         loading.value = false;
       });
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
