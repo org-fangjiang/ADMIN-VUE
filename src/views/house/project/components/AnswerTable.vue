@@ -69,6 +69,7 @@
   } from '/@/api/host/answer/model/answerModel';
   import { deleteAnswer, getAnswers, reEnableAnswer } from '/@/api/host/answer/answer';
   import AnswerForm from './AnswerForm.vue';
+  import { processListByLine, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'AnswerTable',
@@ -88,13 +89,14 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const answerConst = ref(_AnswerConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      //设置分页
       const pageSizeList = ref<string[]>(PageSizeList);
-      const answer: AnswerModel[] = [];
       const pageParam: PageParam = reactive({
         pageNum: 1,
         pageSize: 10,
@@ -105,11 +107,12 @@
         current: pageParam.pageNum,
         pageSize: pageParam.pageSize,
       }));
+      //页码修改
       const handleTableChange = async (pag: any) => {
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
 
       // 筛选条件
@@ -119,6 +122,7 @@
         id: '',
       });
       // 列表结果
+      const answer: AnswerModel[] = [];
       let list = reactive(answer);
       // 抽屉参数
       const drawerParam = reactive({
@@ -127,14 +131,28 @@
         title: '',
         visible: false,
       });
+      //打开modal，添加回答
+      const addAnswer = async () => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = '';
+        drawerParam.title = t('host.action.add');
+      };
+      //关闭modal，清空数据
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
         drawerParam.id = '';
         drawerParam.title = '';
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
+
+      //初始加载
+      onMounted(async () => {
+        const result = await getList();
+        processListByLine(result, list, total);
+      });
 
       // 获取list
       const getList = async () => {
@@ -154,73 +172,33 @@
         return result;
       };
 
-      function processListByLine(result: any) {
-        if (!result) {
-          return;
-        }
-        const { content, page } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = Number(page.totalElements);
-      }
-
-      onMounted(async () => {
-        const result = await getList();
-        processListByLine(result);
-      });
-
+      //删除
       const deleteOneAnswer = async (line) => {
         try {
           loading.value = true;
           await deleteAnswer(line.id);
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
       };
+      //恢复
       const reEnableOneAnswer = async (line) => {
         try {
           loading.value = true;
           await reEnableAnswer(line.id);
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
-      };
-
-      const addAnswer = async () => {
-        drawerParam.visible = true;
-        drawerParam.state = '0';
-        drawerParam.id = '';
-        drawerParam.title = t('host.action.add');
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

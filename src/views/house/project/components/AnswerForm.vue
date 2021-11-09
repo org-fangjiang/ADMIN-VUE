@@ -36,11 +36,11 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { AnswerModel, _AnswerConst } from '/@/api/host/answer/model/answerModel';
   import { addAnswers } from '/@/api/host/answer/answer';
+  import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'QuestionForm',
@@ -63,7 +63,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const answerConst = ref(_AnswerConst);
       let loading = ref<boolean>(true);
@@ -89,7 +88,7 @@
               const { content } = await addAnswers(formState);
               success(t('host.action.add'), t('host.action.success'));
               Object.assign(formState, content);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
@@ -112,22 +111,6 @@
         loading.value = true;
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

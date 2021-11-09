@@ -86,17 +86,7 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import {
-    Table,
-    Pagination,
-    Tag,
-    Button,
-    Dropdown,
-    notification,
-    Modal,
-    Menu,
-    MenuItem,
-  } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Button, Dropdown, Modal, Menu, MenuItem } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
     addRecommend,
@@ -110,6 +100,8 @@
     _ColumnsRecommend,
     _RecommendConst,
   } from '/@/api/host/recommend/model/recommendModel';
+
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'RecommendTable',
@@ -138,6 +130,7 @@
       const columnsRecommend = reactive(_ColumnsRecommend);
       const recommendConst = ref(_RecommendConst);
 
+      //控制添加热门楼盘的modal
       let isModal = ref<boolean>(false);
       const addProject = () => {
         isModal.value = true;
@@ -145,7 +138,21 @@
       const onClose = async () => {
         isModal.value = false;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
+      };
+      //添加热门楼盘返回的信息
+      const projectInfo = async (value) => {
+        try {
+          loading.value = true;
+          await addRecommend(value.id);
+          success(t('host.action.add'), t('host.action.success'));
+          const result = await getList();
+          processList(result, list, pageParam);
+        } catch (error: any) {
+          failed(error?.response?.data?.message, t('host.action.fail'));
+        } finally {
+          loading.value = false;
+        }
       };
 
       // 分页
@@ -156,7 +163,8 @@
         totalPages: 0,
         totalElements: 0,
       });
-      // const options = ref<Option[]>([]);
+
+      //省市id
       const cityId = userStore.getUserInfo.companyCityId;
       const provinceId = userStore.getUserInfo.companyProvinceId;
       // 筛选条件
@@ -171,74 +179,6 @@
       const recommend: RecommendModel[] = [];
       // 列表结果
       let list = reactive(recommend);
-
-      const projectInfo = async (value) => {
-        try {
-          loading.value = true;
-          await addRecommend(value.id);
-          success(t('host.action.add'), t('host.action.success'));
-          const result = await getList();
-          processList(result);
-        } catch (error: any) {
-          failed(error?.response?.data?.message, t('host.action.fail'));
-        } finally {
-          loading.value = false;
-        }
-      };
-
-      // 操作
-      const action = async (key) => {
-        debugger;
-        const code = key.key;
-        const id = key?.item['data-id'] || undefined;
-        debugger;
-        switch (code) {
-          case 0:
-            // 删除
-            try {
-              loading.value = true;
-              await deleteRecommend(id);
-              success(t('host.action.delete'), t('host.action.success'));
-              const result = await getList();
-              processList(result);
-            } catch (error: any) {
-              failed(error?.response?.data?.message, t('host.action.fail'));
-            } finally {
-              loading.value = false;
-            }
-            break;
-          case 1:
-            // 恢复
-            try {
-              loading.value = true;
-              await reEnableRecommend(id);
-              success(t('host.action.reEnable'), t('host.action.success'));
-              const result = await getList();
-              processList(result);
-            } catch (error: any) {
-              failed(error?.response?.data?.message, t('host.action.fail'));
-            } finally {
-              loading.value = false;
-            }
-            break;
-        }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       // 获取list
       const getList = async () => {
@@ -261,35 +201,58 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
+      // 操作
+      const action = async (key) => {
+        const code = key.key;
+        const id = key?.item['data-id'] || undefined;
+        switch (code) {
+          case 0:
+            // 删除
+            try {
+              loading.value = true;
+              await deleteRecommend(id);
+              success(t('host.action.delete'), t('host.action.success'));
+              const result = await getList();
+              processList(result, list, pageParam);
+            } catch (error: any) {
+              failed(error?.response?.data?.message, t('host.action.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
+          case 1:
+            // 恢复
+            try {
+              loading.value = true;
+              await reEnableRecommend(id);
+              success(t('host.action.reEnable'), t('host.action.success'));
+              const result = await getList();
+              processList(result, list, pageParam);
+            } catch (error: any) {
+              failed(error?.response?.data?.message, t('host.action.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
         }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
+      };
 
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
 
       return {
