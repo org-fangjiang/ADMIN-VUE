@@ -78,6 +78,7 @@ export default {
     AREA_PLANNING: '区域规划',
     AREA_PRICE: '区域房价',
     PROJECT: '实探楼盘',
+    Encyclopedia: '房产百科',
   },
   dynamicSort: {
     OPEN: '楼盘开盘',

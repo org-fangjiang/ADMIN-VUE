@@ -51,6 +51,7 @@ export const _NewsConst = {
     { value: '5', label: t('host.SORTS.AREA_PLANNING'), color: 'geekblue' },
     { value: '6', label: t('host.SORTS.AREA_PRICE'), color: 'volcano' },
     { value: '7', label: t('host.SORTS.PROJECT'), color: 'geekblue' },
+    { value: '8', label: t('host.SORTS.Encyclopedia'), color: 'geekblue' },
   ],
   SORTS_WITH_PROJECT: [
     { value: '2', label: t('host.SORTS.OPENING_NEWS'), color: 'volcano' },

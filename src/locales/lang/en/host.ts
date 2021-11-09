@@ -78,6 +78,7 @@ export default {
     AREA_PLANNING: 'AREA_PLANNING',
     AREA_PRICE: 'AREA_PRICE',
     PROJECT: 'PROJECT',
+    Encyclopedia: 'Encyclopedia',
   },
   dynamicSort: {
     OPEN: 'OPEN',
