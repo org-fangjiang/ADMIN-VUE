@@ -30,6 +30,7 @@
             :disabled="isUpdate && !updateFields.includes('price')"
             v-model:value="formState.price"
             autoComplete="off"
+            :type="'number'"
             suffix="元/m²"
           />
         </FormItem>
@@ -38,6 +39,7 @@
             :disabled="isUpdate && !updateFields.includes('priceDays')"
             v-model:value="formState.priceDays"
             autoComplete="off"
+            :type="'number'"
             suffix="天"
           />
         </FormItem>
@@ -190,16 +192,11 @@
           <Button @click="setDevelop">设置开发商</Button>
           <br />
           <span>{{ developerName }}</span>
-          <!-- <FDeveloper
-            :developerId="formState.hDeveloperByDeveloperId?.id || ''"
-            @setProjectDevelop="setProjectDevelop"
-          /> -->
         </FormItem>
         <FormItem ref="brandId" :label="t('host.brandId')" name="brandId">
           <Button @click="setBrand">设置品牌商</Button>
           <br />
           <span>{{ brandName }}</span>
-          <!-- <FBrand :brandId="formState.brandId?.id || ''" @setProjectBrand="setProjectBrand" /> -->
         </FormItem>
       </div>
       <br />
@@ -296,6 +293,7 @@
             v-model:value="formState.landArea"
             autoComplete="off"
             suffix="m²"
+            :type="'number'"
           />
         </FormItem>
         <FormItem ref="buildArea" :label="t('host.buildArea')" name="buildArea">
@@ -304,6 +302,7 @@
             v-model:value="formState.buildArea"
             autoComplete="off"
             suffix="m²"
+            :type="'number'"
           />
         </FormItem>
         <FormItem ref="volumeRate" :label="t('host.volumeRate')" name="volumeRate">
@@ -321,6 +320,7 @@
             v-model:value="formState.greenRate"
             autoComplete="off"
             suffix="%"
+            :type="'number'"
           />
         </FormItem>
         <FormItem ref="parking" :label="t('host.parking')" name="parking">
@@ -343,6 +343,7 @@
             v-model:value="formState.houseTotal"
             autoComplete="off"
             suffix="户"
+            :type="'number'"
           />
         </FormItem>
         <FormItem ref="elevatorInfo" :label="t('host.elevatorInfo')" name="elevatorInfo">
@@ -356,10 +357,6 @@
           <Button @click="setEstate">设置物业公司</Button>
           <br />
           <span>{{ estateName }}</span>
-          <!-- <FEstateCompany
-            :estateCompany="formState.estateCompany || ''"
-            @setProjectEstateCompany="setProjectEstateCompany"
-          /> -->
         </FormItem>
         <FormItem ref="estatePrice" :label="t('host.estatePrice')" name="estatePrice">
           <Input
@@ -367,6 +364,7 @@
             v-model:value="formState.estatePrice"
             autoComplete="off"
             suffix="元/m²"
+            :type="'number'"
           />
         </FormItem>
         <FormItem
@@ -474,10 +472,11 @@
             :disabled="isUpdate && !updateFields.includes('number')"
             v-model:value="formState.number"
             autoComplete="off"
+            :type="'number'"
           />
         </FormItem>
         <FormItem ref="lookTime" :label="t('host.lookTime')" name="lookTime">
-          <Input
+          <InputNumber
             :disabled="isUpdate && !updateFields.includes('lookTime')"
             v-model:value="formState.lookTime"
             autoComplete="off"
