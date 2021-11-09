@@ -115,14 +115,17 @@
     setup() {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
+      //样式前准
       const { prefixCls } = useDesign('department');
+      //加载动画
       let loading = ref<boolean>(false);
       let tip = ref<string>('加载中...');
       const departmentConst = ref(DepartmentConst);
-
+      //数据类型
       const depts: Options[] = [];
       let list = reactive(depts);
 
+      //获取最外层数据
       const loadData = async () => {
         loading.value = true;
         try {
@@ -130,12 +133,13 @@
           const { content } = await getAllDepartments({});
           content.forEach((item) => {
             if (item.hasChild) {
+              //如果有子项，先给一个空数组，展示加号
               list.push(Object.assign(item, { children: [] }));
             } else {
               list.push(Object.assign(item));
             }
           });
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -146,13 +150,16 @@
         }
       };
 
-      let expandedRowKeys = ref<string[]>([]);
-      let selectedRowKeys = ref<string[]>([]);
+      let expandedRowKeys = ref<string[]>([]); //展开的数据
+      let selectedRowKeys = ref<string[]>([]); //选中的数据
 
+      //选中的数据发生改变时
       const onSelectChange = (record, selected) => {
         if (selected) {
+          //选中
           selectedRowKeys.value.push(record.id);
         } else {
+          //取消选中，获取要取消的id，在选中的数据中进行删除
           const flag = selectedRowKeys.value.indexOf(record.id);
           selectedRowKeys.value.splice(flag, 1);
         }
@@ -160,7 +167,6 @@
 
       //展开行发生改变时触发
       const handleExpandedRowsChange = async (expandedRows: string[]) => {
-        // loading.value = true;
         if (expandedRows.length === 0) {
           return;
         }
@@ -175,7 +181,6 @@
         //调用递归函数
         addChild(flags, list, children);
         expandedRowKeys.value = expandedRows;
-        // loading.value = false;
       };
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {
         parent.forEach((item) => {
@@ -217,7 +222,7 @@
               }
             });
           }
-        } catch (error) {
+        } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
             content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
@@ -228,7 +233,7 @@
           return result;
         }
       };
-
+      //抽屉参数
       const drawerParam = reactive({
         id: '',
         parentId: '',
@@ -236,13 +241,14 @@
         title: '',
         visible: false,
       });
+      //添加部门
       const add = () => {
         drawerParam.visible = true;
         drawerParam.parentId = '';
         drawerParam.state = '0';
         drawerParam.title = t('model.department.addDept');
       };
-
+      //操作
       const action = async (key) => {
         const code = key.key;
         const id = key?.item['data-id'] || undefined;
@@ -262,7 +268,7 @@
               drawerParam.parentId = id;
               drawerParam.title = t('model.department.addDept');
               drawerParam.visible = true;
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.department.fail'));
             } finally {
               loading.value = false;
@@ -277,7 +283,7 @@
               expandedRowKeys.value.splice(0);
               selectedRowKeys.value.splice(0);
               await loadData();
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.department.fail'));
             } finally {
               loading.value = false;
@@ -286,6 +292,8 @@
             break;
         }
       };
+
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -301,6 +309,7 @@
         });
       };
 
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.id = '';
         drawerParam.parentId = '';
@@ -312,6 +321,7 @@
         await loadData();
       };
 
+      //页面初始加载
       onMounted(async () => {
         await loadData();
       });

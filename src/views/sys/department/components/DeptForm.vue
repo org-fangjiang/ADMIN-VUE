@@ -103,11 +103,12 @@
       const formRef = ref();
 
       const options = ref<Option[]>([]);
-
+      //判断是否为更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //企业名称，上级名称
       let companyName = ref();
       let parentName = ref();
       const formState: UnwrapRef<DepartmentModel> = reactive({
@@ -137,31 +138,34 @@
         }
       }, 200);
 
+      //选择企业
       const changeCompany = (value) => {
         formState.companyId = value;
       };
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
           .then(async () => {
             loading.value = true;
             if (props.id) {
+              //更新
               try {
                 const { content } = await updateDepartment(formState);
                 success(t('model.department.updateDept'), t('model.department.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.department.fail'));
               } finally {
                 loading.value = false;
               }
             } else {
+              //添加
               try {
                 const { content } = await addDepartment(formState);
                 success(t('model.department.addDept'), t('model.department.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.department.fail'));
               } finally {
                 loading.value = false;
@@ -173,8 +177,10 @@
           });
       };
 
+      //重置
       const resetForm = async () => {
         if (props.id) {
+          //将初始信息赋值
           loading.value = true;
           try {
             const { content } = await getDepartment({ deptId: props.id });
@@ -186,6 +192,7 @@
             loading.value = false;
           }
         } else {
+          //重置清空
           formRef.value.resetFields();
         }
         loading.value = false;
@@ -232,6 +239,7 @@
         loading.value = false;
       });
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
