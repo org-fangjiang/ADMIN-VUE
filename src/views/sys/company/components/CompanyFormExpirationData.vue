@@ -13,7 +13,6 @@
         :label="t('model.company.expirationData')"
         name="expirationData"
       >
-        <!-- <Input v-model:value="formState.expirationData" autoComplete="off" /> -->
         <DatePicker
           showTime
           :disabled-date="disabledDate"
@@ -23,10 +22,7 @@
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-        <Button v-if="!isUpdate" type="primary" @click="onSubmit">{{
-          t('model.company.add')
-        }}</Button>
-        <Button v-else type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
+        <Button type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('model.company.cancel')
         }}</Button>
@@ -66,20 +62,28 @@
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
-      const companyId = ref(props.id);
-      let isUpdate = ref<boolean>(false);
-      if (props.id && props.id !== '') {
-        isUpdate.value = true;
-      }
       const loading = ref<boolean>(false);
       const tip = ref<string>('更新中...');
-      const formRef = ref();
+
       const rules = reactive(CompanyConst.COMPANY_RULES_EXPIRATION_DATA);
+      const formRef = ref();
       const formState: UnwrapRef<CompanyModel> = reactive({
         id: '',
         expirationData: '',
       });
 
+      const companyId = ref(props.id);
+      //选择日期
+      const change = (_date: any | string, dateString: string) => {
+        formState.expirationData = dateString;
+      };
+      //不能选的时间
+      const disabledDate = (current: any) => {
+        // Can not select days before today and today
+        return current && current < moment().endOf('day');
+      };
+
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -90,7 +94,7 @@
                 const { content } = await renewalData(formState);
                 success(t('model.company.updateInfo'), t('model.company.update_success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.company.update_failed'));
               } finally {
                 loading.value = false;
@@ -100,6 +104,19 @@
           .catch((error: ValidateErrorEntity<CompanyModel>) => {
             console.log('error', error);
           });
+      };
+
+      const resetForm = async () => {
+        if (companyId.value) {
+          loading.value = true;
+          try {
+            const { content } = await getCompany(companyId.value);
+            Object.assign(formState, content);
+          } catch (error) {
+          } finally {
+            loading.value = false;
+          }
+        }
       };
 
       const success = (message: any, description: any) => {
@@ -116,28 +133,6 @@
           content: content || t('sys.api.networkExceptionMsg'),
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
-      };
-
-      const resetForm = async () => {
-        if (companyId.value) {
-          loading.value = true;
-          try {
-            const { content } = await getCompany(companyId.value);
-            Object.assign(formState, content);
-          } catch (error) {
-          } finally {
-            loading.value = false;
-          }
-        }
-      };
-
-      const change = (_date: any | string, dateString: string) => {
-        formState.expirationData = dateString;
-      };
-
-      const disabledDate = (current: any) => {
-        // Can not select days before today and today
-        return current && current < moment().endOf('day');
       };
 
       onMounted(async () => {
@@ -160,7 +155,6 @@
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
         companyId,
-        isUpdate,
         tip,
         rules,
         labelCol: { span: 6 },

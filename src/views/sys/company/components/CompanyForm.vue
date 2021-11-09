@@ -23,11 +23,6 @@
         />
       </FormItem>
       <FormItem ref="provinceId" :label="t('model.company.province')" name="provinceId">
-        <!-- <Input
-          :disabled="companyId && !updateFields.includes('provinceId')"
-          v-model:value="formState.provinceId"
-          autoComplete="off"
-        /> -->
         <FProvince
           :disabledProvince="isUpdate && !updateFields.includes('provinceId')"
           :provinceId="formState.provinceId"
@@ -35,11 +30,6 @@
         />
       </FormItem>
       <FormItem ref="cityId" :label="t('model.company.city')" name="cityId">
-        <!-- <Input
-          :disabled="companyId && !updateFields.includes('cityId')"
-          v-model:value="formState.cityId"
-          autoComplete="off"
-        /> -->
         <FCity
           :disabledCity="isUpdate && !updateFields.includes('cityId')"
           :provinceId="formState.provinceId"
@@ -48,11 +38,6 @@
         />
       </FormItem>
       <FormItem ref="areaId" :label="t('model.company.area')" name="areaId">
-        <!-- <Input
-          :disabled="companyId && !updateFields.includes('areaId')"
-          v-model:value="formState.areaId"
-          autoComplete="off"
-        /> -->
         <FArea
           :disabledArea="isUpdate && !updateFields.includes('areaId')"
           :cityId="formState.cityId"
@@ -90,11 +75,6 @@
         />
       </FormItem>
       <FormItem ref="companySize" :label="t('model.company.companySize')" name="companySize">
-        <!-- <Input
-          :disabled="companyId && !updateFields.includes('companySize')"
-          v-model:value="formState.companySize"
-          autoComplete="off"
-        /> -->
         <Select
           @change="stateHandleChange"
           v-model:value="formState.companySize"
@@ -119,11 +99,6 @@
         :label="t('model.company.commissionMode')"
         name="commissionMode"
       >
-        <!-- <Input
-          :disabled="companyId && !updateFields.includes('commissionMode')"
-          v-model:value="formState.commissionMode"
-          autoComplete="off"
-        /> -->
         <RadioGroup v-model:value="formState.commissionMode">
           <Radio value="0">百分比</Radio>
           <Radio value="1">固定金额</Radio>
@@ -137,12 +112,6 @@
         :label="t('model.company.expirationData')"
         name="expirationData"
       >
-        <!-- <Input
-          v-show="false"
-          :disabled="companyId && !updateFields.includes('expirationData')"
-          v-model:value="formState.expirationData"
-          autoComplete="off"
-        /> -->
         <DatePicker
           showTime
           :disabled-date="disabledDate"
@@ -216,19 +185,23 @@
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
+      //判断是不是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //加载动画
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
       const formRef = ref();
+      //表单验证规则
       const rules = reactive(CompanyConst.COMPANY_RULES);
-      const companySizes = reactive(CompanyConst.COMPANY_SIZES);
+
+      //状态改变
       const stateHandleChange = async (value) => {
         formState.companySize = value;
       };
-
+      //省市区修改，更新了一个之后，下级数据清空重新获取
       const changeProvince = async (e) => {
         if (e.value !== formState.provinceId) {
           formState.cityId = '';
@@ -244,6 +217,18 @@
       };
       const changeArea = async (e) => {
         formState.areaId = e.value || '';
+      };
+
+      //企业规模下拉数据
+      const companySizes = reactive(CompanyConst.COMPANY_SIZES);
+      //日期选择
+      const change = (_date: any | string, dateString: string) => {
+        formState.expirationData = dateString;
+      };
+      //不可选的日期
+      const disabledDate = (current: any) => {
+        // Can not select days before today and today
+        return current && current < moment().endOf('day');
       };
 
       const formState: UnwrapRef<CompanyModel> = reactive({
@@ -283,7 +268,7 @@
                 success(t('model.company.updateInfo'), t('model.company.update_success'));
                 Object.assign(formState, content);
                 formState.commission = Number(formState.commission);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.company.update_failed'));
               } finally {
                 loading.value = false;
@@ -295,7 +280,7 @@
                 success(t('model.company.save'), t('model.company.save_success'));
                 Object.assign(formState, content);
                 formState.commission = Number(formState.commission);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.company.save_failed'));
               } finally {
                 loading.value = false;
@@ -307,26 +292,7 @@
           });
       };
 
-      const change = (_date: any | string, dateString: string) => {
-        formState.expirationData = dateString;
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
+      //重置表单
       const resetForm = async () => {
         if (props.id) {
           loading.value = true;
@@ -343,11 +309,24 @@
         }
       };
 
-      const disabledDate = (current: any) => {
-        // Can not select days before today and today
-        return current && current < moment().endOf('day');
+      //操作成功/失败提示信息
+      const success = (message: any, description: any) => {
+        notification.success({
+          message: message,
+          description: description,
+          duration: 3,
+        });
       };
 
+      const failed = (title: any, content: any) => {
+        createErrorModal({
+          title: title || t('sys.api.errorTip'),
+          content: content || t('sys.api.networkExceptionMsg'),
+          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+        });
+      };
+
+      //页面初始加载
       onMounted(async () => {
         if (props.id) {
           loading.value = true;

@@ -134,6 +134,7 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const columns = reactive(_Columns);
+
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -141,6 +142,7 @@
         totalPages: 0,
         totalElements: 0,
       });
+
       const drawerParam = reactive({
         id: '',
         state: '',
@@ -155,6 +157,12 @@
         companyId: '',
       });
 
+      //加载
+      onMounted(async () => {
+        const result = await getList();
+        processList(result);
+      });
+
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
@@ -165,6 +173,7 @@
       const users: GetUserModel[] = [];
       let list = reactive(users);
 
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<GetUserModel> | undefined;
@@ -187,11 +196,21 @@
         }
         return result;
       };
-      //加载
-      onMounted(async () => {
-        const result = await getList();
-        processList(result);
-      });
+
+      //将获取到的数据，按照分页，赋值到表格
+      function processList(result: any) {
+        if (!result) {
+          return;
+        }
+        const { page, content } = result;
+        list.splice(0);
+        content.forEach((link) => {
+          list.push(link);
+        });
+        page.number = page.number + 1;
+        Object.assign(pageParam, {}, page);
+      }
+
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -214,6 +233,7 @@
         }
       };
 
+      //添加管理员，打开modal
       const addUser = () => {
         drawerParam.visible = true;
         drawerParam.state = '1';
@@ -221,7 +241,7 @@
         drawerParam.comanyName = props.comanyName || '';
         drawerParam.companyId = props.companyId || '';
       };
-
+      //关闭modal，清空数据，重新加载
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
@@ -232,6 +252,7 @@
         processList(result);
       };
 
+      //发送请求成功/失败的提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -248,23 +269,13 @@
         });
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((link) => {
-          list.push(link);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
+      //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
         processList(result);
       };
+      //条数修改
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;

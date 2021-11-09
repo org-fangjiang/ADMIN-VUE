@@ -12,10 +12,7 @@
         <Input v-model:value="formState.create" autoComplete="off" />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
-        <Button v-if="!isUpdate" type="primary" @click="onSubmit">{{
-          t('model.company.add')
-        }}</Button>
-        <Button v-else type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
+        <Button type="primary" @click="onSubmit">{{ t('model.company.save') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('model.company.cancel')
         }}</Button>
@@ -54,20 +51,19 @@
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
+      //企业id
       const companyId = ref(props.id);
-      let isUpdate = ref<boolean>(false);
-      if (props.id && props.id !== '') {
-        isUpdate.value = true;
-      }
       const loading = ref<boolean>(false);
       const tip = ref<string>('更新中...');
       const formRef = ref();
+      //验证规则
       const rules = reactive(CompanyConst.COMPANY_RULES_CREATE_BY);
       const formState: UnwrapRef<CompanyModel> = reactive({
         id: '',
         createBy: '',
       });
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -78,7 +74,7 @@
                 const { content } = await changeCreateBy(formState);
                 success(t('model.company.updateInfo'), t('model.company.update_success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('model.company.update_failed'));
               } finally {
                 loading.value = false;
@@ -90,6 +86,7 @@
           });
       };
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -106,6 +103,7 @@
         });
       };
 
+      //重置
       const resetForm = async () => {
         if (companyId.value) {
           loading.value = true;
@@ -119,10 +117,12 @@
         }
       };
 
+      //初始加载
       onMounted(async () => {
         if (companyId.value) {
           loading.value = true;
           try {
+            //根据id获取相关信息
             const { content } = await getCompany(companyId.value);
             Object.assign(formState, content);
           } catch (error) {
@@ -139,7 +139,6 @@
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
         companyId,
-        isUpdate,
         tip,
         rules,
         labelCol: { span: 6 },

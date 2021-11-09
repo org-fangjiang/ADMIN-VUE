@@ -88,13 +88,14 @@
       const { t } = useI18n();
       const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('role');
+      //下拉框数据
       const options = ref<Option[]>([]);
-
+      //加载动画
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
       const formRef = ref();
+      //验证规则
       const rules = reactive(RoleConst._RULES);
-      const roleConst = ref(RoleConst);
       const sysRoleMenusById: MenuModel[] = [];
       const formState: UnwrapRef<RoleModel> = reactive({
         id: '',
@@ -109,9 +110,9 @@
         sysRoleMenusById: [],
         companyName: '',
       });
-
+      //企业名称
       const companyName = ref();
-
+      //提交
       const onSubmit = () => {
         formRef.value.validate().then(async () => {
           loading.value = true;
@@ -119,7 +120,7 @@
             const { content } = await addRoles(formState);
             success(t('model.role.addRole'), t('model.role.success'));
             Object.assign(formState, content);
-          } catch (error) {
+          } catch (error: any) {
             failed(error?.response?.data?.message, t('model.role.fail'));
           } finally {
             loading.value = false;
@@ -127,6 +128,7 @@
         });
       };
 
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -143,10 +145,11 @@
         });
       };
 
+      //重置
       const resetForm = async () => {
         formRef.value.resetFields();
       };
-
+      //初始加载
       onMounted(async () => {
         if (props.companyId) {
           const { content } = await getCompany(props.companyId);
@@ -164,7 +167,6 @@
         updateFields: RoleConst._UPDATE_FIELDS,
         tip,
         rules,
-        roleConst,
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         onSubmit,

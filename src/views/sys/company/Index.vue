@@ -195,6 +195,15 @@
       const { notification, createErrorModal } = useMessage();
       // 修改为其它对应的组件名称
       const { prefixCls } = useDesign('company');
+      // 修改为其它对应的Const
+      const companyConst = ref(CompanyConst);
+      // 修改为其它对应的columns
+      const columns = reactive(CompanyColumns);
+      //加载动画
+      let loading = ref<boolean>(true);
+      let tip = ref<string>('加载中...');
+
+      //抽屉参数
       const drawerParam = reactive({
         id: '',
         state: '0',
@@ -202,13 +211,9 @@
         visible: false,
         name: '',
       });
+
+      //分页
       const pageSizeList = ref<string[]>(PageSizeList);
-      // 修改为其它对应的Const
-      const companyConst = ref(CompanyConst);
-      let loading = ref<boolean>(true);
-      let tip = ref<string>('加载中...');
-      // 修改为其它对应的columns
-      const columns = reactive(CompanyColumns);
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -216,7 +221,7 @@
         totalPages: 0,
         totalElements: 0,
       });
-
+      //筛选参数
       const condition = reactive({
         state: '',
         provinceId: '',
@@ -224,16 +229,28 @@
         areaId: '',
       });
 
+      // 企业信息数据
+      const companies: CompanyModel[] = [];
+      let list = reactive(companies);
+
+      //状态修改
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
         processList(result);
       };
 
-      // 企业信息数据
-      const companies: CompanyModel[] = [];
-      let list = reactive(companies);
+      //城市区筛选
+      const locationChange = async (e) => {
+        condition.provinceId = e.value[0] || '';
+        condition.cityId = e.value[1] || '';
+        condition.areaId = e.value[2] || '';
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result);
+      };
 
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<CompanyModel> | undefined;
@@ -254,12 +271,7 @@
         return result;
       };
 
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
-      };
-
+      //根据分页，将数据赋值到表格，返回第一页
       function processList(result: any) {
         if (!result) {
           return;
@@ -273,6 +285,14 @@
         Object.assign(pageParam, {}, page);
       }
 
+      //页码修改
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result);
+      };
+
+      //页面条数改变
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
@@ -344,7 +364,6 @@
             drawerParam.id = id;
             drawerParam.title = t('model.company.addRole');
             drawerParam.visible = true;
-            // const { content } = await getCompany(id);
             drawerParam.name = content.name || '';
             break;
           case 6:
@@ -353,7 +372,6 @@
             drawerParam.id = id;
             drawerParam.title = t('model.company.admin');
             drawerParam.visible = true;
-            // const { content } = await getCompany(id);
             drawerParam.name = content.name || '';
             break;
         }
@@ -375,6 +393,7 @@
         });
       };
 
+      //添加，打开抽屉
       const add = () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
@@ -382,6 +401,7 @@
         drawerParam.title = t('model.company.add');
       };
 
+      //关闭抽屉
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.id = '';
@@ -389,6 +409,7 @@
         drawerParam.visible = false;
         drawerParam.name = '';
         if (drawerParam.state === '6') {
+          //直接返回，不重新加载主页面
           drawerParam.state = '0';
           return;
         }
@@ -397,16 +418,7 @@
         processList(result);
       };
 
-      const locationChange = async (e) => {
-        debugger;
-        condition.provinceId = e.value[0] || '';
-        condition.cityId = e.value[1] || '';
-        condition.areaId = e.value[2] || '';
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
-      };
-
+      //初始加载
       onMounted(async () => {
         const result = await getList();
         processList(result);

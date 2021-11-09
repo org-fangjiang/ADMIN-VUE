@@ -89,11 +89,6 @@
       </FormItem>
 
       <FormItem ref="roleName" :label="t('model.user.roleName')" name="roleName">
-        <!-- <Input
-          :disabled="!updateFields.includes('roleName')"
-          v-model:value="formState.roleName"
-          autoComplete="off"
-        /> -->
         <Select
           ref="selectRef"
           :disabled="!updateFields.includes('roleName')"
@@ -167,8 +162,6 @@
       let tip = ref<string>('加载中...');
 
       const formRef = ref();
-      const options = ref<Option[]>([]);
-      const roleOptions = ref<Option[]>([]);
       const formState: UnwrapRef<AddUserModel> = reactive({
         username: '',
         password: '',
@@ -190,6 +183,10 @@
         companyId: props.companyId || '',
       });
 
+      //部门/角色下拉
+      const options = ref<Option[]>([]);
+      const roleOptions = ref<Option[]>([]);
+
       const changeDept = (value) => {
         formState.deptId = value;
       };
@@ -197,6 +194,7 @@
         formState.roleId = value;
       };
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -208,7 +206,7 @@
               const { content } = await addCompanyUser(formState);
               success(t('model.company.addCompanyUser'), t('model.user.success'));
               Object.assign(formState, content);
-            } catch (error) {
+            } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
               loading.value = false;
@@ -218,25 +216,13 @@
             console.log('error', error);
           });
       };
+
+      //重置
       const resetForm = async () => {
         formRef.value.resetFields();
       };
 
-      onMounted(async () => {
-        const { content } = await getAllDepartments({});
-        if (content) {
-          content.forEach((item) => {
-            options.value.push({ value: item.deptId || '', label: item.deptName || '' });
-          });
-        }
-        const result = await getRoles({ companyId: props.companyId });
-        if (result.content) {
-          result.content.forEach((role) => {
-            roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
-          });
-        }
-      });
-
+      //成功/失败提示信息
       const success = (message: any, description: any) => {
         notification.success({
           message: message,
@@ -252,6 +238,22 @@
           getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
+
+      //初始加载
+      onMounted(async () => {
+        const { content } = await getAllDepartments({});
+        if (content) {
+          content.forEach((item) => {
+            options.value.push({ value: item.deptId || '', label: item.deptName || '' });
+          });
+        }
+        const result = await getRoles({ companyId: props.companyId });
+        if (result.content) {
+          result.content.forEach((role) => {
+            roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
+          });
+        }
+      });
 
       return {
         t,
