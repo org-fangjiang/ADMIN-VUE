@@ -91,17 +91,7 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
-  import {
-    Table,
-    Pagination,
-    Tag,
-    Button,
-    Modal,
-    Dropdown,
-    Menu,
-    MenuItem,
-    // Select,
-  } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Button, Modal, Dropdown, Menu, MenuItem } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import DeveloperForm from './components/DeveloperForm.vue';
   import {
@@ -114,6 +104,7 @@
     deleteDeveloper,
     reEnableDeveloper,
   } from '/@/api/host/developer/developer';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'DeveloperTable',
@@ -128,17 +119,15 @@
       MenuItem,
       Loading,
       DeveloperForm,
-      // Select,
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('developer');
       const developerConst = ref(_DeveloperConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const developer: DeveloperModel[] = [];
 
       // 分页
       let pageParam = reactive({
@@ -148,7 +137,12 @@
         totalPages: 0,
         totalElements: 0,
       });
-      // const options = ref<Option[]>([]);
+
+      onMounted(async () => {
+        const result = await getList();
+        processList(result, list, pageParam);
+      });
+
       // 筛选条件
       const condition = reactive({
         name: '',
@@ -156,14 +150,8 @@
         id: '',
       });
       // 列表结果
+      const developer: DeveloperModel[] = [];
       let list = reactive(developer);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-      });
 
       // 获取list
       const getList = async () => {
@@ -186,54 +174,6 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
-      };
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
-      };
-
-      onMounted(async () => {
-        const result = await getList();
-        processList(result);
-      });
-
-      const onClose = async () => {
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
-        const result = await getList();
-        processList(result);
-      };
-
-      // 添加
-      const addEstateCompany = () => {
-        drawerParam.visible = true;
-        drawerParam.state = '0';
-        drawerParam.id = '';
-        drawerParam.title = t('host.action.add');
-      };
-
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -246,7 +186,7 @@
               await deleteDeveloper(id);
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -260,7 +200,7 @@
               await reEnableDeveloper(id);
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -277,27 +217,49 @@
         }
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
+      // 添加
+      const addEstateCompany = () => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = '';
+        drawerParam.title = t('host.action.add');
+      };
+
+      //页码改变
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
       return {
         t,
         prefixCls,
         developerConst,
-        // options,
         condition,
         developerColumns,
         loading,

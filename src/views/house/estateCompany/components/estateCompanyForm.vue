@@ -44,7 +44,6 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input, Textarea } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -56,6 +55,7 @@
     getEstateCompany,
     updateEstateCompany,
   } from '/@/api/host/estateCompany/estateCompany';
+  import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'EstateCompanyForm',
@@ -76,16 +76,25 @@
     setup(props) {
       debugger;
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('estateCompany');
       const estateCompanyConst = ref(_EstateCompanyConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-
+      //判断是不是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+
+      //初始加载
+      onMounted(async () => {
+        loading.value = true;
+        if (props.id) {
+          const { content } = await getEstateCompany(props.id);
+          Object.assign(formState, content);
+        }
+        loading.value = false;
+      });
 
       // fromRef 获取form
       const formRef = ref();
@@ -100,7 +109,7 @@
               try {
                 await updateEstateCompany(formState);
                 success(t('host.action.update'), t('host.action.success'));
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -111,7 +120,7 @@
                 const { content } = await addEstateCompany(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -123,6 +132,7 @@
           });
       };
 
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -131,31 +141,6 @@
         } finally {
           loading.value = false;
         }
-      };
-
-      onMounted(async () => {
-        loading.value = true;
-        if (props.id) {
-          const { content } = await getEstateCompany(props.id);
-          Object.assign(formState, content);
-        }
-        loading.value = false;
-      });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

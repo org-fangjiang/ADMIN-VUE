@@ -1,19 +1,6 @@
 // 文章信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <!-- <Select
-      ref="selectRef"
-      label-in-value
-      placeholder="Select LineId"
-      style="width: 250px"
-      :filter-option="false"
-      :not-found-content="null"
-      :options="options"
-      :showSearch="true"
-      :labelInValue="false"
-      @change="projectChange"
-      :allowClear="true"
-    /> -->
     <Button v-auth="newsConst._PERMS.ADD" @click="addNews" :class="`${prefixCls}-add`">
       {{ t('host.action.add') }}
     </Button>
@@ -150,11 +137,11 @@
     Dropdown,
     Menu,
     MenuItem,
-    // Select,
     Image,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import NewsForm from './components/NewsFrom.vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'NewsTable',
@@ -170,11 +157,10 @@
       Loading,
       Image,
       NewsForm,
-      // Select,
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('news');
@@ -182,8 +168,6 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const news: NewsModel[] = [];
-
       // 分页
       let pageParam = reactive({
         size: 10,
@@ -192,7 +176,7 @@
         totalPages: 0,
         totalElements: 0,
       });
-      // const options = ref<Option[]>([]);
+
       const cityId = userStore.getUserInfo.companyCityId;
       const provinceId = userStore.getUserInfo.companyProvinceId;
       // 筛选条件
@@ -203,79 +187,6 @@
         inMobile: '',
         id: '',
       });
-      // 列表结果
-      let list = reactive(news);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-      });
-      let createBy = ref<string[]>([]);
-      // 获取list
-      const getList = async () => {
-        loading.value = true;
-        let result: BasePageResult<NewsModel> | undefined;
-        try {
-          result = await getNewsByCity(
-            condition,
-            {
-              pageSize: pageParam.size,
-              pageNum: pageParam.number,
-            },
-            sortParam
-          );
-          // if (result.content) {
-          //   result.content.forEach(async (item) => {
-          //     if (item.createBy) {
-          //       const create = await updateUserInfo({ id: item.createBy });
-          //       createBy.value.push(create.content.username || '');
-          //     }
-          //   });
-          // }
-        } catch (error: any) {
-          createErrorModal({
-            title: t('sys.api.errorTip'),
-            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
-            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-          });
-        } finally {
-          loading.value = false;
-        }
-        return result;
-      };
-
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
-      //根据项目筛选
-      // const projectChange = async (value) => {
-      //   condition.projectId = value;
-      //   let pageResult: BasePageResult<NewsModel> | undefined;
-      //   let lineResult: BasePageResult<NewsModel> | undefined;
-      //   if (!condition.projectId) {
-      //     pageParam.number = 1;
-      //     pageResult = await getList();
-      //     processList(pageResult);
-      //   } else {
-      //     condition.projectId = value;
-      //     pageParam.number = 1;
-      //     lineResult = await getNewsByProject(condition);
-      //     processList(lineResult);
-      //     condition.projectId = '';
-      //   }
-      // };
 
       //根据创建时间排序，默认降序
       const sortParam = reactive({
@@ -297,42 +208,43 @@
         }
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
-      };
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
-      };
-
+      //初始加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
 
-      const onClose = async () => {
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
-        const result = await getList();
-        processList(result);
-      };
+      // 列表结果
+      const news: NewsModel[] = [];
+      let list = reactive(news);
 
-      // 添加文章
-      const addMetroStation = () => {
-        drawerParam.visible = true;
-        drawerParam.state = '0';
-        drawerParam.id = '';
-        drawerParam.title = t('host.action.add');
+      let createBy = ref<string[]>([]);
+      // 获取list
+      const getList = async () => {
+        loading.value = true;
+        let result: BasePageResult<NewsModel> | undefined;
+        try {
+          result = await getNewsByCity(
+            condition,
+            {
+              pageSize: pageParam.size,
+              pageNum: pageParam.number,
+            },
+            sortParam
+          );
+        } catch (error: any) {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
+            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          });
+        } finally {
+          loading.value = false;
+        }
+        return result;
       };
 
       // 操作
@@ -347,7 +259,7 @@
               await deleteNews(id);
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -361,7 +273,7 @@
               await reEnableNews(id);
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -378,6 +290,24 @@
         }
       };
 
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
+      // 添加文章
       const addNews = async () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
@@ -385,27 +315,24 @@
         drawerParam.title = t('host.action.add');
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
+      //页码改变
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
       return {
         t,
         prefixCls,
         newsConst,
-        // options,
         condition,
         ColumnsNews,
         loading,
@@ -417,9 +344,7 @@
         onChange,
         addNews,
         onShowSizeChange,
-        // projectChange,
         onClose,
-        addMetroStation,
         action,
         cityId,
         provinceId,

@@ -131,7 +131,6 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import {
     Button,
     Form,
@@ -150,6 +149,7 @@
   import FProject from '/@/components/FProject';
   import FTinymce from '/@/components/FTinymce';
   import { getProject } from '/@/api/host/project/project';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -191,17 +191,25 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('news');
       const newsConst = ref(_NewsConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-
+      //判断是否为更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
 
+      // fromRef 获取form
+      const formRef = ref();
+      const formState: UnwrapRef<NewsModel> = reactive({
+        provinceId: props.provinceId,
+        cityId: props.cityId,
+        keywords: '',
+      });
+
+      //控制modal是否打开
       let isModal = ref<boolean>(false);
       let selected = ref<string[]>([]);
       const changeModal = () => {
@@ -217,17 +225,9 @@
         selected.value.splice(0);
       };
 
-      // fromRef 获取form
-      const formRef = ref();
-      const formState: UnwrapRef<NewsModel> = reactive({
-        provinceId: props.provinceId,
-        cityId: props.cityId,
-        keywords: '',
-      });
-
       const options = ref<Option[]>([]);
       let tags = ref<string[]>([]);
-
+      //标签
       const tagsChange = async (value) => {
         let selectTags = '';
         if (value && value.length > 0) {
@@ -239,27 +239,27 @@
         selectTags = selectTags.substring(x + 1);
         formState.keywords = selectTags;
       };
-
+      //正文
       function handleChange(value: string) {
         formState.content = value;
       }
-
+      //上传图片
       const changeFile = async (info) => {
         if (info.file.status === 'done') {
           formState.img = info.file.response.data;
         }
       };
-
+      //是否在手机端展示
       const inMobileChange = async (value) => {
         formState.inMobile = value;
       };
-
+      //分类展示
       const sortChange = async (value) => {
         formState.sort = value;
       };
 
       let area = ref<string[]>([]);
-
+      //设置项目
       const setNewsProject = async (value) => {
         loading.value = true;
         if (value.projects && value.projects.length > 0) {
@@ -277,7 +277,7 @@
         }
         loading.value = false;
       };
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -310,7 +310,7 @@
             console.log('error', error);
           });
       };
-
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -320,7 +320,7 @@
           loading.value = false;
         }
       };
-
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -337,22 +337,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

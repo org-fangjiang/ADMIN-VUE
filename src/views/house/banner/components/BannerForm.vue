@@ -64,12 +64,12 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input, Textarea, Select, Image, Upload } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BannerModel, _BannerConst } from '/@/api/host/banner/model/bannerModel';
   import { addBanner, getBanner, updateBanner } from '/@/api/host/banner/banner';
   import { ApiSource } from '/@/api/host/source/source';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -101,14 +101,13 @@
       },
     },
     setup(props) {
-      debugger;
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('banner');
       const bannerConst = ref(_BannerConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
 
+      //判断是不是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
@@ -118,16 +117,10 @@
         formState.hProjectId = value.value;
       };
 
-      // fromRef 获取form
-      const formRef = ref();
-      const formState: UnwrapRef<BannerModel> = reactive({
-        cityId: props.companyCityId || '',
-      });
       //关键词
       const options = ref<Option[]>([]);
       let tags = ref<string[]>([]);
       const tagsChange = async (value) => {
-        debugger;
         let selectTags = '';
         if (value && value.length > 0) {
           value.forEach((item: string) => {
@@ -144,6 +137,13 @@
           formState.address = info.file.response.data;
         }
       };
+
+      // fromRef 获取form
+      const formRef = ref();
+      const formState: UnwrapRef<BannerModel> = reactive({
+        cityId: props.companyCityId || '',
+      });
+
       //确认
       const onSubmit = () => {
         formRef.value
@@ -154,7 +154,7 @@
               try {
                 await updateBanner(formState);
                 success(t('host.action.update'), t('host.action.success'));
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -165,7 +165,7 @@
                 const { content } = await addBanner(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
-              } catch (error) {
+              } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
@@ -177,6 +177,7 @@
           });
       };
 
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -187,6 +188,7 @@
         }
       };
 
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -203,22 +205,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

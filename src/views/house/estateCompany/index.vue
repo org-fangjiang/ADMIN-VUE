@@ -102,18 +102,9 @@
     _EstateCompanyConst,
     _EstateCompanyColumns as estateCompanyColumns,
   } from '/@/api/host/estateCompany/model/estateCompanyModel';
-  import {
-    Table,
-    Pagination,
-    Tag,
-    Button,
-    Modal,
-    Dropdown,
-    Menu,
-    MenuItem,
-    // Select,
-  } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Button, Modal, Dropdown, Menu, MenuItem } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'EstateCompanyTable',
@@ -128,17 +119,15 @@
       MenuItem,
       Loading,
       EstateCompanyForm,
-      // Select,
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('estateCompany');
       const estateCompanyConst = ref(_EstateCompanyConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const estateCompany: EstateCompanyModel[] = [];
 
       // 分页
       let pageParam = reactive({
@@ -148,21 +137,22 @@
         totalPages: 0,
         totalElements: 0,
       });
-      // const options = ref<Option[]>([]);
+
       // 筛选条件
       const condition = reactive({
         name: '',
         state: '',
         id: '',
       });
+
       // 列表结果
+      const estateCompany: EstateCompanyModel[] = [];
       let list = reactive(estateCompany);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
+
+      //初始加载
+      onMounted(async () => {
+        const result = await getList();
+        processList(result, list, pageParam);
       });
 
       // 获取list
@@ -186,54 +176,6 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
-      };
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
-      };
-
-      onMounted(async () => {
-        const result = await getList();
-        processList(result);
-      });
-
-      const onClose = async () => {
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
-        const result = await getList();
-        processList(result);
-      };
-
-      // 添加
-      const addEstateCompany = () => {
-        drawerParam.visible = true;
-        drawerParam.state = '0';
-        drawerParam.id = '';
-        drawerParam.title = t('host.action.add');
-      };
-
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -246,7 +188,7 @@
               await deleteEstateCompany(id);
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -260,7 +202,7 @@
               await reEnableEstateCompany(id);
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -277,27 +219,49 @@
         }
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
+      // 添加
+      const addEstateCompany = () => {
+        drawerParam.visible = true;
+        drawerParam.state = '0';
+        drawerParam.id = '';
+        drawerParam.title = t('host.action.add');
+      };
+
+      //页码改变
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
       return {
         t,
         prefixCls,
         estateCompanyConst,
-        // options,
         condition,
         estateCompanyColumns,
         loading,
