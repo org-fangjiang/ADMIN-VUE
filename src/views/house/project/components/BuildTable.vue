@@ -97,12 +97,6 @@
         :selected="drawerParam.selected"
         @setBuildLayout="setBuildLayout"
       />
-      <!-- <FLicense
-        v-if="drawerParam.state === '2'"
-        :projectId="props.id"
-        :buildId="drawerParam.id"
-        @setBuildLicense="setBuildLicense"
-      /> -->
     </Modal>
     <Modal
       :bodyStyle="{ overflow: 'auto', margin: '16px', height: '100px' }"
@@ -126,7 +120,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
@@ -141,6 +135,7 @@
   import FLayout from '/@/components/FLayout';
   import FLicense from '/@/components/Flicense';
   import { BuildLayoutBean } from '/@/api/host/build/model/BuildLayoutEntity';
+  import { processListByLine, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'BuildTable',
@@ -174,13 +169,15 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
-      const buildConst = ref(_BuildConst);
+
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const build: BuildModel[] = [];
+
+      //参数权限
+      const buildConst = ref(_BuildConst);
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -197,7 +194,27 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
+      };
+
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+        selected: [''],
+      });
+      //关闭抽屉
+      const onClose = async () => {
+        isVisible.value = false;
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        drawerParam.selected = [''];
+        const result = await getList();
+        processListByLine(result, list, total);
       };
 
       // 筛选条件
@@ -207,25 +224,8 @@
         id: '',
       });
       // 列表结果
+      const build: BuildModel[] = [];
       let list = reactive(build);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-        selected: [''],
-      });
-      const onClose = async () => {
-        isVisible.value = false;
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
-        drawerParam.selected = [''];
-        const result = await getList();
-        processList(result);
-      };
 
       // 获取list
       const getList = async () => {
@@ -245,45 +245,35 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = Number(page.totalElements);
-      }
-
+      //初始加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       });
 
+      //删除
       const deleteOneBuild = async (line) => {
         try {
           loading.value = true;
           await deleteBuild(line.id);
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
-          processList(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
       };
+
+      //恢复
       const reEnableOneBuild = async (line) => {
         try {
           loading.value = true;
           await reEnableBuild(line.id);
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
-          processList(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
@@ -291,13 +281,14 @@
         }
       };
 
+      //添加，打开modal
       const addBuild = async () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
         drawerParam.title = t('host.action.add');
       };
-
+      //更新
       const updateBuild = async (line) => {
         drawerParam.visible = true;
         drawerParam.state = '0';
@@ -313,17 +304,13 @@
         drawerParam.title = t('host.action.setLicense');
       };
 
-      const formState: UnwrapRef<BuildModel> = reactive({
-        projectId: props.id || '',
-      });
       //设置许可证
       const setBuildLicense = async () => {
-        // formState.licenseId = value.value;
         isVisible.value = false;
         drawerParam.state = '';
         drawerParam.title = '';
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       };
 
       //打开设置户型
@@ -365,22 +352,6 @@
         }
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
       return {
         t,
         prefixCls,
@@ -404,7 +375,6 @@
         setBuildLayout,
         setLicense,
         setBuildLicense,
-        formState,
         isVisible,
       };
     },

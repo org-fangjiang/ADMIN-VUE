@@ -58,6 +58,8 @@
     _Columns as ColumnsLayout,
   } from '/@/api/host/layout/model/layoutModel';
   import { getLayoutList } from '/@/api/host/layout/layout';
+  import { processListByLine } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'FLayout',
     components: {
@@ -90,7 +92,6 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const source: LayoutModel[] = [];
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -107,7 +108,7 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
 
       // const formRef = ref();
@@ -120,6 +121,7 @@
         id: '',
       });
       // 列表结果
+      const source: LayoutModel[] = [];
       let list = reactive(source);
 
       // 获取list
@@ -140,23 +142,23 @@
         return result;
       };
 
-      function processListByLine(result: any) {
-        if (!result) {
-          return;
-        }
-        const { content, page } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = Number(page.totalElements);
-      }
+      // function processListByLine(result: any) {
+      //   if (!result) {
+      //     return;
+      //   }
+      //   const { content, page } = result;
+      //   list.splice(0);
+      //   if (content) {
+      //     content.forEach((line) => {
+      //       list.push(line);
+      //     });
+      //   }
+      //   total.value = Number(page.totalElements);
+      // }
 
       onMounted(async () => {
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       });
 
       let selectedRowKeys = ref<string[]>(props.selected as string[]); //将之前选中的值展示

@@ -60,8 +60,6 @@
         />
       </FormItem>
       <FormItem ref="licenseId" :label="t('host.build.licenseId')" name="licenseId">
-        <!-- <Image v-if="type !== '6' && type !== '7'" :src="address" width="100px" />
-        <div v-else>{{ address }}</div> -->
         <div else>{{ licenseName }}</div>
         <Button @click="changeModal">{{ t('host.action.setLicense') }}</Button>
       </FormItem>
@@ -127,12 +125,13 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input, Select, Textarea, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BuildModel, _BuildConst } from '/@/api/host/build/model/buildModel';
   import { addBuild, updateBuild, getBuild } from '/@/api/host/build/build';
   import FLicense from '/@/components/Flicense';
+  import { success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'BuildForm',
     components: {
@@ -143,7 +142,6 @@
       Loading,
       Select,
       Textarea,
-      // Image,
       Modal,
       FLicense,
     },
@@ -171,12 +169,18 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const buildConst = ref(_BuildConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
 
+      //判断是更新还是添加
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
+
+      //是否打开设置资源的modal
       let isModal = ref<boolean>(false);
       const changeModal = () => {
         isModal.value = true;
@@ -185,50 +189,31 @@
         isModal.value = false;
       };
 
-      let isUpdate = ref<boolean>(false);
-      if (props.id && props.id !== '') {
-        isUpdate.value = true;
-      }
-
       // fromRef 获取form
       const formRef = ref();
       const formState: UnwrapRef<BuildModel> = reactive({
         projectId: props.projectId || '',
       });
 
+      //是否标记图片
       const remarkChange = async (value) => {
         formState.remark = value;
       };
 
+      //销售状态修改
       const saleStateChange = async (value) => {
         formState.saleState = value;
       };
 
-      let address = ref<string>();
-      let type = ref<string>();
-
-      // const setSource = async (value) => {
-      //   loading.value = true;
-      //   try {
-      //     formState.licenseId = value.id;
-      //     address.value = value.address;
-      //     type.value = value.type;
-      //     success(t('host.layout.setSource'), t('host.action.success'));
-      //   } catch (error: any) {
-      //     failed(error?.response?.data?.message, t('host.action.fail'));
-      //   } finally {
-      //     loading.value = false;
-      //   }
-      //   isModal.value = false;
-      // };
+      //设置预售证
       let licenseName = ref('');
       const setBuildLicense = (value) => {
         isModal.value = false;
-        debugger;
         formState.licenseId = value.formState.licenseId;
         licenseName.value = value.licenseName.value;
       };
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -262,6 +247,7 @@
           });
       };
 
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -272,6 +258,7 @@
         }
       };
 
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -280,22 +267,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,
@@ -313,12 +284,9 @@
         wrapperCol: { span: 14 },
         isUpdate,
         props,
-        // setSource,
         changeModal,
         isModal,
         onClose,
-        address,
-        type,
         setBuildLicense,
         licenseName,
       };
