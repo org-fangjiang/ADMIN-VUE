@@ -111,7 +111,6 @@
     SelectOption,
     Upload,
   } from 'ant-design-vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   import { AddUserModel, _Const } from '/@/api/sys/user/model/userModel';
@@ -119,6 +118,8 @@
   import { getRoles } from '/@/api/sys/role/role';
   import { useUserStore } from '/@/store/modules/user';
   import { ApiSource } from '/@/api/host/source/source';
+  import { success, failed } from '/@/hooks/web/useList';
+
   interface Option {
     value: string;
     label: string;
@@ -138,12 +139,10 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('user');
       const userConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      let isUpdate = ref<boolean>(false);
       const formRef = ref();
       //角色下拉
       const roleOptions = ref<Option[]>([]);
@@ -219,22 +218,6 @@
         }
         loading.value = false;
       });
-      //操作成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,
@@ -243,7 +226,6 @@
         tip,
         roleOptions,
         changeRole,
-        isUpdate,
         updateFields: _Const._ADD_FIELDS,
         loading,
         onSubmit,

@@ -136,6 +136,7 @@
   import AddUserForm from './components/AddUserForm.vue';
   import SetMobileTable from './components/SetMobileTable.vue';
   import SetEmailTable from './components/SetEmailTable.vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
   export default defineComponent({
     name: 'UserTable',
     components: {
@@ -155,7 +156,7 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('user');
       const userConst = ref(_Const);
       let loading = ref<boolean>(true);
@@ -188,14 +189,13 @@
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       const users: GetUserModel[] = [];
       let list = reactive(users);
       //获取列表数据
       const getList = async () => {
-        debugger;
         loading.value = true;
         let result: BasePageResult<GetUserModel> | undefined;
         try {
@@ -217,7 +217,7 @@
       //加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
       //设置手机号和邮箱
       let isMobile = ref(false);
@@ -234,7 +234,7 @@
               await deleteUser(id);
               success(t('model.user.deleteUser'), t('model.user.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
@@ -248,7 +248,7 @@
               await reEnableUser(id);
               success(t('model.user.reEnableUser'), t('model.user.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
@@ -278,47 +278,19 @@
         drawerParam.id = '';
         drawerParam.title = '';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //关闭邮箱和手机的modal
       const isCancel = () => {
         isMobile.value = false;
         isEmail.value = false;
       };
-      //发送请求成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-      //将获取到的数据，分页放到列表中
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((link) => {
-          list.push(link);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数改变
       const onShowSizeChange = async (current, size) => {
@@ -326,7 +298,7 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       return {
