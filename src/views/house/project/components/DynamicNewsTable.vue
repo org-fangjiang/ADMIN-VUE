@@ -82,7 +82,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -133,7 +133,6 @@
       const dynamicNewsConst = ref(_DynamicNewsConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -181,20 +180,6 @@
         }
         return result;
       };
-
-      // function processList(result: any) {
-      //   if (!result) {
-      //     return;
-      //   }
-      //   const { page, content } = result;
-      //   list.splice(0);
-      //   if (content) {
-      //     content.forEach((line) => {
-      //       list.push(line);
-      //     });
-      //   }
-      //   total.value = page.totalElements;
-      // }
 
       //初始加载
       onMounted(async () => {
@@ -261,22 +246,6 @@
         drawerParam.title = t('host.action.update');
       };
 
-      // const success = (message: any, description: any) => {
-      //   notification.success({
-      //     message: message,
-      //     description: description,
-      //     duration: 3,
-      //   });
-      // };
-
-      // const failed = (title: any, content: any) => {
-      //   createErrorModal({
-      //     title: title || t('sys.api.errorTip'),
-      //     content: content || t('sys.api.networkExceptionMsg'),
-      //     // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-      //   });
-      // };
-
       return {
         t,
         prefixCls,
@@ -286,7 +255,6 @@
         processListByLine,
         loading,
         tip,
-        pageSizeList,
         pagination,
         handleTableChange,
         list,

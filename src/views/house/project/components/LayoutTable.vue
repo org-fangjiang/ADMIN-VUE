@@ -100,7 +100,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal, Image, Select } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -137,7 +137,6 @@
       const layoutConst = ref(_LayoutConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -266,7 +265,6 @@
         ColumnsLayout,
         loading,
         tip,
-        pageSizeList,
         pagination,
         handleTableChange,
         list,

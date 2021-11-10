@@ -59,7 +59,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -96,7 +96,6 @@
       let tip = ref<string>('加载中...');
 
       //设置分页
-      const pageSizeList = ref<string[]>(PageSizeList);
       const pageParam: PageParam = reactive({
         pageNum: 1,
         pageSize: 10,
@@ -209,7 +208,6 @@
         ColumnsAnswer,
         loading,
         tip,
-        pageSizeList,
         pagination,
         handleTableChange,
         list,
