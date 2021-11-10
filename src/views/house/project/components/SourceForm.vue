@@ -75,11 +75,11 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input, Select, Upload } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { SourceModel, _SourceConst } from '/@/api/host/source/model/sourceModel';
   import { updateResource, addResource, getResource, ApiSource } from '/@/api/host/source/source';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -121,7 +121,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const sourceConst = ref(_SourceConst);
       let loading = ref<boolean>(true);
@@ -136,7 +135,6 @@
       const options = ref<Option[]>([]);
       let tags = ref<string[]>([]);
       const tagsChange = async (value) => {
-        debugger;
         let selectTags = '';
         if (value && value.length > 0) {
           value.forEach((item: string) => {
@@ -155,7 +153,7 @@
           formState.address = info.file.response.data;
         }
       };
-
+      //类型选择
       const sortChange = async (value) => {
         formState.sort = value;
       };
@@ -163,7 +161,7 @@
       // fromRef 获取form
       const formRef = ref();
       const formState: UnwrapRef<SourceModel> = reactive({});
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -196,6 +194,7 @@
             console.log('error', error);
           });
       };
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -205,6 +204,8 @@
           loading.value = false;
         }
       };
+
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -221,22 +222,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

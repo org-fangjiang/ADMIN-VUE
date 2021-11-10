@@ -242,6 +242,7 @@
   import { Persistent } from '/@/utils/cache/persistent';
   import { HOUSE_PROJECT } from '/@/enums/cacheEnum';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -267,30 +268,15 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const hostConst = ref(_HostConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const columns = reactive(_ColumnsHost);
-      let pageParam = reactive({
-        size: 10,
-        number: 1,
-        numberOfElements: 0,
-        totalPages: 0,
-        totalElements: 0,
-      });
-      // 获取用户store
-      const userStore = useUserStore();
-      const cityId = userStore.getUserInfo.companyCityId;
-      let provinceId = ref();
-      const condition = reactive({
-        state: '',
-        name: '',
-        provinceId: provinceId,
-        cityId: cityId,
-      });
+
+      //抽屉
       const drawerParam = reactive({
         id: '',
         state: '',
@@ -300,6 +286,15 @@
         cityId: '',
         areaId: '',
       });
+      //分页参数
+      let pageParam = reactive({
+        size: 10,
+        number: 1,
+        numberOfElements: 0,
+        totalPages: 0,
+        totalElements: 0,
+      });
+
       //根据名称筛选
       const setProject = async (value) => {
         let result: BasePageResult<HostModel> | undefined;
@@ -309,7 +304,7 @@
         } else {
           result = await getList();
         }
-        processList(result);
+        processList(result, list, pageParam);
       };
       const onClear = async () => {
         let result: BasePageResult<HostModel> | undefined;
@@ -317,15 +312,21 @@
           pageSize: pageParam.size,
           pageNum: pageParam.number,
         });
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
+
+      // 获取用户store
+      const userStore = useUserStore();
+      const cityId = userStore.getUserInfo.companyCityId;
+      let provinceId = ref();
+
       //根据创建时间排序，默认降序
       const sortParam = reactive({
         asc: [''],
@@ -346,17 +347,31 @@
         }
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
+
+      //查询条件
+      const condition = reactive({
+        state: '',
+        name: '',
+        provinceId: provinceId,
+        cityId: cityId,
+      });
+
+      //初始加载
+      onMounted(async () => {
+        provinceId.value = ref<string>(userStore.getUserInfo.companyProvinceId || '');
+        const result = await getList();
+        processList(result, list, pageParam);
+      });
 
       const projects: HostModel[] = [];
       let list = reactive(projects);
-
+      //获取数据
       const getList = async () => {
         loading.value = true;
         let result: BasePageResult<HostModel> | undefined;
         try {
-          debugger;
           result = await searchWithCondition(
             condition,
             {
@@ -376,12 +391,7 @@
         }
         return result;
       };
-      //加载
-      onMounted(async () => {
-        provinceId.value = ref<string>(userStore.getUserInfo.companyProvinceId || '');
-        const result = await getList();
-        processList(result);
-      });
+
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -407,7 +417,7 @@
               await deleteProject(id);
               success(t('host.action.delete'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -421,7 +431,7 @@
               await reEnableProject(id);
               success(t('host.action.reEnable'), t('host.action.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -480,15 +490,15 @@
         }
       };
 
+      //新增项目，打开modal
       const addProject = () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
         drawerParam.title = t('host.action.add');
       };
-
+      //关闭modal，清空数据
       const onClose = async () => {
-        debugger;
         if (drawerParam.id != '') {
           Persistent.removeLocal(HOUSE_PROJECT, true);
         }
@@ -497,48 +507,20 @@
         drawerParam.id = '';
         drawerParam.title = '';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((link) => {
-          list.push(link);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       return {

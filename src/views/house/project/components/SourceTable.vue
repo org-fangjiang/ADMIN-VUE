@@ -124,6 +124,7 @@
     setSandImg,
   } from '/@/api/host/source/source';
   import SourceForm from './SourceForm.vue';
+  import { processListByLine, success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -160,13 +161,14 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const sourceConst = ref(_SourceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      //分页
       const pageSizeList = ref<string[]>(PageSizeList);
-      const source: SourceModel[] = [];
       const pageParam: PageParam = reactive({
         pageNum: 1,
         pageSize: 10,
@@ -181,7 +183,7 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
 
       const options = ref<Option[]>([]);
@@ -193,23 +195,15 @@
         id: '',
         sort: '',
       });
-      // 列表结果
-      let list = reactive(source);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-      });
-      const onClose = async () => {
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
+
+      //初始加载
+      onMounted(async () => {
         const result = await getList();
-        processListByLine(result);
-      };
+        processListByLine(result, list, total);
+      });
+      // 列表结果
+      const source: SourceModel[] = [];
+      let list = reactive(source);
 
       // 获取list
       const getList = async () => {
@@ -229,45 +223,28 @@
         return result;
       };
 
-      function processListByLine(result: any) {
-        if (!result) {
-          return;
-        }
-        const { content, page } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = Number(page.totalElements);
-      }
-
-      onMounted(async () => {
-        const result = await getList();
-        processListByLine(result);
-      });
-
+      //删除
       const deleteOneSource = async (line) => {
         try {
           loading.value = true;
           await deleteResource(line.id);
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
       };
+      //恢复
       const reEnableOneSource = async (line) => {
         try {
           loading.value = true;
           await reEnableResource(line.id);
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
@@ -275,62 +252,58 @@
         }
       };
 
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+      //添加资源
       const addSource = async () => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
         drawerParam.title = t('host.action.add');
       };
-
+      //更新
       const updateResource = async (line) => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.update');
       };
-
+      //设置沙盘图
       const setSand = async (line) => {
         try {
           loading.value = true;
           await setSandImg(line.id, props.id || '');
           success(t('host.action.setSandImg'), t('host.action.success'));
-          // const result = await getList();
-          // processListByLine(result);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
       };
-
+      //设置项目首图
       const setFirst = async (line) => {
         try {
           loading.value = true;
           await setFirstImg(line.id, props.id || '');
           success(t('host.action.setFirstImg'), t('host.action.success'));
-          // const result = await getList();
-          // processListByLine(result);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

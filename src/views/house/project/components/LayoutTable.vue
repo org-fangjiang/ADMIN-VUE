@@ -110,6 +110,7 @@
   } from '/@/api/host/layout/model/layoutModel';
   import { deleteLayout, getLayoutList, reEnableLayout } from '/@/api/host/layout/layout';
   import LayoutForm from './LayoutForm.vue';
+  import { processListByLine, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'LayoutTable',
@@ -128,28 +129,15 @@
         type: String,
         require: true,
       },
-      provinceId: {
-        type: String,
-        require: true,
-      },
-      cityId: {
-        type: String,
-        require: true,
-      },
-      areaId: {
-        type: String,
-        require: true,
-      },
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const layoutConst = ref(_LayoutConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const layout: LayoutModel[] = [];
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -166,7 +154,7 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
       // 筛选条件
       const condition = reactive({
@@ -174,23 +162,17 @@
         projectId: props.id || '',
         id: '',
       });
-      // 列表结果
-      let list = reactive(layout);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-      });
-      const onClose = async () => {
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
+
+      //状态修改
+      const stateHandleChange = async (value) => {
+        condition.state = value;
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
+
+      // 列表结果
+      const layout: LayoutModel[] = [];
+      let list = reactive(layout);
 
       // 获取list
       const getList = async () => {
@@ -210,45 +192,34 @@
         return result;
       };
 
-      function processListByLine(result: any) {
-        if (!result) {
-          return;
-        }
-        const { content, page } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = page.totalElements;
-      }
-
+      //初始加载
       onMounted(async () => {
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       });
 
+      //删除
       const deleteOneLayout = async (line) => {
         try {
           loading.value = true;
           await deleteLayout(line.id);
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
       };
+      //恢复
       const reEnableOneLayout = async (line) => {
         try {
           loading.value = true;
           await reEnableLayout(line.id);
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
@@ -256,40 +227,35 @@
         }
       };
 
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+      //关闭抽屉
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+      //添加
       const addLayout = async (line) => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.add');
       };
-
+      //更新
       const updateLayout = async (line) => {
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.update');
-      };
-
-      const stateHandleChange = async (value) => {
-        condition.state = value;
-        const result = await getList();
-        processListByLine(result);
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

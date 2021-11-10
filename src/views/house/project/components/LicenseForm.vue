@@ -51,13 +51,13 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input, Image, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import FSource from '/@/components/FSource';
   import { LicenseModel, _LicenseConst } from '/@/api/host/license/model/licenseModel';
   import { addLicense, getLicense, updateLicense } from '/@/api/host/license/license';
   import { getResource } from '/@/api/host/source/source';
+  import { success, failed } from '/@/hooks/web/useList';
   export default defineComponent({
     name: 'LicenseForm',
     components: {
@@ -79,27 +79,21 @@
         type: String,
         require: true,
       },
-      provinceId: {
-        type: String,
-        require: true,
-      },
-      cityId: {
-        type: String,
-        require: true,
-      },
-      areaId: {
-        type: String,
-        require: true,
-      },
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const licenseConst = ref(_LicenseConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
 
+      //判断更新还是新增
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
+
+      //控制modal是否显示
       let isModal = ref<boolean>(false);
       const changeModal = () => {
         isModal.value = true;
@@ -107,11 +101,6 @@
       const onClose = () => {
         isModal.value = false;
       };
-
-      let isUpdate = ref<boolean>(false);
-      if (props.id && props.id !== '') {
-        isUpdate.value = true;
-      }
 
       // fromRef 获取form
       const formRef = ref();
@@ -121,7 +110,7 @@
 
       let address = ref<string>();
       let type = ref<string>();
-
+      //设置资源
       const setSource = async (value) => {
         loading.value = true;
         try {
@@ -137,6 +126,7 @@
         isModal.value = false;
       };
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -170,6 +160,7 @@
           });
       };
 
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -181,7 +172,7 @@
       };
 
       let updateAddress = ref<string>('');
-
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -196,22 +187,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

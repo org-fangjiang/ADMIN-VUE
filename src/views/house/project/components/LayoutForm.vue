@@ -109,7 +109,6 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import {
     Button,
     Form,
@@ -125,6 +124,7 @@
   import { updateLayout, addLayout, getLayout } from '/@/api/host/layout/layout';
   import FSource from '/@/components/FSource';
   import { FGroup } from '/@/components/FGroup';
+  import { success, failed } from '/@/hooks/web/useList';
   export default defineComponent({
     name: 'LayoutForm',
     components: {
@@ -152,12 +152,12 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const layoutConst = ref(_LayoutConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
 
+      //控制modal是否打开
       let isModal = ref<boolean>(false);
       const changeModal = () => {
         isModal.value = true;
@@ -166,6 +166,7 @@
         isModal.value = false;
       };
 
+      //判断是更新还是新增
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
@@ -176,7 +177,7 @@
       const formState: UnwrapRef<LayoutModel> = reactive({
         projectId: props.projectId || '',
       });
-
+      //标签修改
       const changeLabels = async (e) => {
         if (e && e.length > 0) {
           formState.labels = '';
@@ -195,23 +196,22 @@
         }
         console.log(formState.labels);
       };
-
+      //销售状态修改
       const saleStateChange = async (value) => {
         formState.saleState = value;
       };
-
+      //朝向修改
       const faceChange = async (value) => {
         formState.face = value;
       };
 
       let address = ref<string>();
       let type = ref<string>();
-
+      //设置资源
       const setSource = async (value) => {
         loading.value = true;
         try {
           formState.resourceId = value.id;
-          debugger;
           address.value = value.address;
           type.value = value.type;
           success(t('host.layout.setSource'), t('host.action.success'));
@@ -223,6 +223,7 @@
         isModal.value = false;
       };
 
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -256,6 +257,7 @@
           });
       };
 
+      //重置
       const resetForm = async () => {
         loading.value = true;
         try {
@@ -267,8 +269,9 @@
       };
 
       let updateAddress = ref<string>('');
-
       let selectLabel = ref<String[]>([]);
+
+      //初始加载
       onMounted(async () => {
         loading.value = true;
         if (props.id) {
@@ -279,10 +282,7 @@
               selectLabel.value = formState.labels.split(',');
             }
           }
-          debugger;
           if (content.hResourceByResourceId) {
-            debugger;
-            // const result = await getResource(content.resourceId);
             if (
               content.hResourceByResourceId.sort !== '6' &&
               content.hResourceByResourceId.sort !== '7'
@@ -293,22 +293,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

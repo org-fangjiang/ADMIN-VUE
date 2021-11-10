@@ -543,7 +543,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef, watch } from 'vue';
   import { Loading } from '/@/components/Loading';
@@ -578,6 +577,7 @@
   import { getDeveloper } from '/@/api/host/developer/developer';
   import { getBrand } from '/@/api/host/brand/brand';
   import { getEstateCompany } from '/@/api/host/estateCompany/estateCompany';
+  import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'ProjectForm',
@@ -614,21 +614,18 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
+
+      //判断是否为更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+      //加载动画
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
-      const formRef = ref();
 
-      const marks = ref<Record<number, any>>({
-        0: '0%',
-        100: '100%',
-      });
-
+      //验证规则
       const rules = reactive(_HostConst._RULES);
       const hostConst = ref(_HostConst);
 
@@ -636,8 +633,16 @@
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       let provinceId = ref<string>(userStore.getUserInfo.companyProvinceId || '');
 
+      const formRef = ref();
       const formState: UnwrapRef<HostModel> = reactive(Persistent.getLocal(HOUSE_PROJECT) || {});
 
+      //标记
+      const marks = ref<Record<number, any>>({
+        0: '0%',
+        100: '100%',
+      });
+
+      //标签
       const changeLabels = async (e) => {
         if (e && e.length > 0) {
           formState.labels = '';
@@ -702,51 +707,39 @@
         state.value = 0;
         selectedRow.value = '';
       };
-
-      // const setProjectBrand = async (value) => {
-      //   formState.brandIdS = value.value;
-      // };
-
-      // const setProjectDevelop = async (value) => {
-      //   formState.developerId = value.value;
-      // };
-
-      // const setProjectEstateCompany = async (value) => {
-      //   formState.estateCompany = value.value;
-      // };
-
+      //类型
       const typeChange = async (e) => {
         formState.type = e || '';
       };
-
+      //建筑类型
       const buildTypeChange = async (e) => {
         formState.buildType = e;
       };
-
+      //装修类型
       const decorationTypeChange = async (e) => {
         formState.decorationType = e;
       };
-
+      //拿地时间
       const getLandTimechange = async (e) => {
         formState.getLandTime = e;
       };
-
+      //销售状态
       const saleStateChange = async (e) => {
         formState.saleState = e;
       };
-
+      //开盘时间
       const openTimechange = (_date: any | string, dateString: string) => {
         formState.openTime = dateString;
       };
-
+      //交房时间
       const payTimechange = (_date: any | string, dateString: string) => {
         formState.payTime = dateString;
       };
-
+      //价格更新时间
       const updatePriceTimechange = (_date: any | string, dateString: string) => {
         formState.updatePriceTime = dateString;
       };
-
+      //贷款方式，多选
       const loanTypeChange = async (value) => {
         let selectType = '';
         if (value && value.length > 0) {
@@ -758,26 +751,26 @@
         selectType = selectType.substring(x + 1);
         formState.loanType = selectType;
       };
-
+      //供水方式
       const waterMethodChange = async (e) => {
         formState.waterMethod = e;
       };
-
+      //供电方式
       const electricityMethodChange = async (e) => {
         formState.electricityMethod = e;
       };
-
+      //供暖方式
       const heatMethodChange = async (e) => {
         formState.heatMethod = e;
       };
-
+      //区
       const areaChange = async (e) => {
         if (!formState.sysAreaByAreaId) {
           formState.sysAreaByAreaId = {};
         }
         formState.sysAreaByAreaId.id = e || '';
       };
-
+      //提成方式
       const commissionModeChange = async () => {
         if (formState.commissionMode === '2') {
           if (formState.commission && formState.commission > 100) {
@@ -785,7 +778,7 @@
           }
         }
       };
-
+      //监听表单数据，存储
       watch(
         () => formState,
         (_v1, _v2) => {
@@ -795,7 +788,7 @@
           deep: true,
         }
       );
-
+      //提交
       const onSubmit = () => {
         formRef.value
           .validate()
@@ -831,23 +824,7 @@
             console.log('error', error);
           });
       };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
+      //重置
       const resetForm = async () => {
         if (props.id) {
           loading.value = true;
@@ -866,6 +843,7 @@
 
       let area = ref('');
       let selected = ref<String[]>([]);
+      //初始加载
       onMounted(async () => {
         if (props.id) {
           loading.value = true;

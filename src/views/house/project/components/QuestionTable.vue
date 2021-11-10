@@ -89,6 +89,7 @@
   import { deleteQuestion, getQuestions, reEnableQuestion } from '/@/api/host/question/question';
   import QuestionForm from './QuestionForm.vue';
   import AnswerTable from './AnswerTable.vue';
+  import { processListByLine, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'QuestionTable',
@@ -109,13 +110,14 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
       const questionConst = ref(_QuestionConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const question: QuestionModel[] = [];
+
+      //分页
       const pageParam: PageParam = reactive({
         pageNum: 1,
         pageSize: 10,
@@ -130,7 +132,7 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       };
 
       // 筛选条件
@@ -140,22 +142,8 @@
         id: '',
       });
       // 列表结果
+      const question: QuestionModel[] = [];
       let list = reactive(question);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-      });
-      const onClose = async () => {
-        drawerParam.visible = false;
-        drawerParam.state = '';
-        drawerParam.id = '';
-        drawerParam.title = '';
-        const result = await getList();
-        processListByLine(result);
-      };
 
       // 获取list
       const getList = async () => {
@@ -175,23 +163,9 @@
         return result;
       };
 
-      function processListByLine(result: any) {
-        if (!result) {
-          return;
-        }
-        const { content, page } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = Number(page.totalElements);
-      }
-
       onMounted(async () => {
         const result = await getList();
-        processListByLine(result);
+        processListByLine(result, list, total);
       });
 
       const deleteOneQuestion = async (line) => {
@@ -200,7 +174,7 @@
           await deleteQuestion(line.id);
           success(t('host.action.delete'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
@@ -213,12 +187,28 @@
           await reEnableQuestion(line.id);
           success(t('host.action.reEnable'), t('host.action.success'));
           const result = await getList();
-          processListByLine(result);
+          processListByLine(result, list, total);
         } catch (error: any) {
           failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
+      };
+
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+      const onClose = async () => {
+        drawerParam.visible = false;
+        drawerParam.state = '';
+        drawerParam.id = '';
+        drawerParam.title = '';
+        const result = await getList();
+        processListByLine(result, list, total);
       };
 
       const addquestion = async () => {
@@ -240,22 +230,6 @@
         drawerParam.state = '1';
         drawerParam.id = line.id;
         drawerParam.title = t('host.question.setAnswer');
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {
