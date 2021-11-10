@@ -462,6 +462,20 @@
             autoComplete="off"
           />
         </FormItem>
+        <FormItem ref="advantage" :label="t('host.advantage')" name="advantage">
+          <Textarea
+            :disabled="isUpdate && !updateFields.includes('advantage')"
+            v-model:value="formState.advantage"
+            autoComplete="off"
+          />
+        </FormItem>
+        <FormItem ref="defect" :label="t('host.defect')" name="defect">
+          <Textarea
+            :disabled="isUpdate && !updateFields.includes('defect')"
+            v-model:value="formState.defect"
+            autoComplete="off"
+          />
+        </FormItem>
       </div>
       <br />
       <Divider />

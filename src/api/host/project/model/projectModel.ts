@@ -75,6 +75,8 @@ export interface HostModel {
   orderNum?: number;
   commission?: number;
   commissionMode?: string;
+  advantage?: string;
+  defect?: string;
   hBuildsById?: BuildEntity[];
   hLayoutsById?: LayoutEntity[];
   hLicensesById?: LicenseEntity[];

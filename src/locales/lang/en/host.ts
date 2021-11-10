@@ -154,6 +154,8 @@ export default {
   link: 'link',
   brandId: 'brandId',
   hDeveloperByDeveloperId: 'hDeveloperByDeveloperId',
+  defect: 'defect',
+  advantage: 'advantage',
   action: {
     add: 'add',
     update: 'update',

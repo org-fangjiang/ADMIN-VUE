@@ -154,6 +154,8 @@ export default {
   link: '链接',
   brandId: '品牌商',
   hDeveloperByDeveloperId: '开发商',
+  defect: '项目缺点',
+  advantage: '项目优点',
   action: {
     add: '添加',
     update: '更新',
