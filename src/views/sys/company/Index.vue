@@ -61,7 +61,7 @@
                 :class="`${prefixCls}-action-menu-item`"
               >
                 <template #icon></template>
-                <Button v-auth="companyConst.COMPANY_PERMS.DELETE" type="link" size="small">
+                <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
                   {{ t('model.company.updateUnLocked') }}
                 </Button>
               </MenuItem>
@@ -169,6 +169,7 @@
     Button,
   } from 'ant-design-vue';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'Company',
@@ -192,7 +193,7 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 修改为其它对应的组件名称
       const { prefixCls } = useDesign('company');
       // 修改为其它对应的Const
@@ -237,7 +238,7 @@
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //城市区筛选
@@ -247,7 +248,7 @@
         condition.areaId = e.value[2] || '';
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //获取数据
@@ -271,25 +272,11 @@
         return result;
       };
 
-      //根据分页，将数据赋值到表格，返回第一页
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
       //页码修改
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //页面条数改变
@@ -298,7 +285,7 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       // 企业操作
@@ -322,7 +309,7 @@
               await deleteCompany(company);
               success(t('model.company.updateInfo'), t('model.company.update_success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.company.update_failed'));
             } finally {
@@ -337,7 +324,7 @@
               await reEnableCompany(company);
               success(t('model.company.updateInfo'), t('model.company.update_success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.company.update_failed'));
             } finally {
@@ -377,22 +364,6 @@
         }
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
       //添加，打开抽屉
       const add = () => {
         drawerParam.visible = true;
@@ -415,13 +386,13 @@
         }
         drawerParam.state = '0';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //初始加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
 
       return {
