@@ -85,13 +85,13 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { _MetroLineConst } from '/@/api/sys/metro/model/metroModel';
   import { getLine, addLine, updateLine, getAllStations } from '/@/api/sys/metro/metro';
-  import { useMessage } from '/@/hooks/web/useMessage';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
   import { Button, Form, FormItem, Input, Modal, Select } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { MapSearchPOI } from '/@/components/FMap';
   import { Icon } from '/@/components/Icon';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     label: string;
@@ -118,7 +118,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
@@ -234,22 +233,6 @@
         });
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       // 是否打开，model
       const startOrEnd = ref('');

@@ -118,6 +118,7 @@
   import { FMenu } from '/@/components/FMenu';
   import { debounce } from 'lodash-es';
   import { getCompanies } from '/@/api/sys/compnay/company';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -141,16 +142,9 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 修改为其它对应的组件名称
       const { prefixCls } = useDesign('role');
-      const drawerParam = reactive({
-        id: '',
-        state: '', //0 添加修改角色 1 修改权限
-        checkedKeys: [''],
-        title: '',
-        visible: false,
-      });
       const pageSizeList = ref<string[]>(PageSizeList);
       // 修改为其它对应的Const
       const roleConst = ref(RoleConst);
@@ -166,6 +160,7 @@
         totalPages: 0,
         totalElements: 0,
       });
+
       const options = ref<Option[]>([]);
       //筛选文本框值发生变化调用
       const fetchUser = debounce(async (value) => {
@@ -178,18 +173,19 @@
         }
       }, 200);
 
-      const condition = reactive({
-        state: '',
-        companyId: '',
-      });
-
+      //选择企业
       const companyChange = async (value) => {
         condition.companyId = value;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
+      //筛选条件
+      const condition = reactive({
+        state: '',
+        companyId: '',
+      });
       // 角色信息数据
       const roles: RoleModel[] = [];
       let list = reactive(roles);
@@ -214,33 +210,6 @@
         return result;
       };
 
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result);
-      };
-
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result);
-      };
-
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -260,7 +229,7 @@
               await deleteRole({ id: id });
               success(t('model.role.deleteRole'), t('model.role.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.role.fail'));
             } finally {
@@ -273,7 +242,7 @@
               await reEnableRole({ id: id });
               success(t('model.role.reEnableRole'), t('model.role.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.role.fail'));
             } finally {
@@ -294,21 +263,14 @@
         }
       };
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
+      //抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '', //0 添加修改角色 1 修改权限
+        checkedKeys: [''],
+        title: '',
+        visible: false,
+      });
 
       const add = () => {
         drawerParam.visible = true;
@@ -323,13 +285,28 @@
         drawerParam.id = '';
         drawerParam.visible = false;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
+
+      //页码修改
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
 
       return {
         t,

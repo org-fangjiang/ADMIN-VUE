@@ -56,6 +56,7 @@
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import AddStation from './AddStation.vue';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -79,7 +80,7 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
@@ -171,22 +172,6 @@
         } finally {
           loading.value = false;
         }
-      };
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

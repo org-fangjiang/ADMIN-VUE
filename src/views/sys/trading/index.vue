@@ -120,6 +120,7 @@
   import TradingForm from './components/TradingForm.vue';
   import FTrading from '/@/components/FTrading';
   import { getCityWithAllArea } from '/@/api/sys/city/city';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'TradingTable',
@@ -139,7 +140,7 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('trading');
@@ -172,7 +173,7 @@
         if (value.length === 0) {
           //没有选中数据时
           const result = await getList();
-          processList(result);
+          processList(result, list, pageParam);
         } else {
           //先将列表信息清空
           list.splice(0);
@@ -230,32 +231,19 @@
         }
         return result;
       };
-      //获取的数据分页放到列表中
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((trading) => {
-          list.push(trading);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
 
       //省市区筛选
       const locationChange = async (e) => {
         condition.cityId = e.value[1] || userStore.getUserInfo.companyCityId;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数改变
       const onShowSizeChange = async (current, size) => {
@@ -263,14 +251,14 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //页面初始化加载
       onMounted(async () => {
         const { content } = await getCityWithAllArea({ id: cityId });
         province.value = content.provinceId || '';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
       //关闭抽屉
       const onClose = async () => {
@@ -280,7 +268,7 @@
         drawerParam.title = '';
         drawerParam.provinceId = '';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       // 添加
@@ -304,7 +292,7 @@
               await deleteTradingArea(id);
               success(t('model.metroLine.result.delete'), t('model.metroLine.result.delete'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
             } finally {
@@ -318,7 +306,7 @@
               await reEnableTradingArea(id);
               success(t('model.metroLine.result.reEnable'), t('model.metroLine.result.reEnable'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
             } finally {
@@ -334,22 +322,6 @@
             drawerParam.provinceId = province.value;
             break;
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

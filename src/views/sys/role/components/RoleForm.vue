@@ -64,8 +64,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addRoles, getRole, updateRole } from '/@/api/sys/role/role';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { RoleModel, RoleConst } from '/@/api/sys/role/model/roleModel';
@@ -75,6 +73,7 @@
   import { MenuModel } from '/@/api/sys/menu/model/menuModel';
   import { getCompanies, getCompany } from '/@/api/sys/compnay/company';
   import { debounce } from 'lodash-es';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -99,8 +98,7 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('role');
+      //获取当前id，判断是更新还是新增
       const currentId = ref(props.roleId || undefined);
       let isUpdate = ref<boolean>(false);
       if (currentId.value && currentId.value !== '') {
@@ -182,22 +180,6 @@
           .catch((error: ValidateErrorEntity<RoleModel>) => {
             console.log('error', error);
           });
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       const resetForm = async () => {

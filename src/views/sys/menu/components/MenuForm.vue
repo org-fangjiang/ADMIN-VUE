@@ -152,10 +152,11 @@
   import { MenuConst, MenuModel } from '/@/api/sys/menu/model/menuModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   import { useUserStore } from '/@/store/modules/user';
+  import { success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'MenuForm',
     components: {
@@ -183,7 +184,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('menu');
       const menuConst = ref(MenuConst);
       let loading = ref<boolean>(true);
@@ -319,22 +319,6 @@
         }
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

@@ -67,7 +67,6 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
   import { Button, Form, FormItem, Input, Modal, Select } from 'ant-design-vue';
@@ -81,6 +80,8 @@
     updateTradingArea,
   } from '/@/api/sys/trading/trading';
   import { getAreas } from '/@/api/sys/area/area';
+  import { success, failed } from '/@/hooks/web/useList';
+
   interface Option {
     label: string;
     value: string;
@@ -110,7 +111,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('trading');
@@ -207,22 +207,6 @@
         });
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       // 是否打开，model
       const visible = ref<boolean>(false);

@@ -139,6 +139,7 @@
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import StationForm from './components/StationForm.vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -163,7 +164,7 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('station');
@@ -225,20 +226,6 @@
         return result;
       };
 
-      //获取到的所有数据分页存放到列表
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
       //将通过线路筛选出来的站点放入列表中
       function processListByLine(result: any) {
         if (!result) {
@@ -259,7 +246,7 @@
         condition.cityId = e.value[1] || userStore.getUserInfo.companyCityId;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //线路筛选
       const lineChange = async (value) => {
@@ -270,7 +257,7 @@
         if (!condition.lineId) {
           pageParam.number = 1;
           result2 = await getList();
-          processList(result2);
+          processList(result2, list, pageParam);
         } else {
           lineResult = await getStationsByLine({ lineId: value });
           processListByLine(lineResult);
@@ -282,7 +269,7 @@
         //清空筛选框内容
         if (e.length === 0) {
           const result = await getList();
-          processList(result);
+          processList(result, list, pageParam);
           return;
         }
         //e为选中的数据，第一个数据线路，第二个数据站点
@@ -305,7 +292,7 @@
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //页面条数修改
@@ -314,13 +301,13 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //页面加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
         const { content } = await getLines({ cityId: condition.cityId });
         content.forEach((item) => {
           options.value.push({ value: item.id || '', label: item.name || '' });
@@ -334,7 +321,7 @@
         drawerParam.id = '';
         drawerParam.title = '';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       // 添加地铁线路
@@ -357,7 +344,7 @@
               await deleteStation(id);
               success(t('model.metroStation.result.delete'), t('model.metroStation.result.delete'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
@@ -374,7 +361,7 @@
                 t('model.metroStation.result.reEnable')
               );
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
             } finally {
@@ -392,22 +379,6 @@
             // 添加站点
             break;
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {

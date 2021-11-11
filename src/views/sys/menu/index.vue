@@ -75,7 +75,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import { Table, Tag, Drawer, Button, notification } from 'ant-design-vue';
+  import { Table, Tag, Drawer, Button } from 'ant-design-vue';
   import { MenuConst, _Columns } from '/@/api/sys/menu/model/menuModel';
   import {
     deleteMenu,
@@ -86,6 +86,7 @@
   } from '/@/api/sys/menu/menu';
   import MenuForm from './components/MenuForm.vue';
   import { useUserStore } from '/@/store/modules/user';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Options {
     id?: string;
@@ -274,22 +275,6 @@
         } finally {
           loading.value = false;
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {

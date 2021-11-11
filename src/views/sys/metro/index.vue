@@ -125,6 +125,7 @@
   import FCascader from '/@/components/FCascader';
   import MetroLineForm from './components/MetroLineForm.vue';
   import StationTable from './components/StationTable.vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'LinkTable',
@@ -144,7 +145,7 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
@@ -199,34 +200,19 @@
         return result;
       };
 
-      //将获取到的数据按照分页展示列表中
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        //每次先将列表清空，在进行赋值
-        list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
       //省市区筛选
       const locationChange = async (e) => {
         condition.cityId = e.value[1] || userStore.getUserInfo.companyCityId;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //页面修改
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数修改
       const onShowSizeChange = async (current, size) => {
@@ -234,13 +220,13 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       //页面初始加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
 
       //关闭抽屉
@@ -257,7 +243,7 @@
         drawerParam.id = '';
         drawerParam.title = '';
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       // 添加地铁线路
@@ -280,7 +266,7 @@
               await deleteLine(id);
               success(t('model.metroLine.result.delete'), t('model.metroLine.result.delete'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
             } finally {
@@ -294,7 +280,7 @@
               await reEnableLine(id);
               success(t('model.metroLine.result.reEnable'), t('model.metroLine.result.reEnable'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
             } finally {
@@ -316,22 +302,6 @@
             drawerParam.title = t('model.metro.stationInfo');
             break;
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       return {
