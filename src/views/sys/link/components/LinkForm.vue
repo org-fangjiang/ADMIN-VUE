@@ -73,7 +73,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addLinks, updateLinks, getLink } from '/@/api/sys/link/link';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
@@ -103,7 +102,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('link');
       const linkConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -112,12 +110,14 @@
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
-      const formRef = ref();
+
       //添加时状态初始为有效，不可改
       let state;
       if (!isUpdate.value) {
         state = _Const.EFFECTIVE;
       }
+
+      const formRef = ref();
       const formState: UnwrapRef<LinkModel> = reactive({
         id: props.id || '',
         title: '',
@@ -211,7 +211,6 @@
 
       return {
         t,
-        prefixCls,
         linkConst,
         tip,
         props,

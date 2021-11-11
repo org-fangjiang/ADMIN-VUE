@@ -23,7 +23,6 @@
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
 
   import { useUserStore } from '/@/store/modules/user';
 
@@ -39,7 +38,6 @@
     emits: ['handleCancel'],
     setup(_props, { emit }) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('header-lock-modal');
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       //获取当前用户信息
@@ -97,7 +95,6 @@
 
       return {
         t,
-        prefixCls,
         userInfo,
         formRef,
         formState,
@@ -112,19 +109,3 @@
     },
   });
 </script>
-<style lang="less">
-  @prefix-cls: ~'@{namespace}-user';
-  @dark-bg: #293146;
-
-  html[data-theme='dark'] {
-    .@{prefix-cls} {
-      background-color: @dark-bg;
-    }
-  }
-
-  .@{prefix-cls} {
-    &-action-menu-item {
-      text-align: center;
-    }
-  }
-</style>

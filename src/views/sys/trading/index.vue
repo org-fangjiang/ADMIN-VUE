@@ -147,12 +147,12 @@
       const tradingConst = ref(_TradingConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
-      const tradingArea: TradingModel[] = [];
+
       //省市
       const cityId = userStore.getUserInfo.companyCityId;
       let province = ref('');
       // 分页
+      const pageSizeList = ref<string[]>(PageSizeList);
       let pageParam = reactive({
         size: 10,
         number: 1,
@@ -200,16 +200,18 @@
           }
         }
       };
+
+      //省市区筛选
+      const locationChange = async (e) => {
+        condition.cityId = e.value[1] || userStore.getUserInfo.companyCityId;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
       // 列表结果
+      const tradingArea: TradingModel[] = [];
       let list = reactive(tradingArea);
-      // 抽屉参数
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
-        provinceId: '',
-      });
 
       // 获取list
       const getList = async () => {
@@ -232,33 +234,21 @@
         return result;
       };
 
-      //省市区筛选
-      const locationChange = async (e) => {
-        condition.cityId = e.value[1] || userStore.getUserInfo.companyCityId;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result, list, pageParam);
-      };
-      //页码改变
-      const onChange = async (page) => {
-        pageParam.number = page;
-        const result = await getList();
-        processList(result, list, pageParam);
-      };
-      //每页条数改变
-      const onShowSizeChange = async (current, size) => {
-        console.log(current);
-        pageParam.size = size;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result, list, pageParam);
-      };
       //页面初始化加载
       onMounted(async () => {
         const { content } = await getCityWithAllArea({ id: cityId });
         province.value = content.provinceId || '';
         const result = await getList();
         processList(result, list, pageParam);
+      });
+
+      // 抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+        provinceId: '',
       });
       //关闭抽屉
       const onClose = async () => {
@@ -322,6 +312,21 @@
             drawerParam.provinceId = province.value;
             break;
         }
+      };
+
+      //页码改变
+      const onChange = async (page) => {
+        pageParam.number = page;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+      //每页条数改变
+      const onShowSizeChange = async (current, size) => {
+        console.log(current);
+        pageParam.size = size;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
       return {

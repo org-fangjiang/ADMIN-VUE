@@ -54,7 +54,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addCity, getCity, updateCity } from '/@/api/sys/city/city';
   import { CityConst, CityModel } from '/@/api/sys/city/model/cityModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
@@ -85,7 +84,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('location');
       const cityConst = ref(CityConst);
       //加载动画
       let loading = ref<boolean>(true);
@@ -166,7 +164,6 @@
 
       return {
         t,
-        prefixCls,
         cityConst,
         formRef,
         tip,

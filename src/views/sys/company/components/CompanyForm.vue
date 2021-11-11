@@ -137,7 +137,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { getCompany, addCompany, updateCompany } from '/@/api/sys/compnay/company';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import moment from 'moment';
@@ -183,7 +182,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('login');
       //判断是不是更新
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
@@ -330,7 +328,6 @@
         t,
         formRef,
         formState,
-        prefixCls,
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
         isUpdate,

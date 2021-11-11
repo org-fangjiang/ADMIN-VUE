@@ -44,7 +44,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
@@ -71,7 +70,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('location');
       const provinceConst = ref(ProvinceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -158,7 +156,6 @@
 
       return {
         t,
-        prefixCls,
         provinceConst,
         formRef,
         isUpdate,

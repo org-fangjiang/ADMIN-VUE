@@ -102,7 +102,7 @@
       const areaConst = ref(AreaConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const formRef = ref();
+      //每页条数列表
       const pageSizeList = ref<string[]>(PageSizeList);
       const areaColumns = reactive(AreaColumns);
       let pageParam = reactive({
@@ -112,6 +112,7 @@
         totalPages: 0,
         totalElements: 0,
       });
+      const formRef = ref();
       const formState: UnwrapRef<AreaModel> = reactive({
         id: '',
         name: '',

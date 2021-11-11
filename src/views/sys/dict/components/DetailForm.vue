@@ -40,7 +40,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addSysDictDetail, UpdateSysDictDetail, getSysDictDetail } from '/@/api/sys/dict/dict';
   import { DictConst, DictDetailModel } from '/@/api/sys/dict/model/dictModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
@@ -72,12 +71,10 @@
     },
     setup(props) {
       const { t } = useI18n();
-      //样式前缀
-      const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const formRef = ref();
+
       //判断更新还是新增
       let isUpdate = ref<boolean>(false);
       if (props.id && props.id !== '') {
@@ -89,6 +86,7 @@
         state = DictConst.EFFECTIVE;
       }
       //表单数据
+      const formRef = ref();
       const formState: UnwrapRef<DictDetailModel> = reactive({
         id: '',
         value: '',
@@ -166,7 +164,6 @@
         t,
         props,
         isUpdate,
-        prefixCls,
         dictConst,
         tip,
         updateFields: DictConst._UPDATE_DETAIL_FIELDS,

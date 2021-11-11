@@ -47,7 +47,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addArea, updateArea, getArea } from '/@/api/sys/area/area';
   import { AreaConst, AreaModel } from '/@/api/sys/area/model/areaModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
@@ -78,7 +77,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('location');
       const areaConst = ref(AreaConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -87,12 +85,13 @@
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
-      const formRef = ref();
+
       //状态初始有效
       let state;
       if (!isUpdate.value) {
         state = AreaConst.EFFECTIVE;
       }
+      const formRef = ref();
       const formState: UnwrapRef<AreaModel> = reactive({
         id: '',
         name: '',
@@ -156,7 +155,6 @@
 
       return {
         t,
-        prefixCls,
         areaConst,
         tip,
         isUpdate,

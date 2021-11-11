@@ -161,20 +161,16 @@
       const userConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
+
       const columns = reactive(_Columns);
+
+      const pageSizeList = ref<string[]>(PageSizeList);
       let pageParam = reactive({
         size: 10,
         number: 1,
         numberOfElements: 0,
         totalPages: 0,
         totalElements: 0,
-      });
-      const drawerParam = reactive({
-        id: '',
-        state: '',
-        title: '',
-        visible: false,
       });
 
       const condition = reactive({
@@ -271,6 +267,14 @@
         drawerParam.id = '';
         drawerParam.title = t('model.user.addUser');
       };
+      //抽屉参数
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
       //关闭抽屉，清空
       const onClose = async () => {
         drawerParam.visible = false;

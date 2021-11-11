@@ -52,7 +52,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import {
     addDepartment,
     updateDepartment,
@@ -95,7 +94,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('dept');
       const departmentConst = ref(DepartmentConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -244,7 +242,6 @@
         isUpdate,
         companyName,
         parentName,
-        prefixCls,
         departmentConst,
         tip,
         updateFields: DepartmentConst._UPDATE_FIELDS,

@@ -41,7 +41,6 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addSysDictGroup, UpdateSysDictGroup, GetSysDictGroup } from '/@/api/sys/dict/dict';
   import { DictConst, DictGroupModel } from '/@/api/sys/dict/model/dictModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
@@ -68,7 +67,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
       //判断是否为更新
       let isUpdate = ref<boolean>(false);
@@ -157,7 +155,6 @@
         t,
         props,
         isUpdate,
-        prefixCls,
         dictConst,
         formRef,
         tip,
