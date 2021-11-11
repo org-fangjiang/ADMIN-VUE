@@ -557,7 +557,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef, watch } from 'vue';
   import { Loading } from '/@/components/Loading';
   import { Icon } from '/@/components/Icon';
@@ -628,7 +627,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('project');
 
       //判断是否为更新
       let isUpdate = ref<boolean>(false);
@@ -948,7 +946,6 @@
 
       return {
         t,
-        prefixCls,
         formRef,
         formState,
         loading,

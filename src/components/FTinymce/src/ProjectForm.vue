@@ -41,7 +41,6 @@
 
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
           <Button type="primary" @click="onSubmit">{{ t('host.action.onSubmit') }}</Button>
-          <!-- <Button style="margin-left: 10px" @click="resetForm">{{ t('host.action.reset') }}</Button> -->
         </FormItem>
       </div>
     </Form>
@@ -116,7 +115,6 @@
       let fetching = ref<boolean>(false);
 
       const nameChange = debounce(async (value) => {
-        debugger;
         fetching.value = true;
         if (value && value !== '') {
           condition.name = value;
@@ -140,7 +138,6 @@
 
       let areaId = ref<string>('');
       const nameSelect = async (value) => {
-        debugger;
         fetching.value = true;
         const { content } = await getProject(value.value);
         formState.id = content.id || '';
@@ -163,22 +160,12 @@
       };
 
       const areaChange = async (_value, selectedOptions) => {
-        debugger;
         formState.area = selectedOptions.label;
       };
 
-      onMounted(async () => {
-        debugger;
-        // const { content } = await searchWithCondition(condition);
-        // if (content && content.length > 0) {
-        //   content.forEach((item) => {
-        //     options.value.push({ value: item.id || '', label: item.name || '' });
-        //   });
-        // }
-      });
+      onMounted(async () => {});
 
       const onSubmit = () => {
-        debugger;
         emit('projectInfo', formState);
       };
 
