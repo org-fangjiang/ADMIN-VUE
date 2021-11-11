@@ -109,6 +109,8 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
+  import { processList, success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'ProvinceTable',
     components: {
@@ -126,7 +128,7 @@
     emits: ['onAddCity', 'onUpdateProvince', 'onAddProvince'],
     setup(_props, { emit }) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
       const provinceConst = ref(ProvinceConst);
       let loading = ref<boolean>(true);
@@ -148,7 +150,7 @@
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       const provinces: ProvinceModel[] = [];
@@ -176,7 +178,7 @@
       //初始加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
       // 操作
       const action = async (key) => {
@@ -194,7 +196,7 @@
                 t('model.location.province.success')
               );
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.province.fail'));
             } finally {
@@ -212,7 +214,7 @@
                 t('model.location.province.success')
               );
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.province.fail'));
             } finally {
@@ -229,39 +231,12 @@
             break;
         }
       };
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-      //数据按照分页，放置到表格
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //条数改变
       const onShowSizeChange = async (current, size) => {
@@ -269,7 +244,7 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //添加省
       const addProvince = () => {
@@ -286,7 +261,7 @@
       // refresh list
       const refresh = async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       return {
         t,

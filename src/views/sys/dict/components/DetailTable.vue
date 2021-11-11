@@ -84,6 +84,8 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
+  import { processList, success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'DetailTable',
     components: {
@@ -105,7 +107,7 @@
     emits: ['onUpdateDetail'],
     setup(props, { emit }) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       //样式前缀
       const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
@@ -163,23 +165,9 @@
       onMounted(async () => {
         loading.value = true;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
         loading.value = false;
       });
-
-      //按照分页，将数据赋值到表格
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
 
       // 操作
       const action = async (key) => {
@@ -194,7 +182,7 @@
               await deleteSysDictDetail(detail);
               success(t('model.dict.detail.deleteDetail'), t('model.dict.detail.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.dict.detail.fail'));
             } finally {
@@ -209,7 +197,7 @@
               await reEnableSysDictDetail(detail);
               success(t('model.dict.detail.recoveryDetail'), t('model.dict.detail.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.dict.detail.fail'));
             } finally {
@@ -225,27 +213,12 @@
       const updateDetail = (detailId) => {
         emit('onUpdateDetail', { detailId });
       };
-      //成功失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数改变
       const onShowSizeChange = async (current, size) => {
@@ -253,12 +226,12 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //刷新列表
       const refresh = async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       return {
         t,

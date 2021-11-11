@@ -83,10 +83,11 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import { Table, Drawer, Button, Menu, MenuItem, Dropdown, notification } from 'ant-design-vue';
+  import { Table, Drawer, Button, Menu, MenuItem, Dropdown } from 'ant-design-vue';
   import { DepartmentColumns, DepartmentConst } from '/@/api/sys/department/model/departmentModel';
   import { getAllDepartments, deleteDepartment } from '/@/api/sys/department/department';
   import DeptForm from './components/DeptForm.vue';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Options {
     deptId?: string;
@@ -291,22 +292,6 @@
 
             break;
         }
-      };
-
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       //关闭抽屉

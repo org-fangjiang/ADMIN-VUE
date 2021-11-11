@@ -45,9 +45,10 @@
   import { DictConst, DictDetailModel } from '/@/api/sys/dict/model/dictModel';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
+  import { success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'DetailForm',
     components: {
@@ -71,7 +72,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       //样式前缀
       const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
@@ -161,23 +161,6 @@
         }
         loading.value = false;
       });
-
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

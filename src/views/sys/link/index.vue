@@ -134,6 +134,7 @@
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import LinkForm from './components/LinkForm.vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'LinkTable',
@@ -154,7 +155,7 @@
     },
     setup() {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('link');
       const linkConst = ref(_Const);
       //加载动画
@@ -193,19 +194,19 @@
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //根据标题搜索
       const selectTitle = async (value) => {
         condition.title = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //根据页码搜索
       const selectPage = async (value) => {
         condition.page = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //省市区筛选
       const locationChange = async (e) => {
@@ -214,7 +215,7 @@
         condition.areaId = e.value[2] || '';
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       const links: LinkModel[] = [];
@@ -242,7 +243,7 @@
       //加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
       // 操作
       const action = async (key) => {
@@ -256,7 +257,7 @@
               await deleteLinks(id);
               success(t('model.link.deleteLink'), t('model.link.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.link.fail'));
             } finally {
@@ -270,7 +271,7 @@
               await reEnableLinks(id);
               success(t('model.link.reEnableLink'), t('model.link.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.link.fail'));
             } finally {
@@ -300,43 +301,14 @@
         drawerParam.id = '';
         drawerParam.title = '';
         const result = await getList();
-        processList(result);
-      };
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
+        processList(result, list, pageParam);
       };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
-      //按照分页将数据放到表格中
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((link) => {
-          list.push(link);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数改变
       const onShowSizeChange = async (current, size) => {
@@ -344,7 +316,7 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       return {

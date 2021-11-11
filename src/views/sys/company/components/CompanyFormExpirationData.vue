@@ -34,8 +34,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { getCompany, renewalData } from '/@/api/sys/compnay/company';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { CompanyModel, CompanyConst } from '/@/api/sys/compnay/model/companyModel';
@@ -43,6 +41,8 @@
   import { Form, FormItem, Button, DatePicker } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import moment from 'moment';
+  import { success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'CompanyFormExpirationData',
     components: {
@@ -60,8 +60,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('login');
       const loading = ref<boolean>(false);
       const tip = ref<string>('更新中...');
 
@@ -117,22 +115,6 @@
             loading.value = false;
           }
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       onMounted(async () => {

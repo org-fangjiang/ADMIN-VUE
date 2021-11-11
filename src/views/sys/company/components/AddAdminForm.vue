@@ -120,13 +120,14 @@
     InputPassword,
     SelectOption,
   } from 'ant-design-vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   import { AddUserModel, _Const } from '/@/api/sys/user/model/userModel';
   import { addCompanyUser } from '/@/api/sys/user/user';
   import { getAllDepartments } from '/@/api/sys/department/department';
   import { getRoles } from '/@/api/sys/role/role';
+  import { success, failed } from '/@/hooks/web/useList';
+
   interface Option {
     value: string;
     label: string;
@@ -155,7 +156,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('company');
       const userConst = ref(_Const);
       let loading = ref<boolean>(false);
@@ -220,23 +220,6 @@
       //重置
       const resetForm = async () => {
         formRef.value.resetFields();
-      };
-
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       //初始加载

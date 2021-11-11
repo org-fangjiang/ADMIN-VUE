@@ -100,6 +100,8 @@
   import { GetUserModel, _Columns, _Const } from '/@/api/sys/user/model/userModel';
   import { deleteCompanyUser, getAllUsers } from '/@/api/sys/user/user';
   import AddAdminForm from './AddAdminForm.vue';
+  import { processList, success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'AdminForm',
     components: {
@@ -127,7 +129,7 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('company');
       const userConst = ref(_Const);
       let loading = ref<boolean>(true);
@@ -160,14 +162,14 @@
       //加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
 
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       const users: GetUserModel[] = [];
@@ -197,20 +199,6 @@
         return result;
       };
 
-      //将获取到的数据，按照分页，赋值到表格
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((link) => {
-          list.push(link);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -223,7 +211,7 @@
               await deleteCompanyUser(id);
               success(t('model.company.deleteCompanyUser'), t('model.user.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.user.fail'));
             } finally {
@@ -249,31 +237,14 @@
         drawerParam.comanyName = '';
         drawerParam.companyId = '';
         const result = await getList();
-        processList(result);
-      };
-
-      //发送请求成功/失败的提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
+        processList(result, list, pageParam);
       };
 
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //条数修改
       const onShowSizeChange = async (current, size) => {
@@ -281,7 +252,7 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       return {

@@ -74,6 +74,8 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
+  import { processList, success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'AreaTable',
     components: {
@@ -95,7 +97,7 @@
     emits: ['onUpdateArea'],
     setup(props, { emit }) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
       const areaConst = ref(AreaConst);
       let loading = ref<boolean>(true);
@@ -146,22 +148,9 @@
       onMounted(async () => {
         loading.value = true;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
         loading.value = false;
       });
-
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
 
       // 操作
       const action = async (key) => {
@@ -176,7 +165,7 @@
               await deleteArea(area);
               success(t('model.location.area.deleteArea'), t('model.location.area.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.area.fail'));
             } finally {
@@ -191,7 +180,7 @@
               await reEnableArea(area);
               success(t('model.location.area.recoveryArea'), t('model.location.area.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.area.fail'));
             } finally {
@@ -207,27 +196,12 @@
       const updateArea = (areaId) => {
         emit('onUpdateArea', { areaId });
       };
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
 
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数改变
       const onShowSizeChange = async (current, size) => {
@@ -235,12 +209,12 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //刷新列表
       const refresh = async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       return {
         t,

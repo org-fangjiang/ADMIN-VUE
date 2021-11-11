@@ -137,7 +137,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { getCompany, addCompany, updateCompany } from '/@/api/sys/compnay/company';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
@@ -157,6 +156,7 @@
   } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { FProvince, FCity, FArea } from '/@/components/FLocation';
+  import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'CompanyForm',
@@ -183,7 +183,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('login');
       //判断是不是更新
       let isUpdate = ref<boolean>(false);
@@ -309,23 +308,6 @@
         }
       };
 
-      //操作成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
-
       //页面初始加载
       onMounted(async () => {
         if (props.id) {
@@ -348,6 +330,7 @@
         t,
         formRef,
         formState,
+        prefixCls,
         loading,
         updateFields: CompanyConst.COMPANY_UPDATE_FIELDS,
         isUpdate,

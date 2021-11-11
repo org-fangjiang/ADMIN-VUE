@@ -53,8 +53,6 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { addRoles } from '/@/api/sys/role/role';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { RoleModel, RoleConst } from '/@/api/sys/role/model/roleModel';
@@ -62,6 +60,7 @@
   import { Form, FormItem, Button, Input, Select, SelectOption } from 'ant-design-vue';
   import { MenuModel } from '/@/api/sys/menu/model/menuModel';
   import { getCompany } from '/@/api/sys/compnay/company';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Option {
     value: string;
@@ -86,8 +85,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('role');
       //下拉框数据
       const options = ref<Option[]>([]);
       //加载动画
@@ -125,23 +122,6 @@
           } finally {
             loading.value = false;
           }
-        });
-      };
-
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
         });
       };
 

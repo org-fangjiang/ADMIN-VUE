@@ -85,6 +85,8 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
+  import { processList, success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'CityTable',
     components: {
@@ -106,7 +108,7 @@
     emits: ['onAddArea', 'onUpdateProvince'],
     setup(props, { emit }) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
+      const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('location');
       const cityConst = ref(CityConst);
       const areaConst = ref(AreaConst);
@@ -184,21 +186,8 @@
       //初始加载
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
-      //按照分页，将数据放到表格中
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((company) => {
-          list.push(company);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
 
       // 操作
       const action = async (key) => {
@@ -213,7 +202,7 @@
               await deleteCity(city);
               success(t('model.location.city.deleteCity'), t('model.location.city.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.city.fail'));
             } finally {
@@ -228,7 +217,7 @@
               await reEnableCity(city);
               success(t('model.location.city.recoveryCity'), t('model.location.city.success'));
               const result = await getList();
-              processList(result);
+              processList(result, list, pageParam);
             } catch (error: any) {
               failed(error?.response?.data?.message, t('model.location.city.fail'));
             } finally {
@@ -244,27 +233,11 @@
         }
       };
 
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //每页条数修改
       const onShowSizeChange = async (current, size) => {
@@ -272,7 +245,7 @@
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       //添加地区
       const addArea = (cityId) => {
@@ -285,7 +258,7 @@
       //刷新列表
       const refresh = async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       return {
         t,

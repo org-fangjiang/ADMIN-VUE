@@ -24,14 +24,14 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { useDesign } from '/@/hooks/web/useDesign';
   import { getCompany, changeCreateBy } from '/@/api/sys/compnay/company';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { CompanyModel, CompanyConst } from '/@/api/sys/compnay/model/companyModel';
   import { Loading } from '/@/components/Loading';
   import { Form, FormItem, Button, Input } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
+  import { success, failed } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'CompanyFormCreateBy',
     components: {
@@ -49,8 +49,6 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
-      const { prefixCls } = useDesign('login');
       //企业id
       const companyId = ref(props.id);
       const loading = ref<boolean>(false);
@@ -84,23 +82,6 @@
           .catch((error: ValidateErrorEntity<CompanyModel>) => {
             console.log('error', error);
           });
-      };
-
-      //成功/失败提示信息
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       //重置
