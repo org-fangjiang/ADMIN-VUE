@@ -43,11 +43,11 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Button, Form, FormItem, Input, Textarea } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BrandModel, _BrandConst } from '/@/api/host/brand/model/brandModel';
   import { addBrand } from '/@/api/host/brand/brand';
+  import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'BrandForm',
@@ -63,7 +63,6 @@
     setup(_props, { emit }) {
       debugger;
       const { t } = useI18n();
-      const { notification, createErrorModal } = useMessage();
       const { prefixCls } = useDesign('brand');
       const brandConst = ref(_BrandConst);
       let loading = ref<boolean>(true);
@@ -108,22 +107,6 @@
         loading.value = true;
         loading.value = false;
       });
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
 
       return {
         t,

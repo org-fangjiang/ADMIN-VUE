@@ -36,7 +36,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import { Table, Tag, Button, notification } from 'ant-design-vue';
+  import { Table, Tag, Button } from 'ant-design-vue';
   import {
     MenuConst,
     _Component_Columns as Component_Columns,
@@ -45,6 +45,7 @@
   import { Loading } from '/@/components/Loading';
   import { setRoleMenu } from '/@/api/sys/role/role';
   import { RoleModel } from '/@/api/sys/role/model/roleModel';
+  import { success, failed } from '/@/hooks/web/useList';
 
   interface Options {
     id?: string;
@@ -167,22 +168,6 @@
         } finally {
           loading.value = false;
         }
-      };
-
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
       };
 
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {

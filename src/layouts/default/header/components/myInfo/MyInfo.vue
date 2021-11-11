@@ -80,11 +80,11 @@
     Upload,
     InputPassword,
   } from 'ant-design-vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { updateMyInfo, getUserInfo } from '/@/api/sys/user/user';
   import { SysUserBean } from '/@/api/sys/user/model/userModel';
   import { ApiSource } from '/@/api/host/source/source';
+  import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'MyInfo',
@@ -104,7 +104,6 @@
     setup(_props, { emit }) {
       const { t } = useI18n();
       const { prefixCls } = useDesign('header-lock-modal');
-      const { notification, createErrorModal } = useMessage();
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       //获取当前用户信息
@@ -159,21 +158,6 @@
         loading.value = false;
       });
 
-      const success = (message: any, description: any) => {
-        notification.success({
-          message: message,
-          description: description,
-          duration: 3,
-        });
-      };
-
-      const failed = (title: any, content: any) => {
-        createErrorModal({
-          title: title || t('sys.api.errorTip'),
-          content: content || t('sys.api.networkExceptionMsg'),
-          // getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-        });
-      };
       //关闭Modal
       const handleCancel = () => {
         emit('handleCancel');
