@@ -49,7 +49,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasePageResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -91,7 +91,6 @@
       const layoutConst = ref(_LayoutConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -142,20 +141,6 @@
         return result;
       };
 
-      // function processListByLine(result: any) {
-      //   if (!result) {
-      //     return;
-      //   }
-      //   const { content, page } = result;
-      //   list.splice(0);
-      //   if (content) {
-      //     content.forEach((line) => {
-      //       list.push(line);
-      //     });
-      //   }
-      //   total.value = Number(page.totalElements);
-      // }
-
       onMounted(async () => {
         const result = await getList();
         processListByLine(result, list, total);
@@ -188,7 +173,6 @@
         ColumnsLayout,
         loading,
         tip,
-        pageSizeList,
         list,
         onSelectChange,
         handleAdd,

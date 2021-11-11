@@ -48,7 +48,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BaseListResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BaseListResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Select, Button, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -58,6 +58,7 @@
   } from '/@/api/host/source/model/sourceModel';
   import { getResources } from '/@/api/host/source/source';
   import { LayoutModel } from '/@/api/host/layout/model/layoutModel';
+  import { processListByLine } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'FSource',
@@ -87,8 +88,6 @@
       const sourceConst = ref(_SourceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
-      const source: SourceModel[] = [];
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -105,7 +104,7 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       };
 
       // const formRef = ref();
@@ -119,7 +118,16 @@
         id: '',
         sort: '',
       });
+
+      //分类
+      const sortChange = async (value) => {
+        condition.sort = value;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+
       // 列表结果
+      const source: SourceModel[] = [];
       let list = reactive(source);
 
       // 获取list
@@ -140,30 +148,10 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        total.value = Number(page.totalElements);
-      }
-
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       });
-
-      const sortChange = async (value) => {
-        condition.sort = value;
-        const result = await getList();
-        processList(result);
-      };
 
       let selectedRowKeys = ref<string>(props.checkedKeys || '');
       let address = ref<string>();
@@ -208,7 +196,6 @@
         ColumnsHost,
         loading,
         tip,
-        pageSizeList,
         list,
         sortChange,
         onSelectChange,

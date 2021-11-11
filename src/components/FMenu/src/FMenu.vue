@@ -112,6 +112,25 @@
         }
       };
 
+      //展开行发生改变时触发
+      const handleExpandedRowsChange = async (expandedRows: string[]) => {
+        if (expandedRows.length === 0) {
+          expandedRowKeys.value = expandedRows;
+          return;
+        }
+        //获取当前要展开的节点
+        const parentId = expandedRows[expandedRows.length - 1];
+        const children = await getMenus(parentId);
+        //当前展开的所有结点
+        const flags: string[] = [];
+        expandedRows.forEach((item) => {
+          flags.push(item);
+        });
+        //调用递归函数
+        addChild(flags, list, children);
+        expandedRowKeys.value = expandedRows;
+      };
+
       //通过父级id获得子菜单赋值给result
       const getMenus = async (parentId: string) => {
         loading.value = true;
@@ -136,37 +155,6 @@
         } finally {
           loading.value = false;
           return result;
-        }
-      };
-
-      let expandedRowKeys = ref<string[]>([]);
-      let selectedRowKeys = ref<string[]>(props.expandedKeys as string[]);
-
-      const onSelectChange = (record, selected) => {
-        if (selected) {
-          selectedRowKeys.value.push(record.id);
-        } else {
-          const flag = selectedRowKeys.value.indexOf(record.id);
-          selectedRowKeys.value.splice(flag, 1);
-        }
-      };
-
-      const handleAdd = async () => {
-        try {
-          loading.value = true;
-          const updatemenus: RoleModel[] = [];
-          selectedRowKeys.value.forEach((item) => {
-            updatemenus.push({ id: item });
-          });
-          await setRoleMenu({
-            id: props.roleId,
-            menus: updatemenus,
-          });
-          success(t('model.role.setRoleMenu'), t('model.role.success'));
-        } catch (error: any) {
-          failed(error?.response?.data?.message, t('model.role.fail'));
-        } finally {
-          loading.value = false;
         }
       };
 
@@ -199,23 +187,37 @@
           }
         });
       };
-      //展开行发生改变时触发
-      const handleExpandedRowsChange = async (expandedRows: string[]) => {
-        if (expandedRows.length === 0) {
-          expandedRowKeys.value = expandedRows;
-          return;
+
+      let expandedRowKeys = ref<string[]>([]);
+      let selectedRowKeys = ref<string[]>(props.expandedKeys as string[]);
+
+      const onSelectChange = (record, selected) => {
+        if (selected) {
+          selectedRowKeys.value.push(record.id);
+        } else {
+          const flag = selectedRowKeys.value.indexOf(record.id);
+          selectedRowKeys.value.splice(flag, 1);
         }
-        //获取当前要展开的节点
-        const parentId = expandedRows[expandedRows.length - 1];
-        const children = await getMenus(parentId);
-        //当前展开的所有结点
-        const flags: string[] = [];
-        expandedRows.forEach((item) => {
-          flags.push(item);
-        });
-        //调用递归函数
-        addChild(flags, list, children);
-        expandedRowKeys.value = expandedRows;
+      };
+
+      //保存
+      const handleAdd = async () => {
+        try {
+          loading.value = true;
+          const updatemenus: RoleModel[] = [];
+          selectedRowKeys.value.forEach((item) => {
+            updatemenus.push({ id: item });
+          });
+          await setRoleMenu({
+            id: props.roleId,
+            menus: updatemenus,
+          });
+          success(t('model.role.setRoleMenu'), t('model.role.success'));
+        } catch (error: any) {
+          failed(error?.response?.data?.message, t('model.role.fail'));
+        } finally {
+          loading.value = false;
+        }
       };
 
       onMounted(async () => {

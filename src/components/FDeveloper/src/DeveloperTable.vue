@@ -38,7 +38,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BaseListResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BaseListResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -48,6 +48,7 @@
   } from '/@/api/host/developer/model/developerModel';
   import { getDevelopers } from '/@/api/host/developer/developer';
   import DeveloperForm from './DeveloperForm.vue';
+  import { processListByLine } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'DeveloperTable',
@@ -73,8 +74,7 @@
       const developerConst = ref(_DeveloperConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
-      const developer: DeveloperModel[] = [];
+
       //新建开发商
       let isNew = ref(false);
       const handleNew = async () => {
@@ -82,7 +82,7 @@
       };
       const addDeveloper = async () => {
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
         isNew.value = false;
       };
 
@@ -101,12 +101,13 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       };
 
       // const formRef = ref();
       const formState: UnwrapRef<DeveloperModel> = reactive({});
       // 列表结果
+      const developer: DeveloperModel[] = [];
       let list = reactive(developer);
       const condition = {
         id: '',
@@ -132,25 +133,9 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        // page.number = page.number + 1;
-        // Object.assign(pageParam, {}, page);
-        total.value = Number(page.totalElements);
-      }
-
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       });
 
       let selectedRowKeys = ref<string>(props.checkedKeys || '');
@@ -176,7 +161,6 @@
         Columns,
         loading,
         tip,
-        pageSizeList,
         list,
         onSelectChange,
         handleAdd,

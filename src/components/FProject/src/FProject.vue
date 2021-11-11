@@ -50,6 +50,8 @@
   import { HostModel, _Columns, _HostConst } from '/@/api/host/project/model/projectModel';
   import { useUserStore } from '/@/store/modules/user';
   import { searchWithCondition } from '/@/api/host/project/project';
+  import { processList } from '/@/hooks/web/useList';
+
   export default defineComponent({
     name: 'FProject',
     components: {
@@ -89,14 +91,14 @@
       const onChange = async (page) => {
         pageParam.number = page;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
       const onShowSizeChange = async (current, size) => {
         console.log(current);
         pageParam.size = size;
         pageParam.number = 1;
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       };
 
       const pageSizeList = ref<string[]>(PageSizeList);
@@ -137,22 +139,9 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        content.forEach((link) => {
-          list.push(link);
-        });
-        page.number = page.number + 1;
-        Object.assign(pageParam, {}, page);
-      }
-
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processList(result, list, pageParam);
       });
 
       let selectedRowKeys = ref<string[]>((props.selected as string[]) || []); //将之前选中的值展示

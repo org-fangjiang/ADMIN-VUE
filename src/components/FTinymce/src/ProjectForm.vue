@@ -87,12 +87,13 @@
 
       const loading = ref<boolean>(false);
       const tip = ref<string>('加载中...');
-      const formRef = ref();
 
+      //获取楼盘相关信息
       const userStore = useUserStore();
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
       let provinceId = ref<string>(userStore.getUserInfo.companyProvinceId || '');
 
+      const formRef = ref();
       const formState = reactive({
         name: '',
         area: '',
@@ -114,6 +115,7 @@
 
       let fetching = ref<boolean>(false);
 
+      //输入框值改变
       const nameChange = debounce(async (value) => {
         fetching.value = true;
         if (value && value !== '') {
@@ -137,11 +139,11 @@
       }, 200);
 
       let areaId = ref<string>('');
+      //选中楼盘信息
       const nameSelect = async (value) => {
         fetching.value = true;
         const { content } = await getProject(value.value);
         formState.id = content.id || '';
-        console.log(content.sysAreaByAreaId?.id);
         if (!content.sysAreaByAreaId) {
           content.sysAreaByAreaId = {};
         }
@@ -159,6 +161,7 @@
         fetching.value = false;
       };
 
+      //区域选择
       const areaChange = async (_value, selectedOptions) => {
         formState.area = selectedOptions.label;
       };

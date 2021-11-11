@@ -38,7 +38,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { BaseListResult, PageParam, PageSizeList } from '/@/api/model/baseModel';
+  import { BaseListResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -48,6 +48,7 @@
   } from '/@/api/host/estateCompany/model/estateCompanyModel';
   import { getEstateCompanies } from '/@/api/host/estateCompany/estateCompany';
   import EstateForm from './EstateForm.vue';
+  import { processListByLine } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'EstateTable',
@@ -73,7 +74,6 @@
       const estateConst = ref(_EstateCompanyConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      const pageSizeList = ref<string[]>(PageSizeList);
       const estate: EstateCompanyModel[] = [];
       //新建物业
       let isNew = ref(false);
@@ -82,7 +82,7 @@
       };
       const addEstate = async () => {
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
         isNew.value = false;
       };
 
@@ -101,7 +101,7 @@
         pageParam.pageSize = pag!.pageSize!;
         pageParam.pageNum = pag?.current;
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       };
 
       // const formRef = ref();
@@ -132,25 +132,9 @@
         return result;
       };
 
-      function processList(result: any) {
-        if (!result) {
-          return;
-        }
-        const { page, content } = result;
-        list.splice(0);
-        if (content) {
-          content.forEach((line) => {
-            list.push(line);
-          });
-        }
-        // page.number = page.number + 1;
-        // Object.assign(pageParam, {}, page);
-        total.value = Number(page.totalElements);
-      }
-
       onMounted(async () => {
         const result = await getList();
-        processList(result);
+        processListByLine(result, list, total);
       });
 
       let selectedRowKeys = ref<string>(props.checkedKeys || '');
@@ -176,7 +160,6 @@
         Columns,
         loading,
         tip,
-        pageSizeList,
         list,
         onSelectChange,
         handleAdd,
