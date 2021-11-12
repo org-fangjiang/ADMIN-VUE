@@ -16,7 +16,7 @@ export enum ApiSource {
   SetSandImg = '/nhouse-server/manageResource/setSandImg', //沙盘图，必选参数：resourceId, projectId
   SetFirstImg = '/nhouse-server/manageResource/setFirstImg', //项目首图，
   Upload = '/api/sys-server/file/upload',
-  UploadNews = '/sys-server/file/uploadNews',
+  UploadNews = '/api/sys-server/file/uploadNews',
   UploadBanner = '/api/sys-server/file/uploadBanner',
 }
 
