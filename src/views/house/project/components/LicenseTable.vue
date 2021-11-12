@@ -60,14 +60,7 @@
       :footer="null"
       :destroyOnClose="true"
     >
-      <LicenseForm
-        v-if="drawerParam.state === '0'"
-        :id="drawerParam.id"
-        :projectId="props.id"
-        :provinceId="props.provinceId"
-        :cityId="props.cityId"
-        :areaId="props.areaId"
-      />
+      <LicenseForm v-if="drawerParam.state === '0'" :id="drawerParam.id" :projectId="props.id" />
       <FBuild
         v-if="drawerParam.state === '1'"
         :id="drawerParam.id"
@@ -117,18 +110,6 @@
     },
     props: {
       id: {
-        type: String,
-        require: true,
-      },
-      provinceId: {
-        type: String,
-        require: true,
-      },
-      cityId: {
-        type: String,
-        require: true,
-      },
-      areaId: {
         type: String,
         require: true,
       },

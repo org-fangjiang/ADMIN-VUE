@@ -154,18 +154,6 @@
         type: String,
         require: true,
       },
-      provinceId: {
-        type: String,
-        require: true,
-      },
-      cityId: {
-        type: String,
-        require: true,
-      },
-      areaId: {
-        type: String,
-        require: true,
-      },
     },
     setup(props) {
       const { t } = useI18n();

@@ -68,9 +68,6 @@
         v-if="drawerParam.state === '0'"
         :id="drawerParam.id"
         :projectId="props.id"
-        :provinceId="props.provinceId"
-        :cityId="props.cityId"
-        :areaId="props.areaId"
       />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -110,18 +107,6 @@
     },
     props: {
       id: {
-        type: String,
-        require: true,
-      },
-      provinceId: {
-        type: String,
-        require: true,
-      },
-      cityId: {
-        type: String,
-        require: true,
-      },
-      areaId: {
         type: String,
         require: true,
       },
