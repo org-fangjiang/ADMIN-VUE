@@ -245,6 +245,7 @@
             v-model:value="formState.lowTotalPrice"
             autoComplete="off"
             suffix="万元/套"
+            :type="'number'"
           />
         </FormItem>
 
@@ -254,6 +255,7 @@
             v-model:value="formState.highTotalPrice"
             autoComplete="off"
             suffix="万元/套"
+            :type="'number'"
           />
         </FormItem>
         <FormItem
