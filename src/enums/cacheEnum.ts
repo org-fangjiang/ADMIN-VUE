@@ -29,6 +29,8 @@ export const APP_SESSION_CACHE_KEY = 'COMMON__SESSION__KEY__';
 
 export const HOUSE_PROJECT = 'HOUSE__PROJECT';
 
+export const HOUSE_NEWS = 'HOUSE__NEWS';
+
 export enum CacheTypeEnum {
   SESSION,
   LOCAL,

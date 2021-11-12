@@ -142,6 +142,8 @@
   import { Loading } from '/@/components/Loading';
   import NewsForm from './components/NewsFrom.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { HOUSE_NEWS } from '/@/enums/cacheEnum';
+  import { Persistent } from '/@/utils/cache/persistent';
 
   export default defineComponent({
     name: 'NewsTable',
@@ -299,6 +301,9 @@
       });
 
       const onClose = async () => {
+        if (drawerParam.id) {
+          Persistent.removeLocal(HOUSE_NEWS, true);
+        }
         drawerParam.visible = false;
         drawerParam.state = '';
         drawerParam.id = '';

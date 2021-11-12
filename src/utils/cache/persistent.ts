@@ -15,6 +15,7 @@ import {
   APP_SESSION_CACHE_KEY,
   MULTIPLE_TABS_KEY,
   HOUSE_PROJECT,
+  HOUSE_NEWS,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { toRaw } from 'vue';
@@ -29,6 +30,7 @@ interface BasicStore {
   [PROJ_CFG_KEY]: ProjectConfig | null;
   [MULTIPLE_TABS_KEY]: RouteLocationNormalized[];
   [HOUSE_PROJECT]: any;
+  [HOUSE_NEWS]: any;
 }
 
 type LocalStore = BasicStore;

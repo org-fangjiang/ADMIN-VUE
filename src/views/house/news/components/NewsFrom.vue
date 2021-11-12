@@ -130,7 +130,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef, watch } from 'vue';
   import {
     Button,
     Form,
@@ -150,6 +150,8 @@
   import FTinymce from '/@/components/FTinymce';
   import { getProject } from '/@/api/host/project/project';
   import { success, failed } from '/@/hooks/web/useList';
+  import { HOUSE_NEWS } from '/@/enums/cacheEnum';
+  import { Persistent } from '/@/utils/cache/persistent';
 
   interface Option {
     value: string;
@@ -203,11 +205,24 @@
 
       // fromRef 获取form
       const formRef = ref();
-      const formState: UnwrapRef<NewsModel> = reactive({
-        provinceId: props.provinceId,
-        cityId: props.cityId,
-        keywords: '',
-      });
+      const formState: UnwrapRef<NewsModel> = reactive(
+        Persistent.getLocal(HOUSE_NEWS) || {
+          provinceId: props.provinceId,
+          cityId: props.cityId,
+          keywords: '',
+        }
+      );
+
+      //监听表单数据，存储
+      watch(
+        () => formState,
+        (_v1, _v2) => {
+          Persistent.setLocal(HOUSE_NEWS, formState, true);
+        },
+        {
+          deep: true,
+        }
+      );
 
       //控制modal是否打开
       let isModal = ref<boolean>(false);
@@ -288,6 +303,7 @@
                 const { content } = await updateNews(formState);
                 success(t('host.action.update'), t('host.action.success'));
                 Object.assign(formState, content);
+                Persistent.removeLocal(HOUSE_NEWS, true);
               } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
@@ -299,6 +315,7 @@
                 const { content } = await addNews(formState);
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
+                Persistent.removeLocal(HOUSE_NEWS, true);
               } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
