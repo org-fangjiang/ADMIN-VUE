@@ -1,7 +1,7 @@
 //关联项目信息列表
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
-    <Button @click="handleAdd">保存</Button>
+    <Button @click="handleAdd" class="setMargin">保存</Button>
     <Table
       :columns="columns"
       :data-source="list"
@@ -25,6 +25,7 @@
       </template>
     </Table>
     <Pagination
+      class="setMargin"
       show-size-changer
       size="large"
       :show-total="(total) => t('component.table.total', { total })"
@@ -190,3 +191,8 @@
     },
   });
 </script>
+<style lang="less">
+  .setMargin {
+    @apply mb-5;
+  }
+</style>

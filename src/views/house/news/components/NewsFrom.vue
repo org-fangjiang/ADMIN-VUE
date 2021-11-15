@@ -110,11 +110,10 @@
       :visible="isModal"
       title=""
       @cancel="onClose"
-      width="100%"
-      wrapClassName="full-modal"
+      width="60%"
       :footer="null"
       :destroyOnClose="true"
-      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :bodyStyle="{ overflow: 'auto', margin: '16px' }"
     >
       <FProject
         v-if="isModal"
