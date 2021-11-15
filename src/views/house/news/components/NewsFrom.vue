@@ -300,9 +300,8 @@
             if (props.id) {
               loading.value = true;
               try {
-                const { content } = await updateNews(formState);
+                await updateNews(formState);
                 success(t('host.action.update'), t('host.action.success'));
-                Object.assign(formState, content);
                 Persistent.removeLocal(HOUSE_NEWS, true);
               } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
@@ -312,9 +311,8 @@
             } else {
               loading.value = true;
               try {
-                const { content } = await addNews(formState);
+                await addNews(formState);
                 success(t('host.action.add'), t('host.action.success'));
-                Object.assign(formState, content);
                 Persistent.removeLocal(HOUSE_NEWS, true);
               } catch (error: any) {
                 failed(error?.response?.data?.message, t('host.action.fail'));
