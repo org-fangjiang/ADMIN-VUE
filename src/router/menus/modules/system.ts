@@ -56,6 +56,10 @@ const system: MenuModule = {
         path: 'link',
         name: t('routes.system.link'),
       },
+      {
+        path: 'violation',
+        name: t('routes.system.violation'),
+      },
     ],
   },
 };

@@ -347,4 +347,14 @@ export default {
     cityId: '城市',
     areaId: '地区',
   },
+  violation: {
+    value: '违规词',
+    state: '状态',
+    add: '添加',
+    delete: '删除',
+    update: '更新',
+    success: '成功',
+    fail: '失败',
+    reEnable: '恢复',
+  },
 };

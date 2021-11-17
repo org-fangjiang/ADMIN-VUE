@@ -32,6 +32,10 @@ export class RequestParam {
     }
   }
 
+  setDataArray(data: any): void {
+    this.paramInstance.data = data;
+  }
+
   clearData(): void {
     this.paramInstance.data = {};
   }

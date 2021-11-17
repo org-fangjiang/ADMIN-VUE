@@ -69,7 +69,7 @@
               if (!selectedOption[0].children) {
                 selectedOption[0].children = [];
               }
-              selectedOption[0].children.push({ value: item.id, label: item.name, isLeaf: false });
+              selectedOption[0].children.push({ value: item.id, label: item.name, isLeaf: true });
             });
           } else {
             selectedOption[0].isLeaf = true;

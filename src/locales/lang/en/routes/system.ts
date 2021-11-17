@@ -11,4 +11,5 @@ export default {
   role: 'Role',
   user: 'User',
   link: 'Link',
+  violation: 'Violation',
 };

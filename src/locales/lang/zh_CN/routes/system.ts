@@ -11,4 +11,5 @@ export default {
   role: '角色管理',
   user: '用户管理',
   link: '链接管理',
+  violation: '违规词库',
 };

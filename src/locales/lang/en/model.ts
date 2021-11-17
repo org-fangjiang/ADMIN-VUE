@@ -348,4 +348,14 @@ export default {
     cityId: 'cityId',
     areaId: 'areaId',
   },
+  violation: {
+    value: 'violation',
+    state: 'state',
+    add: 'add',
+    delete: 'delete',
+    update: 'update',
+    success: 'success',
+    fail: 'fail',
+    reEnable: 'reEnable',
+  },
 };

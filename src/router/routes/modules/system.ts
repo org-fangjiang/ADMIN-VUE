@@ -133,6 +133,16 @@ const system: AppRouteModule = {
         icon: 'carbon:text-link',
       },
     },
+    {
+      path: 'violation',
+      name: 'Violation',
+      component: () => import('/@/views/sys/violation/index.vue'),
+      meta: {
+        title: t('routes.system.violation'),
+        roles: ['/system/violation'],
+        icon: '',
+      },
+    },
   ],
 };
 
