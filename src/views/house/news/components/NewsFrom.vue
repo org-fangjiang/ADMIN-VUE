@@ -14,7 +14,7 @@
           v-model:value="formState.title"
           autoComplete="off"
         />
-        <div v-if="titleVio" style="background-color: red">
+        <div v-if="titleVio" style="border-width: 1px; border-color: red">
           <span>标题中出现{{ titNumber }}个违规词。</span>
           <br />
           <span :key="item.start" v-for="item in titViolations"
@@ -28,7 +28,7 @@
           v-model:value="formState.description"
           autoComplete="off"
         />
-        <div v-if="desVio" style="background-color: red">
+        <div v-if="desVio" style="border-width: 1px; border-color: red">
           <span>描述中出现{{ desNumber }}个违规词。</span>
           <br />
           <span :key="item.start" v-for="item in desViolations"
@@ -59,8 +59,9 @@
           width="100%"
           :provinceId="props.provinceId"
           :cityId="props.cityId"
+          :contViolations="violations"
         />
-        <div v-if="isViolation" style="background-color: red">
+        <div v-if="isViolation" style="border-width: 1px; border-color: red">
           <span>正文中出现{{ number }}个违规词。</span>
           <br />
           <span :key="item.start" v-for="item in violations"

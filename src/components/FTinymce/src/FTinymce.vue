@@ -102,6 +102,10 @@
   import { Modal, Input } from 'ant-design-vue';
 
   const tinymceProps = {
+    contViolations: {
+      type: Array,
+      require: true,
+    },
     provinceId: {
       type: String,
       require: true,
@@ -439,7 +443,6 @@
         isShow.value = true;
       }
       function setAltText() {
-        debugger;
         const editor = unref(editorRef);
         const element = editor.selection.getNode();
         if (element.tagName !== 'IMG') {
@@ -513,6 +516,11 @@
           fullscreen.value = e.state;
         });
       }
+
+      watch(
+        () => props.contViolations,
+        (_v1, _v2) => {}
+      );
 
       return {
         prefixCls,
