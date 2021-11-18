@@ -44,3 +44,10 @@ export interface SortParam {
   asc: string[];
   desc: string[];
 }
+
+export interface NewsResult {
+  code;
+  content: [];
+  description: [];
+  title: [];
+}

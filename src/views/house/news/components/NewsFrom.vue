@@ -14,6 +14,13 @@
           v-model:value="formState.title"
           autoComplete="off"
         />
+        <div v-if="titleVio" style="background-color: red">
+          <span>标题中出现{{ titNumber }}个违规词。</span>
+          <br />
+          <span :key="item.start" v-for="item in titViolations"
+            >第{{ item.start }}个字后，违规词为“{{ item.word }}”。</span
+          >
+        </div>
       </FormItem>
       <FormItem ref="description" :label="t('host.news.description')" name="description">
         <Textarea
@@ -21,6 +28,13 @@
           v-model:value="formState.description"
           autoComplete="off"
         />
+        <div v-if="desVio" style="background-color: red">
+          <span>描述中出现{{ desNumber }}个违规词。</span>
+          <br />
+          <span :key="item.start" v-for="item in desViolations"
+            >第{{ item.start }}个字后，违规词为“{{ item.word }}”。</span
+          >
+        </div>
       </FormItem>
       <FormItem ref="keywords" :label="t('host.news.keywords')" name="keywords">
         <Select
@@ -46,6 +60,13 @@
           :provinceId="props.provinceId"
           :cityId="props.cityId"
         />
+        <div v-if="isViolation" style="background-color: red">
+          <span>正文中出现{{ number }}个违规词。</span>
+          <br />
+          <span :key="item.start" v-for="item in violations"
+            >第{{ item.start }}个字后，违规词为“{{ item.word }}”。</span
+          >
+        </div>
       </FormItem>
       <FormItem ref="img" :label="t('host.news.img')" name="img">
         <Image :src="formState.img" width="100px" />
@@ -291,15 +312,50 @@
         }
         loading.value = false;
       };
+
+      //正文违规词
+      let isViolation = ref(false);
+      let number = ref();
+      let violations = ref<string[]>();
+      //标题违规
+      let titleVio = ref(false);
+      let titNumber = ref();
+      let titViolations = ref<string[]>();
+      //描述违规
+      let desVio = ref(false);
+      let desNumber = ref();
+      let desViolations = ref<string[]>();
       //提交
       const onSubmit = () => {
         formRef.value
           .validate()
           .then(async () => {
+            isViolation.value = false;
+            titleVio.value = false;
+            desVio.value = false;
             if (props.id) {
               loading.value = true;
               try {
-                await updateNews(formState);
+                const result = await updateNews(formState);
+                if (result.code === 400) {
+                  if (result.content.length > 0) {
+                    number.value = result.content.length;
+                    isViolation.value = true;
+                    violations.value = result.content;
+                  }
+                  if (result.title.length > 0) {
+                    titleVio.value = true;
+                    titNumber.value = result.title.length;
+                    titViolations.value = result.title;
+                  }
+                  if (result.description.length > 0) {
+                    desVio.value = true;
+                    desNumber.value = result.description.length;
+                    desViolations.value = result.description;
+                  }
+                  failed('出现违规词', '请根据提示信息进行修改');
+                  return;
+                }
                 success(t('host.action.update'), t('host.action.success'));
                 Persistent.removeLocal(HOUSE_NEWS, true);
               } catch (error: any) {
@@ -310,7 +366,26 @@
             } else {
               loading.value = true;
               try {
-                await addNews(formState);
+                const result = await addNews(formState);
+                if (result.code === 400) {
+                  if (result.content.length > 0) {
+                    number.value = result.content.length;
+                    isViolation.value = true;
+                    violations.value = result.content;
+                  }
+                  if (result.title.length > 0) {
+                    titleVio.value = true;
+                    titNumber.value = result.title.length;
+                    titViolations.value = result.title;
+                  }
+                  if (result.description.length > 0) {
+                    desVio.value = true;
+                    desNumber.value = result.description.length;
+                    desViolations.value = result.description;
+                  }
+                  failed('出现违规词', '请根据提示信息进行修改');
+                  return;
+                }
                 success(t('host.action.add'), t('host.action.success'));
                 Persistent.removeLocal(HOUSE_NEWS, true);
               } catch (error: any) {
@@ -366,8 +441,8 @@
         setNewsProject,
         onSubmit,
         resetForm,
-        labelCol: { span: 6 },
-        wrapperCol: { span: 14 },
+        labelCol: { span: 4 },
+        wrapperCol: { span: 16 },
         isUpdate,
         props,
         ApiSource,
@@ -380,6 +455,15 @@
         options,
         tags,
         tagsChange,
+        isViolation,
+        number,
+        violations,
+        titleVio,
+        titNumber,
+        titViolations,
+        desVio,
+        desNumber,
+        desViolations,
       };
     },
   });

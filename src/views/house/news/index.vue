@@ -99,7 +99,7 @@
       :visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="50%"
+      width="80%"
       :footer="null"
       :destroyOnClose="true"
     >

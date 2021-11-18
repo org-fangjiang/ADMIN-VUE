@@ -1,6 +1,6 @@
 import { defHttp } from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
-import { BasePageResult, BaseResult, SortParam } from '../../model/baseModel';
+import { BasePageResult, BaseResult, NewsResult, SortParam } from '../../model/baseModel';
 import { RequestParam } from '/@/utils/param/requestParam';
 import { PageParam } from '/@/api/model/baseModel';
 import { NewsCondition, NewsModel } from './model/newsModel';
@@ -64,7 +64,7 @@ export function updateNews(news: NewsModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(news);
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<NewsModel>>(
+  return defHttp.post<NewsResult>(
     {
       url: ApiNews.UpdateNews,
       data,
@@ -79,7 +79,7 @@ export function addNews(news: NewsModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData(news);
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<NewsModel>>(
+  return defHttp.post<NewsResult>(
     {
       url: ApiNews.AddNews,
       data,
