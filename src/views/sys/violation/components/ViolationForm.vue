@@ -9,6 +9,7 @@
     >
       <FormItem ref="title" :label="t('model.violation.value')" name="title">
         <Select
+          :allowClear="true"
           v-model:value="tags"
           mode="tags"
           style="width: 100%"
