@@ -2,6 +2,17 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-select`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="metroConst.STATES"
+      :pagination="false"
+    />
     <!-- 根据地区进行筛选 -->
     <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
     <!-- 添加地铁线路 -->
@@ -120,7 +131,17 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Table, Pagination, Tag, Button, Drawer, Dropdown, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Drawer,
+    Dropdown,
+    Menu,
+    MenuItem,
+    Select,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import MetroLineForm from './components/MetroLineForm.vue';
@@ -142,6 +163,7 @@
       FCascader,
       MetroLineForm,
       StationTable,
+      Select,
     },
     setup() {
       const { t } = useI18n();
@@ -167,8 +189,15 @@
       // 筛选条件
       const condition = reactive({
         cityId: userStore.getUserInfo.companyCityId,
-        state: '',
+        state: '1',
       });
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
       // 列表结果
       let list = reactive(metroLine);
       // 抽屉参数
@@ -321,6 +350,8 @@
         onClose,
         addMetroLine,
         action,
+        stateHandleChange,
+        condition,
       };
     },
   });

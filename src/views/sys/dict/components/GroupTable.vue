@@ -134,12 +134,13 @@
       });
       //获取数据的条件
       const condition = reactive({
-        state: '',
+        state: '1',
         detailId: '',
       });
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
       };

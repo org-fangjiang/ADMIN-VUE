@@ -2,6 +2,17 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-select`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="tradingConst.STATES"
+      :pagination="false"
+    />
     <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
     <Button v-auth="tradingConst._PERMS.ADD" @click="addMetroLine" :class="`${prefixCls}-select`">{{
       t('component.action.add')
@@ -114,7 +125,17 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Table, Pagination, Tag, Button, Drawer, Dropdown, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Drawer,
+    Dropdown,
+    Menu,
+    MenuItem,
+    Select,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import FCascader from '/@/components/FCascader';
   import TradingForm from './components/TradingForm.vue';
@@ -137,6 +158,7 @@
       FCascader,
       TradingForm,
       FTrading,
+      Select,
     },
     setup() {
       const { t } = useI18n();
@@ -164,10 +186,19 @@
       const condition = reactive({
         cityId: cityId,
         provinceId: province,
-        state: '',
+        state: '1',
         name: '',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
       //根据名称筛选，选中并返回的方法
       const changeName = async (value) => {
         if (value.length === 0) {
@@ -350,6 +381,7 @@
         changeName,
         cityId,
         province,
+        stateHandleChange,
       };
     },
   });

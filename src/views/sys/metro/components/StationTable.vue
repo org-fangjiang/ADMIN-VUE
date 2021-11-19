@@ -1,6 +1,17 @@
 // 站点信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-sel`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="stationConst.STATES"
+      :pagination="false"
+    />
     <Button v-auth="stationConst._PERMS.ADD" @click="addMetroStation" :class="`${prefixCls}-sel`">
       {{ t('component.action.add') }}
     </Button>
@@ -53,7 +64,7 @@
   import { BaseListResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Table, Tag, Button, Modal } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Select } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import AddStation from './AddStation.vue';
   import { success, failed } from '/@/hooks/web/useList';
@@ -71,6 +82,7 @@
       Modal,
       Loading,
       AddStation,
+      Select,
     },
     props: {
       lineId: {
@@ -94,11 +106,19 @@
       // 筛选条件
       const condition = reactive({
         cityId: userStore.getUserInfo.companyCityId,
-        state: '',
+        state: '1',
         lineId: props.lineId || '',
         name: '',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        const result = await getList();
+        processListByLine(result);
+      };
+
       // 列表结果
       let list = reactive(metroStation);
       // 抽屉参数
@@ -142,9 +162,11 @@
         }
         const { content } = result;
         list.splice(0);
-        content.forEach((line) => {
-          list.push(line);
-        });
+        if (content) {
+          content.forEach((line) => {
+            list.push(line);
+          });
+        }
       }
 
       onMounted(async () => {
@@ -189,6 +211,7 @@
         addMetroStation,
         deleteStation,
         onClose,
+        stateHandleChange,
       };
     },
   });

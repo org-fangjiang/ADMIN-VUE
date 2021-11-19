@@ -224,7 +224,7 @@
       });
       //筛选参数
       const condition = reactive({
-        state: '',
+        state: '2',
         provinceId: '',
         cityId: '',
         areaId: '',
@@ -237,6 +237,7 @@
       //状态修改
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
       };

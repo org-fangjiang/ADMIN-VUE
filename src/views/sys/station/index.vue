@@ -1,6 +1,17 @@
 // 站点信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-select`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="stationConst.STATES"
+      :pagination="false"
+    />
     <FCascader @change="locationChange" class="mr-2" :class="`${prefixCls}-select`" />
     <Select
       :class="`${prefixCls}-select`"
@@ -190,11 +201,20 @@
       // 筛选条件
       const condition = reactive({
         cityId: userStore.getUserInfo.companyCityId,
-        state: '',
+        state: '1',
         lineId: '',
         name: '',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
       // 列表结果
       let list = reactive(metroStation);
       // 抽屉参数
@@ -403,6 +423,7 @@
         action,
         cityId,
         changeStation,
+        stateHandleChange,
       };
     },
   });

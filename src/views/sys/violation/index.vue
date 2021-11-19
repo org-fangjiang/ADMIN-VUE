@@ -2,6 +2,17 @@
 
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-select`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="violationConst.STATES"
+      :pagination="false"
+    />
     <Button v-auth="violationConst._PERMS.ADD" @click="addViolation" :class="`${prefixCls}-select`">
       {{ t('component.action.add') }}
     </Button>
@@ -110,7 +121,17 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
-  import { Table, Pagination, Tag, Button, Drawer, Dropdown, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Drawer,
+    Dropdown,
+    Menu,
+    MenuItem,
+    Select,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import {
@@ -140,6 +161,7 @@
       MenuItem,
       Loading,
       ViolationForm,
+      Select,
     },
     setup() {
       const { t } = useI18n();
@@ -159,10 +181,18 @@
       });
       // 筛选条件
       const condition = reactive({
-        state: '',
+        state: '1',
         value: '',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
 
       // 列表结果
       const violation: ViolationModel[] = [];
@@ -208,6 +238,7 @@
         drawerParam.state = '';
         drawerParam.id = '';
         drawerParam.title = '';
+        pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
       };
@@ -337,6 +368,7 @@
         renableViolation,
         deleteViolation,
         selected,
+        stateHandleChange,
       };
     },
   });

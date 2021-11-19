@@ -3,6 +3,17 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <div class="container flex-row">
+      <!-- 状态筛选 -->
+      <Select
+        :class="`${prefixCls}-select`"
+        ref="select"
+        :allowClear="true"
+        v-model:value="condition.state"
+        style="width: 120px"
+        @change="stateHandleChange"
+        :options="roleConst.STATES"
+        :pagination="false"
+      />
       <Button :class="`${prefixCls}-select`" v-auth="roleConst._PERMS.ADD" @click="add">{{
         t('model.role.addRole')
       }}</Button>
@@ -181,9 +192,17 @@
         processList(result, list, pageParam);
       };
 
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
       //筛选条件
       const condition = reactive({
-        state: '',
+        state: '1',
         companyId: '',
       });
       // 角色信息数据
@@ -328,6 +347,7 @@
         onClose,
         options,
         fetchUser,
+        stateHandleChange,
       };
     },
   });

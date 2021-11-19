@@ -145,10 +145,11 @@
         totalElements: 0,
       });
       //加载条件
-      const condition = reactive({ state: '' });
+      const condition = reactive({ state: '1' });
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
       };

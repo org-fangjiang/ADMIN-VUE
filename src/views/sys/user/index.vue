@@ -175,7 +175,7 @@
 
       const condition = reactive({
         deptId: '',
-        state: '',
+        state: '1',
         mobile: '',
         companyId: '',
         roleId: '',
@@ -184,6 +184,7 @@
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
       };
