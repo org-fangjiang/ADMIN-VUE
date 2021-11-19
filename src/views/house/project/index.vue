@@ -316,7 +316,6 @@
       const clickPrice = (record) => {
         updatePrice.value = true;
         priceInfo.value = record;
-        debugger;
       };
 
       //根据名称筛选
@@ -342,6 +341,7 @@
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
       };
@@ -376,7 +376,7 @@
 
       //查询条件
       const condition = reactive({
-        state: '',
+        state: '1',
         name: '',
         provinceId: provinceId,
         cityId: cityId,
@@ -420,19 +420,21 @@
       const action = async (key) => {
         const code = key.key;
         const id = key?.item['data-id'] || undefined;
-        const { content } = await getProject(id);
-        if (!content.sysAreaByAreaId) {
-          content.sysAreaByAreaId = {};
+        if (code != 0 && code != 1) {
+          const { content } = await getProject(id);
+          if (!content.sysAreaByAreaId) {
+            content.sysAreaByAreaId = {};
+          }
+          if (!content.sysProvinceByProvinceId) {
+            content.sysProvinceByProvinceId = {};
+          }
+          if (!content.sysCityByCityId) {
+            content.sysCityByCityId = {};
+          }
+          drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
+          drawerParam.cityId = content.sysCityByCityId.id || '';
+          drawerParam.areaId = content.sysAreaByAreaId.id || '';
         }
-        if (!content.sysProvinceByProvinceId) {
-          content.sysProvinceByProvinceId = {};
-        }
-        if (!content.sysCityByCityId) {
-          content.sysCityByCityId = {};
-        }
-        drawerParam.provinceId = content.sysProvinceByProvinceId.id || '';
-        drawerParam.cityId = content.sysCityByCityId.id || '';
-        drawerParam.areaId = content.sysAreaByAreaId.id || '';
         switch (code) {
           case 0:
             // 删除
