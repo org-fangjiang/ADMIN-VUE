@@ -171,7 +171,6 @@
       :destroyOnClose="true"
       :footer="null"
     >
-      <ProjectForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
       <SourceTable
         v-if="drawerParam.state === '1'"
         :id="drawerParam.id"
@@ -213,6 +212,17 @@
       :destroyOnClose="true"
     >
       <PriceForm :priceInfo="priceInfo" v-if="updatePrice" />
+    </Modal>
+    <Modal
+      v-model:visible="projectModal"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      width="80%"
+      :bodyStyle="{ overflowY: 'auto', margin: '16px', height: '700px' }"
+      :destroyOnClose="true"
+      :footer="null"
+    >
+      <ProjectForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -311,6 +321,7 @@
         totalElements: 0,
       });
 
+      //控制双击更新价格的modal
       let priceInfo = ref<Object>();
       let updatePrice = ref(false);
       const clickPrice = (record) => {
@@ -416,6 +427,9 @@
         return result;
       };
 
+      //控制添加更新项目的modal
+      let projectModal = ref(false);
+
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -466,9 +480,9 @@
             break;
           case 2:
             // 更新
+            projectModal.value = true;
             drawerParam.id = id;
             drawerParam.state = '0';
-            drawerParam.visible = true;
             drawerParam.title = t('host.action.update');
             break;
           case 3:
@@ -518,7 +532,7 @@
 
       //新增项目，打开modal
       const addProject = () => {
-        drawerParam.visible = true;
+        projectModal.value = true;
         drawerParam.state = '0';
         drawerParam.id = '';
         drawerParam.title = t('host.action.add');
@@ -535,6 +549,7 @@
         const result = await getList();
         processList(result, list, pageParam);
         updatePrice.value = false;
+        projectModal.value = false;
       };
 
       const onChange = async (page) => {
@@ -578,6 +593,7 @@
         clickPrice,
         priceInfo,
         updatePrice,
+        projectModal,
       };
     },
   });
