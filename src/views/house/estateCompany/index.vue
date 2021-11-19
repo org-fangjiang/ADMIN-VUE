@@ -1,6 +1,17 @@
 // 物业公司管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="estateCompanyConst.STATES"
+      :pagination="false"
+    />
     <Button
       v-auth="estateCompanyConst._PERMS.ADD"
       @click="addEstateCompany"
@@ -102,7 +113,17 @@
     _EstateCompanyConst,
     _EstateCompanyColumns as estateCompanyColumns,
   } from '/@/api/host/estateCompany/model/estateCompanyModel';
-  import { Table, Pagination, Tag, Button, Modal, Dropdown, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Select,
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Modal,
+    Dropdown,
+    Menu,
+    MenuItem,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
 
@@ -119,6 +140,7 @@
       MenuItem,
       Loading,
       EstateCompanyForm,
+      Select,
     },
     setup() {
       const { t } = useI18n();
@@ -141,9 +163,17 @@
       // 筛选条件
       const condition = reactive({
         name: '',
-        state: '',
+        state: '1',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
 
       // 列表结果
       const estateCompany: EstateCompanyModel[] = [];
@@ -275,6 +305,7 @@
         onClose,
         addEstateCompany,
         action,
+        stateHandleChange,
       };
     },
   });

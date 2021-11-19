@@ -1,6 +1,17 @@
 // 许可证信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-sel`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="licenseConst.STATES"
+      :pagination="false"
+    />
     <Button v-auth="licenseConst._PERMS.ADD" @click="addLicense" :class="`${prefixCls}-sel`">{{
       t('host.action.add')
     }}</Button>
@@ -79,7 +90,7 @@
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { Table, Tag, Button, Modal } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Select } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
     LicenseModel,
@@ -107,6 +118,7 @@
       Loading,
       FBuild,
       LicenseForm,
+      Select,
     },
     props: {
       id: {
@@ -124,7 +136,7 @@
 
       // 添加分页
       const pageParam: PageParam = reactive({
-        pageNum: 0,
+        pageNum: 1,
         pageSize: 10,
       });
       const total = ref<number>(0);
@@ -142,10 +154,19 @@
 
       // 筛选条件
       const condition = reactive({
-        state: '',
+        state: '1',
         projectId: props.id || '',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+
       // 列表结果
       const license: LicenseModel[] = [];
       let list = reactive(license);
@@ -292,6 +313,7 @@
         props,
         setBuild,
         setLicenseBuild,
+        stateHandleChange,
       };
     },
   });

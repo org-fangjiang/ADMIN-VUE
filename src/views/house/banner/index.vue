@@ -1,6 +1,17 @@
 //轮播图管理
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="bannerConst.STATES"
+      :pagination="false"
+    />
     <Button v-auth="bannerConst._PERMS.ADD" @click="addBanner" :class="`${prefixCls}-add`">{{
       t('host.action.add')
     }}</Button>
@@ -102,6 +113,7 @@
     MenuItem,
     Modal,
     Image,
+    Select,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { deleteBanner, getBanners, reEnableBanner } from '/@/api/host/banner/banner';
@@ -112,6 +124,7 @@
   export default defineComponent({
     name: 'BannerTable',
     components: {
+      Select,
       Table,
       Pagination,
       Tag,
@@ -155,10 +168,18 @@
       const cityId = userStore.getUserInfo.companyCityId;
       // 筛选条件
       const condition = reactive({
-        state: '',
+        state: '1',
         id: '',
         cityId: cityId || '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
 
       const banner: BannerModel[] = [];
       // 列表结果
@@ -286,6 +307,7 @@
         failed,
         success,
         action,
+        stateHandleChange,
       };
     },
   });

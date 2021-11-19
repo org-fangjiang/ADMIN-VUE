@@ -1,6 +1,17 @@
 // 物业公司管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="developerConst.STATES"
+      :pagination="false"
+    />
     <Button
       v-auth="developerConst._PERMS.ADD"
       @click="addEstateCompany"
@@ -91,7 +102,17 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
-  import { Table, Pagination, Tag, Button, Modal, Dropdown, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Select,
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Modal,
+    Dropdown,
+    Menu,
+    MenuItem,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import DeveloperForm from './components/DeveloperForm.vue';
   import {
@@ -109,6 +130,7 @@
   export default defineComponent({
     name: 'DeveloperTable',
     components: {
+      Select,
       Table,
       Pagination,
       Tag,
@@ -146,9 +168,18 @@
       // 筛选条件
       const condition = reactive({
         name: '',
-        state: '',
+        state: '1',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
       // 列表结果
       const developer: DeveloperModel[] = [];
       let list = reactive(developer);
@@ -273,6 +304,7 @@
         onClose,
         addEstateCompany,
         action,
+        stateHandleChange,
       };
     },
   });

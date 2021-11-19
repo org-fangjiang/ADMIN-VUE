@@ -140,7 +140,7 @@
 
       // 添加分页
       const pageParam: PageParam = reactive({
-        pageNum: 0,
+        pageNum: 1,
         pageSize: 10,
       });
       const total = ref<number>(0);
@@ -165,6 +165,7 @@
       //状态修改
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.pageNum = 1;
         const result = await getList();
         processListByLine(result, list, total);
       };

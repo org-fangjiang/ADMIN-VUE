@@ -1,6 +1,17 @@
 // 文章信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="newsConst.STATES"
+      :pagination="false"
+    />
     <Button v-auth="newsConst._PERMS.ADD" @click="addNews" :class="`${prefixCls}-add`">
       {{ t('host.action.add') }}
     </Button>
@@ -138,6 +149,7 @@
     Menu,
     MenuItem,
     Image,
+    Select,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import NewsForm from './components/NewsFrom.vue';
@@ -159,6 +171,7 @@
       Loading,
       Image,
       NewsForm,
+      Select,
     },
     setup() {
       const { t } = useI18n();
@@ -184,11 +197,19 @@
       // 筛选条件
       const condition = reactive({
         city: userStore.getUserInfo.companyCityId,
-        state: '',
+        state: '1',
         projectId: '',
         inMobile: '',
         id: '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
 
       //根据创建时间排序，默认降序
       const sortParam = reactive({
@@ -356,6 +377,7 @@
         createBy,
         sortChange,
         sortParam,
+        stateHandleChange,
       };
     },
   });

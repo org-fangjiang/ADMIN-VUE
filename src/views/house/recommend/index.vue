@@ -1,6 +1,17 @@
 //热门楼盘
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <!-- 状态筛选 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.state"
+      style="width: 120px"
+      @change="stateHandleChange"
+      :options="recommendConst.STATES"
+      :pagination="false"
+    />
     <Button :class="`${prefixCls}-add`" v-auth="recommendConst._PERMS.ADD" @click="addProject">
       {{ t('host.action.add') }}</Button
     >
@@ -86,7 +97,17 @@
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
-  import { Table, Pagination, Tag, Button, Dropdown, Modal, Menu, MenuItem } from 'ant-design-vue';
+  import {
+    Select,
+    Table,
+    Pagination,
+    Tag,
+    Button,
+    Dropdown,
+    Modal,
+    Menu,
+    MenuItem,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
     addRecommend,
@@ -106,6 +127,7 @@
   export default defineComponent({
     name: 'RecommendTable',
     components: {
+      Select,
       Table,
       Pagination,
       Tag,
@@ -169,12 +191,20 @@
       const provinceId = userStore.getUserInfo.companyProvinceId;
       // 筛选条件
       const condition = reactive({
-        state: '',
+        state: '1',
         provinceId: provinceId || '',
         id: '',
         projectName: '',
         cityId: cityId || '',
       });
+
+      //根据状态筛选
+      const stateHandleChange = async (value) => {
+        condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
 
       const recommend: RecommendModel[] = [];
       // 列表结果
@@ -277,6 +307,7 @@
         failed,
         success,
         action,
+        stateHandleChange,
       };
     },
   });
