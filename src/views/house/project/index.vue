@@ -40,6 +40,9 @@
           </Tag>
         </span>
       </template>
+      <template #price="{ record }">
+        <span @dblclick="clickPrice(record)">{{ record.price }}</span>
+      </template>
       <template #createTime="{ text: createTime }">
         <span>{{ createTime.replace('T', ' ').replace('.000+08:00', '') }}</span>
       </template>
@@ -200,6 +203,17 @@
       />
       <QuestionTable v-if="drawerParam.state === '6'" :id="drawerParam.id" />
     </Modal>
+    <Modal
+      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :visible="updatePrice"
+      title="修改楼盘价格"
+      @cancel="onClose"
+      width=""
+      :footer="null"
+      :destroyOnClose="true"
+    >
+      <PriceForm :priceInfo="priceInfo" v-if="updatePrice" />
+    </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -243,6 +257,7 @@
   import { HOUSE_PROJECT } from '/@/enums/cacheEnum';
   import FProjectSelect from '/@/components/FProjectSelect';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import PriceForm from './components/PriceForm.vue';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -265,6 +280,7 @@
       DynamicNewsTable,
       QuestionTable,
       FProjectSelect,
+      PriceForm,
     },
     setup() {
       const { t } = useI18n();
@@ -294,6 +310,14 @@
         totalPages: 0,
         totalElements: 0,
       });
+
+      let priceInfo = ref<Object>();
+      let updatePrice = ref(false);
+      const clickPrice = (record) => {
+        updatePrice.value = true;
+        priceInfo.value = record;
+        debugger;
+      };
 
       //根据名称筛选
       const setProject = async (value) => {
@@ -508,6 +532,7 @@
         drawerParam.title = '';
         const result = await getList();
         processList(result, list, pageParam);
+        updatePrice.value = false;
       };
 
       const onChange = async (page) => {
@@ -548,6 +573,9 @@
         onClear,
         sortChange,
         sortParam,
+        clickPrice,
+        priceInfo,
+        updatePrice,
       };
     },
   });

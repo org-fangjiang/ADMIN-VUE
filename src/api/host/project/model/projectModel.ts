@@ -284,7 +284,7 @@ export const _Columns = [
     key: 'price',
     dataIndex: 'price',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'price' },
   },
   {
     title: t('host.state'),
