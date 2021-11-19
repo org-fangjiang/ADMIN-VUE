@@ -1,6 +1,6 @@
 export default {
-  EFFECTIVE: '上线',
-  INVALID: '下线',
+  EFFECTIVE: '有效',
+  INVALID: '无效',
   TYPE: {
     HOUSE: '住宅',
     FLATS: '公寓',
