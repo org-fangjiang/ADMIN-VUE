@@ -9,7 +9,7 @@
       rowKey="id"
       :pagination="pagination"
       @change="handleTableChange"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange, type: 'radio' }"
+      :row-selection="{ selectedRowKeys: rows, onChange: onSelectChange, type: 'radio' }"
     >
       <template #state="{ text: state }">
         <span>
@@ -138,19 +138,20 @@
         processListByLine(result, list, total);
       });
 
-      let selectedRowKeys = ref<string>(props.checkedKeys || '');
+      let rows = reactive<string[]>([]);
+      if (props.checkedKeys) {
+        rows.push(props.checkedKeys);
+      }
 
-      const onSelectChange = (record, selected) => {
-        if (selectedRowKeys.value) {
-          selectedRowKeys.value = '';
-        }
-        if (selected) {
-          selectedRowKeys.value = record.id;
-        }
+      const onSelectChange = (selectedRowKeys: string[]) => {
+        rows.splice(0);
+        selectedRowKeys.forEach((item) => {
+          rows.push(item);
+        });
       };
 
       const handleAdd = async () => {
-        emit('setDeveloper', { id: selectedRowKeys.value });
+        emit('setDeveloper', { id: rows[0] });
       };
 
       return {
@@ -166,7 +167,7 @@
         handleAdd,
         props,
         formState,
-        selectedRowKeys,
+        rows,
         handleTableChange,
         pagination,
         handleNew,

@@ -18,7 +18,7 @@
       rowKey="id"
       :pagination="pagination"
       @change="handleTableChange"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange, type: 'radio' }"
+      :row-selection="{ selectedRowKeys: rows, onChange: onSelectChange, type: 'radio' }"
     >
       <template #address="{ text: address }">
         <Image v-if="type !== '6' && type !== '7'" :src="address" width="70px" />
@@ -153,23 +153,24 @@
         processListByLine(result, list, total);
       });
 
-      let selectedRowKeys = ref<string>(props.checkedKeys || '');
+      let rows = reactive<string[]>([]);
+      if (props.checkedKeys) {
+        rows.push(props.checkedKeys);
+      }
       let address = ref<string>();
       let type = ref();
 
-      const onSelectChange = (record, selected) => {
-        if (selectedRowKeys.value) {
-          selectedRowKeys.value = '';
-        }
-        if (selected) {
-          selectedRowKeys.value = record.id;
-          address.value = record.address;
-          type.value = record.sort;
-        }
+      const onSelectChange = (selectedRowKeys, selectedRows) => {
+        rows.splice(0);
+        selectedRowKeys.forEach((item) => {
+          rows.push(item);
+        });
+        address.value = selectedRows[0].address;
+        type.value = selectedRows[0].sort;
       };
 
       const handleAdd = async () => {
-        emit('setSource', { id: selectedRowKeys.value, address: address.value, type: type.value });
+        emit('setSource', { id: rows[0], address: address.value, type: type.value });
       };
 
       // let selectedRowKeys = ref<string[]>([]);
@@ -202,7 +203,7 @@
         handleAdd,
         props,
         formState,
-        selectedRowKeys,
+        rows,
         type,
         handleTableChange,
         pagination,
