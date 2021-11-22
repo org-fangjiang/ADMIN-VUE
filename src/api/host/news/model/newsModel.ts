@@ -30,6 +30,7 @@ export interface NewsCondition {
   city?: string;
   inMobile?: string;
   state?: string;
+  sort?: string;
 }
 
 export const _NewsConst = {
@@ -98,6 +99,7 @@ export const _ColumnsNews = [
     key: 'title',
     dataIndex: 'title',
     ellipsis: 'true',
+    width: '20%',
     slots: '',
   },
   {
@@ -105,22 +107,23 @@ export const _ColumnsNews = [
     key: 'keywords',
     dataIndex: 'keywords',
     ellipsis: 'true',
-    slots: '',
+    width: '30%',
+    slots: { customRender: 'keywords' },
   },
-  {
-    title: t('host.news.img'),
-    key: 'img',
-    dataIndex: 'img',
-    ellipsis: 'true',
-    slots: { customRender: 'img' },
-  },
-  {
-    title: t('host.news.projects'),
-    key: 'projects',
-    dataIndex: 'projects',
-    ellipsis: 'true',
-    slots: { customRender: 'projects' },
-  },
+  // {
+  //   title: t('host.news.img'),
+  //   key: 'img',
+  //   dataIndex: 'img',
+  //   ellipsis: 'true',
+  //   slots: { customRender: 'img' },
+  // },
+  // {
+  //   title: t('host.news.projects'),
+  //   key: 'projects',
+  //   dataIndex: 'projects',
+  //   ellipsis: 'true',
+  //   slots: { customRender: 'projects' },
+  // },
   {
     title: t('host.news.inMobile'),
     key: 'inMobile',
@@ -160,12 +163,14 @@ export const _ColumnsNews = [
     // sortOrder: 'descend',
     // sortDirections: '[descend]',
     defaultSortOrder: 'descend',
+    width: '180px',
     sorter: true,
   },
   {
     title: t('host.operation'),
     key: 'operation',
     ellipsis: 'true',
+    width: '100px',
     slots: { customRender: 'operation' },
   },
 ];

@@ -12,6 +12,16 @@
       :options="newsConst.STATES"
       :pagination="false"
     />
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      v-model:value="condition.sort"
+      style="width: 120px"
+      @change="sortHandleChange"
+      :options="newsConst.SORTS"
+      :pagination="false"
+    />
     <Button v-auth="newsConst._PERMS.ADD" @click="addNews" :class="`${prefixCls}-add`">
       {{ t('host.action.add') }}
     </Button>
@@ -22,12 +32,17 @@
       :pagination="false"
       @change="sortChange"
     >
-      <template #img="{ text: img }">
+      <template #keywords="{ text: keywords }">
+        <span class="mr-1" v-for="(item, index) in keywords.split(',')" :key="index">
+          <Tag color="blue">{{ item }}</Tag>
+        </span>
+      </template>
+      <!-- <template #img="{ text: img }">
         <Image :src="img" width="63px" />
       </template>
       <template #projects="{ text: projects }">
         <span v-for="item in projects" :key="item.id">{{ item.name }},</span>
-      </template>
+      </template> -->
       <template #inMobile="{ text: inMobile }">
         <span>
           <Tag :color="newsConst.IN_MOBILES[inMobile].color">
@@ -148,7 +163,6 @@
     Dropdown,
     Menu,
     MenuItem,
-    Image,
     Select,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
@@ -169,7 +183,6 @@
       Menu,
       MenuItem,
       Loading,
-      Image,
       NewsForm,
       Select,
     },
@@ -201,11 +214,20 @@
         projectId: '',
         inMobile: '',
         id: '',
+        sort: '',
       });
 
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.number = 1;
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
+      //根据分类筛选
+      const sortHandleChange = async (value) => {
+        condition.sort = value;
         pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
@@ -378,6 +400,7 @@
         sortChange,
         sortParam,
         stateHandleChange,
+        sortHandleChange,
       };
     },
   });

@@ -67,8 +67,8 @@ export default {
     REMARK_ON: '标记到图片',
   },
   IN_MOBILES: {
-    NOT_IN_MOBILE: '不在手机端展示',
-    IN_MOBILE: '在手机端展示',
+    NOT_IN_MOBILE: '否',
+    IN_MOBILE: '是',
   },
   SORTS: {
     GROUND_NEWS: '拿地资讯',
@@ -161,6 +161,7 @@ export default {
     update: '更新',
     delete: '删除',
     reEnable: '恢复',
+    see: '查看',
     success: '成功',
     fail: '失败',
     reset: '重置',
@@ -224,7 +225,7 @@ export default {
     removeLayout: '移除户型',
   },
   license: {
-    number: '许可证号',
+    number: '预售证号',
     projectId: '项目id',
     resourceId: '资源id',
     setBuild: '关联楼栋',
