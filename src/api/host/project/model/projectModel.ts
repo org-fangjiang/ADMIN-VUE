@@ -116,6 +116,8 @@ export const _HostConst = {
     { value: '3', label: t('host.TYPE.SHOP'), color: 'volcano' }, //商铺 TYPE_SHOP
     { value: '4', label: t('host.TYPE.OFFICE'), color: 'geekblue' }, //写字楼 TYPE_OFFICE
     { value: '5', label: t('host.TYPE.STORE'), color: 'volcano' }, //仓库 TYPE_STORE
+    { value: '6', label: t('host.TYPE.APARTMENT'), color: 'geekblue' }, //仓库 TYPE_STORE
+    { value: '7', label: t('host.TYPE.BUSINESS'), color: 'geekblue' }, //仓库 TYPE_STORE
   ],
   DECORATIONS: [
     { value: '1', label: t('host.DECORATION.ROUGHCAST'), color: 'volcano' }, //毛坯 DECORATION_ROUGHCAST
