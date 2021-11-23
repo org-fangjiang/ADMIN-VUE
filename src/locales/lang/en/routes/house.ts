@@ -7,4 +7,5 @@ export default {
   brand: 'Brand',
   developer: 'Developer',
   banner: 'Banner',
+  note: 'Note',
 };

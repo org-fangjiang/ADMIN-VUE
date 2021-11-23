@@ -77,6 +77,15 @@ const house: AppRouteModule = {
         roles: ['/house/banner'],
       },
     },
+    {
+      path: 'note',
+      name: 'note',
+      component: () => import('/@/views/house/note/index.vue'),
+      meta: {
+        title: t('routes.house.note'),
+        roles: ['/house/note'],
+      },
+    },
   ],
 };
 

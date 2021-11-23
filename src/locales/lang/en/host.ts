@@ -161,6 +161,7 @@ export default {
     update: 'update',
     delete: 'delete',
     reEnable: 'reEnable',
+    see: 'See',
     success: 'success',
     fail: 'fail',
     reset: 'reset',

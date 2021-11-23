@@ -34,6 +34,10 @@ const house: MenuModule = {
         path: 'banner',
         name: t('routes.house.banner'),
       },
+      {
+        path: 'note',
+        name: t('routes.house.note'),
+      },
     ],
   },
 };

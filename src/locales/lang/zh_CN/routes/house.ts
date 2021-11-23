@@ -7,4 +7,5 @@ export default {
   brand: '品牌商管理',
   developer: '开发商管理',
   banner: '轮播图管理',
+  note: '楼盘笔记',
 };
