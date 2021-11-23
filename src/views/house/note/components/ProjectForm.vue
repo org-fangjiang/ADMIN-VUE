@@ -1,8 +1,9 @@
 <template>
   <div class="w-full h-full">
     <div class="pb-4 setwidth">
-      <div class="mt-2">
+      <div class="flex-col mt-2 sm:flex">
         <span class="name">{{ formState.name }}</span>
+        <span class="text-sm font-light lg:ml-4">别名：{{ formState.aliasName }}</span>
       </div>
       <div class="basic">
         <div class="basicInfo">基本信息</div>
@@ -60,6 +61,7 @@
           <div v-for="item in formState.hBuildsById" :key="item.id">
             <div v-if="item.state === '1'">
               <span class="font-bold">{{ item.number }}号楼：</span>
+              <span class="text-base">共{{ item.floors }}层</span>
               <div class="flex-row flex-wrap grid-cols-2 lg:flex sm:grid">
                 <div class="" v-for="e in item.hBuildLayoutsById" :key="e.buildId">
                   <div class="mb-4 mr-4 lg:w-full">
@@ -73,7 +75,6 @@
                         e.hLayoutByLayoutId.toilet
                       }}卫{{ e.hLayoutByLayoutId.area }}m²；</span
                     >
-                    <span>共{{ item.floors }}层；</span>
                     <span v-if="e.hLayoutByLayoutId.saleState === '1'">在售；</span>
                     <span v-if="e.hLayoutByLayoutId.saleState === '2'">待售；</span>
                     <span v-if="e.hLayoutByLayoutId.saleState === '3'">售罄；</span>
@@ -272,7 +273,7 @@
   }
 
   .name {
-    @apply text-xl font-bold text-blue-500;
+    @apply text-2xl font-bold text-blue-500;
   }
 
   .basic {
