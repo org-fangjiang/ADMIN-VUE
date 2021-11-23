@@ -171,7 +171,7 @@ export default {
     setBuild: '设置楼栋',
     setSandImg: '设置项目沙盘图',
     setFirstImg: '设置项目首图',
-    setLicense: '设置许可证',
+    setLicense: '设置预售证',
     setDynamicNews: '设置动态文章',
     setQuestion: '设置问答',
   },
