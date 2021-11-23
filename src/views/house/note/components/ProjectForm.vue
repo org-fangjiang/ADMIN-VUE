@@ -28,6 +28,10 @@
               <span v-if="formState.decorationType === '4'">毛坯与简装</span>
               <span v-if="formState.decorationType === '5'">毛坯与精装</span>
             </div>
+            <div>
+              开盘时间：
+              <span>{{ formState.openTime?.replace('T', ' ').replace('.000+08:00', '') }}</span>
+            </div>
           </div>
           <div class="sm:w-full lg:w-1/2">
             <div class=""
@@ -42,6 +46,10 @@
               <span>{{ formState?.sysCityByCityId?.name }}</span>
               <span>{{ formState?.sysAreaByAreaId?.name }}</span>
               <span>{{ formState.address }}</span>
+            </div>
+            <div>
+              交房时间：
+              <span>{{ formState.payTime?.replace('T', ' ').replace('.000+08:00', '') }}</span>
             </div>
           </div>
         </div>
@@ -65,6 +73,7 @@
                         e.hLayoutByLayoutId.toilet
                       }}卫{{ e.hLayoutByLayoutId.area }}m²；</span
                     >
+                    <span>共{{ item.floors }}层；</span>
                     <span v-if="e.hLayoutByLayoutId.saleState === '1'">在售；</span>
                     <span v-if="e.hLayoutByLayoutId.saleState === '2'">待售；</span>
                     <span v-if="e.hLayoutByLayoutId.saleState === '3'">售罄；</span>

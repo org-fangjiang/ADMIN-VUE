@@ -8,7 +8,7 @@
     :options="data"
     @change="change"
   >
-    设置许可证
+    设置预售证
   </Select>
   <Button @click="save">保存</Button>
 </template>
