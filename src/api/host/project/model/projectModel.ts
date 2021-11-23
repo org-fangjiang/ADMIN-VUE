@@ -228,6 +228,8 @@ export const _HostConst = {
     'lookTime',
     'commissionMode',
     'commission',
+    'defect',
+    'advantage',
   ],
   _RULES: {
     name: [{ required: true, message: t('host.name'), trigger: 'blur' }],
