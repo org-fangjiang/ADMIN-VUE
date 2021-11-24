@@ -12,6 +12,8 @@ import { setupStore } from '/@/store';
 import { setupGlobDirectives } from '/@/directives';
 import { setupI18n } from '/@/locales/setupI18n';
 import { registerGlobComp } from '/@/components/registerGlobComp';
+// WebSocket
+// import { setupWebsocket } from '/@/websocket';
 
 // Do not introduce on-demand in local development?
 // In the local development for introduce on-demand, the number of browser requests will increase by about 20%.
@@ -47,6 +49,9 @@ async function bootstrap() {
 
   // Configure global error handling
   setupErrorHandle(app);
+
+  // set websocket
+  // setupWebsocket(app);
 
   // Mount when the route is ready
   // https://next.router.vuejs.org/api/#isready

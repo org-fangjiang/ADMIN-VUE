@@ -30,10 +30,35 @@
   import NoticeList from './NoticeList.vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { getCurrentInstance } from 'vue';
+  import { init as wsInit } from '/@/websocket/socket';
+  import { getAccessToken } from '/@/utils/auth';
 
   export default defineComponent({
     components: { Popover, BellOutlined, Tabs, TabPane: Tabs.TabPane, Badge, NoticeList },
     setup() {
+      // 连接websocket
+      const instance = getCurrentInstance();
+      let socket;
+      if (instance) {
+        socket = wsInit(instance);
+        // if (!socket.connected) {
+        //   socket.connect();
+        // }
+      }
+
+      socket.onopen = () => {
+        console.log('socket is connected');
+        const token = getAccessToken();
+        const Authorization = `${token}`;
+        const msg = JSON.stringify({ Authorization });
+        socket.send(msg);
+      };
+
+      socket.onmessage = (msg) => {
+        console.log('notify:::', msg);
+      };
+
       const { prefixCls } = useDesign('header-notify');
       const { createMessage } = useMessage();
       const listData = ref(tabListData);
@@ -50,6 +75,7 @@
         createMessage.success('你点击了通知，ID=' + record.id);
         // 可以直接将其标记为已读（为标题添加删除线）,此处演示的代码会切换删除线状态
         record.titleDelete = !record.titleDelete;
+        socket.send(record.id);
       }
 
       return {
