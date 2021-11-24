@@ -16,6 +16,8 @@
               <span v-if="formState.type === '3'">商铺</span>
               <span v-if="formState.type === '4'">写字楼</span>
               <span v-if="formState.type === '5'">仓库</span>
+              <span v-if="formState.type === '6'">别墅</span>
+              <span v-if="formState.type === '7'">商业</span>
             </div>
             <div>
               产&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;权：

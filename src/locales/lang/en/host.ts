@@ -7,7 +7,7 @@ export default {
     SHOP: 'SHOP',
     OFFICE: 'OFFICE',
     STORE: 'STORE',
-    APARTMENT: 'APARTMENT',
+    VILLA: 'VILLA',
     BUSINESS: 'BUSINESS',
   },
   DECORATION: {

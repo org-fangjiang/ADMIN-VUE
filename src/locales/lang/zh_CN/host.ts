@@ -7,7 +7,7 @@ export default {
     SHOP: '商铺',
     OFFICE: '写字楼',
     STORE: '仓库',
-    APARTMENT: '公寓',
+    VILLA: '别墅',
     BUSINESS: '商业',
   },
   DECORATION: {
