@@ -86,7 +86,6 @@
       }
 
       let update = ref<boolean>(false);
-      let islock = ref<boolean>(false);
       // open doc
       function openDoc() {
         update.value = true;
@@ -118,7 +117,6 @@
         getShowDoc,
         register,
         getUseLockPage,
-        islock,
         update,
         handleCancel,
       };

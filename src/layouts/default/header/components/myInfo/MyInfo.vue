@@ -32,7 +32,6 @@
           </Select>
         </FormItem>
         <FormItem ref="avatar" :label="t('model.user.avatar')" name="avatar">
-          <!-- <Input v-model:value="formState.avatar" autoComplete="off" /> -->
           <Upload
             list-type="picture-card"
             :show-upload-list="false"
@@ -81,7 +80,7 @@
     InputPassword,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
-  import { updateMyInfo, getUserInfo } from '/@/api/sys/user/user';
+  import { updateMyInfo } from '/@/api/sys/user/user';
   import { SysUserBean } from '/@/api/sys/user/model/userModel';
   import { ApiSource } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
@@ -152,9 +151,7 @@
 
       onMounted(async () => {
         loading.value = true;
-        const result = await getUserInfo(userStore.getUserInfo.id);
-        debugger;
-        Object.assign(formState, result);
+        Object.assign(formState, userStore.getUserInfo);
         loading.value = false;
       });
 
@@ -166,7 +163,6 @@
       return {
         t,
         prefixCls,
-        // userInfo,
         formRef,
         formState,
         onSubmit,
