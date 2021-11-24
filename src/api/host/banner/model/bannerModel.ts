@@ -54,7 +54,7 @@ export const _BannerColumns = [
     key: 'keyword',
     dataIndex: 'keyword',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'keyword' },
   },
   {
     title: t('host.banner.address'),

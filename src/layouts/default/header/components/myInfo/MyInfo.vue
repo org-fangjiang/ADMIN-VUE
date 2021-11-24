@@ -187,10 +187,4 @@
       background-color: @dark-bg;
     }
   }
-
-  .@{prefix-cls} {
-    &-action-menu-item {
-      text-align: center;
-    }
-  }
 </style>

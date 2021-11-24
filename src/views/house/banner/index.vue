@@ -16,6 +16,11 @@
       t('host.action.add')
     }}</Button>
     <Table :columns="bannerColumns" :data-source="list" rowKey="id" :pagination="false">
+      <template #keyword="{ text: keyword }">
+        <span class="mr-1" v-for="(item, index) in keyword.split(',')" :key="index">
+          <Tag color="blue">{{ item }}</Tag>
+        </span>
+      </template>
       <template #address="{ text: address }">
         <Image :src="address" width="63px" />
       </template>
