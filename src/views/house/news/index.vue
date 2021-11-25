@@ -128,6 +128,8 @@
       width="80%"
       :footer="null"
       :destroyOnClose="true"
+      wrapClassName="full-modal"
+      centered
     >
       <NewsForm
         v-if="drawerParam.state === '0'"
@@ -429,13 +431,6 @@
   }
 
   .full-modal {
-    .ant-modal {
-      max-width: 100%;
-      top: 0;
-      padding-bottom: 0;
-      margin: 0;
-    }
-
     .ant-modal-content {
       display: flex;
       flex-direction: column;

@@ -21,6 +21,7 @@
       rowKey="id"
       :pagination="pagination"
       @change="handleTableChange"
+      :scroll="{ y: 'calc(70vh)' }"
     >
       <template #hBuildsById="{ text: hBuildsById }">
         <span v-for="item in hBuildsById" :key="item.id">{{ item.name }}</span>

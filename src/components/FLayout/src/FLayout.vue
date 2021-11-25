@@ -9,6 +9,7 @@
       :pagination="pagination"
       @change="handleTableChange"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelectChange }"
+      :scroll="{ y: 'calc(70vh)' }"
     >
       <template #hResourceByResourceId="{ text: hResourceByResourceId }">
         <Image

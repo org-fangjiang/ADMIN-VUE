@@ -19,6 +19,7 @@
       :pagination="pagination"
       @change="handleTableChange"
       :row-selection="{ selectedRowKeys: rows, onChange: onSelectChange, type: 'radio' }"
+      :scroll="{ y: 'calc(70vh)' }"
     >
       <template #address="{ text: address }">
         <Image v-if="type !== '6' && type !== '7'" :src="address" width="70px" />

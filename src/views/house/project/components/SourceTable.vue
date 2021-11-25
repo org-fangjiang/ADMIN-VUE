@@ -21,6 +21,7 @@
       rowKey="id"
       :pagination="pagination"
       @change="handleTableChange"
+      :scroll="{ y: 'calc(70vh)' }"
     >
       <template #address="scope">
         <Image

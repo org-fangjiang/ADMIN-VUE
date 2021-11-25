@@ -21,6 +21,7 @@
       rowKey="id"
       :pagination="pagination"
       @change="handleTableChange"
+      :scroll="{ y: 'calc(70vh)' }"
     >
       <template #saleState="{ text: saleState }">
         <span>
@@ -92,6 +93,8 @@
       width="70%"
       :footer="null"
       :destroyOnClose="true"
+      wrapClassName="full-modal"
+      centered
     >
       <BuildForm v-if="drawerParam.state === '0'" :id="drawerParam.id" :projectId="props.id" />
       <FLayout
@@ -395,6 +398,19 @@
     &-sel {
       margin-right: 10px;
       margin-bottom: 20px;
+    }
+  }
+
+  .full-modal {
+    height: calc(100vh);
+
+    .ant-modal-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-modal-body {
+      flex: 1;
     }
   }
 </style>

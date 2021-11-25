@@ -170,6 +170,8 @@
       :bodyStyle="{ overflow: 'auto', margin: '16px' }"
       :destroyOnClose="true"
       :footer="null"
+      wrapClassName="full-modal"
+      centered
     >
       <SourceTable
         v-if="drawerParam.state === '1'"
@@ -617,6 +619,19 @@
       margin-top: 20px;
       margin-right: 10px;
       margin-bottom: 20px;
+    }
+  }
+
+  .full-modal {
+    height: calc(100vh);
+
+    .ant-modal-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-modal-body {
+      flex: 1;
     }
   }
 </style>
