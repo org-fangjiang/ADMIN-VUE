@@ -63,6 +63,24 @@
         <div else>{{ licenseName }}</div>
         <Button @click="changeModal">{{ t('host.action.setLicense') }}</Button>
       </FormItem>
+      <FormItem ref="openTime" :label="t('host.build.openTime')" name="openTime">
+        <DatePicker
+          showTime
+          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('openTime')"
+          format="YYYY-MM-DD HH:mm:ss"
+          :value="formState.openTime"
+          @change="openTimechange"
+        />
+      </FormItem>
+      <FormItem ref="payTime" :label="t('host.build.payTime')" name="payTime">
+        <DatePicker
+          showTime
+          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('payTime')"
+          format="YYYY-MM-DD HH:mm:ss"
+          :value="formState.payTime"
+          @change="payTimechange"
+        />
+      </FormItem>
       <FormItem ref="locationX" :label="t('host.build.locationX')" name="locationX">
         <Input
           :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('locationX')"
@@ -125,7 +143,16 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Button, Form, FormItem, Input, Select, Textarea, Modal } from 'ant-design-vue';
+  import {
+    Button,
+    Form,
+    FormItem,
+    Input,
+    Select,
+    Textarea,
+    Modal,
+    DatePicker,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BuildModel, _BuildConst } from '/@/api/host/build/model/buildModel';
   import { addBuild, updateBuild, getBuild } from '/@/api/host/build/build';
@@ -144,6 +171,7 @@
       Textarea,
       Modal,
       FLicense,
+      DatePicker,
     },
     props: {
       id: {
@@ -182,6 +210,15 @@
       const formState: UnwrapRef<BuildModel> = reactive({
         projectId: props.projectId || '',
       });
+
+      //开盘时间
+      const openTimechange = (_date: any | string, dateString: string) => {
+        formState.openTime = dateString;
+      };
+      //交房时间
+      const payTimechange = (_date: any | string, dateString: string) => {
+        formState.payTime = dateString;
+      };
 
       //是否标记图片
       const remarkChange = async (value) => {
@@ -277,6 +314,8 @@
         onClose,
         setBuildLicense,
         licenseName,
+        openTimechange,
+        payTimechange,
       };
     },
   });

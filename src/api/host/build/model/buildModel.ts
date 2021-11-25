@@ -21,6 +21,8 @@ export interface BuildModel {
   remark?: string;
   locationX?: number;
   locationY?: number;
+  openTime?: string;
+  payTime?: string;
 }
 
 export interface BuildCondition {
@@ -64,6 +66,8 @@ export const _BuildConst = {
     'remark',
     'locationX',
     'locationY',
+    'openTime',
+    'payTime',
   ],
   _RULES: {
     number: [{ required: true, message: t('host.build.number'), trigger: 'blur' }],

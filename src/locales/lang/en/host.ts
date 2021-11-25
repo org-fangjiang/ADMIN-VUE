@@ -224,6 +224,8 @@ export default {
     locationY: 'locationY',
     addLayout: 'addLayout',
     removeLayout: 'removeLayout',
+    openTime: 'openTime',
+    payTime: 'payTime',
   },
   license: {
     number: 'number',

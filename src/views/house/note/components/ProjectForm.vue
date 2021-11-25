@@ -31,10 +31,10 @@
               <span v-if="formState.decorationType === '4'">毛坯与简装</span>
               <span v-if="formState.decorationType === '5'">毛坯与精装</span>
             </div>
-            <div>
+            <!-- <div>
               开盘时间：
               <span>{{ formState.openTime?.replace('T', ' ').replace('.000+08:00', '') }}</span>
-            </div>
+            </div> -->
           </div>
           <div class="sm:w-full lg:w-1/2">
             <div class=""
@@ -50,10 +50,10 @@
               <span>{{ formState?.sysAreaByAreaId?.name }}</span>
               <span>{{ formState.address }}</span>
             </div>
-            <div>
+            <!-- <div>
               交房时间：
               <span>{{ formState.payTime?.replace('T', ' ').replace('.000+08:00', '') }}</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -63,23 +63,31 @@
           <div v-for="item in formState.hBuildsById" :key="item.id">
             <div v-if="item.state === '1'">
               <span class="font-bold">{{ item.number }}号楼：</span>
-              <span class="text-base">共{{ item.floors }}层</span>
-              <div class="flex-row flex-wrap grid-cols-2 lg:flex sm:grid">
-                <div class="" v-for="e in item.hBuildLayoutsById" :key="e.buildId">
-                  <div class="mb-4 mr-4 lg:w-full">
-                    <img
-                      :src="e.hLayoutByLayoutId.hResourceByResourceId.address"
-                      alt="户型图"
-                      style="width: 150px; height: 200px"
-                    />
-                    <span
-                      >{{ &nbsp; e.hLayoutByLayoutId.room }}室{{ e.hLayoutByLayoutId.hall }}厅{{
-                        e.hLayoutByLayoutId.toilet
-                      }}卫{{ e.hLayoutByLayoutId.area }}m²；</span
-                    >
-                    <span v-if="e.hLayoutByLayoutId.saleState === '1'">在售；</span>
-                    <span v-if="e.hLayoutByLayoutId.saleState === '2'">待售；</span>
-                    <span v-if="e.hLayoutByLayoutId.saleState === '3'">售罄；</span>
+              <span class="text-base">共{{ item.floors }}层</span><br />
+              <span class="text-base">开盘时间:{{ item.payTime }}</span>
+              <span class="text-base">&nbsp;&nbsp;交房时间:{{ item.openTime }}</span>
+              <div class="lg:flex-row lg:flex-wrap sm:grid-cols-2 lg:flex sm:grid">
+                <div
+                  class="e.hLayoutByLayoutId.state === '1'"
+                  v-for="e in item.hBuildLayoutsById"
+                  :key="e.buildId"
+                >
+                  <div>
+                    <div class="mb-4 mr-4 lg:w-full">
+                      <img
+                        :src="e.hLayoutByLayoutId.hResourceByResourceId.address"
+                        alt="户型图"
+                        style="width: 150px; height: 200px"
+                      />
+                      <span
+                        >{{ &nbsp; e.hLayoutByLayoutId.room }}室{{ e.hLayoutByLayoutId.hall }}厅{{
+                          e.hLayoutByLayoutId.toilet
+                        }}卫{{ e.hLayoutByLayoutId.area }}m²；</span
+                      >
+                      <span v-if="e.hLayoutByLayoutId.saleState === '1'">在售；</span>
+                      <span v-if="e.hLayoutByLayoutId.saleState === '2'">待售；</span>
+                      <span v-if="e.hLayoutByLayoutId.saleState === '3'">售罄；</span>
+                    </div>
                   </div>
                 </div>
               </div>

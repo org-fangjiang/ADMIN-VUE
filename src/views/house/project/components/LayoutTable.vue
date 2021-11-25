@@ -157,7 +157,7 @@
       };
       // 筛选条件
       const condition = reactive({
-        state: '',
+        state: '1',
         projectId: props.id || '',
         id: '',
       });

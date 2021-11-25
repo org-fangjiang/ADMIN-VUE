@@ -225,6 +225,8 @@ export default {
     locationY: '维度',
     addLayout: '关联户型',
     removeLayout: '移除户型',
+    payTime: '交房时间',
+    openTime: '开盘时间',
   },
   license: {
     number: '预售证号',
