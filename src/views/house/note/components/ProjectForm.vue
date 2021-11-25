@@ -67,12 +67,8 @@
               <span class="text-base">开盘时间:{{ item.payTime }}</span>
               <span class="text-base">&nbsp;&nbsp;交房时间:{{ item.openTime }}</span>
               <div class="lg:flex-row lg:flex-wrap sm:grid-cols-2 lg:flex sm:grid">
-                <div
-                  class="e.hLayoutByLayoutId.state === '1'"
-                  v-for="e in item.hBuildLayoutsById"
-                  :key="e.buildId"
-                >
-                  <div>
+                <div v-for="e in item.hBuildLayoutsById" :key="e.buildId">
+                  <div v-if="e.hLayoutByLayoutId.state === '1'">
                     <div class="mb-4 mr-4 lg:w-full">
                       <img
                         :src="e.hLayoutByLayoutId.hResourceByResourceId.address"
