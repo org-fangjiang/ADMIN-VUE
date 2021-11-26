@@ -828,7 +828,7 @@
                 Object.assign(formState, content);
                 Persistent.removeLocal(HOUSE_PROJECT, true);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('host.action.fail'));
+                // failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
               }
@@ -852,6 +852,7 @@
           }
         } else {
           formRef.value.resetFields();
+          Persistent.removeLocal(HOUSE_PROJECT, true);
         }
       };
 
