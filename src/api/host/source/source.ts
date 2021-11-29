@@ -20,11 +20,12 @@ export enum ApiSource {
   UploadNews = '/api/sys-server/file/uploadNews',
   UploadBanner = '/api/sys-server/file/uploadBanner',
   UpdateVideo = '/api/sys-server/file/updateVideo',
+  UpdateVideoApi = '/sys-server/file/updateVideo',
 }
 export function uploadVideo(formData, mode: ErrorMessageMode = 'modal') {
   return defHttp.post(
     {
-      url: ApiSource.UpdateVideo,
+      url: ApiSource.UpdateVideoApi,
       params: formData,
       headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
     },
