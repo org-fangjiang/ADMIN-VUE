@@ -13,6 +13,7 @@
     :filter-option="false"
     :not-found-content="fetching ? undefined : null"
     @clear="onClear"
+    placeholder="项目名称"
   >
     <template v-if="fetching" #notFoundContent>
       <Spin size="small" />
@@ -45,7 +46,7 @@
     emits: ['setProject', 'onClear'],
     setup(props, { emit }) {
       const data = ref<Option[]>([]);
-      const selected = ref({ value: '', label: '', key: '' });
+      const selected = ref();
 
       const userStore = useUserStore();
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');

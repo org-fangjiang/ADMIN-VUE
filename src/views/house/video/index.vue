@@ -14,6 +14,7 @@
     />
     <!-- 是否是热门筛选 -->
     <Select
+      placeholder="是否热门"
       :class="`${prefixCls}-add`"
       ref="select"
       :allowClear="true"
@@ -21,17 +22,9 @@
       style="width: 120px"
       @change="isTopHandleChange"
       :options="videoConst.isTop"
-      :pagination="false"
     />
     <!-- 根据项目筛选 -->
     <FProjectSelect @onClear="proClear" @setProject="setProject" :class="`${prefixCls}-add`" />
-    <!-- 通过city筛选 -->
-    <FCity
-      :provinceId="provinceId"
-      :cityId="cityId"
-      @change="cityChange"
-      :class="`${prefixCls}-add`"
-    />
     <Button v-auth="videoConst._PERMS.ADD" @click="addVideo" :class="`${prefixCls}-add`">
       {{ t('host.action.add') }}</Button
     >
@@ -166,7 +159,6 @@
   import { cancel, deleteVideo, GetByPage, reEnableVideo, setTop } from '/@/api/host/video/video';
   import VideoForm from './components/VideoForm.vue';
   import FProjectSelect from '/@/components/FProjectSelect';
-  import { FCity } from '/@/components/FLocation';
   import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
@@ -184,7 +176,6 @@
       Loading,
       VideoForm,
       FProjectSelect,
-      FCity,
     },
     setup() {
       const { t } = useI18n();
@@ -216,7 +207,7 @@
       // 筛选条件
       const condition = reactive({
         cityId: '',
-        isTop: '',
+        isTop: undefined,
         project: '',
         state: '1',
       });
@@ -247,14 +238,6 @@
 
       const proClear = async () => {
         condition.project = '';
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result, list, pageParam);
-      };
-
-      //根据市筛选
-      const cityChange = async (value) => {
-        condition.cityId = value.value;
         pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);
@@ -414,7 +397,6 @@
         action,
         stateHandleChange,
         isTopHandleChange,
-        cityChange,
         setProject,
         provinceId,
         cityId,
