@@ -24,6 +24,7 @@
   import { Select, Spin } from 'ant-design-vue';
   import { getProject, search, searchWithCondition } from '/@/api/host/project/project';
   import { useUserStore } from '/@/store/modules/user';
+  import { debounce } from 'lodash';
   interface Option {
     value: string;
     label: string;
@@ -44,7 +45,7 @@
     emits: ['setProject', 'onClear'],
     setup(props, { emit }) {
       const data = ref<Option[]>([]);
-      const selected = ref({});
+      const selected = ref({ value: '', label: '', key: '' });
 
       const userStore = useUserStore();
       const cityId = ref<string>(userStore.getUserInfo.companyCityId || '');
@@ -70,7 +71,7 @@
             if (content) {
               selected.value = {
                 value: props.projectId,
-                label: content.name,
+                label: content.name || '',
                 key: props.projectId,
               };
               data.value.push({ value: content.id || '', label: content.name || '' });
@@ -86,7 +87,7 @@
           if (content) {
             selected.value = {
               value: props.projectId,
-              label: content.name,
+              label: content.name || '',
               key: props.projectId,
             };
             data.value.push({ value: content.id || '', label: content.name || '' });
@@ -94,7 +95,7 @@
         }
       });
       let fetching = ref<boolean>(false);
-      const nameChange = async (value) => {
+      const nameChange = debounce(async (value) => {
         fetching.value = true;
         if (value) {
           // 通过名称搜索
@@ -117,7 +118,7 @@
           }
         }
         fetching.value = false;
-      };
+      }, 1000);
 
       const nameSelect = async (value) => {
         emit('setProject', value);

@@ -8,4 +8,5 @@ export default {
   developer: 'Developer',
   banner: 'Banner',
   note: 'Note',
+  video: 'Video',
 };

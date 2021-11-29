@@ -38,6 +38,10 @@ const house: MenuModule = {
         path: 'note',
         name: t('routes.house.note'),
       },
+      {
+        path: 'video',
+        name: t('routes.house.video'),
+      },
     ],
   },
 };
