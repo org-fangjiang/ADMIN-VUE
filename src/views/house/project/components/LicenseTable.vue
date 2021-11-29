@@ -24,7 +24,7 @@
       :scroll="{ y: 'calc(70vh)' }"
     >
       <template #hBuildsById="{ text: hBuildsById }">
-        <span v-for="item in hBuildsById" :key="item.id">{{ item.name }}</span>
+        <span v-for="item in hBuildsById" :key="item.id">{{ item.number }}</span>
       </template>
       <template #state="{ text: state }">
         <span>
