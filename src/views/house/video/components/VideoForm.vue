@@ -46,6 +46,7 @@
           @change="sortHandleChange"
           :options="videoConst.SORTS"
           :pagination="false"
+          :disabled="isUpdate && !videoConst._UPDATE_FIELDS.includes('sort')"
         />
       </FormItem>
       <FormItem ref="videoAddress" :label="t('host.video.videoAddress')" name="videoAddress">
@@ -54,6 +55,7 @@
           :remove="handleRemove"
           :file-list="fileList"
           :multiple="false"
+          :disabled="isUpdate && !videoConst._UPDATE_FIELDS.includes('videoAddress')"
         >
           <Button> Select File </Button>
         </Upload>
@@ -201,7 +203,9 @@
       };
 
       const beforeUpload = (file: FileItem) => {
+        fileList.value = [];
         fileList.value = [...fileList.value, file];
+        formState.videoAddress = '';
         return false;
       };
 
@@ -222,6 +226,11 @@
             } else {
               loading.value = true;
               const formData = new FormData();
+              if (fileList.value.length === 0) {
+                failed(t('host.video.videoNull'), t('host.video.selectVideo'));
+                loading.value = false;
+                return;
+              }
               fileList.value.forEach((file: FileItem) => {
                 formData.append('file', file as any);
                 formData.append('provinceId', provinceId || '');
@@ -236,6 +245,7 @@
                 return;
               } finally {
                 loading.value = false;
+                fileList.value = [];
               }
               try {
                 await addVideo(formState);

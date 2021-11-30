@@ -68,6 +68,13 @@ export const VideoColumns = [
     slots: '',
   },
   {
+    title: t('host.video.sort'),
+    key: 'sort',
+    dataIndex: 'sort',
+    ellipsis: 'true',
+    slots: { customRender: 'sort' },
+  },
+  {
     title: t('host.video.description'),
     key: 'description',
     dataIndex: 'description',

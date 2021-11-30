@@ -29,6 +29,13 @@
       {{ t('host.action.add') }}</Button
     >
     <Table :columns="Columns" :data-source="list" rowKey="id" :pagination="false">
+      <template #sort="{ text: sort }">
+        <span>
+          <Tag :color="videoConst.SORTS[sort - 1].color">
+            {{ videoConst.SORTS[sort - 1].label }}
+          </Tag>
+        </span>
+      </template>
       <template #isTop="{ text: isTop }">
         <span>
           <Tag :color="videoConst.isTop[isTop].color">
