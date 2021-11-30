@@ -150,7 +150,7 @@ export default {
   otherInfo: '公园配套',
   description: '相关描述',
   lookTime: '项目被浏览次数',
-  orderNum: '排序',
+  orderNum: '权重',
   hLayoutsById: '户型',
   firstImg: '项目首图',
   link: '链接',
@@ -176,6 +176,8 @@ export default {
     setLicense: '设置预售证',
     setDynamicNews: '设置动态文章',
     setQuestion: '设置问答',
+    clearProjectOrder: '清空权重',
+    setProjectOrder: '设置权重',
   },
   layout: {
     room: '卧室',
@@ -307,5 +309,7 @@ export default {
     setTop: '设置热门',
     cancelTop: '取消热门',
     projectId: '项目',
+    selectVideo: '请选择视频',
+    videoNull: '视频不能为空',
   },
 };

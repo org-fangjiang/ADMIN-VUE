@@ -176,6 +176,8 @@ export default {
     setLicense: 'setLicense',
     setDynamicNews: 'setDynamicNews',
     setQuestion: 'setQuestion',
+    clearProjectOrder: 'clearProjectOrder',
+    setProjectOrder: 'setProjectOrder',
   },
   layout: {
     room: 'room',
@@ -306,5 +308,7 @@ export default {
     setTop: 'setTop',
     cancelTop: 'cancelTop',
     projectId: 'projectId',
+    selectVideo: 'selectVideo',
+    videoNull: 'videoNull',
   },
 };

@@ -16,6 +16,38 @@ enum ApiHost {
   SetProjectDeveloper = '/nhouse-server/manageProject/setProjectDeveloper',
   SetProjectBrand = '/nhouse-server/manageProject/setProjectBrand', // 设置品牌商
   GetProject = '/nhouse-server/manageProject/getProject',
+  SetProjectOrder = '/nhouse-server/manageProject/setProjectOrder',
+  ClearProjectOrder = '/nhouse-server/manageProject/clearProjectOrder',
+}
+
+export function clearProjectOrder(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<HostModel>>(
+    {
+      url: ApiHost.SetProjectOrder,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function setProjectOrder(id: string, order: number, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id, order });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<HostModel>>(
+    {
+      url: ApiHost.SetProjectOrder,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getProject(id: string, mode: ErrorMessageMode = 'modal') {

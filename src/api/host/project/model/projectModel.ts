@@ -311,6 +311,14 @@ export const _ColumnsHost = [
     sorter: true,
   },
   {
+    title: t('host.orderNum'),
+    key: 'orderNum',
+    dataIndex: 'orderNum',
+    ellipsis: 'false',
+    slots: { customRender: 'orderNum' },
+    sorter: true,
+  },
+  {
     title: t('host.operation'),
     key: 'operation',
     ellipsis: 'true',

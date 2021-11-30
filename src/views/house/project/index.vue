@@ -46,6 +46,9 @@
       <template #createTime="{ text: createTime }">
         <span>{{ createTime.replace('T', ' ').replace('.000+08:00', '') }}</span>
       </template>
+      <template #orderNum="{ text: orderNum }">
+        <span>{{ orderNum }}</span>
+      </template>
       <template #operation="{ text: link }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
@@ -146,6 +149,28 @@
                   {{ t('host.action.setDynamicNews') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="9" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="hostConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.setProjectOrder') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="10" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="hostConst._PERMS.UPDATE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('host.action.clearProjectOrder') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -206,14 +231,15 @@
     </Modal>
     <Modal
       :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
-      :visible="updatePrice"
-      title="修改楼盘价格"
+      :visible="smModal"
+      :title="drawerParam.title"
       @cancel="onClose"
       width=""
       :footer="null"
       :destroyOnClose="true"
     >
       <PriceForm :priceInfo="priceInfo" v-if="updatePrice" />
+      <OrderForm :id="drawerParam.id" v-if="updateOrder" />
     </Modal>
     <Modal
       v-model:visible="projectModal"
@@ -257,6 +283,7 @@
   import DynamicNewsTable from './components/DynamicNewsTable.vue';
   import QuestionTable from './components/QuestionTable.vue';
   import {
+    clearProjectOrder,
     deleteProject,
     getProject,
     reEnableProject,
@@ -270,6 +297,7 @@
   import FProjectSelect from '/@/components/FProjectSelect';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import PriceForm from './components/PriceForm.vue';
+  import OrderForm from './components/OrderForm.vue';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -293,6 +321,7 @@
       QuestionTable,
       FProjectSelect,
       PriceForm,
+      OrderForm,
     },
     setup() {
       const { t } = useI18n();
@@ -326,9 +355,12 @@
       //控制双击更新价格的modal
       let priceInfo = ref<Object>();
       let updatePrice = ref(false);
+      let smModal = ref(false);
       const clickPrice = (record) => {
         updatePrice.value = true;
         priceInfo.value = record;
+        smModal.value = true;
+        drawerParam.title = '更新价格';
       };
 
       //根据名称筛选
@@ -365,22 +397,38 @@
       let provinceId = ref();
 
       //根据创建时间排序，默认降序
-      const sortParam = reactive({
-        asc: [''],
+      let sortParam = reactive({
+        asc: [] as any[],
         desc: ['createTime'],
       });
       const sortChange = async (pagination, filters, sorter) => {
         //打印可以分别得到上下箭头的数据
         console.log(pagination, filters, sorter);
-        sortParam.asc.splice(0);
-        sortParam.desc.splice(0);
         if (sorter.order === 'ascend') {
-          sortParam.asc.push('createTime');
+          if (sortParam.asc.indexOf(sorter.columnKey) === -1) {
+            sortParam.asc.push(sorter.columnKey);
+          }
+          if (sortParam.desc.includes(sorter.columnKey)) {
+            const indexDesc = sortParam.desc.indexOf(sorter.columnKey);
+            sortParam.desc.splice(indexDesc, 1);
+          }
         } else if (sorter.order === 'descend') {
-          sortParam.desc.push('createTime');
+          if (sortParam.desc.indexOf(sorter.columnKey) === -1) {
+            sortParam.desc.push(sorter.columnKey);
+          }
+          if (sortParam.asc.includes(sorter.columnKey)) {
+            const flag = sortParam.asc.indexOf(sorter.columnKey);
+            sortParam.asc.splice(flag, 1);
+          }
         } else if (sorter.order === undefined) {
-          sortParam.asc.splice(0);
-          sortParam.desc.splice(0);
+          if (sortParam.asc.includes(sorter.columnKey)) {
+            const flag = sortParam.asc.indexOf(sorter.columnKey);
+            sortParam.asc.splice(flag, 1);
+          }
+          if (sortParam.desc.includes(sorter.columnKey)) {
+            const indexDesc = sortParam.desc.indexOf(sorter.columnKey);
+            sortParam.desc.splice(indexDesc, 1);
+          }
         }
         pageParam.number = 1;
         const result = await getList();
@@ -431,6 +479,8 @@
 
       //控制添加更新项目的modal
       let projectModal = ref(false);
+      //控制权重
+      let updateOrder = ref(false);
 
       // 操作
       const action = async (key) => {
@@ -529,6 +579,27 @@
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setQuestion');
             break;
+          case 9:
+            // 设置权重
+            drawerParam.title = t('host.action.setProjectOrder');
+            smModal.value = true;
+            drawerParam.id = id;
+            updateOrder.value = true;
+            break;
+          case 10:
+            // 取消权重
+            try {
+              loading.value = true;
+              await clearProjectOrder(id);
+              success(t('host.action.clearProjectOrder'), t('host.action.success'));
+              const result = await getList();
+              processList(result, list, pageParam);
+            } catch (error: any) {
+              failed(t('host.action.clearProjectOrder'), t('host.action.fail'));
+            } finally {
+              loading.value = false;
+            }
+            break;
         }
       };
 
@@ -548,10 +619,12 @@
         drawerParam.state = '';
         drawerParam.id = '';
         drawerParam.title = '';
-        const result = await getList();
-        processList(result, list, pageParam);
         updatePrice.value = false;
         projectModal.value = false;
+        smModal.value = false;
+        updateOrder.value = false;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
 
       const onChange = async (page) => {
@@ -596,6 +669,8 @@
         priceInfo,
         updatePrice,
         projectModal,
+        smModal,
+        updateOrder,
       };
     },
   });
