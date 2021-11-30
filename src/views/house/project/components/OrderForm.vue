@@ -78,7 +78,8 @@
       const resetForm = async () => {
         loading.value = true;
         try {
-          formRef.value.resetFields();
+          const { content } = await getProject(props.id || '');
+          formState.orderNum = content.orderNum;
         } catch (error) {
         } finally {
           loading.value = false;
