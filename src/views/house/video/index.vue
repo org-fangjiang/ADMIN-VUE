@@ -237,7 +237,7 @@
 
       //根据项目筛选
       const setProject = async (value) => {
-        condition.project = value;
+        condition.project = value.value;
         pageParam.number = 1;
         const result = await getList();
         processList(result, list, pageParam);

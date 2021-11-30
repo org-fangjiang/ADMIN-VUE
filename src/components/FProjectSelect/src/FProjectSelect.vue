@@ -14,6 +14,7 @@
     :not-found-content="fetching ? undefined : null"
     @clear="onClear"
     placeholder="项目名称"
+    :disabled="props.disable"
   >
     <template v-if="fetching" #notFoundContent>
       <Spin size="small" />
@@ -42,6 +43,10 @@
         type: String,
         require: true,
       },
+      disable: {
+        type: Boolean,
+        require: false,
+      },
     },
     emits: ['setProject', 'onClear'],
     setup(props, { emit }) {
@@ -54,7 +59,7 @@
 
       const condition = reactive({
         name: '',
-        state: '',
+        state: '1',
         provinceId: provinceId,
         cityId: cityId,
       });

@@ -35,7 +35,11 @@
         />
       </FormItem>
       <FormItem ref="projectId" :label="t('host.video.projectId')" name="projectId">
-        <FProjectSelect :projectId="formState.projectId" @setProject="setProject" />
+        <FProjectSelect
+          :projectId="formState.projectId"
+          @setProject="setProject"
+          :disable="isUpdate && !videoConst._UPDATE_FIELDS.includes('projectId')"
+        />
       </FormItem>
       <FormItem ref="sort" :label="t('host.video.sort')" name="sort">
         <Select
@@ -136,7 +140,7 @@
     },
     setup(props) {
       const { t } = useI18n();
-      const { prefixCls } = useDesign('brand');
+      const { prefixCls } = useDesign('video');
       const videoConst = ref(_VideoConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
