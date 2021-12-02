@@ -405,30 +405,24 @@
         //打印可以分别得到上下箭头的数据
         console.log(pagination, filters, sorter);
         if (sorter.order === 'ascend') {
-          if (sortParam.asc.indexOf(sorter.columnKey) === -1) {
-            sortParam.asc.push(sorter.columnKey);
+          if (sorter.columnKey === 'createTime') {
+            sortParam.asc = ['createTime', 'orderNum'];
           }
-          if (sortParam.desc.includes(sorter.columnKey)) {
-            const indexDesc = sortParam.desc.indexOf(sorter.columnKey);
-            sortParam.desc.splice(indexDesc, 1);
+          if (sorter.columnKey === 'orderNum') {
+            sortParam.asc = ['orderNum', 'createTime'];
           }
+          sortParam.desc = [];
         } else if (sorter.order === 'descend') {
-          if (sortParam.desc.indexOf(sorter.columnKey) === -1) {
-            sortParam.desc.push(sorter.columnKey);
+          if (sorter.columnKey === 'createTime') {
+            sortParam.desc = ['createTime', 'orderNumber'];
           }
-          if (sortParam.asc.includes(sorter.columnKey)) {
-            const flag = sortParam.asc.indexOf(sorter.columnKey);
-            sortParam.asc.splice(flag, 1);
+          if (sorter.columnKey === 'orderNum') {
+            sortParam.desc = ['orderNum', 'createTime'];
           }
+          sortParam.asc = [];
         } else if (sorter.order === undefined) {
-          if (sortParam.asc.includes(sorter.columnKey)) {
-            const flag = sortParam.asc.indexOf(sorter.columnKey);
-            sortParam.asc.splice(flag, 1);
-          }
-          if (sortParam.desc.includes(sorter.columnKey)) {
-            const indexDesc = sortParam.desc.indexOf(sorter.columnKey);
-            sortParam.desc.splice(indexDesc, 1);
-          }
+          sortParam.desc = [];
+          sortParam.asc = [];
         }
         pageParam.number = 1;
         const result = await getList();

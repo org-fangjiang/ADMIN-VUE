@@ -80,7 +80,19 @@ export const _NewsConst = {
   _RULES: {
     description: [{ required: true, message: t('host.news.description'), trigger: 'blur' }],
     title: [{ required: true, message: t('host.news.title'), trigger: 'blur' }],
-    keywords: [{ required: true, message: t('host.news.keywords'), trigger: 'blur' }],
+    keywords: [
+      {
+        required: true,
+        trigger: 'change',
+        validator: function async(_rule, keywords: string) {
+          const list = keywords.split(',');
+          if (!list || list.length < 5) {
+            return Promise.reject('关键字至少5个');
+          }
+          return Promise.resolve();
+        },
+      },
+    ],
     content: [{ required: true, message: t('host.news.content'), trigger: 'blur' }],
     img: [{ required: true, message: t('host.news.img'), trigger: 'blur' }],
     sort: [{ required: true, message: t('host.news.sort'), trigger: 'blur' }],

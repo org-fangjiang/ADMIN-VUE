@@ -1,4 +1,4 @@
-// 添加更改楼栋信息
+// 添加文章信息
 <template>
   <div :class="prefixCls">
     <Form
@@ -263,17 +263,10 @@
 
       const options = ref<Option[]>([]);
       let tags = ref<string[]>([]);
+
       //标签
       const tagsChange = async (value) => {
-        let selectTags = '';
-        if (value && value.length > 0) {
-          value.forEach((item: string) => {
-            selectTags = selectTags + ',' + item;
-          });
-        }
-        const x = selectTags.indexOf(',');
-        selectTags = selectTags.substring(x + 1);
-        formState.keywords = selectTags;
+        formState.keywords = value.toString();
       };
       //正文
       function handleChange(value: string) {
