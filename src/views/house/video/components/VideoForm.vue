@@ -244,12 +244,12 @@
               try {
                 const result = await uploadVideo(formData);
                 formState.videoAddress = result;
+                fileList.value = [];
               } catch (error: any) {
                 failed(t('host.video.videoAddress'), t('host.action.fail'));
                 return;
               } finally {
                 loading.value = false;
-                fileList.value = [];
               }
               try {
                 await addVideo(formState);
