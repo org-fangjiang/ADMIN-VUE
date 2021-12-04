@@ -102,12 +102,15 @@
         id: '',
         number: '',
         firstImg: '',
+        price: 0,
+        labels: '',
+        saleState: '',
       });
 
       const options = ref<Option[]>([]);
 
       const condition = reactive({
-        state: '',
+        state: '1',
         name: '',
         provinceId: provinceId,
         cityId: cityId,
@@ -158,6 +161,9 @@
         } else {
           formState.hLayoutsById = '';
         }
+        formState.price = content.price || 0;
+        formState.labels = content.labels || '';
+        formState.saleState = content.saleState || '';
         fetching.value = false;
       };
 

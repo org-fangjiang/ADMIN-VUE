@@ -1,0 +1,63 @@
+.pdiv {
+  @apply m-auto mt-4 overflow-hidden lg:w-3/4 sm:w-full;
+}
+
+.mdiv {
+  @apply w-full lg:h-[160px] m-auto bg-gray-100 p-2 sm:h-[120px];
+}
+
+.sdiv {
+  @apply flex flex-row w-full h-full overflow-hidden;
+}
+
+.imgdiv {
+  @apply w-2/5 h-full pr-4 place-items-center;
+}
+
+.imgstyle {
+  @apply object-cover w-full h-full;
+}
+
+.rightDiv {
+  @apply flex flex-col items-stretch w-3/5 h-full;
+}
+
+.nameStyle {
+  @apply text-xl font-bold sm:text-base;
+}
+
+.areaStyle {
+  @apply mt-2 sm:mt-0 sm:text-xs;
+}
+
+.mrt {
+  @apply lg:mr-4 sm:mr-2 overflow-ellipsis;
+}
+
+.fontcolor {
+  @apply text-2xl font-bold text-red-600 sm:text-base;
+}
+
+.tellStyle {
+  @apply flex flex-row items-center w-full mt-2 sm:mt-1;
+}
+
+.labelStyle {
+  @apply text-[12px] rounded px-1 lg:py-1 text-[#3485ff] opacity-70 bg-opacity-50 bg-[#98C1FF];
+}
+
+.labelDiv {
+  @apply flex flex-row items-center mt-2 space-x-2 sm:mb-0;
+}
+
+.hcss {
+  @apply text-sm text-center text-white bg-blue-500 rounded-sm lg:px-1 lg:py-1;
+}
+
+.title {
+  @apply flex flex-row space-x-2;
+}
+
+.setbo {
+  @apply grid items-end w-full h-full grid-cols-1;
+}
