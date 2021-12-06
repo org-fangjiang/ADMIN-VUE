@@ -45,6 +45,7 @@
           :options="options"
           :disabled="isUpdate && !newsConst._UPDATE_FIELDS.includes('keywords')"
           @change="tagsChange"
+          :open="false"
         />
       </FormItem>
       <FormItem ref="projects" :label="t('host.news.projects')" name="projects">
@@ -406,7 +407,16 @@
       //初始加载
       onMounted(async () => {
         loading.value = true;
+        if (formState.keywords) {
+          const deTag: string[] = formState.keywords.split(',');
+          deTag.forEach((tag) => {
+            options.value.push({ value: tag, label: tag });
+            tags.value.push(tag);
+          });
+        }
         if (props.id) {
+          options.value.splice(0);
+          tags.value.splice(0);
           const { content } = await getNews(props.id);
           Object.assign(formState, content);
           if (!formState.keywords) {
