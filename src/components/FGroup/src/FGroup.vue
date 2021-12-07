@@ -67,6 +67,7 @@
         () => props.ids,
         (_v1, _v2) => {
           if (props.ids) {
+            result.value = [];
             props.ids.forEach((item) => {
               result.value.push({ value: item.id, label: item.value, key: item.id });
             });
