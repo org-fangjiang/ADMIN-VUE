@@ -11,7 +11,7 @@
   />
 </template>
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from 'vue';
+  import { defineComponent, onMounted, ref, watch } from 'vue';
   import { Select } from 'ant-design-vue';
   import { getAllSysDictGroups } from '/@/api/sys/dict/dict';
   import { SysDictDetailBean } from '/@/api/host/project/model/SysDictDetailBean';
@@ -23,7 +23,7 @@
       Select,
     },
     props: {
-      detialsId: {
+      ids: {
         type: Array as PropType<SysDictDetailBean[]>,
         require: false,
       },
@@ -52,17 +52,27 @@
           });
         }
         if (props.selectedLabel) {
-          debugger;
           props.selectedLabel.forEach((item) => {
             result.value.push({ value: item, key: item });
           });
         }
-        if (props.detialsId) {
-          props.detialsId.forEach((item) => {
-            result.value.push({ value: item.id, label: item.value, key: item.groupId });
+        if (props.ids) {
+          props.ids.forEach((item) => {
+            result.value.push({ value: item.id, label: item.value, key: item.id });
           });
         }
       });
+
+      watch(
+        () => props.ids,
+        (_v1, _v2) => {
+          if (props.ids) {
+            props.ids.forEach((item) => {
+              result.value.push({ value: item.id, label: item.value, key: item.id });
+            });
+          }
+        }
+      );
 
       const change = (value) => {
         debugger;

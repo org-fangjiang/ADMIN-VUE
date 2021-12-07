@@ -282,7 +282,7 @@
           />
         </FormItem>
         <FormItem ref="labels" :label="t('host.labels')" name="labels">
-          <FGroup @change="changeLabels" :detialsId="formState.sysDictDetailBeans" />
+          <FGroup @change="changeLabels" :ids="formState.sysDictDetailBeans" />
         </FormItem>
       </div>
       <br />
@@ -858,6 +858,7 @@
 
       let area = ref('');
       let selected = ref<String[]>([]);
+      let selectedLabel = ref<String[]>([]);
       //初始加载
       onMounted(async () => {
         if (props.id) {
@@ -865,6 +866,12 @@
           try {
             const { content } = await getProject(props.id);
             Object.assign(formState, content);
+            if (formState.sysDictDetailBeans) {
+              formState.sysDictDetailBeans.forEach((item) => {
+                selectedLabel.value.push(item.id || '');
+              });
+              formState.labels = selectedLabel.value.toString();
+            }
             if (formState.loanType) {
               const loanTypes = formState.loanType.split(',');
               selected.value = loanTypes;
@@ -1003,6 +1010,7 @@
         setEstate,
         estateName,
         selectedRow,
+        selectedLabel,
       };
     },
   });

@@ -47,11 +47,7 @@
         />
       </FormItem>
       <FormItem ref="labels" :label="t('host.layout.labels')" name="labels">
-        <FGroup
-          @change="changeLabels"
-          :detialsId="formState.sysDictDetailBeans"
-          :selectedLabel="selectLabel"
-        />
+        <FGroup @change="changeLabels" :selectedLabel="selectLabel" />
       </FormItem>
       <FormItem ref="face" :label="t('host.layout.face')" name="face">
         <Select
