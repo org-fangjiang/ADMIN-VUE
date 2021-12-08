@@ -95,6 +95,15 @@ const house: AppRouteModule = {
         roles: ['/house/video'],
       },
     },
+    {
+      path: 'channel',
+      name: 'channel',
+      component: () => import('/@/views/house/channel/index.vue'),
+      meta: {
+        title: t('routes.house.channel'),
+        roles: ['/house/channel'],
+      },
+    },
   ],
 };
 

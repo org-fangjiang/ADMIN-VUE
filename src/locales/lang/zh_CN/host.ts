@@ -312,4 +312,17 @@ export default {
     selectVideo: '请选择视频',
     videoNull: '视频不能为空',
   },
+  channel: {
+    name: '名称',
+    username: '负责人',
+    contact: '联系方式',
+    description: '描述',
+    channelCase: '案场负责人',
+  },
+  channelCase: {
+    name: '姓名',
+    contact: '联系方式',
+    avatar: '头像',
+    channelId: '渠道',
+  },
 };

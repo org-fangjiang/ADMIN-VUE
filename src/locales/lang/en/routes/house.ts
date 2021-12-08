@@ -9,4 +9,5 @@ export default {
   banner: 'Banner',
   note: 'Note',
   video: 'Video',
+  channel: 'Channel',
 };

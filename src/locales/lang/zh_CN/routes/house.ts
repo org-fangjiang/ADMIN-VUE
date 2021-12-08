@@ -9,4 +9,5 @@ export default {
   banner: '轮播图管理',
   note: '楼盘笔记',
   video: '视频管理',
+  channel: '渠道信息',
 };

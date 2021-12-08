@@ -311,4 +311,17 @@ export default {
     selectVideo: 'selectVideo',
     videoNull: 'videoNull',
   },
+  channel: {
+    name: 'Name',
+    username: 'UserName',
+    contact: 'contact',
+    description: 'description',
+    channelCase: 'channelCase',
+  },
+  channelCase: {
+    name: 'Name',
+    contact: 'Contact',
+    avatar: 'Avatar',
+    channelId: 'ChannelId',
+  },
 };

@@ -42,6 +42,10 @@ const house: MenuModule = {
         path: 'video',
         name: t('routes.house.video'),
       },
+      {
+        path: 'channel',
+        name: t('routes.house.channel'),
+      },
     ],
   },
 };
