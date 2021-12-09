@@ -280,30 +280,44 @@
       const addChild = (expandedRows: string[], parent: Options[], children: Options[]) => {
         parent.forEach((item) => {
           //先找到展开的根节点
-          if (item.id === expandedRows[0]) {
-            //最近展开的一层
-            if (expandedRows.length === 1) {
-              if (children.length === 0) {
-                //没有子菜单，删除展开按钮加号
-                delete item.children;
-              } else {
-                //遍历children，赋值给父菜单的children
-                // 判断是子节点是否存在数据
-                if (item.children && item.children.length > 0) {
-                  return;
-                }
-                children.forEach((cItem) => {
-                  if (!item.children) {
-                    item.children = [];
-                  }
-                  item.children.push(cItem);
-                });
-              }
+          // if (item.id === expandedRows[0]) {
+          //   //最近展开的一层
+          //   if (expandedRows.length === 1) {
+          //     if (children.length === 0) {
+          //       //没有子菜单，删除展开按钮加号
+          //       delete item.children;
+          //     } else {
+          //       //遍历children，赋值给父菜单的children
+          //       // 判断是子节点是否存在数据
+          //       if (item.children && item.children.length > 0) {
+          //         return;
+          //       }
+          //       children.forEach((cItem) => {
+          //         if (!item.children) {
+          //           item.children = [];
+          //         }
+          //         item.children.push(cItem);
+          //       });
+          //     }
+          //     return;
+          //   }
+          //   debugger;
+          //   expandedRows.splice(0, 1); //删除第一项数据
+          //   addChild(expandedRows, item.children || [], children);
+          // }
+          if (item.id === expandedRows[expandedRows.length - 1]) {
+            if (item.children && item.children.length > 0) {
               return;
             }
-            expandedRows.splice(0, 1); //删除第一项数据
-            addChild(expandedRows, item.children || [], children);
+            children.forEach((cItem) => {
+              if (!item.children) {
+                item.children = [];
+              }
+              item.children.push(cItem);
+            });
+            return;
           }
+          addChild(expandedRows, item.children || [], children);
         });
       };
       //展开行发生改变时触发
@@ -321,6 +335,7 @@
           flags.push(item);
         });
         //调用递归函数
+        debugger;
         addChild(flags, list, children);
         expandedRowKeys.value = expandedRows;
       };
