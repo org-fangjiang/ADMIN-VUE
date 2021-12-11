@@ -38,6 +38,7 @@
     "@iconify/iconify": "^2.0.3",
     "@logicflow/core": "^0.6.1",
     "@logicflow/extension": "^0.6.1",
+    "@stomp/stompjs": "^6.1.2",
     "@vueuse/core": "^5.1.4",
     "@zxcvbn-ts/core": "^1.0.0-beta.0",
     "ant-design-vue": "2.2.2",
