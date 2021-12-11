@@ -23,41 +23,30 @@
   </div>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, ref } from 'vue';
+  import { computed, defineComponent, getCurrentInstance, ref } from 'vue';
   import { Popover, Tabs, Badge } from 'ant-design-vue';
   import { BellOutlined } from '@ant-design/icons-vue';
   import { tabListData, ListItem } from './data';
   import NoticeList from './NoticeList.vue';
+  import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { getCurrentInstance } from 'vue';
-  import { init as wsInit } from '/@/websocket/socket';
-  import { getAccessToken } from '/@/utils/auth';
+  import { initStomp as wsInit } from '/@/websocket/socket';
+  import { Client } from '@stomp/stompjs';
 
   export default defineComponent({
     components: { Popover, BellOutlined, Tabs, TabPane: Tabs.TabPane, Badge, NoticeList },
     setup() {
-      // 连接websocket
+      const userStore = useUserStore();
+      const userId = userStore.userInfo?.id || '';
+      const roleName = userStore.userInfo?.roleName || 'temp';
+
+      // websocket 消息回调
+      const onMessage = function (message) {
+        console.log('onMessage', message.body);
+      };
       const instance = getCurrentInstance();
-      let socket;
-      if (instance) {
-        socket = wsInit(instance);
-        // if (!socket.connected) {
-        //   socket.connect();
-        // }
-      }
-
-      socket.onopen = () => {
-        console.log('socket is connected');
-        const token = getAccessToken();
-        const Authorization = `${token}`;
-        const msg = JSON.stringify({ Authorization });
-        socket.send(msg);
-      };
-
-      socket.onmessage = (msg) => {
-        console.log('notify:::', msg);
-      };
+      const client: Client = wsInit(roleName, userId, onMessage, instance);
 
       const { prefixCls } = useDesign('header-notify');
       const { createMessage } = useMessage();
@@ -75,7 +64,12 @@
         createMessage.success('你点击了通知，ID=' + record.id);
         // 可以直接将其标记为已读（为标题添加删除线）,此处演示的代码会切换删除线状态
         record.titleDelete = !record.titleDelete;
-        socket.send(record.id);
+        // 推送信息
+        const data = { aaa: 'hello world' };
+        client.publish({
+          destination: '/message/receive',
+          body: JSON.stringify(data),
+        });
       }
 
       return {

@@ -35,7 +35,7 @@
   // components
   import { Dropdown, Menu } from 'ant-design-vue';
 
-  import { defineComponent, computed, ref } from 'vue';
+  import { defineComponent, computed, ref, getCurrentInstance } from 'vue';
 
   import { useUserStore } from '/@/store/modules/user';
   import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
@@ -68,6 +68,7 @@
       const { t } = useI18n();
       const { getShowDoc, getUseLockPage } = useHeaderSetting();
       const userStore = useUserStore();
+      const instance = getCurrentInstance();
 
       const getUserInfo = computed(() => {
         const { realName = '', avatar, description } = userStore.getUserInfo || {};
@@ -82,7 +83,7 @@
 
       //  login out
       function handleLoginOut() {
-        userStore.confirmLoginOut();
+        userStore.confirmLoginOut(instance);
       }
 
       let update = ref<boolean>(false);

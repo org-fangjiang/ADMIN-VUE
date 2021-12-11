@@ -15,6 +15,8 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { tokenInfoModel } from '/@/api/sys/model/tokenModel';
 import { MenuConst } from '../../api/sys/menu/model/permsModel';
+import { Client } from '@stomp/stompjs';
+import { ComponentInternalInstance } from 'vue';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -190,7 +192,7 @@ export const useUserStore = defineStore({
     /**
      * @description: Confirm before logging out
      */
-    confirmLoginOut() {
+    confirmLoginOut(instance: ComponentInternalInstance | null) {
       const { createConfirm } = useMessage();
       const { t } = useI18n();
       createConfirm({
@@ -199,6 +201,12 @@ export const useUserStore = defineStore({
         content: t('sys.app.logoutMessage'),
         onOk: async () => {
           await this.logout(true);
+          const app = instance?.appContext;
+          if (app?.config.globalProperties.$stompClient) {
+            const client: Client = app?.config.globalProperties.$stompClient;
+            client.disconnectHeaders = { close: 'success' };
+            client.deactivate();
+          }
         },
       });
     },
