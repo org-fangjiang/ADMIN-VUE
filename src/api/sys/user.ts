@@ -21,7 +21,7 @@ export function refreshTokenApi(params: RefreshParams) {
   return defHttp.post<LoginResultModel>(
     {
       url: Api.RefreshToken,
-      params,
+      data: params,
     },
     {
       withToken: false,
@@ -40,7 +40,7 @@ export function getCodeApi() {
  */
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {
   defHttp.setHeader({ Authorization: 'Basic ZmFuZ2ppYW5nOjEyMzQ1Ng==' });
-  return defHttp.post<LoginResultModel>(
+  return defHttp.get<LoginResultModel>(
     {
       url: Api.Login,
       params,
