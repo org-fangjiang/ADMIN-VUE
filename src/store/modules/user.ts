@@ -55,7 +55,7 @@ export const useUserStore = defineStore({
       return this.access_token || getAuthCache<string>(ACCESS_TOKEN_KEY);
     },
     getRefreshToken(): string {
-      return this.access_token || getAuthCache<string>(REFRESH_TOKEN_KEY);
+      return this.refresh_token || getAuthCache<string>(REFRESH_TOKEN_KEY);
     },
     getSessionTimeout(): boolean {
       return !!this.sessionTimeout;
