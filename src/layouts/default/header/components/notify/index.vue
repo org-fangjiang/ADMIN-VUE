@@ -20,6 +20,7 @@
         </Tabs>
       </template>
     </Popover>
+    <audio controls="controls" hidden src="/src/assets/mp3/tip.mp3" ref="audio"></audio>
   </div>
 </template>
 <script lang="ts">
@@ -40,9 +41,12 @@
       const userStore = useUserStore();
       const userId = userStore.userInfo?.id || '';
       const roleName = userStore.userInfo?.roleName || 'temp';
+      const audio = ref();
 
       // websocket 消息回调
       const onMessage = function (message) {
+        audio.value.currentTime = 0;
+        audio.value.play();
         console.log('onMessage', message.body);
       };
       const instance = getCurrentInstance();
@@ -78,6 +82,7 @@
         count,
         onNoticeClick,
         numberStyle: {},
+        audio,
       };
     },
   });
