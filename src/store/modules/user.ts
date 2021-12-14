@@ -36,9 +36,9 @@ export const useUserStore = defineStore({
     userInfo: null,
     perms: [],
     // token
-    access_token: undefined,
+    access_token: getAuthCache<string>(ACCESS_TOKEN_KEY) || '',
     expires_in: 0,
-    refresh_token: undefined,
+    refresh_token: getAuthCache<string>(REFRESH_TOKEN_KEY) || '',
     scope: [],
     token_type: '',
     // Whether the login expired
@@ -65,7 +65,9 @@ export const useUserStore = defineStore({
     setTokenInfo(tokenInfo: tokenInfoModel) {
       this.setAccessToken(tokenInfo.token_type + ' ' + tokenInfo.access_token);
       this.setExpiresIn(tokenInfo.expires_in);
-      this.setRefreshToken(tokenInfo.refresh_token);
+      if (tokenInfo.refresh_token) {
+        this.setRefreshToken(tokenInfo.refresh_token);
+      }
       this.setScope(tokenInfo.scope);
       this.setTokenType(tokenInfo.token_type);
     },
@@ -118,6 +120,7 @@ export const useUserStore = defineStore({
         client_secret: '123456',
         scope: 'all',
       });
+      tokenInfo.refresh_token = undefined;
       this.setTokenInfo(tokenInfo);
     },
     /**

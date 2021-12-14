@@ -18,6 +18,7 @@ enum Api {
   GetPermCode = '/getPermCode',
 }
 export function refreshTokenApi(params: RefreshParams) {
+  defHttp.setHeader({ Authorization: 'Basic ZmFuZ2ppYW5nOjEyMzQ1Ng==' });
   return defHttp.post<LoginResultModel>(
     {
       url: Api.RefreshToken,
