@@ -2,6 +2,7 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 pt-2">
     <Button @click="handleAdd" class="setMargin">保存</Button>
+    <FProjectSelect @setProject="setProject" @onClear="onClear" class="setMargin" />
     <Table
       :columns="columns"
       :data-source="list"
@@ -50,8 +51,9 @@
   import { Loading } from '/@/components/Loading';
   import { HostModel, _Columns, _HostConst } from '/@/api/host/project/model/projectModel';
   import { useUserStore } from '/@/store/modules/user';
-  import { searchWithCondition } from '/@/api/host/project/project';
+  import { search, searchWithCondition } from '/@/api/host/project/project';
   import { processList } from '/@/hooks/web/useList';
+  import FProjectSelect from '/@/components/FProjectSelect';
 
   export default defineComponent({
     name: 'FProject',
@@ -61,6 +63,7 @@
       Loading,
       Button,
       Pagination,
+      FProjectSelect,
     },
     props: {
       id: {
@@ -80,6 +83,36 @@
       const hostConst = ref(_HostConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      //通过名称筛选
+      const setProject = async (value) => {
+        condition.name = value.label;
+        pageParam.number = 1;
+        loading.value = true;
+        let result: BasePageResult<HostModel> | undefined;
+        try {
+          result = await search(condition, {
+            pageSize: pageParam.size,
+            pageNum: pageParam.number,
+          });
+        } catch (error: any) {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
+            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          });
+        } finally {
+          loading.value = false;
+        }
+        processList(result, list, pageParam);
+      };
+      //清空项目名称
+      const onClear = async () => {
+        condition.name = '';
+        const result = await getList();
+        processList(result, list, pageParam);
+      };
+
       //设置分页
       let pageParam = reactive({
         size: 10,
@@ -113,7 +146,7 @@
       const cityId = userStore.getUserInfo.companyCityId;
       const provinceId = userStore.getUserInfo.companyProvinceId;
       const condition = reactive({
-        state: '',
+        state: '1',
         name: '',
         provinceId: provinceId || '',
         cityId: cityId || '',
@@ -187,12 +220,14 @@
         projects,
         onChange,
         onShowSizeChange,
+        setProject,
+        onClear,
       };
     },
   });
 </script>
 <style lang="less">
   .setMargin {
-    @apply mb-5;
+    @apply mb-5 mr-2;
   }
 </style>

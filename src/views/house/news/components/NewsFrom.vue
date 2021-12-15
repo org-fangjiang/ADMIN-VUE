@@ -49,7 +49,9 @@
         />
       </FormItem>
       <FormItem ref="projects" :label="t('host.news.projects')" name="projects">
-        <span v-for="item in formState.projects" :key="item.id">{{ item.name }}，</span>
+        <span v-for="(item, index) in formState.projects" :key="item.id"
+          ><Tag color="blue" @close="log(index)" closable>{{ item.name }}</Tag></span
+        >
         <Button @click="changeModal">{{ t('host.news.setProject') }}</Button>
       </FormItem>
       <FormItem ref="content" :label="t('host.news.content')" name="content">
@@ -163,6 +165,7 @@
     Image,
     Upload,
     Modal,
+    Tag,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { NewsModel, _NewsConst } from '/@/api/host/news/model/newsModel';
@@ -194,6 +197,7 @@
       Modal,
       FProject,
       FTinymce,
+      Tag,
     },
     props: {
       id: {
@@ -245,6 +249,14 @@
           deep: true,
         }
       );
+
+      const log = (index) => {
+        if (formState.projects && formState.projects.length > 0) {
+          formState.projects.splice(index, 1);
+        }
+        debugger;
+        formState.projects;
+      };
 
       //控制modal是否打开
       let isModal = ref<boolean>(false);
@@ -468,6 +480,7 @@
         desVio,
         desNumber,
         desViolations,
+        log,
       };
     },
   });
