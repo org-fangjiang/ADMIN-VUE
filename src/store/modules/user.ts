@@ -120,7 +120,6 @@ export const useUserStore = defineStore({
         client_secret: '123456',
         scope: 'all',
       });
-      tokenInfo.refresh_token = undefined;
       this.setTokenInfo(tokenInfo);
     },
     /**

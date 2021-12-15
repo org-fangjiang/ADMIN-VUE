@@ -16,6 +16,7 @@ import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
+import { useUserStore } from '/@/store/modules/user';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -152,6 +153,35 @@ const transform: AxiosTransform = {
   },
 
   /**
+   * @description 401重新请求
+   * @param error
+   */
+  responseInterceptors401: async (err: any) => {
+    const userStore = useUserStore();
+    const refreshToken = userStore.getRefreshToken;
+    const config = err.config;
+    const retry: number = config.retry;
+    if (retry == 0 || !refreshToken) {
+      return Promise.reject(err);
+    }
+    await userStore.refreshToken();
+    config.retry = config.retry - 1;
+    const data = await defHttp.request(config);
+    const result: AxiosResponse<Result> = {
+      data: {
+        code: 200,
+        message: '成功',
+        data,
+      },
+      status: 200,
+      statusText: '成功',
+      headers: {},
+      config,
+    };
+    return result;
+  },
+
+  /**
    * @description: 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
@@ -230,6 +260,8 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 是否携带token
           withToken: true,
         },
+        // 重试次数
+        retry: 1,
       },
       opt || {}
     )

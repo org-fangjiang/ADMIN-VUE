@@ -73,6 +73,7 @@ export class VAxios {
       requestInterceptors,
       requestInterceptorsCatch,
       responseInterceptors,
+      responseInterceptors401,
       responseInterceptorsCatch,
     } = transform;
 
@@ -110,6 +111,10 @@ export class VAxios {
       }
       return res;
     }, undefined);
+
+    responseInterceptors401 &&
+      isFunction(responseInterceptors401) &&
+      this.axiosInstance.interceptors.response.use(undefined, responseInterceptors401);
 
     // Response result interceptor error capture
     responseInterceptorsCatch &&
@@ -212,6 +217,7 @@ export class VAxios {
         .then((res: AxiosResponse<Result>) => {
           if (transformRequestHook && isFunction(transformRequestHook)) {
             try {
+              debugger;
               const ret = transformRequestHook(res, opt);
               resolve(ret);
             } catch (err) {

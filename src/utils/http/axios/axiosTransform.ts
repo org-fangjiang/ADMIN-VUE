@@ -45,6 +45,8 @@ export abstract class AxiosTransform {
    */
   requestInterceptorsCatch?: (error: Error) => void;
 
+  responseInterceptors401?: (error: Error) => any;
+
   /**
    * @description: 请求之后的拦截器错误处理
    */
