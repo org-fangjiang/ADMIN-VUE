@@ -153,26 +153,20 @@
             if (props.id) {
               try {
                 const { content } = await updateTradingArea(formState);
-                success(
-                  t('model.metroStation.result.update'),
-                  t('model.metroStation.result.update')
-                );
+                success(t('model.trading.tradingInfo'), t('model.trading.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
+                failed(t('model.trading.tradingInfo'), t('model.trading.fail'));
               } finally {
                 loading.value = false;
               }
             } else {
               try {
                 const { content } = await addTradingArea(formState);
-                success(
-                  t('model.metroStation.result.addStation'),
-                  t('model.metroStation.result.addStation')
-                );
+                success(t('model.trading.tradingInfo'), t('model.trading.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('model.metroStation.result.failed'));
+                failed(t('model.trading.tradingInfo'), t('model.trading.fail'));
               } finally {
                 loading.value = false;
               }

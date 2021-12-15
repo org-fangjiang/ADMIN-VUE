@@ -347,6 +347,11 @@ export default {
     provinceId: 'provinceId',
     cityId: 'cityId',
     areaId: 'areaId',
+    tradingInfo: 'tradingInfo action',
+    success: 'success',
+    fail: 'fail',
+    delete: 'delete',
+    reenable: 'reenable',
   },
   violation: {
     value: 'violation',

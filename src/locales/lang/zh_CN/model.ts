@@ -346,6 +346,11 @@ export default {
     provinceId: '省份',
     cityId: '城市',
     areaId: '地区',
+    tradingInfo: '商圈信息操作',
+    success: '成功',
+    fail: '失败',
+    delete: '删除',
+    reenable: '恢复',
   },
   violation: {
     value: '违规词',

@@ -311,11 +311,11 @@
             try {
               loading.value = true;
               await deleteTradingArea(id);
-              success(t('model.metroLine.result.delete'), t('model.metroLine.result.delete'));
+              success(t('model.trading.delete'), t('model.trading.success'));
               const result = await getList();
               processList(result, list, pageParam);
             } catch (error: any) {
-              failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+              failed(t('model.trading.delete'), t('model.trading.fail'));
             } finally {
               loading.value = false;
             }
@@ -325,11 +325,11 @@
             try {
               loading.value = true;
               await reEnableTradingArea(id);
-              success(t('model.metroLine.result.reEnable'), t('model.metroLine.result.reEnable'));
+              success(t('model.trading.reenable'), t('model.trading.success'));
               const result = await getList();
               processList(result, list, pageParam);
             } catch (error: any) {
-              failed(error?.response?.data?.message, t('model.metroLine.result.failed'));
+              failed(t('model.trading.reenable'), t('model.trading.fail'));
             } finally {
               loading.value = false;
             }
