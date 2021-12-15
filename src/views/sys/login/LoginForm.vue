@@ -53,7 +53,7 @@
         {{ t('sys.login.registerButton') }}
       </Button> -->
     </FormItem>
-    <ARow class="enter-x">
+    <!-- <ARow class="enter-x">
       <ACol :xs="24" :md="8">
         <Button block @click="setLoginState(LoginStateEnum.MOBILE)">
           {{ t('sys.login.mobileSignInFormTitle') }}
@@ -79,20 +79,20 @@
       <AlipayCircleFilled />
       <GoogleCircleFilled />
       <TwitterCircleFilled />
-    </div>
+    </div> -->
   </Form>
 </template>
 <script lang="ts">
-  import { defineComponent, reactive, ref, toRaw, unref, computed, onMounted } from 'vue';
+  import { defineComponent, reactive, ref, toRaw, unref, computed, onMounted, watch } from 'vue';
 
-  import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
-  import {
-    GithubFilled,
-    WechatFilled,
-    AlipayCircleFilled,
-    GoogleCircleFilled,
-    TwitterCircleFilled,
-  } from '@ant-design/icons-vue';
+  import { Checkbox, Form, Input, Row, Col, Button } from 'ant-design-vue';
+  // import {
+  //   GithubFilled,
+  //   WechatFilled,
+  //   AlipayCircleFilled,
+  //   GoogleCircleFilled,
+  //   TwitterCircleFilled,
+  // } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
 
   import { useI18n } from '/@/hooks/web/useI18n';
@@ -103,6 +103,9 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { getCodeApi } from '/@/api/sys/user';
   import { CodeResultModel } from '/@/api/sys/model/userModel';
+  import { ACCESS_TOKEN_KEY, IS_REMEMBER, REFRESH_TOKEN_KEY } from '/@/enums/cacheEnum';
+  import { getAuthCache, setAuthCache } from '/@/utils/auth';
+  import { Persistent } from '/@/utils/cache/persistent';
   //import { onKeyStroke } from '@vueuse/core';
 
   export default defineComponent({
@@ -115,14 +118,14 @@
       Form,
       FormItem: Form.Item,
       Input,
-      Divider,
+      // Divider,
       LoginFormTitle,
       InputPassword: Input.Password,
-      GithubFilled,
-      WechatFilled,
-      AlipayCircleFilled,
-      GoogleCircleFilled,
-      TwitterCircleFilled,
+      // GithubFilled,
+      // WechatFilled,
+      // AlipayCircleFilled,
+      // GoogleCircleFilled,
+      // TwitterCircleFilled,
     },
     setup() {
       const { t } = useI18n();
@@ -144,6 +147,19 @@
         key: '',
         codeUrl: '',
       });
+
+      watch(
+        () => rememberMe.value,
+        async () => {
+          if (rememberMe.value) {
+            setAuthCache(IS_REMEMBER, 1);
+          } else {
+            setAuthCache(IS_REMEMBER, 0);
+            Persistent.removeLocal(REFRESH_TOKEN_KEY, true);
+            Persistent.removeLocal(ACCESS_TOKEN_KEY, true);
+          }
+        }
+      );
 
       const { validForm } = useFormValid(formRef);
 
@@ -194,6 +210,12 @@
 
       onMounted(() => {
         getCode();
+        const isRemember = getAuthCache(IS_REMEMBER);
+        if (isRemember === 1) {
+          rememberMe.value = true;
+        } else {
+          rememberMe.value = false;
+        }
       });
 
       return {

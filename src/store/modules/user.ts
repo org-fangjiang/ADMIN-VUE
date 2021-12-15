@@ -3,7 +3,12 @@ import type { ErrorMessageMode } from '/#/axios';
 import { defineStore } from 'pinia';
 import { store } from '/@/store';
 import { PageEnum } from '/@/enums/pageEnum';
-import { ACCESS_TOKEN_KEY, USER_INFO_KEY, REFRESH_TOKEN_KEY } from '/@/enums/cacheEnum';
+import {
+  ACCESS_TOKEN_KEY,
+  USER_INFO_KEY,
+  REFRESH_TOKEN_KEY,
+  IS_REMEMBER,
+} from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { LoginParams, LoginResultModel, UserInfoModel } from '/@/api/sys/model/userModel';
 import { doLogout, getUserInfo, loginApi, refreshTokenApi } from '/@/api/sys/user';
@@ -80,7 +85,10 @@ export const useUserStore = defineStore({
     },
     setRefreshToken(info: string | undefined) {
       this.refresh_token = info;
-      setAuthCache(REFRESH_TOKEN_KEY, info);
+      const isRemember = getAuthCache<number>(IS_REMEMBER);
+      if (isRemember === 1) {
+        setAuthCache(REFRESH_TOKEN_KEY, info);
+      }
     },
     setScope(info: string[]) {
       this.scope = info;

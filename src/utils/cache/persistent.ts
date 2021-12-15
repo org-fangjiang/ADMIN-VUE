@@ -16,6 +16,7 @@ import {
   MULTIPLE_TABS_KEY,
   HOUSE_PROJECT,
   HOUSE_NEWS,
+  IS_REMEMBER,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { toRaw } from 'vue';
@@ -31,6 +32,7 @@ interface BasicStore {
   [MULTIPLE_TABS_KEY]: RouteLocationNormalized[];
   [HOUSE_PROJECT]: any;
   [HOUSE_NEWS]: any;
+  [IS_REMEMBER]: number;
 }
 
 type LocalStore = BasicStore;

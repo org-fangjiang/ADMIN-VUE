@@ -31,6 +31,8 @@ export const HOUSE_PROJECT = 'HOUSE__PROJECT';
 
 export const HOUSE_NEWS = 'HOUSE__NEWS';
 
+export const IS_REMEMBER = 'IS_REMEMBER';
+
 export enum CacheTypeEnum {
   SESSION,
   LOCAL,
