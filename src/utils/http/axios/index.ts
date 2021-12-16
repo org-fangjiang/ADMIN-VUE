@@ -182,6 +182,32 @@ const transform: AxiosTransform = {
   },
 
   /**
+   * @param error 超时
+   * @returns any
+   */
+  responseInterceptorsTimeout: async (err: any) => {
+    const { code, message, config } = err || {};
+    if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1 && config.timeOutRetry != 0) {
+      config.timeOutRetry = config.timeOutRetry - 1;
+      const data = await defHttp.request(config);
+      const result: AxiosResponse<Result> = {
+        data: {
+          code: 200,
+          message: '成功',
+          data,
+        },
+        status: 200,
+        statusText: '成功',
+        headers: {},
+        config,
+      };
+      return result;
+    } else {
+      return Promise.reject(err);
+    }
+  },
+
+  /**
    * @description: 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
@@ -227,7 +253,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // authentication schemes，e.g: Bearer
         // authenticationScheme: 'Bearer',
         authenticationScheme: '',
-        timeout: 100 * 1000,
+        timeout: 15 * 1000,
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
         // 接口可能会有通用的地址部分，可以统一抽取出来
@@ -262,6 +288,8 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         },
         // 重试次数
         retry: 1,
+        //超时重试
+        timeOutRetry: 3,
       },
       opt || {}
     )

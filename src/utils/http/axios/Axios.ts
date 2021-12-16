@@ -74,6 +74,7 @@ export class VAxios {
       requestInterceptorsCatch,
       responseInterceptors,
       responseInterceptors401,
+      responseInterceptorsTimeout,
       responseInterceptorsCatch,
     } = transform;
 
@@ -115,6 +116,10 @@ export class VAxios {
     responseInterceptors401 &&
       isFunction(responseInterceptors401) &&
       this.axiosInstance.interceptors.response.use(undefined, responseInterceptors401);
+
+    responseInterceptorsTimeout &&
+      isFunction(responseInterceptorsTimeout) &&
+      this.axiosInstance.interceptors.response.use(undefined, responseInterceptorsTimeout);
 
     // Response result interceptor error capture
     responseInterceptorsCatch &&
