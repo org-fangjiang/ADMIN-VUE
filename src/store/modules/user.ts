@@ -194,6 +194,7 @@ export const useUserStore = defineStore({
       } catch {
         console.log('注销Token失败');
       }
+      this.setRefreshToken(undefined);
       this.setAccessToken(undefined);
       this.setSessionTimeout(false);
       goLogin && router.push(PageEnum.BASE_LOGIN);
