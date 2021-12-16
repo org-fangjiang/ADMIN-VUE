@@ -28,6 +28,7 @@ export function uploadVideo(formData, mode: ErrorMessageMode = 'modal') {
       url: ApiSource.UpdateVideoApi,
       params: formData,
       headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+      timeout: 300 * 1000,
     },
     {
       errorMessageMode: mode,
