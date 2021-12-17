@@ -592,7 +592,7 @@
   import { getDeveloper } from '/@/api/host/developer/developer';
   import { getBrand } from '/@/api/host/brand/brand';
   import { getEstateCompany } from '/@/api/host/estateCompany/estateCompany';
-  import { success, failed } from '/@/hooks/web/useList';
+  import { success } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'ProjectForm',
@@ -816,7 +816,7 @@
                 Object.assign(formState, content);
                 Persistent.removeLocal(HOUSE_PROJECT, true);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('host.action.fail'));
+                // failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
               }

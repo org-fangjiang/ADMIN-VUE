@@ -171,7 +171,7 @@
           const result = await getList();
           processList(result, list, pageParam);
         } catch (error: any) {
-          failed(error?.response?.data?.message, t('host.action.fail'));
+          // failed(error?.response?.data?.message, t('host.action.fail'));
         } finally {
           loading.value = false;
         }
@@ -245,7 +245,7 @@
               const result = await getList();
               processList(result, list, pageParam);
             } catch (error: any) {
-              failed(error?.response?.data?.message, t('host.action.fail'));
+              // failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
             }
@@ -259,7 +259,7 @@
               const result = await getList();
               processList(result, list, pageParam);
             } catch (error: any) {
-              failed(error?.response?.data?.message, t('host.action.fail'));
+              // failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
               loading.value = false;
             }

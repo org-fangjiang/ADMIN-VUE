@@ -155,7 +155,7 @@
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   import { useUserStore } from '/@/store/modules/user';
-  import { success, failed } from '/@/hooks/web/useList';
+  import { success } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'MenuForm',
@@ -246,7 +246,7 @@
                 success(t('model.perms.updateMenu'), t('model.perms.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('model.perms.fail'));
+                // failed(error?.response?.data?.message, t('model.perms.fail'));
               } finally {
                 loading.value = false;
               }
@@ -256,7 +256,7 @@
                 success(t('model.perms.addMenu'), t('model.perms.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('model.perms.fail'));
+                // failed(error?.response?.data?.message, t('model.perms.fail'));
               } finally {
                 loading.value = false;
               }

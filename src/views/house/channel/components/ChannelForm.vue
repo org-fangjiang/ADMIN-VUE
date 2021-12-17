@@ -52,7 +52,7 @@
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { Button, Form, FormItem, Input, Textarea } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
-  import { success, failed } from '/@/hooks/web/useList';
+  import { success } from '/@/hooks/web/useList';
   import { ChannelModel, _ChannelConst } from '/@/api/host/channel/model/channelModel';
   import { addChannel, getChannel, updateChannel } from '/@/api/host/channel/channel';
 
@@ -99,7 +99,7 @@
                 await updateChannel(formState);
                 success(t('host.action.update'), t('host.action.success'));
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('host.action.fail'));
+                // failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
               }
@@ -110,7 +110,7 @@
                 success(t('host.action.add'), t('host.action.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('host.action.fail'));
+                // failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
               }

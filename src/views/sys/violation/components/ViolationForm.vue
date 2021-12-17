@@ -115,7 +115,7 @@
                   await add(formState);
                   success(t('model.violation.add'), t('model.violation.success'));
                 } catch (error: any) {
-                  failed(error?.response?.data?.message, t('model.violation.fail'));
+                  // failed(error?.response?.data?.message, t('model.violation.fail'));
                 } finally {
                   loading.value = false;
                 }

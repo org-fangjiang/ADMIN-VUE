@@ -47,7 +47,7 @@
   import { Select, Button, Form, FormItem, Input } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
-  import { success, failed } from '/@/hooks/web/useList';
+  import { success } from '/@/hooks/web/useList';
 
   export default defineComponent({
     name: 'GroupForm',
@@ -100,7 +100,7 @@
                 success(t('model.dict.group.addGroup'), t('model.dict.group.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('model.dict.group.fail'));
+                // failed(error?.response?.data?.message, t('model.dict.group.fail'));
               } finally {
                 loading.value = false;
               }
@@ -110,7 +110,7 @@
                 success(t('model.dict.group.updateGroup'), t('model.dict.group.success'));
                 Object.assign(formState, content);
               } catch (error: any) {
-                failed(error?.response?.data?.message, t('model.dict.group.fail'));
+                // failed(error?.response?.data?.message, t('model.dict.group.fail'));
               } finally {
                 loading.value = false;
               }

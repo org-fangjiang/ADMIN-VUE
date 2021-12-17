@@ -365,6 +365,7 @@
 
       //根据名称筛选
       const setProject = async (value) => {
+        loading.value = true;
         let result: BasePageResult<HostModel> | undefined;
         if (value) {
           condition.name = value.label;
@@ -373,14 +374,17 @@
           result = await getList();
         }
         processList(result, list, pageParam);
+        loading.value = false;
       };
       const onClear = async () => {
+        loading.value = true;
         let result: BasePageResult<HostModel> | undefined;
         result = await searchWithCondition(condition, {
           pageSize: pageParam.size,
           pageNum: pageParam.number,
         });
         processList(result, list, pageParam);
+        loading.value = false;
       };
 
       //根据状态筛选
