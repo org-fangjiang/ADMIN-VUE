@@ -56,9 +56,11 @@
           :action="ApiSource.Upload"
           :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('address')"
           @change="changeFile"
+          v-model:file-list="fileList"
         >
           <Button> Upload </Button>
         </Upload>
+        <img v-if="imgUrl" :src="imgUrl" alt="资源图" />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
@@ -84,6 +86,14 @@
   interface Option {
     value: string;
     label: string;
+  }
+
+  interface FileItem {
+    uid: string;
+    name?: string;
+    status?: string;
+    response?: string;
+    url?: string;
   }
 
   export default defineComponent({
@@ -146,11 +156,15 @@
         formState.keyword = selectTags;
       };
       //上传资源
+      const fileList = ref<FileItem[]>([]);
+      let imgUrl = ref('');
       const changeFile = async (info) => {
         if (info.file.status === 'done') {
+          fileList.value.splice(0);
           formState.title = info.file.name;
           formState.projectId = props.projectId;
           formState.address = info.file.response.data;
+          imgUrl.value = info.file.response.data;
         }
       };
       //类型选择
@@ -243,6 +257,8 @@
         tagsChange,
         tags,
         options,
+        fileList,
+        imgUrl,
       };
     },
   });
