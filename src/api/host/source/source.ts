@@ -21,6 +21,8 @@ export enum ApiSource {
   UploadBanner = '/api/sys-server/file/uploadBanner',
   UpdateVideo = '/api/sys-server/file/updateVideo',
   UpdateVideoApi = '/sys-server/file/updateVideo',
+  UploadUserImg = '/api/sys-server/file/uploadUserImg',
+  UploadActivityImg = '/api/sys-server/file/uploadActivityImg',
 }
 export function uploadVideo(formData, mode: ErrorMessageMode = 'modal') {
   return defHttp.post(

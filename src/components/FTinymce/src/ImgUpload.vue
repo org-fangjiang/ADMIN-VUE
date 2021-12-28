@@ -32,6 +32,7 @@
       :action="ApiSource.UploadNews"
       @change="handleChange"
       :showUploadList="false"
+      :headers="requestHeader"
     >
       <a-button type="primary">
         {{ t('component.upload.imgUpload') }}
@@ -46,6 +47,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useGlobSetting } from '/@/hooks/setting';
   import { useI18n } from '/@/hooks/web/useI18n';
+  import { getAccessToken } from '/@/utils/auth';
 
   export default defineComponent({
     name: 'TinymceImageUpload',
@@ -92,6 +94,10 @@
         };
       });
 
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
+
       function handleChange(info: Recordable) {
         const file = info.file;
         const status = file?.status;
@@ -125,6 +131,7 @@
         isOk,
         onOK,
         onClose,
+        requestHeader,
       };
     },
   });

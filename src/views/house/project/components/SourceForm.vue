@@ -57,6 +57,7 @@
           :disabled="isUpdate && !sourceConst._UPDATE_fIELD.includes('address')"
           @change="changeFile"
           v-model:file-list="fileList"
+          :headers="requestHeader"
         >
           <Button> Upload </Button>
         </Upload>
@@ -82,6 +83,7 @@
   import { SourceModel, _SourceConst } from '/@/api/host/source/model/sourceModel';
   import { updateResource, addResource, getResource, ApiSource } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
+  import { getAccessToken } from '/@/utils/auth';
 
   interface Option {
     value: string;
@@ -140,6 +142,10 @@
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
 
       //关键词
       const options = ref<Option[]>([]);
@@ -259,6 +265,7 @@
         options,
         fileList,
         imgUrl,
+        requestHeader,
       };
     },
   });

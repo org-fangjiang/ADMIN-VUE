@@ -26,11 +26,12 @@
           list-type="picture-card"
           :show-upload-list="false"
           :data="{
-            provinceId: provinceId,
-            cityId: cityId,
+            userId: userStore.getUserInfo.id,
+            companyId: userStore.getUserInfo.companyId,
           }"
-          :action="ApiSource.UploadNews"
+          :action="ApiSource.UploadUserImg"
           @change="changeFile"
+          :headers="requestHeader"
         >
           <img v-if="formState.avatar" :src="formState.avatar" />
           <div v-else>Upload</div>
@@ -65,6 +66,7 @@
     getChannelCase,
     updateChannelCase,
   } from '/@/api/host/channelCase/channelCase';
+  import { getAccessToken } from '/@/utils/auth';
 
   export default defineComponent({
     name: 'ChannelCaseForm',
@@ -103,6 +105,9 @@
       const userStore = useUserStore();
       const cityId = userStore.getUserInfo.companyCityId;
       const provinceId = userStore.getUserInfo.companyProvinceId;
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
 
       // fromRef 获取form
       const formRef = ref();
@@ -193,6 +198,8 @@
         cityId,
         provinceId,
         changeFile,
+        userStore,
+        requestHeader,
       };
     },
   });

@@ -36,10 +36,11 @@
             list-type="picture-card"
             :show-upload-list="false"
             :data="{
-              provinceId: formState.companyProvinceId,
-              cityId: formState.companyCityId,
+              userId: userStore.getUserInfo.id,
+              companyId: userStore.getUserInfo.companyId,
             }"
-            :action="ApiSource.UploadNews"
+            :headers="requestHeader"
+            :action="ApiSource.UploadUserImg"
             @change="changeFile"
           >
             <img v-if="formState.avatar" :src="formState.avatar" />
@@ -84,6 +85,7 @@
   import { SysUserBean } from '/@/api/sys/user/model/userModel';
   import { ApiSource } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
+  import { getAccessToken } from '/@/utils/auth';
 
   export default defineComponent({
     name: 'MyInfo',
@@ -114,6 +116,8 @@
         id: userStore.getUserInfo.id,
       });
       //上传头像
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
       const changeFile = async (info) => {
         if (info.file.status === 'done') {
           formState.avatar = info.file.response.data;
@@ -174,6 +178,8 @@
         handleCancel,
         ApiSource,
         changeFile,
+        userStore,
+        requestHeader,
       };
     },
   });

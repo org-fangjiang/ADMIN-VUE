@@ -25,7 +25,7 @@
 </template>
 <script lang="ts">
   import { computed, defineComponent, getCurrentInstance, ref } from 'vue';
-  import { Popover, Tabs, Badge } from 'ant-design-vue';
+  import { Popover, Tabs, Badge, notification } from 'ant-design-vue';
   import { BellOutlined } from '@ant-design/icons-vue';
   import { tabListData, ListItem } from './data';
   import NoticeList from './NoticeList.vue';
@@ -34,23 +34,74 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { initStomp as wsInit } from '/@/websocket/socket';
   import { Client } from '@stomp/stompjs';
+  import { router } from '/@/router';
 
   export default defineComponent({
-    components: { Popover, BellOutlined, Tabs, TabPane: Tabs.TabPane, Badge, NoticeList },
+    components: {
+      Popover,
+      BellOutlined,
+      Tabs,
+      TabPane: Tabs.TabPane,
+      Badge,
+      NoticeList,
+    },
     setup() {
       const userStore = useUserStore();
       const userId = userStore.userInfo?.id || '';
       const roleName = userStore.userInfo?.roleName || 'temp';
       const audio = ref();
+      const realName = userStore.getUserInfo.realName;
+      const companyId = userStore.getUserInfo.companyId;
 
       // websocket 消息回调
       const onMessage = function (message) {
+        note(message.body);
         audio.value.currentTime = 0;
         audio.value.play();
         console.log('onMessage', message.body);
       };
+      const note = (mess) => {
+        const body = mess.substring(1, mess.length - 1);
+        const array = body.split(',');
+        const type = array[0].split('"');
+        const information = array[1].split('"');
+        if (type[3] === '1') {
+          notification.success({
+            message: realName,
+            description: information[3],
+            duration: 0,
+            onClick: () => {
+              routerReplace(type[3]);
+            },
+          });
+        }
+        if (type[3] === '2') {
+          notification.info({
+            message: realName,
+            description: information[3],
+            duration: 0,
+            onClick: () => {
+              routerReplace(type[3]);
+            },
+          });
+        }
+        if (type[3] === '3') {
+          notification.warning({
+            message: realName,
+            description: information[3],
+            duration: 0,
+            onClick: () => {
+              routerReplace(type[3]);
+            },
+          });
+        }
+        // const status = array[2].split('"');
+      };
+      const routerReplace = (type) => {
+        router.push({ path: '/marketing/clue', query: { type: type } });
+      };
       const instance = getCurrentInstance();
-      const client: Client = wsInit(roleName, userId, onMessage, instance);
+      const client: Client = wsInit(companyId, roleName, userId, onMessage, instance);
 
       const { prefixCls } = useDesign('header-notify');
       const { createMessage } = useMessage();
@@ -83,6 +134,7 @@
         onNoticeClick,
         numberStyle: {},
         audio,
+        realName,
       };
     },
   });

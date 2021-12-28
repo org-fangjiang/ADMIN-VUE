@@ -33,6 +33,27 @@ enum Api {
   SetUserEmail = '/sys-server/user/setUserEmail', // user:update
   ReEnableUser = '/sys-server/user/reEnableUser', // user:update
   GetUserInfo = '/api/auth/getUserInfo',
+  GetUsersBySale = '/sys-server/user/getUsersBySale',
+}
+
+export function getUsersBySale(
+  realName: string,
+  page?: PageParam,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({ realName });
+  reqParam.setPage(page);
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<GetUserModel>>(
+    {
+      url: Api.GetUsersBySale,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 //获取用户信息

@@ -4,4 +4,5 @@ export interface Option {
   isLeaf?: boolean;
   loading?: boolean;
   children?: Option[];
+  disabled?: boolean;
 }

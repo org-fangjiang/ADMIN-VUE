@@ -1,6 +1,6 @@
 <template>
   <Cascader
-    v-model:value="value"
+    v-model:value="selected"
     :options="options"
     :loadData="loadData"
     :size="props.size"
@@ -29,10 +29,31 @@
     emits: ['changeProivnce', 'changeCity', 'changeArea', 'change'],
     setup(props, { emit }) {
       // set default value
-      const value = ref<string[]>([props.provinceId || '', props.cityId || '', props.areaId || '']);
+      const selected = ref<Array<string | undefined>>([]);
+      if (props.provinceId) {
+        selected.value.push(props.provinceId);
+      }
+      if (props.cityId) {
+        selected.value.push(props.cityId);
+      }
+      if (props.areaId) {
+        selected.value.push(props.areaId);
+      }
+
       const options = ref<Option[]>([]);
 
       const change = (value, _selectedOptions) => {
+        if (!value[0]) {
+          if (props.provinceId) {
+            selected.value.push(props.provinceId);
+          }
+          if (props.cityId) {
+            selected.value.push(props.cityId);
+          }
+          if (props.areaId) {
+            selected.value.push(props.areaId);
+          }
+        }
         if (value[0]) {
           emit('changeProivnce', { id: value[0] });
         }
@@ -92,16 +113,54 @@
       onMounted(async () => {
         const { content } = await getAllProvinces();
         content.forEach((item) => {
-          options.value?.push({ value: item.id, label: item.name, isLeaf: false });
+          options.value?.push({
+            value: item.id,
+            label: item.name,
+            isLeaf: false,
+            disabled: props.disProCity,
+          });
         });
-        console.log('options: ', options);
+        if (props.provinceId && props.cityId) {
+          const city = await getCity(props.provinceId);
+          let cityChild = ref<Option[]>([]);
+          city.forEach((item) => {
+            cityChild.value.push({
+              value: item.id,
+              label: item.name,
+              isLeaf: false,
+              disabled: props.disProCity,
+            });
+          });
+          const area = await getArea(props.cityId);
+          let areaChild = ref<Option[]>([]);
+          area.forEach((q) => {
+            areaChild.value.push({ value: q.id, label: q.name });
+          });
+          for (let i = 0; i < options.value.length; i++) {
+            if (options.value[i].value === props.provinceId) {
+              options.value[i].isLeaf = false;
+              options.value[i].children = cityChild.value;
+              // if (props.areaId) {
+              for (let j = 0; j < cityChild.value.length; j++) {
+                if (cityChild.value[j].value === props.cityId) {
+                  if (options.value[i].children) {
+                    (options.value[i].children as Option[])[j].children = areaChild.value;
+                  }
+                }
+              }
+              // }
+            }
+          }
+        }
       });
       return {
         change,
-        value,
+        selected,
         options,
         loadData,
         props,
+        // clear,
+        // cascader,
       };
     },
   });

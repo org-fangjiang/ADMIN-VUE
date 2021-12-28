@@ -89,6 +89,7 @@ const token = getAccessToken();
 // }
 
 export function initStomp(
+  companyId: string,
   role: string,
   userId: string,
   onMessage: any,
@@ -108,7 +109,7 @@ export function initStomp(
   client.heartbeatIncoming = 4000;
   client.heartbeatOutgoing = 4000;
   client.onConnect = function (_frame) {
-    client.subscribe(`/queue/${role}`, onMessage);
+    client.subscribe(`/queue/${companyId}/${role}`, onMessage);
     client.subscribe(`/user/${userId}/queue`, onMessage);
   };
 

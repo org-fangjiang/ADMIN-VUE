@@ -60,10 +60,11 @@
           list-type="picture-card"
           :show-upload-list="false"
           :data="{
-            provinceId: userStore.getUserInfo.companyProvinceId,
-            cityId: userStore.getUserInfo.companyCityId,
+            userId: userStore.getUserInfo.id,
+            companyId: userStore.getUserInfo.companyId,
           }"
-          :action="ApiSource.UploadNews"
+          :headers="requestHeader"
+          :action="ApiSource.UploadUserImg"
           @change="changeFile"
         >
           <img v-if="formState.avatar" :src="formState.avatar" />
@@ -118,6 +119,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { ApiSource } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
+  import { getAccessToken } from '/@/utils/auth';
 
   interface Option {
     value: string;
@@ -146,6 +148,9 @@
       const roleOptions = ref<Option[]>([]);
       //用户信息
       const userStore = useUserStore();
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
 
       const formState: UnwrapRef<AddUserModel> = reactive({
         username: '',
@@ -234,6 +239,7 @@
         userStore,
         ApiSource,
         changeFile,
+        requestHeader,
       };
     },
   });

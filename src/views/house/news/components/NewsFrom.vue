@@ -82,6 +82,7 @@
           :action="ApiSource.UploadNews"
           :disabled="isUpdate && !newsConst._UPDATE_FIELDS.includes('img')"
           @change="changeFile"
+          :headers="requestHeader"
         >
           <Button> Upload </Button>
         </Upload>
@@ -177,6 +178,7 @@
   import { success, failed } from '/@/hooks/web/useList';
   import { HOUSE_NEWS } from '/@/enums/cacheEnum';
   import { Persistent } from '/@/utils/cache/persistent';
+  import { getAccessToken } from '/@/utils/auth';
 
   interface Option {
     value: string;
@@ -228,6 +230,10 @@
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
 
       // fromRef 获取form
       const formRef = ref();
@@ -481,6 +487,7 @@
         desNumber,
         desViolations,
         log,
+        requestHeader,
       };
     },
   });

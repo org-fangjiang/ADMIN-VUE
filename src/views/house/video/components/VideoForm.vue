@@ -60,6 +60,7 @@
           :file-list="fileList"
           :multiple="false"
           :disabled="isUpdate && !videoConst._UPDATE_FIELDS.includes('videoAddress')"
+          :headers="requestHeader"
         >
           <Button> Select File </Button>
         </Upload>
@@ -67,6 +68,7 @@
       <FormItem ref="photoAddress" :label="t('host.video.photoAddress')" name="photoAddress">
         <Image :src="formState.photoAddress" width="100px" />
         <Upload
+          :headers="requestHeader"
           :data="{
             provinceId: provinceId,
             cityId: cityId,
@@ -102,6 +104,7 @@
   import { ApiSource, uploadVideo } from '/@/api/host/source/source';
   import { useUserStore } from '/@/store/modules/user';
   import { updateVideo, addVideo, getById } from '/@/api/host/video/video';
+  import { getAccessToken } from '/@/utils/auth';
 
   interface Option {
     value: string;
@@ -154,6 +157,9 @@
       const userInfo = useUserStore();
       const provinceId = userInfo.getUserInfo.companyProvinceId;
       const cityId = userInfo.getUserInfo.companyCityId;
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
 
       const fileList = ref<FileItem[]>([]);
 
@@ -326,6 +332,7 @@
         beforeUpload,
         fileList,
         handleRemove,
+        requestHeader,
       };
     },
   });

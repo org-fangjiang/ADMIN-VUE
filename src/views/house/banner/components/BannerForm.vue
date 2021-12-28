@@ -41,6 +41,7 @@
           :action="ApiSource.UploadBanner"
           :disabled="isUpdate && !bannerConst._UPDATE_FIELDS.includes('address')"
           @change="changeFile"
+          :headers="requestHeader"
         >
           <Button> Upload </Button>
         </Upload>
@@ -70,6 +71,7 @@
   import { addBanner, getBanner, updateBanner } from '/@/api/host/banner/banner';
   import { ApiSource } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
+  import { getAccessToken } from '/@/utils/auth';
 
   interface Option {
     value: string;
@@ -116,6 +118,10 @@
       const setProject = async (value) => {
         formState.hProjectId = value.value;
       };
+
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
 
       //关键词
       const options = ref<Option[]>([]);
@@ -226,6 +232,7 @@
         changeFile,
         ApiSource,
         setProject,
+        requestHeader,
       };
     },
   });
