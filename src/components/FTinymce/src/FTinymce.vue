@@ -237,7 +237,7 @@
           auto_focus: true,
           skin: skinName.value,
           skin_url: publicPath + 'resource/tinymce/skins/ui/' + skinName.value,
-          content_css: publicPath + 'src/components/FTinymce/css/contentCSS.css',
+          content_css: 'https://fangjiang-saas-prod.oss-cn-beijing.aliyuncs.com/css/contentCSS.css',
           // publicPath + 'resource/tinymce/skins/ui/' + skinName.value + '/content.min.css',
           ...options,
           setup: (editor) => {
@@ -359,48 +359,60 @@
         let labelHtml = '';
         let i = 0;
         for (i; i < labelsArray.length; i++) {
-          labelHtml = labelHtml + '<span class="labelStyle">' + labelsArray[i] + '</span>';
+          labelHtml =
+            labelHtml +
+            '<span style="font-size: 12px; border-radius: 4px; padding-left: 1px; padding-right: 1px; padding-bottom: 1px; padding-top: 1px; color: rgba(52, 133, 255, 0.7); background-color: rgba(152, 193, 255); margin-right: 4px; ">' +
+            labelsArray[i] +
+            '</span>';
         }
-        let saleState = '';
+        let saleState = 'background-color: #efbd47';
+        let bg = '';
         if (value.saleState) {
           if (value.saleState === '1') {
             saleState = '在售';
+            bg = 'background-color: rgba(59, 130, 246)';
           }
           if (value.saleState === '2') {
             saleState = '待售';
+            bg = 'background-color: #efbd47';
           }
           if (value.saleState === '3') {
             saleState = '售罄';
+            bg = 'background-color: red';
           }
         }
         if (!value.hLayoutsById) {
           value.hLayoutsById = '暂无数据';
         }
-        let html = `<div class="pdiv">
-          <div class="mdiv">
-            <div class="sdiv">
-              <div class="imgdiv">
-                <img src="${value.firstImg}" alt="${value.name.label}" class="imgstyle" >
+        let html =
+          `<div style="background-color:rgba(243, 244, 246); height: 180px; margin-top:16px; width: 95%; margin: auto; ">
+          <div style="background-color:rgba(243, 244, 246); height: 180px; height: 100%; padding: 8px">
+            <div style="display: flex; flex-direction: row; overflow: hidden; width: 100%; height: 100%">
+              <div style="width: 35%; height: 100%; padding-right: 16px; place-items: center;">
+                <img src="${value.firstImg}" alt="${value.name.label}" style="object-fit: cover; width: 100%; height: 100%" >
               </div>
-              <div class="rightDiv">
-                <div class="title">
-                  <a href="/house/${value.id}.html" target="_blank" class="nameStyle">${value.name.label}</a>
-                  <span class="hcss">${saleState}</span>
+              <div style="display: flex; flex-direction: column; align-items: stretch; width: 60%; height: 100%">
+                <div style="display: flex; flex-direction: row;">
+                  <a href="/house/${value.id}.html" target="_blank" style="font-size: 20px; line-height: 28px; font-weight: 700;">${value.name.label}</a>
+                  <span style=" margin-left: 0.5rem; font-size: 14px; line-height: 20px; text-align: center; color: white; background-color: rgba(59, 130, 246); border-radius: 2px; padding-left: 4px;
+  padding-right: 4px; padding-top: 4px; padding-bottom: 4px;` +
+          bg +
+          `">${saleState}</span>
                 </div>
-                <div class="setbo">
-                <div class="areaStyle">
-                  <span class="mrt">[${value.area}]</span>
-                  <span class="mrt"> ${value.address}</span>
+                <div style="display: grid; display: grid; width: 100%; height: 100%; grid-template-columns: repeat(1, minmax(0, 1fr));">
+                <div style="margin-top: 8px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+                  <span style="margin-right: 16px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">[${value.area}]</span>
+                  <span style="margin-right: 16px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"> ${value.address}</span>
                 </div>
-                <div class="areaStyle">
+                <div style="margin-top: 8px;">
                   <span>户型：</span>
                   <span>${value.hLayoutsById}</span>
                 </div>
-                <div class="areaStyle">
-                  <span class="fontcolor">${value.price}</span>
+                <div style="margin-top: 8px;">
+                  <span style="font-size: 24px; line-height: 32px; font-weight: 700; color: #da1111;">${value.price}</span>
                   <span>元/㎡</span>
                 </div>
-                <div class="labelDiv">`;
+                <div style="display: flex; flex-direction: row; align-items: center;">`;
         html =
           html +
           labelHtml +
