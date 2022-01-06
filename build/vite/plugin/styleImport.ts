@@ -4,7 +4,7 @@
  */
 
 import styleImport from 'vite-plugin-style-import';
-
+// ant-design-vue 找不到style
 export function configStyleImportPlugin(isBuild: boolean) {
   if (!isBuild) return [];
   const styleImportPlugin = styleImport({
@@ -21,6 +21,8 @@ export function configStyleImportPlugin(isBuild: boolean) {
             'textarea',
             'radio-group',
             'select-option',
+            'tab-pane',
+            'timeline-item',
           ];
           if (item.includes(name)) {
             return '';
