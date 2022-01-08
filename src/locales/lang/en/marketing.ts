@@ -105,4 +105,10 @@ export default {
     headImg: 'headImg',
     userNumber: 'userNumber',
   },
+  timeRule: {
+    clueDropLevel: 'clueDropLevel',
+    clueUnFollow: 'clueUnFollow',
+    clueUnclaimed: 'clueUnclaimed',
+    companyId: 'companyId',
+  },
 };

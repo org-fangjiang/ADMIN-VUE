@@ -18,6 +18,14 @@ const marketing: MenuModule = {
         path: 'activity',
         name: t('routes.marketing.activity'),
       },
+      {
+        path: 'timeRule',
+        name: t('routes.marketing.timeRule'),
+      },
+      {
+        path: 'allTimeRule',
+        name: t('routes.marketing.allTimeRule'),
+      },
     ],
   },
 };

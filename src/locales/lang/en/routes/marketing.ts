@@ -3,4 +3,6 @@ export default {
   clue: 'Clue',
   addClue: 'AddClue',
   activity: 'Activity',
+  timeRule: 'TimeRule',
+  allTimeRule: 'AllTimeRule',
 };

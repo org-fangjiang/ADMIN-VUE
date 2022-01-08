@@ -41,6 +41,24 @@ const marketing: AppRouteModule = {
         roles: ['/marketing/activity'],
       },
     },
+    {
+      path: 'timeRule',
+      name: 'TimeRule',
+      component: () => import('/@/views/marketing/timeRule/index.vue'),
+      meta: {
+        title: t('routes.marketing.timeRule'),
+        roles: ['/marketing/timeRule'],
+      },
+    },
+    {
+      path: 'allTimeRule',
+      name: 'AllTimeRule',
+      component: () => import('/@/views/marketing/allTimeRule/index.vue'),
+      meta: {
+        title: t('routes.marketing.allTimeRule'),
+        roles: ['/marketing/allTimeRule'],
+      },
+    },
   ],
 };
 

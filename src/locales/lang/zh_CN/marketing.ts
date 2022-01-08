@@ -105,4 +105,10 @@ export default {
     headImg: '头图',
     userNumber: '活动人数',
   },
+  timeRule: {
+    clueDropLevel: '线索未跟进掉级：多长时间未跟进掉级',
+    clueUnFollow: '线索待跟进：多长时间提醒单位（分钟）',
+    clueUnclaimed: '线索待领取：多长时间提醒单位（分钟',
+    companyId: '企业',
+  },
 };
