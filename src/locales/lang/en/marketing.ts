@@ -46,6 +46,7 @@ export default {
   SOURCE_13: 'Tiktok',
   SOURCE_14: 'Video promotion',
   SOURCE_15: 'Activity promotion',
+  SOURCE_16: 'Surplus House',
   FOLLOW_RESULT_1: 'FOLLOW_RESULT_1',
   FOLLOW_RESULT_2: 'FOLLOW_RESULT_2',
   FOLLOW_RESULT_3: 'FOLLOW_RESULT_3',

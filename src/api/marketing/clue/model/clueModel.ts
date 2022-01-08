@@ -125,6 +125,7 @@ export const ClueConst = {
     { value: '13', label: t('marketing.SOURCE_13'), color: 'red' },
     { value: '14', label: t('marketing.SOURCE_14'), color: 'yellow' },
     { value: '15', label: t('marketing.SOURCE_15'), color: 'green' },
+    { value: '16', label: t('marketing.SOURCE_16'), color: 'green' },
   ],
   _PERMS: {
     SELECT: 'clue:select',

@@ -46,6 +46,7 @@ export default {
   SOURCE_13: '抖音',
   SOURCE_14: '视频推广',
   SOURCE_15: '活动推广',
+  SOURCE_16: '余房查询',
   FOLLOW_RESULT_1: '无效',
   FOLLOW_RESULT_2: '不买房',
   FOLLOW_RESULT_3: '同行',
