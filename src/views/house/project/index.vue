@@ -614,15 +614,20 @@
           Persistent.removeLocal(HOUSE_PROJECT, true);
         }
         drawerParam.visible = false;
-        drawerParam.state = '';
+
         drawerParam.id = '';
         drawerParam.title = '';
         updatePrice.value = false;
         projectModal.value = false;
         smModal.value = false;
-        updateOrder.value = false;
-        const result = await getList();
-        processList(result, list, pageParam);
+        if (drawerParam.state === '0' || updateOrder) {
+          drawerParam.state = '';
+          updateOrder.value = false;
+          const result = await getList();
+          processList(result, list, pageParam);
+        } else {
+          drawerParam.state = '';
+        }
       };
 
       const onChange = async (page) => {
