@@ -14,10 +14,16 @@
         :options="roleConst.STATES"
         :pagination="false"
       />
-      <Button :class="`${prefixCls}-select`" v-auth="roleConst._PERMS.ADD" @click="add">{{
-        t('model.role.addRole')
-      }}</Button>
+      <Button
+        v-if="isSuper"
+        :class="`${prefixCls}-select`"
+        v-auth="roleConst._PERMS.ADD"
+        @click="add"
+      >
+        {{ t('model.role.addRole') }}
+      </Button>
       <Select
+        v-if="isSuper"
         ref="selectRef"
         label-in-value
         placeholder="Select Company"
@@ -61,7 +67,12 @@
                   t('model.role.reEnableRole')
                 }}</Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="role.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="isSuper"
+                :key="3"
+                :data-id="role.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="roleConst._PERMS.UPDATE" type="link" size="small">{{
                   t('model.role.setRoleMenu')
@@ -130,6 +141,7 @@
   import { debounce } from 'lodash-es';
   import { getCompanies } from '/@/api/sys/compnay/company';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { useUserStore } from '/@/store/modules/user';
 
   interface Option {
     value: string;
@@ -161,6 +173,10 @@
       const roleConst = ref(RoleConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      const userStore = useUserStore();
+      const roleName = userStore.getUserInfo.roleName;
+      const isSuper = roleName === 'super_admin';
 
       // 修改为其它对应的columns
       const roleColumns = reactive(RoleColumns);
@@ -348,6 +364,7 @@
         options,
         fetchUser,
         stateHandleChange,
+        isSuper,
       };
     },
   });
