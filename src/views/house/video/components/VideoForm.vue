@@ -68,6 +68,7 @@
       <FormItem ref="photoAddress" :label="t('host.video.photoAddress')" name="photoAddress">
         <Image :src="formState.photoAddress" width="100px" />
         <Upload
+          :customRequest="customRequest"
           :headers="requestHeader"
           :data="{
             provinceId: provinceId,
@@ -96,12 +97,22 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Button, Form, FormItem, Input, Textarea, Select, Image, Upload } from 'ant-design-vue';
+  import {
+    Button,
+    Form,
+    FormItem,
+    Input,
+    Textarea,
+    Select,
+    Image,
+    Upload,
+    message,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { success, failed } from '/@/hooks/web/useList';
   import { VideoModel, _VideoConst } from '/@/api/host/video/model/videoModel';
   import FProjectSelect from '/@/components/FProjectSelect';
-  import { ApiSource, uploadVideo } from '/@/api/host/source/source';
+  import { ApiSource, uploadVideo, uploadVideoPhoto } from '/@/api/host/source/source';
   import { useUserStore } from '/@/store/modules/user';
   import { updateVideo, addVideo, getById } from '/@/api/host/video/video';
   import { getAccessToken } from '/@/utils/auth';
@@ -160,6 +171,22 @@
       //上传图片请求头
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('provinceId', provinceId || '');
+        formData.append('cityId', cityId || '');
+        uploadVideoPhoto(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.photoAddress = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
 
       const fileList = ref<FileItem[]>([]);
 
@@ -249,7 +276,7 @@
               });
               try {
                 const result = await uploadVideo(formData);
-                formState.videoAddress = result;
+                formState.videoAddress = result.data.data;
                 fileList.value = [];
               } catch (error: any) {
                 failed(t('host.video.videoAddress'), t('host.action.fail'));
@@ -333,6 +360,7 @@
         fileList,
         handleRemove,
         requestHeader,
+        customRequest,
       };
     },
   });

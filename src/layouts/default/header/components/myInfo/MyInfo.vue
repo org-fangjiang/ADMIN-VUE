@@ -33,6 +33,7 @@
         </FormItem>
         <FormItem ref="avatar" :label="t('model.user.avatar')" name="avatar">
           <Upload
+            :customRequest="customRequest"
             list-type="picture-card"
             :show-upload-list="false"
             :data="{
@@ -79,11 +80,12 @@
     SelectOption,
     Upload,
     InputPassword,
+    message,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { updateMyInfo } from '/@/api/sys/user/user';
   import { SysUserBean } from '/@/api/sys/user/model/userModel';
-  import { ApiSource } from '/@/api/host/source/source';
+  import { ApiSource, uploadUserImg } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
   import { getAccessToken } from '/@/utils/auth';
 
@@ -122,6 +124,21 @@
         if (info.file.status === 'done') {
           formState.avatar = info.file.response.data;
         }
+      };
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('userId', userStore.getUserInfo.id);
+        formData.append('companyId', userStore.getUserInfo.companyId);
+        uploadUserImg(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.avatar = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
       };
       //提交
       const onSubmit = () => {
@@ -180,6 +197,7 @@
         changeFile,
         userStore,
         requestHeader,
+        customRequest,
       };
     },
   });

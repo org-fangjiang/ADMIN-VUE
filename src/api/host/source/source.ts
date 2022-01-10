@@ -24,18 +24,253 @@ export enum ApiSource {
   UploadUserImg = '/api/sys-server/file/uploadUserImg',
   UploadActivityImg = '/api/sys-server/file/uploadActivityImg',
 }
-export function uploadVideo(formData, mode: ErrorMessageMode = 'modal') {
-  return defHttp.post(
-    {
-      url: ApiSource.UpdateVideoApi,
-      params: formData,
-      headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
-      timeout: 300 * 1000,
-    },
-    {
-      errorMessageMode: mode,
-    }
-  );
+
+export async function uploadActivityImg(formData, mode: ErrorMessageMode = 'modal') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadActivityImg,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadActivityImg,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
+}
+
+export async function uploadUserImg(formData, mode: ErrorMessageMode = 'modal') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadUserImg,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadUserImg,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
+}
+
+export async function uploadNews(formData, mode: ErrorMessageMode = 'none') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadNews,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = defHttp.post(
+      {
+        url: ApiSource.UploadNews,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
+}
+
+export async function upload(formData, mode: ErrorMessageMode = 'none') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.Upload,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.Upload,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
+}
+
+export async function uploadBanner(
+  formData,
+  file: any,
+  otherParam: any,
+  mode: ErrorMessageMode = 'none'
+) {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadBanner,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        file,
+        otherParam,
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadBanner,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        file,
+        otherParam,
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
+}
+export async function uploadVideoPhoto(formData, mode: ErrorMessageMode = 'modal') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UpdateVideo,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UpdateVideo,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        timeout: 300 * 1000,
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
+}
+export async function uploadVideo(formData, mode: ErrorMessageMode = 'modal') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UpdateVideoApi,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        timeout: 300 * 1000,
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UpdateVideoApi,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        timeout: 300 * 1000,
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
 }
 
 export function getResourcesList(condition: SourceCondition, mode: ErrorMessageMode = 'modal') {

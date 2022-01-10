@@ -23,6 +23,7 @@
       </FormItem>
       <FormItem ref="avatar" :label="t('host.channelCase.avatar')" name="avatar">
         <Upload
+          :customRequest="customRequest"
           list-type="picture-card"
           :show-upload-list="false"
           :data="{
@@ -52,14 +53,14 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Button, Form, FormItem, Input, Upload } from 'ant-design-vue';
+  import { Button, Form, FormItem, Input, message, Upload } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { success, failed } from '/@/hooks/web/useList';
   import {
     ChannelCaseModel,
     _ChannelCaseConst,
   } from '/@/api/host/channelCase/model/channelCaseModel';
-  import { ApiSource } from '/@/api/host/source/source';
+  import { ApiSource, uploadUserImg } from '/@/api/host/source/source';
   import { useUserStore } from '/@/store/modules/user';
   import {
     addChannelCase,
@@ -108,6 +109,22 @@
       //上传图片请求头
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('userId', userStore.getUserInfo.id);
+        formData.append('companyId', userStore.getUserInfo.companyId);
+        uploadUserImg(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.avatar = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
 
       // fromRef 获取form
       const formRef = ref();
@@ -200,6 +217,7 @@
         changeFile,
         userStore,
         requestHeader,
+        customRequest,
       };
     },
   });

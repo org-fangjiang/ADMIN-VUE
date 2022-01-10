@@ -1,6 +1,7 @@
 export default {
   EFFECTIVE: 'EFFECTIVE',
   INVALID: 'INVALID',
+  upload: 'Upload',
   TYPE: {
     HOUSE: 'HOUSE',
     FLATS: 'FLATS',

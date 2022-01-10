@@ -46,6 +46,7 @@
       </FormItem>
       <FormItem ref="address" :label="t('host.source.address')" name="address">
         <Upload
+          :customRequest="customRequest"
           :data="{
             projectId: props.projectId,
             provinceId: props.provinceId,
@@ -78,10 +79,16 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Button, Form, FormItem, Input, Select, Upload } from 'ant-design-vue';
+  import { Button, Form, FormItem, Input, message, Select, Upload } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { SourceModel, _SourceConst } from '/@/api/host/source/model/sourceModel';
-  import { updateResource, addResource, getResource, ApiSource } from '/@/api/host/source/source';
+  import {
+    updateResource,
+    addResource,
+    getResource,
+    ApiSource,
+    upload,
+  } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
   import { getAccessToken } from '/@/utils/auth';
 
@@ -146,6 +153,29 @@
       //上传图片请求头
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('type', formState.sort || '');
+        formData.append('areaId', props.areaId || '');
+        formData.append('cityId', props.cityId || '');
+        formData.append('provinceId', props.provinceId || '');
+        formData.append('projectId', props.projectId || '');
+        upload(formData)
+          .then((res) => {
+            debugger;
+            options.onSuccess(res, options.file);
+            formState.address = res.data.data;
+            imgUrl.value = res.data.data;
+            formState.title = options.file.name;
+            formState.projectId = props.projectId;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
 
       //关键词
       const options = ref<Option[]>([]);
@@ -266,6 +296,7 @@
         fileList,
         imgUrl,
         requestHeader,
+        customRequest,
       };
     },
   });

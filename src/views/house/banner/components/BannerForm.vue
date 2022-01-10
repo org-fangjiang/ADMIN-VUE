@@ -35,13 +35,15 @@
       <FormItem ref="address" :label="t('host.banner.address')" name="address">
         <Image :src="formState.address" width="100px" />
         <Upload
+          :customRequest="customRequest"
           :data="{
             cityId: props.companyCityId,
           }"
+          @change="changeFile"
           :action="ApiSource.UploadBanner"
           :disabled="isUpdate && !bannerConst._UPDATE_FIELDS.includes('address')"
-          @change="changeFile"
           :headers="requestHeader"
+          :showUploadList="false"
         >
           <Button> Upload </Button>
         </Upload>
@@ -65,11 +67,21 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Button, Form, FormItem, Input, Textarea, Select, Image, Upload } from 'ant-design-vue';
+  import {
+    Button,
+    Form,
+    FormItem,
+    Input,
+    Textarea,
+    Select,
+    Image,
+    Upload,
+    message,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BannerModel, _BannerConst } from '/@/api/host/banner/model/bannerModel';
   import { addBanner, getBanner, updateBanner } from '/@/api/host/banner/banner';
-  import { ApiSource } from '/@/api/host/source/source';
+  import { ApiSource, uploadBanner } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
   import { getAccessToken } from '/@/utils/auth';
 
@@ -122,6 +134,36 @@
       //上传图片请求头
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('cityId', props.companyCityId || '');
+        uploadBanner(formData, options.file, { cityId: props.companyCityId || '' })
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.address = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+            // debugger;
+            // uploadBanner(formData, options.file, { cityId: props.companyCityId || '' })
+            //   .then((res) => {
+            //     options.onSuccess(res, options.file);
+            //     formState.address = res.data.data;
+            //   })
+            //   .catch(() => {
+            //     options.onError();
+            //     message.error('上传失败，请删除重试');
+            //   });
+          });
+      };
+
+      // let visible = ref(false);
+      // const refreshUpload = (options) => {
+      //   customRequest(options);
+      // };
 
       //关键词
       const options = ref<Option[]>([]);
@@ -233,6 +275,8 @@
         ApiSource,
         setProject,
         requestHeader,
+        uploadBanner,
+        customRequest,
       };
     },
   });

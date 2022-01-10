@@ -161,11 +161,28 @@ const transform: AxiosTransform = {
     const refreshToken = userStore.getRefreshToken;
     const config = err.config;
     const retry: number = config.retry;
-    if (retry == 0 || !refreshToken) {
+    if (err.response.data.code === 401) {
+      await userStore.refreshToken();
+    }
+    if (retry <= 0 || !refreshToken) {
       return Promise.reject(err);
     }
-    await userStore.refreshToken();
     config.retry = config.retry - 1;
+    // debugger;
+    // if (false && (config.file || config.otherParam)) {
+    //   config.headers['Content-Type'] = 'multipart/form-data;';
+    //   const form = new FormData();
+    //   form.append('file', config.file);
+    //   if (config.otherParam) {
+    //     const keys: string[] = Object.keys(config.otherParam);
+    //     let i = 0;
+    //     for (i; i < keys.length; i++) {
+    //       const key = keys[i];
+    //       form.append(key, config.otherParam[key]);
+    //     }
+    //   }
+    //   config.data = form;
+    // }
     const data = await defHttp.request(config);
     const result: AxiosResponse<Result> = {
       data: {
@@ -290,6 +307,10 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         retry: 1,
         //超时重试
         timeOutRetry: 3,
+        //
+        file: undefined,
+        //
+        otherParam: undefined,
       },
       opt || {}
     )

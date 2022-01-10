@@ -1,6 +1,7 @@
 export default {
   EFFECTIVE: '有效',
   INVALID: '无效',
+  upload: '上传',
   TYPE: {
     HOUSE: '住宅',
     FLATS: '公寓',

@@ -33,6 +33,7 @@
       @change="handleChange"
       :showUploadList="false"
       :headers="requestHeader"
+      :customRequest="customRequest"
     >
       <a-button type="primary">
         {{ t('component.upload.imgUpload') }}
@@ -42,8 +43,8 @@
 </template>
 <script lang="ts">
   import { defineComponent, computed, ref } from 'vue';
-  import { ApiSource } from '/@/api/host/source/source';
-  import { Upload } from 'ant-design-vue';
+  import { ApiSource, uploadNews } from '/@/api/host/source/source';
+  import { message, Upload } from 'ant-design-vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useGlobSetting } from '/@/hooks/setting';
   import { useI18n } from '/@/hooks/web/useI18n';
@@ -71,7 +72,6 @@
     },
     emits: ['uploading', 'done', 'error'],
     setup(props, { emit }) {
-      debugger;
       let uploading = false;
       let width = ref(0);
       let isOk = ref<boolean>(false);
@@ -98,6 +98,23 @@
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
 
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('cityId', props.cityId || '');
+        formData.append('provinceId', props.provinceId || '');
+        uploadNews(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            const name = options.file?.name;
+            emit('done', name, res.data.data, width.value + '%');
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
+
       function handleChange(info: Recordable) {
         const file = info.file;
         const status = file?.status;
@@ -109,13 +126,12 @@
             uploading = true;
           }
         } else if (status === 'done') {
-          const url = file?.response?.data;
-          debugger;
-          emit('done', name, url, width.value + '%');
+          // const url = file?.response?.data;
+          // emit('done', name, url, width.value + '%');
           uploading = false;
         } else if (status === 'error') {
-          emit('error');
-          uploading = false;
+          // emit('error');
+          // uploading = false;
         }
       }
 
@@ -132,6 +148,7 @@
         onOK,
         onClose,
         requestHeader,
+        customRequest,
       };
     },
   });

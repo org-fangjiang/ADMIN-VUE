@@ -55,6 +55,7 @@
       </FormItem>
       <FormItem ref="headImg" :label="t('marketing.clueActivity.headImg')" name="headImg">
         <Upload
+          :customRequest="customRequest"
           :headers="requestHeader"
           :data="{
             userId: userId,
@@ -117,6 +118,7 @@
     Upload,
     Image,
     InputNumber,
+    message,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import {
@@ -135,7 +137,7 @@
     addUser,
   } from '/@/api/marketing/clueActivity/clueActivity';
   import { failed, success } from '/@/hooks/web/useList';
-  import { ApiSource } from '/@/api/host/source/source';
+  import { ApiSource, uploadActivityImg } from '/@/api/host/source/source';
   import { getAccessToken } from '/@/utils/auth';
 
   interface Option {
@@ -194,6 +196,22 @@
       const userId = userStore.getUserInfo.id;
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('userId', userId);
+        formData.append('companyId', companyId);
+        uploadActivityImg(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.headImg = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
 
       //搜索项目
       let fetching = ref<boolean>(false);
@@ -358,6 +376,7 @@
         changeFile,
         userId,
         requestHeader,
+        customRequest,
       };
     },
   });

@@ -75,6 +75,7 @@
       <FormItem ref="img" :label="t('host.news.img')" name="img">
         <Image :src="formState.img" width="100px" />
         <Upload
+          :customRequest="customRequest"
           :data="{
             provinceId: props.provinceId,
             cityId: props.cityId,
@@ -167,11 +168,12 @@
     Upload,
     Modal,
     Tag,
+    message,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { NewsModel, _NewsConst } from '/@/api/host/news/model/newsModel';
   import { addNews, updateNews, getNews } from '/@/api/host/news/news';
-  import { ApiSource } from '/@/api/host/source/source';
+  import { ApiSource, uploadNews } from '/@/api/host/source/source';
   import FProject from '/@/components/FProject';
   import FTinymce from '/@/components/FTinymce';
   import { getProject } from '/@/api/host/project/project';
@@ -234,6 +236,22 @@
       //上传图片请求头
       const requestHeader = ref({ Authorization: '' });
       requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('cityId', props.cityId || '');
+        formData.append('provinceId', props.provinceId || '');
+        uploadNews(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.img = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
 
       // fromRef 获取form
       const formRef = ref();
@@ -488,6 +506,7 @@
         desViolations,
         log,
         requestHeader,
+        customRequest,
       };
     },
   });
