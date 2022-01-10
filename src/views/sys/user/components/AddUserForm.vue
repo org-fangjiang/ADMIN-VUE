@@ -184,11 +184,11 @@
         deptId: '',
         deptName: '',
         roleId: '',
-        roleName: '',
+        roleName: undefined,
         sysRoleBeans: [], // roleId 集合
         type: '',
         companyName: '',
-        companyId: '',
+        companyId: userStore.getUserInfo.companyId,
       });
 
       //上传头像
@@ -199,6 +199,8 @@
       };
       //选择角色
       const changeRole = (value: string[]) => {
+        formState.roleName = value.toString();
+        formState.sysRoleBeans?.splice(0);
         value.forEach((item) => {
           formState.sysRoleBeans?.push({ id: item });
         });
