@@ -7,22 +7,22 @@ import { SourceCondition, SourceModel } from './model/sourceModel';
 import { ContentTypeEnum } from '/@/enums/httpEnum';
 
 export enum ApiSource {
-  GetResourcesList = '/nhouse-server/manageResource/getResourcesList', //必选参数：projectId
-  GetResources = '/nhouse-server/manageResource/getResources', //必选参数：projectId  分页
-  GetResource = '/nhouse-server/resource/getResource', //id
-  AddResource = '/nhouse-server/manageResource/addResource', //必选参数：address, sort, projectId
-  UpdateResource = '/nhouse-server/manageResource/updateResource',
-  DeleteResource = '/nhouse-server/manageResource/deleteResource',
-  ReEnableResource = '/nhouse-server/manageResource/reEnableResource',
-  SetSandImg = '/nhouse-server/manageResource/setSandImg', //沙盘图，必选参数：resourceId, projectId
-  SetFirstImg = '/nhouse-server/manageResource/setFirstImg', //项目首图，
-  Upload = '/api/sys-server/file/upload',
-  UploadNews = '/api/sys-server/file/uploadNews',
-  UploadBanner = '/api/sys-server/file/uploadBanner',
-  UpdateVideo = '/api/sys-server/file/updateVideo',
-  UpdateVideoApi = '/sys-server/file/updateVideo',
-  UploadUserImg = '/api/sys-server/file/uploadUserImg',
-  UploadActivityImg = '/api/sys-server/file/uploadActivityImg',
+  GetResourcesList = 'nhouse-server/manageResource/getResourcesList', //必选参数：projectId
+  GetResources = 'nhouse-server/manageResource/getResources', //必选参数：projectId  分页
+  GetResource = 'nhouse-server/resource/getResource', //id
+  AddResource = 'nhouse-server/manageResource/addResource', //必选参数：address, sort, projectId
+  UpdateResource = 'nhouse-server/manageResource/updateResource',
+  DeleteResource = 'nhouse-server/manageResource/deleteResource',
+  ReEnableResource = 'nhouse-server/manageResource/reEnableResource',
+  SetSandImg = 'nhouse-server/manageResource/setSandImg', //沙盘图，必选参数：resourceId, projectId
+  SetFirstImg = 'nhouse-server/manageResource/setFirstImg', //项目首图，
+  Upload = 'sys-server/file/upload',
+  UploadNews = 'sys-server/file/uploadNews',
+  UploadBanner = 'sys-server/file/uploadBanner',
+  UpdateVideo = 'sys-server/file/updateVideo',
+  UpdateVideoApi = 'sys-server/file/updateVideo',
+  UploadUserImg = 'sys-server/file/uploadUserImg',
+  UploadActivityImg = 'sys-server/file/uploadActivityImg',
 }
 
 export async function uploadActivityImg(formData, mode: ErrorMessageMode = 'modal') {
