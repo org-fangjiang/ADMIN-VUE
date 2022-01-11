@@ -33,6 +33,8 @@
           :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('clueDropLevel')"
           v-model:value="formState.clueDropLevel"
           autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
         />
       </FormItem>
       <FormItem
@@ -44,6 +46,8 @@
           :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('clueUnFollow')"
           v-model:value="formState.clueUnFollow"
           autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
         />
       </FormItem>
       <FormItem
@@ -55,6 +59,8 @@
           :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('clueUnclaimed')"
           v-model:value="formState.clueUnclaimed"
           autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
         />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 8 }">
