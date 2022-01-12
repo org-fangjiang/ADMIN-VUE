@@ -52,19 +52,19 @@ export const TimeRuleColumns = [
     title: t('marketing.timeRule.clueDropLevel'),
     key: 'clueDropLevel',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'clueDropLevel' },
   },
   {
     title: t('marketing.timeRule.clueUnFollow'),
     key: 'clueUnFollow',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'clueUnFollow' },
   },
   {
     title: t('marketing.timeRule.clueUnclaimed'),
     key: 'clueUnclaimed',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'clueUnclaimed' },
   },
   {
     title: t('marketing.timeRule.companyId'),

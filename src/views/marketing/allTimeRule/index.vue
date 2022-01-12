@@ -2,6 +2,15 @@
   <div class="p-4">
     <Button class="my-4" type="default" @click="addRule">{{ t('host.action.add') }}</Button>
     <Table :columns="columns" :data-source="list" rowKey="companyId" :pagination="false">
+      <template #clueDropLevel="{ text: clue }">
+        <span>{{ clue.clueDropLevel }}分钟</span>
+      </template>
+      <template #clueUnFollow="{ text: clue }">
+        <span>{{ clue.clueUnFollow }}分钟</span>
+      </template>
+      <template #clueUnclaimed="{ text: clue }">
+        <span>{{ clue.clueUnclaimed }}分钟</span>
+      </template>
       <template #companyId="{ text: comId }">
         <span>{{ comId.companyById?.name || comId.companyId }}</span>
       </template>
