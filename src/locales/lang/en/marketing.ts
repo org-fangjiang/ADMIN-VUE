@@ -1,5 +1,6 @@
 export default {
   action: {
+    preview: 'preview',
     add: 'add',
     update: 'update',
     delete: 'delete',

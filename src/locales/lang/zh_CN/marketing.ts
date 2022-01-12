@@ -1,5 +1,6 @@
 export default {
   action: {
+    preview: '预览',
     add: '添加',
     update: '更新',
     delete: '删除',

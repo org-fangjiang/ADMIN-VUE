@@ -120,6 +120,15 @@
             >
               {{ t('marketing.action.publish') }}
             </Button>
+            <Button
+              v-auth="activityCOnst._PERMS.SELECT"
+              type="link"
+              size="small"
+              :class="prefixCls"
+              @click="clickPreview(line)"
+            >
+              {{ t('marketing.action.preview') }}
+            </Button>
           </template>
         </Table>
       </TabPane>
@@ -232,6 +241,15 @@
             >
               {{ t('marketing.action.publish') }}
             </Button>
+            <Button
+              v-auth="activityCOnst._PERMS.SELECT"
+              type="link"
+              size="small"
+              :class="prefixCls"
+              @click="clickPreview(line)"
+            >
+              {{ t('marketing.action.preview') }}
+            </Button>
           </template>
         </Table>
       </TabPane>
@@ -263,6 +281,18 @@
         :isSee="drawerParam.isSee"
         v-if="drawerParam.state === '0'"
       />
+    </Modal>
+    <Modal
+      v-model:visible="isPreview"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      width="100%"
+      :destroyOnClose="true"
+      :footer="null"
+      :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
+      wrapClassName="full-modal"
+    >
+      <PreviewActivity v-if="drawerParam.state === '1'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -307,6 +337,7 @@
   } from '/@/api/marketing/clueActivity/clueActivity';
   import ActivityForm from './components/ActivityForm.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import PreviewActivity from './components/PreviewActivity.vue';
 
   export default defineComponent({
     name: 'ActivityTable',
@@ -323,6 +354,7 @@
       TabPane,
       ActivityForm,
       Modal,
+      PreviewActivity,
     },
     setup() {
       const { t } = useI18n();
@@ -458,6 +490,15 @@
         } finally {
           loading.value = false;
         }
+      };
+
+      //预览
+      let isPreview = ref(false);
+      const clickPreview = async (line) => {
+        isPreview.value = true;
+        drawerParam.title = t('marketing.action.preview');
+        drawerParam.state = '1';
+        drawerParam.id = line.id;
       };
 
       // 操作
@@ -623,6 +664,7 @@
       });
 
       const onClose = async () => {
+        isPreview.value = false;
         drawerParam.visible = false;
         drawerParam.state = '';
         drawerParam.id = '';
@@ -690,6 +732,8 @@
         allList,
         clickPublish,
         allClickPublish,
+        isPreview,
+        clickPreview,
       };
     },
   });
@@ -718,6 +762,13 @@
   }
 
   .full-modal {
+    .ant-modal {
+      max-width: 100%;
+      top: 0;
+      padding-bottom: 0;
+      margin: 0;
+    }
+
     .ant-modal-content {
       display: flex;
       flex-direction: column;
@@ -726,6 +777,9 @@
 
     .ant-modal-body {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   }
 </style>
