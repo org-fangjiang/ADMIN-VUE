@@ -208,11 +208,10 @@
                   >
                 </div>
                 <div class="space-x-2 text-left">
-                  <span
-                    v-for="(label, e) in item.sysDictDetailBeans"
-                    :key="e"
-                    class="rounded text-[8px] bg-[#FB3E48] px-1 text-white"
-                    >{{ label.value }}</span
+                  <span v-for="(label, e) in item.sysDictDetailBeans" :key="e"
+                    ><span v-if="e < 3" class="rounded text-[8px] bg-[#FB3E48] px-1 text-white">{{
+                      label.value
+                    }}</span></span
                   >
                 </div>
               </div>

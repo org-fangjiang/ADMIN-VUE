@@ -90,7 +90,7 @@ export default {
     STATE_1: '上线',
     STATE_2: '待发布',
     SORT_1: '特价楼盘',
-    SORT_2: '显示折扣',
+    SORT_2: '限时折扣',
     SORT_3: '特惠补贴',
     SORT_4: '成交好礼',
     SORT_5: '推荐楼盘',
