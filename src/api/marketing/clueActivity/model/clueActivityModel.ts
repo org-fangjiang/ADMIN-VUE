@@ -71,7 +71,19 @@ export const ClueActivityCOnst = {
   },
   _UPDATE_FIELDS: ['title', 'description', 'expireTime', 'headImg'],
   _RULES: {
-    title: [{ required: true, message: t('marketing.clueActivity.title'), trigger: 'blur' }],
+    title: [
+      {
+        required: true,
+        message: '活动标题不超过8个字',
+        trigger: 'change',
+        validator: function async(_rule, title: string) {
+          if (title.length > 8) {
+            return Promise.reject('活动标题不超过8个字');
+          }
+          return Promise.resolve();
+        },
+      },
+    ],
     description: [
       { required: true, message: t('marketing.clueActivity.description'), trigger: 'blur' },
     ],
