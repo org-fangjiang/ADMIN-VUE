@@ -22,6 +22,7 @@ import { tokenInfoModel } from '/@/api/sys/model/tokenModel';
 import { MenuConst } from '../../api/sys/menu/model/permsModel';
 import { Client } from '@stomp/stompjs';
 import { ComponentInternalInstance } from 'vue';
+import { AesEncryption } from '/@/utils/cipher';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -141,6 +142,10 @@ export const useUserStore = defineStore({
     ): Promise<UserInfoModel | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
+        const aes = new AesEncryption({ key: 'hebeifangjiangkj', iv: 'hebeifangjiangkj' });
+        const { password } = loginParams;
+        const pass = aes.encryptByAES(password);
+        loginParams.password = pass;
         const data = await loginApi(loginParams, mode);
         // save token
         this.setTokenInfo(data);

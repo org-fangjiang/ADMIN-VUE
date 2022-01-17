@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full min-h-screen max-w-[700px]">
     <img :src="activity.headImg" width="100%" class="absolute top-0 z-0 w-full max-w-[700px]" />
-    <div class="relative top-0 text-center w-full pt-[70px] px-5 flex flex-col items-center">
+    <div class="relative top-0 text-center w-full pt-[70px] pb-6 px-5 flex flex-col items-center">
       <span class="text-[38px] text-white font-extrabold">{{ activity.title }}</span>
       <!-- <span class="text-white text-[22px] tracking-widest mt-4">{{ activity.description }}</span> -->
       <div class="flex flex-col mt-6">
