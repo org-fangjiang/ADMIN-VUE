@@ -48,8 +48,8 @@
   import { Button, Form, FormItem, Input } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { success, failed } from '/@/hooks/web/useList';
-  import { HostModel, _HostConst } from '/@/api/host/project/model/projectModel';
-  import { updateProject } from '/@/api/host/project/project';
+  import { _HostConst } from '/@/api/host/project/model/projectModel';
+  import { PriceModel, updatePrice } from '/@/api/host/project/project';
 
   export default defineComponent({
     name: 'PriceForm',
@@ -75,7 +75,13 @@
 
       // fromRef 获取form
       const formRef = ref();
-      const formState: UnwrapRef<HostModel> = reactive({});
+      const formState: UnwrapRef<PriceModel> = reactive({
+        id: '',
+        price: '',
+        lowTotalPrice: '',
+        highTotalPrice: '',
+        priceDescription: '',
+      });
 
       const onSubmit = () => {
         formRef.value
@@ -83,7 +89,7 @@
           .then(async () => {
             loading.value = true;
             try {
-              const { content } = await updateProject(formState);
+              const { content } = await updatePrice(formState);
               success(t('host.action.update'), t('host.action.success'));
               Object.assign(formState, content);
             } catch (error: any) {
@@ -107,7 +113,11 @@
       };
       onMounted(async () => {
         loading.value = true;
-        Object.assign(formState, props.priceInfo);
+        formState.id = props.priceInfo?.id;
+        formState.price = props.priceInfo?.price;
+        formState.lowTotalPrice = props.priceInfo?.lowTotalPrice;
+        formState.highTotalPrice = props.priceInfo?.highTotalPrice;
+        formState.priceDescription = props.priceInfo?.priceDescription;
         loading.value = false;
       });
 

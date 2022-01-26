@@ -94,6 +94,27 @@ export function deleteProject(id: string, mode: ErrorMessageMode = 'modal') {
     }
   );
 }
+export interface PriceModel {
+  id: string;
+  price: string;
+  lowTotalPrice: string;
+  highTotalPrice: string;
+  priceDescription: string;
+}
+export function updatePrice(project: PriceModel, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData(project);
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<HostModel>>(
+    {
+      url: ApiHost.UpdateProject,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
 
 export function updateProject(project: HostModel, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
