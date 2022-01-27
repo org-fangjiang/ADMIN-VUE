@@ -508,13 +508,13 @@
           <InputNumber
             :disabled="isUpdate && !updateFields.includes('commission')"
             type="number"
-            v-show="formState.commissionMode === '1'"
+            v-if="formState.commissionMode === '1'"
             v-model:value="formState.commission"
           />
-          <span v-show="formState.commissionMode === '1'">元/套</span>
+          <span v-if="formState.commissionMode === '1'">元/套</span>
           <Slider
             :disabled="isUpdate && !updateFields.includes('commission')"
-            v-show="formState.commissionMode === '2'"
+            v-else
             v-model:value="formState.commission"
             autoComplete="off"
             :marks="marks"
@@ -786,11 +786,11 @@
       };
       //提成方式
       const commissionModeChange = async () => {
-        if (formState.commissionMode === '2') {
-          if (formState.commission && formState.commission > 100) {
-            formState.commission = 100;
-          }
-        }
+        // if (formState.commissionMode === '2') {
+        //   if (formState.commission && formState.commission > 100) {
+        //     formState.commission = 100;
+        //   }
+        // }
       };
       //监听表单数据，存储
       watch(
@@ -808,6 +808,11 @@
           .validate()
           .then(async () => {
             formState.commission = Number(formState.commission);
+            if (formState.commissionMode === '2') {
+              if (formState.commission && formState.commission > 100) {
+                formState.commission = 100;
+              }
+            }
             if (props.id) {
               loading.value = true;
               try {
