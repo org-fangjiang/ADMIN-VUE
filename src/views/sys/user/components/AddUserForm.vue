@@ -57,6 +57,7 @@
       </FormItem>
       <FormItem ref="avatar" :label="t('model.user.avatar')" name="avatar">
         <Upload
+          accept="image/*"
           :customRequest="customRequest"
           list-type="picture-card"
           :show-upload-list="false"

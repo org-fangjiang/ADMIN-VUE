@@ -75,6 +75,7 @@
       <FormItem ref="img" :label="t('host.news.img')" name="img">
         <Image :src="formState.img" width="100px" />
         <Upload
+          accept="image/*"
           :customRequest="customRequest"
           :data="{
             provinceId: props.provinceId,

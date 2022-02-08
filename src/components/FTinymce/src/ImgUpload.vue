@@ -23,6 +23,7 @@
       </Upload>
     </Modal> -->
     <Upload
+      accept="image/*"
       name="file"
       multiple
       :data="{

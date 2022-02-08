@@ -55,6 +55,7 @@
       </FormItem>
       <FormItem ref="headImg" :label="t('marketing.clueActivity.headImg')" name="headImg">
         <Upload
+          accept="image/*"
           :customRequest="customRequest"
           :headers="requestHeader"
           :data="{

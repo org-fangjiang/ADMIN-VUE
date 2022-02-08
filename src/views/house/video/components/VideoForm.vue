@@ -55,6 +55,7 @@
       </FormItem>
       <FormItem ref="videoAddress" :label="t('host.video.videoAddress')" name="videoAddress">
         <Upload
+          accept="video/*"
           :before-upload="beforeUpload"
           :remove="handleRemove"
           :file-list="fileList"
@@ -68,6 +69,7 @@
       <FormItem ref="photoAddress" :label="t('host.video.photoAddress')" name="photoAddress">
         <Image :src="formState.photoAddress" width="100px" />
         <Upload
+          accept="image/*"
           :customRequest="customRequest"
           :headers="requestHeader"
           :data="{

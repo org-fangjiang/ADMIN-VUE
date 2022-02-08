@@ -23,6 +23,7 @@
       </FormItem>
       <FormItem ref="avatar" :label="t('host.channelCase.avatar')" name="avatar">
         <Upload
+          accept="image/*"
           :customRequest="customRequest"
           list-type="picture-card"
           :show-upload-list="false"

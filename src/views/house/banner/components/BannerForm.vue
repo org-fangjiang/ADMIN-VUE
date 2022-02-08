@@ -35,6 +35,7 @@
       <FormItem ref="address" :label="t('host.banner.address')" name="address">
         <Image :src="formState.address" width="100px" />
         <Upload
+          accept="image/*"
           :customRequest="customRequest"
           :data="{
             cityId: props.companyCityId,
