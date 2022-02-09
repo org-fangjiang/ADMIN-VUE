@@ -78,7 +78,19 @@ export const _NewsConst = {
     'projects',
   ],
   _RULES: {
-    description: [{ required: true, message: t('host.news.description'), trigger: 'blur' }],
+    description: [
+      {
+        required: true,
+        trigger: 'change',
+        validator: function async(_rule, description: string) {
+          if (description.length > 160 || description.length === 0) {
+            return Promise.reject('描述必填并且不超过160字');
+          } else {
+            return Promise.resolve();
+          }
+        },
+      },
+    ],
     title: [{ required: true, message: t('host.news.title'), trigger: 'blur' }],
     keywords: [
       {
