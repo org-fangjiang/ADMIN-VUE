@@ -15,7 +15,56 @@ enum ApiAnswer {
   Failed = 'nhouse-server/manageAnswer/failed',
   PassIds = 'nhouse-server/manageAnswer/passIds',
   FailedIds = 'nhouse-server/manageAnswer/failedIds',
+  FailedList = 'nhouse-server/manageAnswer/failedList',
+  DelFailed = 'nhouse-server/manageAnswer/delFailed',
+  DelFailedIds = 'nhouse-server/manageAnswer/delFailedIds',
 }
+
+export function delFailedIds(id: string[], mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post<AnswerModel>(
+    {
+      url: ApiAnswer.DelFailedIds,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function delFailed(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post<AnswerModel>(
+    {
+      url: ApiAnswer.DelFailed,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function failedList(page?: PageParam, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setPage(page);
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<AnswerModel>>(
+    {
+      url: ApiAnswer.FailedList,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
 export function failedIds(id: string[], mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id: id });
