@@ -143,6 +143,26 @@ const system: AppRouteModule = {
         icon: '',
       },
     },
+    {
+      path: 'question',
+      name: 'Question',
+      component: () => import('/@/views/sys/question/index.vue'),
+      meta: {
+        title: t('routes.system.question'),
+        roles: ['/system/question'],
+        icon: '',
+      },
+    },
+    {
+      path: 'answer',
+      name: 'Answer',
+      component: () => import('/@/views/sys/answer/index.vue'),
+      meta: {
+        title: t('routes.system.answer'),
+        roles: ['/system/answer'],
+        icon: '',
+      },
+    },
   ],
 };
 

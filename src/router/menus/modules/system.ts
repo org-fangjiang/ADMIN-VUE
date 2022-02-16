@@ -60,6 +60,14 @@ const system: MenuModule = {
         path: 'violation',
         name: t('routes.system.violation'),
       },
+      {
+        path: 'question',
+        name: t('routes.system.question'),
+      },
+      {
+        path: 'answer',
+        name: t('routes.system.answer'),
+      },
     ],
   },
 };

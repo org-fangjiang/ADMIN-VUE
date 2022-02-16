@@ -362,4 +362,15 @@ export default {
     fail: '失败',
     reEnable: '恢复',
   },
+  question: {
+    pass: '通过',
+    fail: '不通过',
+    content: '内容',
+    willPass: '待通过',
+  },
+  answer: {
+    pass: '通过',
+    fail: '不通过',
+    content: '内容',
+  },
 };

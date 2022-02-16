@@ -12,6 +12,85 @@ enum ApiQuestion {
   DeleteQuestion = 'nhouse-server/manageQuestion/deleteQuestion',
   ReEnableQuestion = 'nhouse-server/manageQuestion/reEnableQuestion',
   GetQuestion = 'nhouse-server/manageQuestion/getQuestion',
+  Examine = 'nhouse-server/manageQuestion/examine',
+  Pass = 'nhouse-server/manageQuestion/pass',
+  Failed = 'nhouse-server/manageQuestion/failed',
+  PassIds = 'nhouse-server/manageQuestion/passIds',
+  FailedIds = 'nhouse-server/manageQuestion/failedIds',
+}
+export function failedIds(id: string[], mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post<QuestionModel>(
+    {
+      url: ApiQuestion.FailedIds,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function passIds(id: string[], mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post<QuestionModel>(
+    {
+      url: ApiQuestion.PassIds,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function failedOne(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post<QuestionModel>(
+    {
+      url: ApiQuestion.Failed,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function pass(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post<QuestionModel>(
+    {
+      url: ApiQuestion.Pass,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function examine(page?: PageParam, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setPage(page);
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<QuestionModel>>(
+    {
+      url: ApiQuestion.Examine,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getQuestion(id: string, mode: ErrorMessageMode = 'modal') {

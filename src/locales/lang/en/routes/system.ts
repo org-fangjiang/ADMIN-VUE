@@ -12,4 +12,6 @@ export default {
   user: 'User',
   link: 'Link',
   violation: 'Violation',
+  question: 'Question',
+  answer: 'Answer',
 };

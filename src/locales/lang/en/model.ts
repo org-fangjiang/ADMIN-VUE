@@ -363,4 +363,15 @@ export default {
     fail: 'fail',
     reEnable: 'reEnable',
   },
+  question: {
+    pass: 'Pass',
+    fail: 'Fail',
+    content: 'Content',
+    willPass: 'WillPass',
+  },
+  answer: {
+    pass: 'Pass',
+    fail: 'Fail',
+    content: 'Content',
+  },
 };

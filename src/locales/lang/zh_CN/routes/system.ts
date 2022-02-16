@@ -12,4 +12,6 @@ export default {
   user: '用户管理',
   link: '链接管理',
   violation: '违规词库',
+  question: '问题审核',
+  answer: '回复审核',
 };

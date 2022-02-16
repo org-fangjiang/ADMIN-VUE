@@ -21,11 +21,17 @@ export const _QuestionConst = {
     { value: '0', label: t('host.INVALID'), color: 'volcano' },
     { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
   ],
+  EXAMINESTATES: [
+    { value: '0', label: t('host.INVALID'), color: 'volcano' },
+    { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
+    { value: '2', label: t('model.question.willPass'), color: 'geekblue' },
+  ],
   _PERMS: {
     SELECT: 'question:select',
     ADD: 'question:add',
     UPDATE: 'question:update',
     DELETE: 'question:delete',
+    EXAMINE: 'question:examine',
   },
   _UPDATE_FIELDS: ['content'],
   _RULES: {
@@ -46,6 +52,29 @@ export const _ColumnsQuestion = [
     title: t('host.question.lookTimes'),
     key: 'lookTimes',
     dataIndex: 'lookTimes',
+    ellipsis: 'true',
+    slots: '',
+  },
+  {
+    title: t('host.state'),
+    key: 'state',
+    dataIndex: 'state',
+    ellipsis: 'true',
+    slots: { customRender: 'state' },
+  },
+  {
+    title: t('host.operation'),
+    key: 'operation',
+    ellipsis: 'true',
+    slots: { customRender: 'operation' },
+  },
+];
+
+export const _Columns = [
+  {
+    title: t('host.question.content'),
+    key: 'content',
+    dataIndex: 'content',
     ellipsis: 'true',
     slots: '',
   },
