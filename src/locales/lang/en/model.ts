@@ -368,10 +368,14 @@ export default {
     fail: 'Fail',
     content: 'Content',
     willPass: 'WillPass',
+    delete: 'Delete',
+    failed: 'Failed',
   },
   answer: {
     pass: 'Pass',
     fail: 'Fail',
     content: 'Content',
+    delete: 'Delete',
+    failed: 'Failed',
   },
 };

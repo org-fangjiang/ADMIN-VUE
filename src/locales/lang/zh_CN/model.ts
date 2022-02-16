@@ -367,10 +367,14 @@ export default {
     fail: '不通过',
     content: '内容',
     willPass: '待通过',
+    delete: '删除',
+    failed: '未通过',
   },
   answer: {
     pass: '通过',
     fail: '不通过',
     content: '内容',
+    delete: '删除',
+    failed: '未通过',
   },
 };

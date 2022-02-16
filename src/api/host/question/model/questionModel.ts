@@ -25,6 +25,7 @@ export const _QuestionConst = {
     { value: '0', label: t('host.INVALID'), color: 'volcano' },
     { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
     { value: '2', label: t('model.question.willPass'), color: 'geekblue' },
+    { value: '3', label: t('model.question.failed'), color: 'geekblue' },
   ],
   _PERMS: {
     SELECT: 'question:select',
