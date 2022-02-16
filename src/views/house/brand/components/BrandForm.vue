@@ -28,6 +28,17 @@
           autoComplete="off"
         />
       </FormItem>
+      <FormItem ref="photoAddress" :label="t('host.banner.address')" name="photoAddress">
+        <Image :src="formState.photoAddress" width="100px" />
+        <Upload
+          accept="image/*"
+          :customRequest="customRequest"
+          :disabled="isUpdate && !brandConst._UPDATE_FIELDS.includes('photoAddress')"
+          :showUploadList="false"
+        >
+          <Button> Upload </Button>
+        </Upload>
+      </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
@@ -43,11 +54,13 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
-  import { Button, Form, FormItem, Input, Textarea } from 'ant-design-vue';
+  import { Button, Form, FormItem, Input, message, Textarea, Upload, Image } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { BrandModel, _BrandConst } from '/@/api/host/brand/model/brandModel';
   import { addBrand, getBrand, updateBrand } from '/@/api/host/brand/brand';
   import { success, failed } from '/@/hooks/web/useList';
+  import { ApiSource, uploadBrand } from '/@/api/host/source/source';
+  import { getAccessToken } from '/@/utils/auth';
 
   export default defineComponent({
     name: 'BrandForm',
@@ -58,6 +71,8 @@
       Input,
       Loading,
       Textarea,
+      Upload,
+      Image,
     },
     props: {
       id: {
@@ -66,7 +81,6 @@
       },
     },
     setup(props) {
-      debugger;
       const { t } = useI18n();
       const { prefixCls } = useDesign('brand');
       const brandConst = ref(_BrandConst);
@@ -78,6 +92,24 @@
       if (props.id && props.id !== '') {
         isUpdate.value = true;
       }
+
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('id', formState.name || '');
+        uploadBrand(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.photoAddress = res.data.data;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
 
       // fromRef 获取form
       const formRef = ref();
@@ -150,6 +182,9 @@
         wrapperCol: { span: 14 },
         isUpdate,
         props,
+        customRequest,
+        ApiSource,
+        requestHeader,
       };
     },
   });

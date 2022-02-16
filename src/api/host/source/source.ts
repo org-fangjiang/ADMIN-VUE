@@ -23,6 +23,41 @@ export enum ApiSource {
   UpdateVideoApi = 'sys-server/file/updateVideo',
   UploadUserImg = 'sys-server/file/uploadUserImg',
   UploadActivityImg = 'sys-server/file/uploadActivityImg',
+  UploadBrand = 'sys-server/file/uploadBrand',
+}
+
+export async function uploadBrand(formData, mode: ErrorMessageMode = 'modal') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadBrand,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadBrand,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
 }
 
 export async function uploadActivityImg(formData, mode: ErrorMessageMode = 'modal') {

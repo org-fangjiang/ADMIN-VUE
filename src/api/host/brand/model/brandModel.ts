@@ -6,6 +6,7 @@ export interface BrandModel {
   name?: string;
   description?: string;
   link?: string;
+  photoAddress?: string;
 }
 
 export interface BrandCondition {
@@ -27,7 +28,7 @@ export const _BrandConst = {
     UPDATE: 'brand:update',
     DELETE: 'brand:delete',
   },
-  _UPDATE_FIELDS: ['name', 'description', 'link'],
+  _UPDATE_FIELDS: ['name', 'description', 'link', 'photoAddress'],
   _RULES: {
     name: [{ required: true, message: t('host.name'), trigger: 'blur' }],
   },
