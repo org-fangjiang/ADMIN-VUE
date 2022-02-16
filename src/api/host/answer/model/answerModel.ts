@@ -23,11 +23,17 @@ export const _AnswerConst = {
     { value: '0', label: t('host.INVALID'), color: 'volcano' },
     { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
   ],
+  EXAMINESTATES: [
+    { value: '0', label: t('host.INVALID'), color: 'volcano' },
+    { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
+    { value: '2', label: t('model.question.willPass'), color: 'geekblue' },
+  ],
   _PERMS: {
     SELECT: 'answers:select',
     ADD: 'answers:add',
     UPDATE: 'answers:update',
     DELETE: 'answers:delete',
+    EXAMINE: 'answers:examine',
   },
   _UPDATE_FIELDS: ['content'],
   _RULES: {
@@ -56,6 +62,29 @@ export const _ColumnsAnswer = [
     title: t('host.answer.likeNum'),
     key: 'likeNum',
     dataIndex: 'likeNum',
+    ellipsis: 'true',
+    slots: '',
+  },
+  {
+    title: t('host.state'),
+    key: 'state',
+    dataIndex: 'state',
+    ellipsis: 'true',
+    slots: { customRender: 'state' },
+  },
+  {
+    title: t('host.operation'),
+    key: 'operation',
+    ellipsis: 'true',
+    slots: { customRender: 'operation' },
+  },
+];
+
+export const _Columns = [
+  {
+    title: t('host.answer.content'),
+    key: 'content',
+    dataIndex: 'content',
     ellipsis: 'true',
     slots: '',
   },
