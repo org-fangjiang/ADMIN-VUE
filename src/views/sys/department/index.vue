@@ -3,7 +3,9 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <div>
-      <Button :class="prefixCls" @click="add">{{ t('model.department.addDept') }}</Button>
+      <Button :class="prefixCls" @click="add" class="my-4">{{
+        t('model.department.addDept')
+      }}</Button>
     </div>
     <Table
       :columns="DepartmentColumns"
@@ -16,6 +18,7 @@
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       @expandedRowsChange="handleExpandedRowsChange"
       rowKey="deptId"
+      class="w-1/2"
     >
       <template #action="{ text: department }">
         <Dropdown placement="bottomCenter" trigger="click">
@@ -52,6 +55,14 @@
                   t('model.department.deleteDept')
                 }}</Button>
               </MenuItem>
+              <MenuItem
+                :key="3"
+                :data-id="department.deptId"
+                :class="`${prefixCls}-action-menu-item`"
+              >
+                <template #icon></template>
+                <Button type="link" size="small">{{ t('model.department.addUser') }}</Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -74,6 +85,7 @@
         :parentId="drawerParam.parentId"
         :id="drawerParam.id"
       />
+      <AddUser :id="drawerParam.id" v-if="drawerParam.state === '1'" />
     </Drawer>
   </div>
 </template>
@@ -88,6 +100,7 @@
   import { getAllDepartments, deleteDepartment } from '/@/api/sys/department/department';
   import DeptForm from './components/DeptForm.vue';
   import { success, failed } from '/@/hooks/web/useList';
+  import AddUser from './components/AddUser.vue';
 
   interface Options {
     deptId?: string;
@@ -112,6 +125,7 @@
       Menu,
       MenuItem,
       Dropdown,
+      AddUser,
     },
     setup() {
       const { t } = useI18n();
@@ -289,7 +303,13 @@
             } finally {
               loading.value = false;
             }
-
+            break;
+          case 3:
+            // add user
+            drawerParam.state = '1';
+            drawerParam.id = id;
+            drawerParam.title = t('model.department.addUser');
+            drawerParam.visible = true;
             break;
         }
       };
@@ -345,7 +365,7 @@
 
   .@{prefix-cls} {
     &-drawer {
-      max-width: 500px;
+      max-width: 800px;
     }
 
     &-action-menu-item {

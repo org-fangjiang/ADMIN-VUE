@@ -32,17 +32,18 @@ export const DepartmentConst = {
     ADD: 'department:add',
     UPDATE: 'department:update',
     DELETE: 'department:delete',
+    ADDUSER: 'user:set:dept',
   },
 };
 
 export const DepartmentColumns = [
-  {
-    title: t('model.department.deptId'),
-    key: 'id',
-    dataIndex: 'deptId',
-    ellipsis: 'true',
-    slots: '',
-  },
+  // {
+  //   title: t('model.department.deptId'),
+  //   key: 'id',
+  //   dataIndex: 'deptId',
+  //   ellipsis: 'true',
+  //   slots: '',
+  // },
   {
     title: t('model.department.deptName'),
     key: 'name',

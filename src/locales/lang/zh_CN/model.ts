@@ -219,6 +219,7 @@ export default {
     reset: '重置',
     success: '成功',
     fail: '失败',
+    addUser: '添加人员',
   },
   link: {
     id: '编号',

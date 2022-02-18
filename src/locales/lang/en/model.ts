@@ -220,6 +220,7 @@ export default {
     reset: 'Reset',
     success: 'Success',
     fail: 'Failed',
+    addUser: 'Add User',
   },
   link: {
     id: 'Id',
