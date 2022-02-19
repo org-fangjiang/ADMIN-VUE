@@ -51,3 +51,10 @@ export interface NewsResult {
   description: [];
   title: [];
 }
+
+export interface CustomerResult<T extends any> {
+  content: T;
+  follow: string;
+  look: string;
+  report: string;
+}
