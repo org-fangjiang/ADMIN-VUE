@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
   import { Cascader } from 'ant-design-vue';
-  import { defineComponent, onMounted, ref } from 'vue';
+  import { defineComponent, onMounted, ref, watch } from 'vue';
   import { getAllProvinces } from '/@/api/sys/province/province';
   import { getAllCities } from '/@/api/sys/city/city';
   import { getAllAreas } from '/@/api/sys/area/area';
@@ -39,6 +39,54 @@
       if (props.areaId) {
         selected.value.push(props.areaId);
       }
+
+      watch(
+        () => props,
+        async () => {
+          if (props.provinceId && props.cityId) {
+            const city = await getCity(props.provinceId);
+            let cityChild = ref<Option[]>([]);
+            city.forEach((item) => {
+              cityChild.value.push({
+                value: item.id,
+                label: item.name,
+                isLeaf: false,
+                disabled: props.disProCity,
+              });
+            });
+            const area = await getArea(props.cityId);
+            let areaChild = ref<Option[]>([]);
+            area.forEach((q) => {
+              areaChild.value.push({ value: q.id, label: q.name });
+            });
+            for (let i = 0; i < options.value.length; i++) {
+              if (options.value[i].value === props.provinceId) {
+                options.value[i].isLeaf = false;
+                options.value[i].children = cityChild.value;
+                for (let j = 0; j < cityChild.value.length; j++) {
+                  if (cityChild.value[j].value === props.cityId) {
+                    if (options.value[i].children) {
+                      (options.value[i].children as Option[])[j].children = areaChild.value;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if (props.provinceId) {
+            selected.value.push(props.provinceId);
+          }
+          if (props.cityId) {
+            selected.value.push(props.cityId);
+          }
+          if (props.areaId) {
+            selected.value.push(props.areaId);
+          }
+        },
+        {
+          deep: true,
+        }
+      );
 
       const options = ref<Option[]>([]);
 
