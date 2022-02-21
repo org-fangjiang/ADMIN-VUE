@@ -6,6 +6,10 @@ export interface TimeRuleModel {
   clueUnFollow?: number;
   clueDropLevel?: number;
   companyById?: any;
+  privateToGroup?: number;
+  groupToCompany?: number;
+  companyToCity?: number;
+  afterFollow?: number;
 }
 
 export interface TimeRuleCondition {
@@ -18,7 +22,15 @@ export const TimeRuleConst = {
     ADD: 'time-rule:add',
     UPDATE: 'time-rule:update',
   },
-  _UPDATE_FIELDS: ['clueDropLevel', 'clueUnFollow', 'clueUnclaimed'],
+  _UPDATE_FIELDS: [
+    'clueDropLevel',
+    'clueUnFollow',
+    'clueUnclaimed',
+    'privateToGroup',
+    'groupToCompany',
+    'companyToCity',
+    'afterFollow',
+  ],
   _RULES: {
     clueDropLevel: [
       {
@@ -41,6 +53,38 @@ export const TimeRuleConst = {
         required: true,
         type: 'number',
         message: t('marketing.timeRule.clueUnclaimed'),
+        trigger: 'blur',
+      },
+    ],
+    privateToGroup: [
+      {
+        required: true,
+        type: 'number',
+        message: t('marketing.timeRule.privateToGroup'),
+        trigger: 'blur',
+      },
+    ],
+    groupToCompany: [
+      {
+        required: true,
+        type: 'number',
+        message: t('marketing.timeRule.groupToCompany'),
+        trigger: 'blur',
+      },
+    ],
+    companyToCity: [
+      {
+        required: true,
+        type: 'number',
+        message: t('marketing.timeRule.companyToCity'),
+        trigger: 'blur',
+      },
+    ],
+    afterFollow: [
+      {
+        required: true,
+        type: 'number',
+        message: t('marketing.timeRule.afterFollow'),
         trigger: 'blur',
       },
     ],
@@ -73,9 +117,34 @@ export const TimeRuleColumns = [
     slots: { customRender: 'companyId' },
   },
   {
+    title: t('marketing.timeRule.privateToGroup'),
+    key: 'privateToGroup',
+    ellipsis: 'true',
+    slots: { customRender: 'privateToGroup' },
+  },
+  {
+    title: t('marketing.timeRule.groupToCompany'),
+    key: 'groupToCompany',
+    ellipsis: 'true',
+    slots: { customRender: 'groupToCompany' },
+  },
+  {
+    title: t('marketing.timeRule.companyToCity'),
+    key: 'companyToCity',
+    ellipsis: 'true',
+    slots: { customRender: 'companyToCity' },
+  },
+  {
+    title: t('marketing.timeRule.afterFollow'),
+    key: 'afterFollow',
+    ellipsis: 'true',
+    slots: { customRender: 'afterFollow' },
+  },
+  {
     title: t('marketing.operation'),
     key: 'operation',
     ellipsis: 'true',
     slots: { customRender: 'operation' },
+    width: '8%',
   },
 ];

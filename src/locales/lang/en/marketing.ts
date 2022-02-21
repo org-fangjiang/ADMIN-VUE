@@ -111,6 +111,10 @@ export default {
     clueUnFollow: 'clueUnFollow',
     clueUnclaimed: 'clueUnclaimed',
     companyId: 'companyId',
+    privateToGroup: 'privateToGroup',
+    groupToCompany: 'groupToCompany',
+    companyToCity: 'companyToCity',
+    afterFollow: 'afterFollow',
   },
   customer: {
     EFFECTIVE: 'EFFECTIVE',

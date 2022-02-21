@@ -107,10 +107,14 @@ export default {
     userNumber: '活动人数',
   },
   timeRule: {
-    clueDropLevel: '线索未跟进掉级：多长时间未跟进掉级',
-    clueUnFollow: '线索待跟进：多长时间提醒单位（分钟）',
-    clueUnclaimed: '线索待领取：多长时间提醒单位（分钟',
+    clueDropLevel: '线索未跟进掉级',
+    clueUnFollow: '线索待跟进提醒（分钟）',
+    clueUnclaimed: '线索待领取提醒（分钟',
     companyId: '企业',
+    privateToGroup: '个人未跟进转小组池（分钟）',
+    groupToCompany: '小组客户未跟进转企业池（分钟）',
+    companyToCity: '企业客户未跟进转城市池（分钟）',
+    afterFollow: '个人客户提前提醒（分钟）',
   },
   customer: {
     EFFECTIVE: '有效',

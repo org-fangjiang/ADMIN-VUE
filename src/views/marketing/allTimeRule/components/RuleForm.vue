@@ -63,6 +63,54 @@
           :parser="(value) => value.replace('分钟', '')"
         />
       </FormItem>
+      <FormItem
+        ref="privateToGroup"
+        :label="t('marketing.timeRule.privateToGroup')"
+        name="privateToGroup"
+      >
+        <InputNumber
+          :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('privateToGroup')"
+          v-model:value="formState.privateToGroup"
+          autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
+        />
+      </FormItem>
+      <FormItem
+        ref="groupToCompany"
+        :label="t('marketing.timeRule.groupToCompany')"
+        name="groupToCompany"
+      >
+        <InputNumber
+          :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('groupToCompany')"
+          v-model:value="formState.groupToCompany"
+          autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
+        />
+      </FormItem>
+      <FormItem
+        ref="companyToCity"
+        :label="t('marketing.timeRule.companyToCity')"
+        name="companyToCity"
+      >
+        <InputNumber
+          :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('companyToCity')"
+          v-model:value="formState.companyToCity"
+          autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
+        />
+      </FormItem>
+      <FormItem ref="afterFollow" :label="t('marketing.timeRule.afterFollow')" name="afterFollow">
+        <InputNumber
+          :disabled="isUpdate && !ruleConst._UPDATE_FIELDS.includes('afterFollow')"
+          v-model:value="formState.afterFollow"
+          autoComplete="off"
+          :formatter="(value) => `${value}分钟`"
+          :parser="(value) => value.replace('分钟', '')"
+        />
+      </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 8 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
