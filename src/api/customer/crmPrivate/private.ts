@@ -14,7 +14,45 @@ export enum PrivateApi {
   GetMy = '/crm-server/customer/getMy',
   AddPrivate = '/crm-server/customer/addPrivate',
   GetMyById = '/crm-server/customer/getMyById',
+  TransferSale = '/crm-server/customer/transferSale', // customer:transfer:sale
+  Update = '/crm-server/customer/update',
 }
+
+export function update(customer: PrivateModel, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData(customer);
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<PrivateModel>>(
+    {
+      url: PrivateApi.Update,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function transferSale(
+  id: string,
+  fromId: string,
+  toId: string,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id, fromId: fromId, toId: toId });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: PrivateApi.TransferSale,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
 export function getMyById(id: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id: id });

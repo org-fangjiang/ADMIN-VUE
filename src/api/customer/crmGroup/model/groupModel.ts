@@ -128,6 +128,8 @@ export const GroupConst = {
   _PERMS: {
     SELECT: 'customer:select:group',
     ADD: 'customer:add:group',
+    DISTRIBUTE: 'customer:distribute',
+    UPDATE: 'customer:update',
   },
 };
 

@@ -10,6 +10,64 @@ export enum CityApi {
   InSystem = '/crm-server/customer/inSystem',
   GetCityById = '/crm-server/customer/getCityById',
   AllSale = '/crm-server/customer/allSale',
+  AddSale = '/crm-server/customer/addSale', // id: string, shareId: string
+  Distribute = '/crm-server/customer/distribute', //from cusId saleId
+  DistributeBatch = '/crm-server/customer/distributeBatch',
+}
+
+export function distributeBatch(
+  fromType: string,
+  customerId: string[],
+  saleId: string,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({ from: fromType, customerId: customerId, saleId: saleId });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: CityApi.DistributeBatch,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function distribute(
+  fromType: string,
+  customerId: string,
+  saleId: string,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({ from: fromType, customerId: customerId, saleId: saleId });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: CityApi.Distribute,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function addSale(id: string, shareId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id, shareId: shareId });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: CityApi.AddSale,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function allSale(id: string, mode: ErrorMessageMode = 'modal') {

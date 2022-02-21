@@ -138,6 +138,8 @@ export const PrivateConst = {
   _PERMS: {
     SELECT: 'customer:select',
     ADD: 'customer:add',
+    TRANSFER: 'customer:transfer:sale',
+    UPDATE: 'customer:update',
   },
 };
 

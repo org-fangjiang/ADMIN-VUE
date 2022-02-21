@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="lg:h-[700px]">
     <Form
       ref="formRef"
       :model="formState"
@@ -263,7 +263,7 @@
           autoComplete="off"
         />
       </FormItem>
-      <FormItem v-if="!isUpdate" :wrapper-col="{ span: 12, offset: 8 }">
+      <FormItem :wrapper-col="{ span: 12, offset: 8 }">
         <Button type="primary" @click="onSubmit">{{ t('marketing.action.onSubmit') }}</Button>
         <Button style="" @click="resetForm">{{ t('component.cropper.btn_reset') }}</Button>
       </FormItem>
@@ -296,6 +296,7 @@
   import { failed, success } from '/@/hooks/web/useList';
   import { debounce } from 'lodash-es';
   import { search, searchWithCondition } from '/@/api/host/project/project';
+  import { update } from '/@/api/customer/crmPrivate/private';
 
   interface Option {
     value: string;
@@ -376,14 +377,24 @@
         formRef.value
           .validate()
           .then(async () => {
-            try {
-              formState.demand = demands.value.toString();
-              const pro = formState.intentionProject?.toString();
-              formState.intentionProject = pro;
-              await addCity(formState);
-              success(t('marketing.action.add'), t('marketing.action.success'));
-            } catch (error: any) {
-              failed(t('marketing.action.add'), t('marketing.action.fail'));
+            if (props.id) {
+              try {
+                formState.demand = demands.value.toString();
+                const pro = formState.intentionProject?.toString();
+                formState.intentionProject = pro;
+                await update(formState);
+                success(t('marketing.action.update'), t('marketing.action.success'));
+              } catch (error: any) {}
+            } else {
+              try {
+                formState.demand = demands.value.toString();
+                const pro = formState.intentionProject?.toString();
+                formState.intentionProject = pro;
+                await addCity(formState);
+                success(t('marketing.action.add'), t('marketing.action.success'));
+              } catch (error: any) {
+                failed(t('marketing.action.add'), t('marketing.action.fail'));
+              }
             }
           })
           .catch((error: any) => {
@@ -391,8 +402,28 @@
           });
       };
 
-      const resetForm = () => {
-        formRef.value.resetFields();
+      const resetForm = async () => {
+        if (props.id) {
+          const { content } = await getCityById(props.id);
+          Object.assign(formState, content);
+          if (formState.liveIn) {
+            liveIne.push(...formState.liveIn.split(','));
+          }
+          if (content.workIn) {
+            workIne.push(...content.workIn.split(','));
+          }
+          if (content.demand) {
+            demands.value = content.demand.split(',');
+          }
+          if (content.projectsByIntention && content.projectsByIntention.length > 0) {
+            content.projectsByIntention.forEach((p) => {
+              projects.value.push(p.id);
+              data.value.push({ value: p.id, label: p.name });
+            });
+          }
+        } else {
+          formRef.value.resetFields();
+        }
       };
 
       watch(
@@ -403,7 +434,7 @@
       );
 
       const isInSys = debounce(async (phone) => {
-        if (isUpdate.value) {
+        if (phone === formState.contact) {
           return;
         }
         if (phone) {
@@ -460,9 +491,6 @@
       let fetching = ref<boolean>(false);
       const data = ref<Option[]>([]);
       const projectSearch = debounce(async (value) => {
-        if (isUpdate.value) {
-          return;
-        }
         fetching.value = true;
         let result;
         if (value) {

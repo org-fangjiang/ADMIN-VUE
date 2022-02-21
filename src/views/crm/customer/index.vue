@@ -1,14 +1,21 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
     <Tabs v-model:activeKey="activeKey">
-      <TabPane key="1" tab="城市" v-auth="cityConst._PERMS.SELECT">
+      <TabPane
+        key="1"
+        tab="城市"
+        v-auth="cityConst._PERMS.SELECT"
+        v-if="hasPermission(cityConst._PERMS.SELECT)"
+      >
         <Button @click="clickCity" v-auth="cityConst._PERMS.ADD">添加</Button>
+        <Button @click="distributeMul" v-auth="cityConst._PERMS.DISTRIBUTE">分配</Button>
         <Table
           :columns="columnsCity"
           :data-source="cityList"
           rowKey="id"
           :pagination="cityPagination"
           @change="handleCityTableChange"
+          :row-selection="{ selectedRowKeys: selectedCity, onChange: onSelectChangeCity }"
         >
           <template #purpose="{ text: purpose }">
             <span v-if="purpose - 1 > -1">
@@ -42,17 +49,26 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seeCity(line)">查看</Button>
+            <Button @click="updateCustomer(line)" v-auth="cityConst._PERMS.UPDATE">编辑</Button>
+            <Button @click="distributeOne(line)" v-auth="cityConst._PERMS.DISTRIBUTE">分配</Button>
           </template>
         </Table>
       </TabPane>
-      <TabPane key="2" tab="公司" v-auth="companyConst._PERMS.SELECT">
+      <TabPane
+        key="2"
+        tab="公司"
+        v-auth="companyConst._PERMS.SELECT"
+        v-if="hasPermission(companyConst._PERMS.SELECT)"
+      >
         <Button @click="clickCompany" v-auth="companyConst._PERMS.ADD">添加</Button>
+        <Button @click="distributeMul" v-auth="companyConst._PERMS.DISTRIBUTE">分配</Button>
         <Table
           :columns="columnsCompany"
           :data-source="companyList"
           rowKey="id"
           :pagination="companyPagination"
           @change="handleCompanyTableChange"
+          :row-selection="{ selectedRowKeys: selectedCompany, onChange: onSelectChangeCompany }"
         >
           <template #purpose="{ text: purpose }">
             <span v-if="purpose - 1 > -1">
@@ -86,17 +102,28 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seeCompany(line)">查看</Button>
+            <Button @click="updateCustomer(line)" v-auth="companyConst._PERMS.UPDATE">编辑</Button>
+            <Button @click="distributeOne(line)" v-auth="companyConst._PERMS.DISTRIBUTE"
+              >分配</Button
+            >
           </template>
         </Table>
       </TabPane>
-      <TabPane key="3" tab="小组" v-auth="groupConst._PERMS.SELECT">
+      <TabPane
+        key="3"
+        tab="小组"
+        v-auth="groupConst._PERMS.SELECT"
+        v-if="hasPermission(groupConst._PERMS.SELECT)"
+      >
         <Button @click="clickGroup" v-auth="groupConst._PERMS.ADD">添加</Button>
+        <Button @click="distributeMul" v-auth="groupConst._PERMS.DISTRIBUTE">分配</Button>
         <Table
           :columns="columnsGroup"
           :data-source="groupList"
           rowKey="id"
           :pagination="groupPagination"
           @change="handleGroupTableChange"
+          :row-selection="{ selectedRowKeys: selectedGroup, onChange: onSelectChangeGroup }"
         >
           <template #purpose="{ text: purpose }">
             <span v-if="purpose - 1 > -1">
@@ -130,11 +157,19 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seeGroup(line)">查看</Button>
+            <Button @click="updateCustomer(line)" v-auth="groupConst._PERMS.UPDATE">编辑</Button>
+            <Button @click="distributeOne(line)" v-auth="groupConst._PERMS.DISTRIBUTE">分配</Button>
           </template>
         </Table>
       </TabPane>
-      <TabPane key="4" tab="个人" v-auth="privateConst._PERMS.SELECT">
+      <TabPane
+        key="4"
+        tab="个人"
+        v-auth="privateConst._PERMS.SELECT"
+        v-if="hasPermission(privateConst._PERMS.SELECT)"
+      >
         <Button @click="clickPrivate" v-auth="privateConst._PERMS.ADD">添加</Button>
+        <!-- <Button @click="distributeMul" v-auth="privateConst._PERMS.TRANSFER">转移</Button> -->
         <Table
           :columns="columnsPrivate"
           :data-source="privateList"
@@ -142,6 +177,7 @@
           :pagination="privatePagination"
           @change="handlePrivateTableChange"
         >
+          <!-- :row-selection="{ selectedRowKeys: selectedPrivate, onChange: onSelectChangePrivate }" -->
           <template #purpose="{ text: purpose }">
             <span v-if="purpose - 1 > -1">
               <Tag :color="privateConst.PURPOSES[purpose - 1].color">
@@ -174,6 +210,8 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seePrivate(line)">查看</Button>
+            <Button @click="updateCustomer(line)" v-auth="privateConst._PERMS.UPDATE">编辑</Button>
+            <Button @click="distributeOne(line)" v-auth="privateConst._PERMS.TRANSFER">转移</Button>
           </template>
         </Table>
       </TabPane>
@@ -182,8 +220,8 @@
       v-model:visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="70%"
-      :bodyStyle="{ overflowY: 'auto', margin: '16px', height: '700px' }"
+      width="40%"
+      :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
       :destroyOnClose="true"
       :footer="null"
     >
@@ -197,6 +235,12 @@
         :companyId="drawerParam.companyId"
         :groupId="drawerParam.groupId"
         :privateId="drawerParam.privateId"
+      />
+      <DistributeForm
+        v-if="drawerParam.state === '5'"
+        :id="drawerParam.id"
+        :ids="ids"
+        :fromType="fromType"
       />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -230,7 +274,6 @@
     GroupConst,
     _ColumnsGroup as columnsGroup,
   } from '/@/api/customer/crmGroup/model/groupModel';
-  import { usePermission } from '/@/hooks/web/usePermission';
   import { getByGroup } from '/@/api/customer/crmGroup/group';
   import GroupForm from './components/GroupForm.vue';
   import {
@@ -242,6 +285,8 @@
   import PrivateForm from './components/PrivateForm.vue';
   // import SelectDetail from './components/SelectDetail.vue';
   import SelectDetail from './components/SelectDetail.vue';
+  import DistributeForm from './components/DistributeForm.vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'Customer',
@@ -258,6 +303,7 @@
       GroupForm,
       PrivateForm,
       SelectDetail,
+      DistributeForm,
     },
     setup() {
       const { t } = useI18n();
@@ -270,6 +316,60 @@
       const companyConst = ref(CompanyConst);
       const groupConst = ref(GroupConst);
       const privateConst = ref(PrivateConst);
+
+      //选中行id
+      let selectedCity = ref<string[]>([]);
+      const onSelectChangeCity = async (selectedRowKeys) => {
+        selectedCity.value = selectedRowKeys;
+      };
+      let selectedCompany = ref<string[]>([]);
+      const onSelectChangeCompany = async (selectedRowKeys) => {
+        selectedCompany.value = selectedRowKeys;
+      };
+      let selectedGroup = ref<string[]>([]);
+      const onSelectChangeGroup = async (selectedRowKeys) => {
+        selectedGroup.value = selectedRowKeys;
+      };
+      let selectedPrivate = ref<string[]>([]);
+      const onSelectChangePrivate = async (selectedRowKeys) => {
+        selectedPrivate.value = selectedRowKeys;
+      };
+
+      // 更新
+      const updateCustomer = (line) => {
+        if (activeKey.value === '1') {
+          drawerParam.state = '0';
+        } else if (activeKey.value === '2') {
+          drawerParam.state = '1';
+        } else if (activeKey.value === '3') {
+          drawerParam.state = '2';
+        } else if (activeKey.value === '4') {
+          drawerParam.state = '3';
+        }
+        drawerParam.id = line.id;
+        drawerParam.title = '更新客户信息';
+        drawerParam.visible = true;
+      };
+
+      // 多个分配
+      const distributeMul = () => {
+        drawerParam.state = '5';
+        if (activeKey.value === '4') {
+          fromType.value = 'private';
+          ids.value = selectedPrivate.value;
+        } else if (activeKey.value === '3') {
+          fromType.value = 'group';
+          ids.value = selectedGroup.value;
+        } else if (activeKey.value === '2') {
+          fromType.value = 'company';
+          ids.value = selectedCompany.value;
+        } else if (activeKey.value === '1') {
+          fromType.value = 'city';
+          ids.value = selectedCity.value;
+        }
+        drawerParam.title = '分配客户';
+        drawerParam.visible = true;
+      };
 
       watch(
         () => activeKey.value,
@@ -295,12 +395,31 @@
         }
       );
 
+      const ids = ref(['']);
+      const fromType = ref('');
+      const distributeOne = (line) => {
+        drawerParam.title = '分配客户';
+        drawerParam.state = '5';
+        if (activeKey.value === '4') {
+          fromType.value = 'private';
+          drawerParam.title = '转移客户';
+        } else if (activeKey.value === '3') {
+          fromType.value = 'group';
+        } else if (activeKey.value === '2') {
+          fromType.value = 'company';
+        } else if (activeKey.value === '1') {
+          fromType.value = 'city';
+        }
+        drawerParam.id = line.id;
+        drawerParam.visible = true;
+      };
+
       const seeCity = (line) => {
         // drawerParam.title = '查看城市';
         // drawerParam.state = '0';
         // drawerParam.visible = true;
         // drawerParam.id = line.id;
-        drawerParam.title = '查看城市';
+        drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
         drawerParam.cityId = line.id;
@@ -311,7 +430,7 @@
         // drawerParam.state = '1';
         // drawerParam.visible = true;
         // drawerParam.id = line.id;
-        drawerParam.title = '查看公司';
+        drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
         drawerParam.companyId = line.id;
@@ -322,7 +441,7 @@
         // drawerParam.state = '2';
         // drawerParam.visible = true;
         // drawerParam.id = line.id;
-        drawerParam.title = '查看小组';
+        drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
         drawerParam.groupId = line.id;
@@ -333,7 +452,7 @@
         // drawerParam.state = '3';
         // drawerParam.visible = true;
         // drawerParam.id = line.id;
-        drawerParam.title = '查看个人';
+        drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
         drawerParam.privateId = line.id;
@@ -360,6 +479,8 @@
         drawerParam.groupId = '';
         drawerParam.privateId = '';
         drawerParam.visible = false;
+        fromType.value = '';
+        ids.value.splice(0);
         let result;
         if (activeKey.value === '1') {
           cityPage.pageNum = 1;
@@ -382,7 +503,7 @@
 
       // 添加城市
       const clickCity = () => {
-        drawerParam.title = '添加城市';
+        drawerParam.title = '添加客户信息';
         drawerParam.state = '0';
         drawerParam.visible = true;
       };
@@ -440,7 +561,7 @@
 
       // 添加企业
       const clickCompany = () => {
-        drawerParam.title = '添加企业';
+        drawerParam.title = '添加客户信息';
         drawerParam.state = '1';
         drawerParam.visible = true;
       };
@@ -499,7 +620,7 @@
 
       // 添加小组
       const clickGroup = () => {
-        drawerParam.title = '添加小组';
+        drawerParam.title = '添加客户信息';
         drawerParam.state = '2';
         drawerParam.visible = true;
       };
@@ -562,7 +683,7 @@
 
       // 添加个人
       const clickPrivate = () => {
-        drawerParam.title = '添加个人';
+        drawerParam.title = '添加客户信息';
         drawerParam.state = '3';
         drawerParam.visible = true;
       };
@@ -582,12 +703,6 @@
         buyIntentionRange: undefined,
         companyId: '',
         groupId: '',
-        // crmSaleCustomerRelationsById: {
-        //   saleId: '',
-        //   customerId: '',
-        //   isOwner: '',
-        //   saleName: '',
-        // },
       });
       // 个人分页
       const privatePage: PageParam = {
@@ -704,6 +819,20 @@
         seeCompany,
         seeGroup,
         seePrivate,
+        ids,
+        fromType,
+        distributeOne,
+        onSelectChangePrivate,
+        onSelectChangeGroup,
+        onSelectChangeCompany,
+        onSelectChangeCity,
+        selectedCity,
+        selectedCompany,
+        selectedGroup,
+        selectedPrivate,
+        distributeMul,
+        hasPermission,
+        updateCustomer,
       };
     },
   });

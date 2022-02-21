@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-row w-full h-full overflow-y-scroll lg:py-4 lg:mb-4">
-    <div class="w-1/3">
+  <div class="lg:h-[700px] flex flex-row w-full h-full overflow-y-scroll lg:py-2 lg:mb-4">
+    <div class="w-1/2">
       <div class="space-x-4 space-y-4 lg:grid lg:grid-cols-2 justify-items-center">
         <div class="place-self-end">用户名：</div>
         <div class="place-self-start">{{ formState.username }}</div>
@@ -73,8 +73,8 @@
         </div>
       </div>
     </div>
-    <div class="w-2/3 mt-4">
-      <div>跟进信息：</div>
+    <div class="w-1/2 mt-4">
+      <div>带看记录</div>
       <div
         v-show="
           formState.crmSaleCustomerRelationsById &&
@@ -94,7 +94,7 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { allSale, getCityById } from '/@/api/customer/crmCity/city';
+  import { getCityById } from '/@/api/customer/crmCity/city';
   import { getCompanyById } from '/@/api/customer/crmCompany/company';
   import { getGroupById } from '/@/api/customer/crmGroup/group';
   import { getMyById } from '/@/api/customer/crmPrivate/private';
@@ -199,8 +199,8 @@
           follow.value = result.follow;
           look.value = result.look;
           report.value = result.report;
-          const saleList = await allSale(props.privateId);
-          console.log(saleList);
+          // const saleList = await allSale(props.privateId);
+          // console.log(saleList);
         }
         if (formState.liveIn) {
           const liveIne: string[] = [];

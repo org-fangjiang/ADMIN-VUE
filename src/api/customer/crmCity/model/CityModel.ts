@@ -127,6 +127,8 @@ export const CityConst = {
   _PERMS: {
     SELECT: 'customer:select:city',
     ADD: 'customer:add:city',
+    DISTRIBUTE: 'customer:distribute',
+    UPDATE: 'customer:update',
   },
 };
 

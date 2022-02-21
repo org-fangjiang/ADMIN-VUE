@@ -128,6 +128,8 @@ export const CompanyConst = {
   _PERMS: {
     SELECT: 'customer:select:company',
     ADD: 'customer:add:company',
+    DISTRIBUTE: 'customer:distribute',
+    UPDATE: 'customer:update',
   },
 };
 
