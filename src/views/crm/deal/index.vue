@@ -205,7 +205,7 @@
         if (activeKey.value === '1') {
           drawerParam.fromType = 'deal';
         } else if (activeKey.value === '2') {
-          drawerParam.fromType = 'invalid';
+          drawerParam.fromType = 'invalidate';
         }
       };
 
@@ -220,7 +220,7 @@
           if (selectedInvalid.value.length === 0) {
             return;
           }
-          drawerParam.fromType = 'invalid';
+          drawerParam.fromType = 'invalidate';
           drawerParam.ids = selectedInvalid.value;
         }
         drawerParam.state = '0';

@@ -1,11 +1,12 @@
 <template>
-  <div class="lg:h-[700px]">
+  <div class="lg:h-[700px] py-4">
     <Form
       ref="formRef"
       :model="formState"
       :rules="rules"
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
+      style="padding: 16px"
     >
       <FormItem ref="contact" :label="t('marketing.customer.contact')" name="contact">
         <Input
@@ -158,108 +159,6 @@
         <Slider
           :disabled="isUpdate && !updateFields.includes('buyIntentionRange')"
           v-model:value="formState.buyIntentionRange"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate"
-        ref="autoBugIntentionRange"
-        :label="t('marketing.customer.autoBugIntentionRange')"
-        name="autoBugIntentionRange"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('autoBugIntentionRange')"
-          v-model:value="formState.autoBugIntentionRange"
-          autoComplete="off"
-          type="number"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate"
-        ref="breakPromiseTimes"
-        :label="t('marketing.customer.breakPromiseTimes')"
-        name="breakPromiseTimes"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('breakPromiseTimes')"
-          v-model:value="formState.breakPromiseTimes"
-          autoComplete="off"
-          type="number"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate"
-        ref="lookTime"
-        :label="t('marketing.customer.lookTime')"
-        name="lookTime"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('lookTime')"
-          v-model:value="formState.lookTime"
-          autoComplete="off"
-          type="number"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate"
-        ref="reportTime"
-        :label="t('marketing.customer.reportTime')"
-        name="reportTime"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('reportTime')"
-          v-model:value="formState.reportTime"
-          autoComplete="off"
-          type="number"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate"
-        ref="viewTime"
-        :label="t('marketing.customer.viewTime')"
-        name="viewTime"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('viewTime')"
-          v-model:value="formState.viewTime"
-          autoComplete="off"
-          type="number"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate"
-        ref="transferTime"
-        :label="t('marketing.customer.transferTime')"
-        name="transferTime"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('transferTime')"
-          v-model:value="formState.transferTime"
-          autoComplete="off"
-          type="number"
-        />
-      </FormItem>
-      <FormItem
-        v-if="isUpdate && formState.userByUpdate"
-        ref="userByUpdate"
-        :label="t('marketing.customer.updateUser')"
-        name="userByUpdate"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('userByUpdate')"
-          v-model:value="formState.userByUpdate.realName"
-          autoComplete="off"
-        />
-      </FormItem>
-      <FormItem
-        v-if="formState.userByCreate"
-        ref="userByCreate"
-        :label="t('marketing.customer.updateUser')"
-        name="userByCreate"
-      >
-        <Input
-          :disabled="isUpdate && !updateFields.includes('userByCreate')"
-          v-model:value="formState.userByCreate.realName"
           autoComplete="off"
         />
       </FormItem>
