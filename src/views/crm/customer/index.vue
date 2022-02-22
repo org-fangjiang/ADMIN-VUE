@@ -49,8 +49,10 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seeCity(line)">查看</Button>
-            <Button @click="updateCustomer(line)" v-auth="cityConst._PERMS.UPDATE">编辑</Button>
             <Button @click="distributeOne(line)" v-auth="cityConst._PERMS.DISTRIBUTE">分配</Button>
+            <!-- <Button @click="transferLevel(line)" v-auth="cityConst._PERMS.TRANSFER_LEVEL"
+              >流转</Button
+            > -->
           </template>
         </Table>
       </TabPane>
@@ -102,10 +104,12 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seeCompany(line)">查看</Button>
-            <Button @click="updateCustomer(line)" v-auth="companyConst._PERMS.UPDATE">编辑</Button>
             <Button @click="distributeOne(line)" v-auth="companyConst._PERMS.DISTRIBUTE"
               >分配</Button
             >
+            <!-- <Button @click="transferLevel(line)" v-auth="companyConst._PERMS.TRANSFER_LEVEL"
+              >流转</Button
+            > -->
           </template>
         </Table>
       </TabPane>
@@ -157,8 +161,10 @@
           </template>
           <template #operation="{ text: line }">
             <Button @click="seeGroup(line)">查看</Button>
-            <Button @click="updateCustomer(line)" v-auth="groupConst._PERMS.UPDATE">编辑</Button>
             <Button @click="distributeOne(line)" v-auth="groupConst._PERMS.DISTRIBUTE">分配</Button>
+            <!-- <Button @click="transferLevel(line)" v-auth="groupConst._PERMS.TRANSFER_LEVEL"
+              >流转</Button
+            > -->
           </template>
         </Table>
       </TabPane>
@@ -212,6 +218,13 @@
             <Button @click="seePrivate(line)">查看</Button>
             <Button @click="updateCustomer(line)" v-auth="privateConst._PERMS.UPDATE">编辑</Button>
             <Button @click="distributeOne(line)" v-auth="privateConst._PERMS.TRANSFER">转移</Button>
+            <!-- <Button @click="transferLevel(line)" v-auth="privateConst._PERMS.TRANSFER_LEVEL"
+              >流转</Button
+            > -->
+            <Button @click="customerDeal(line)" v-auth="privateConst._PERMS.DEAL">成交</Button>
+            <Button @click="customerInvalid(line)" v-auth="privateConst._PERMS.INVALID"
+              >无效</Button
+            >
           </template>
         </Table>
       </TabPane>
@@ -242,12 +255,14 @@
         :ids="ids"
         :fromType="fromType"
       />
+      <SelectLevel v-if="drawerParam.state === '6'" :id="drawerParam.id" :fromType="fromType" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 <script lang="ts">
   import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue';
+  import SelectLevel from './components/SelectLevel.vue';
   import { useI18n } from 'vue-i18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -259,7 +274,7 @@
   } from '/@/api/customer/crmCity/model/CityModel';
   import { getByCity } from '/@/api/customer/crmCity/city';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { processListByLine } from '/@/hooks/web/useList';
+  import { processListByLine, success } from '/@/hooks/web/useList';
   import { Tabs, TabPane, Table, Tag, Button, Modal } from 'ant-design-vue';
   import CityForm from './components/CityForm.vue';
   import {
@@ -281,7 +296,7 @@
     PrivateModel,
     _ColumnsPrivate as columnsPrivate,
   } from '/@/api/customer/crmPrivate/model/PrivateModel';
-  import { getByPrivate } from '/@/api/customer/crmPrivate/private';
+  import { deal, getByPrivate, invalid } from '/@/api/customer/crmPrivate/private';
   import PrivateForm from './components/PrivateForm.vue';
   // import SelectDetail from './components/SelectDetail.vue';
   import SelectDetail from './components/SelectDetail.vue';
@@ -304,6 +319,7 @@
       PrivateForm,
       SelectDetail,
       DistributeForm,
+      SelectLevel,
     },
     setup() {
       const { t } = useI18n();
@@ -316,6 +332,48 @@
       const companyConst = ref(CompanyConst);
       const groupConst = ref(GroupConst);
       const privateConst = ref(PrivateConst);
+
+      // 成交
+      const customerDeal = async (line) => {
+        try {
+          await deal(line.id);
+          success('成功', '客户处理成功');
+          privatePage.pageNum = 1;
+          const result = await getPrivateList();
+          await processListByLine(result, privateList, privateTotal);
+        } catch (error) {}
+      };
+      // 无效
+      const customerInvalid = async (line) => {
+        try {
+          await invalid(line.id);
+          success('成功', '客户处理成功');
+          privatePage.pageNum = 1;
+          const result = await getPrivateList();
+          await processListByLine(result, privateList, privateTotal);
+        } catch (error) {}
+      };
+
+      // 改变所在池
+      const transferLevel = (line) => {
+        drawerParam.state = '6';
+        if (activeKey.value === '4') {
+          fromType.value = 'private';
+          ids.value = selectedPrivate.value;
+        } else if (activeKey.value === '3') {
+          fromType.value = 'group';
+          ids.value = selectedGroup.value;
+        } else if (activeKey.value === '2') {
+          fromType.value = 'company';
+          ids.value = selectedCompany.value;
+        } else if (activeKey.value === '1') {
+          fromType.value = 'city';
+          ids.value = selectedCity.value;
+        }
+        drawerParam.id = line.id;
+        drawerParam.title = '客户流转';
+        drawerParam.visible = true;
+      };
 
       const sortCity = {
         asc: [''],
@@ -783,6 +841,7 @@
       });
 
       return {
+        transferLevel,
         t,
         prefixCls,
         loading,
@@ -846,6 +905,8 @@
         distributeMul,
         hasPermission,
         updateCustomer,
+        customerInvalid,
+        customerDeal,
       };
     },
   });

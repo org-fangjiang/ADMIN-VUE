@@ -53,6 +53,12 @@ export default {
   FOLLOW_RESULT_3: '同行',
   FOLLOW_RESULT_4: '号码错误',
   FOLLOW_RESULT_5: '已转为客户',
+  CITY: '城市池',
+  GROUP: '小组池',
+  COMPANY: '公司池',
+  PRIVATE: '个人池',
+  DEAL: '成交池',
+  INVALIDATE: '无效池',
   clue: {
     username: '用户名',
     purpose: '购房用途',
@@ -117,6 +123,7 @@ export default {
     afterFollow: '个人客户提前提醒（分钟）',
   },
   customer: {
+    DEAL: '成交',
     EFFECTIVE: '有效',
     INVALID: '无效',
     STATE_2: '待跟进',

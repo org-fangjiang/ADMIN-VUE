@@ -53,6 +53,12 @@ export default {
   FOLLOW_RESULT_3: 'FOLLOW_RESULT_3',
   FOLLOW_RESULT_4: 'FOLLOW_RESULT_4',
   FOLLOW_RESULT_5: 'FOLLOW_RESULT_5',
+  CITY: 'city',
+  GROUP: 'group',
+  COMPANY: 'company',
+  PRIVATE: 'private',
+  DEAL: 'deal',
+  INVALIDATE: 'invalidate',
   clue: {
     username: 'username',
     purpose: 'purpose',
@@ -117,6 +123,7 @@ export default {
     afterFollow: 'afterFollow',
   },
   customer: {
+    DEAL: 'Deal',
     EFFECTIVE: 'EFFECTIVE',
     INVALID: 'INVALID',
     STATE_2: 'Not claimed',

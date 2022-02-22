@@ -19,6 +19,27 @@ export enum CityApi {
   AddSale = '/crm-server/customer/addSale', // id: string, shareId: string
   Distribute = '/crm-server/customer/distribute', //from cusId saleId
   DistributeBatch = '/crm-server/customer/distributeBatch',
+  TransferLevel = '/crm-server/customer/transferLevel', // customer:transfer:level
+}
+
+export function transferLevel(
+  id: string,
+  from: string,
+  to: string,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id, from: from, to: to });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: CityApi.TransferLevel,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function distributeBatch(
