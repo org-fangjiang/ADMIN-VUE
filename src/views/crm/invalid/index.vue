@@ -1,6 +1,8 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Button @click="distributeMul" v-auth="dealConst._PERMS.DISTRIBUTE">分配</Button>
+    <Button @click="distributeMul" v-auth="invalidConst._PERMS.DISTRIBUTE" class="my-2"
+      >分配</Button
+    >
     <InputSearch
       :class="`${prefixCls}-select`"
       v-model:value="contactValue"
@@ -38,7 +40,7 @@
       :allowClear="true"
       style="width: 120px"
       @change="purposeChange"
-      :options="dealConst.PURPOSES"
+      :options="invalidConst.PURPOSES"
       :pagination="false"
       placeholder="购房用途"
     />
@@ -53,17 +55,17 @@
       type="number"
     />
     <Table
-      :columns="columnsDeal"
-      :data-source="dealList"
+      :columns="columnsInvalid"
+      :data-source="invalidList"
       rowKey="id"
-      :pagination="dealPagination"
-      @change="handleDealTableChange"
-      :row-selection="{ selectedRowKeys: selectedDeal, onChange: onSelectChangeDeal }"
+      :pagination="invalidPagination"
+      @change="handleInvalidTableChange"
+      :row-selection="{ selectedRowKeys: selectedInvalid, onChange: onSelectChangeInvalid }"
     >
       <template #purpose="{ text: purpose }">
         <span v-if="purpose - 1 > -1">
-          <Tag :color="dealConst.PURPOSES[purpose - 1].color">
-            {{ dealConst.PURPOSES[purpose - 1].label }}
+          <Tag :color="invalidConst.PURPOSES[purpose - 1].color">
+            {{ invalidConst.PURPOSES[purpose - 1].label }}
           </Tag>
         </span>
       </template>
@@ -78,21 +80,21 @@
       </template>
       <template #gender="{ text: gender }">
         <span>
-          <Tag :color="dealConst.GENDER[gender].color">
-            {{ dealConst.GENDER[gender].label }}
+          <Tag :color="invalidConst.GENDER[gender].color">
+            {{ invalidConst.GENDER[gender].label }}
           </Tag>
         </span>
       </template>
       <template #state="{ text: state }">
         <span>
-          <Tag :color="dealConst.STATES[state].color">
-            {{ dealConst.STATES[state].label }}
+          <Tag :color="invalidConst.STATES[state].color">
+            {{ invalidConst.STATES[state].label }}
           </Tag>
         </span>
       </template>
       <template #operation="{ text: line }">
         <Button @click="seeDeal(line)">查看</Button>
-        <Button @click="distributeOne(line)" v-auth="dealConst._PERMS.DISTRIBUTE">分配</Button>
+        <Button @click="distributeOne(line)" v-auth="invalidConst._PERMS.DISTRIBUTE">分配</Button>
       </template>
     </Table>
     <Modal
@@ -110,7 +112,7 @@
         :fromType="drawerParam.fromType"
         :ids="drawerParam.ids"
       />
-      <SelectDetail v-if="drawerParam.state === '1'" :dealId="drawerParam.dealId" />
+      <SelectDetail v-if="drawerParam.state === '1'" :invalidId="drawerParam.invalidId" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -123,14 +125,14 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { Loading } from '/@/components/Loading';
   import {
-    DealConst,
-    DealModel,
-    _ColumnsDeal as columnsDeal,
-  } from '/@/api/customer/crmDeal/model/DealModel';
+    InvalidConst,
+    InvalidModel,
+    _ColumnsInvalid as columnsInvalid,
+  } from '/@/api/customer/crmInvalid/model/InvalidModel';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { getByDeal } from '/@/api/customer/crmDeal/deal';
   import { processListByLine } from '/@/hooks/web/useList';
+  import { getByInvalid } from '/@/api/customer/crmInvalid/invalid';
   import { useUserStore } from '/@/store/modules/user';
   import DistributeForm from '../customer/components/DistributeForm.vue';
   import SelectDetail from '../customer/components/SelectDetail.vue';
@@ -138,7 +140,7 @@
   import FProjectSelect from '/@/components/FProjectSelect';
 
   export default defineComponent({
-    name: 'Deal',
+    name: 'Invalid',
     components: {
       Loading,
       Table,
@@ -158,6 +160,10 @@
       const { prefixCls } = useDesign('customer');
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      const invalidConst = ref(InvalidConst);
+
+      const invalidResult: InvalidModel[] = [];
+      let invalidList = reactive(invalidResult);
 
       //手机号
       const contactValue = ref<String>('');
@@ -166,68 +172,63 @@
           contactValue.value = contactValue.value + '****';
         }
         if (!contactValue.value) {
-          const result = await getDealList();
-          processListByLine(result, dealList, dealTotal);
+          const result = await getInvalidList();
+          processListByLine(result, invalidList, invalidTotal);
         }
       };
       const contactSearch = async (value: string) => {
         value = value.replace('****', '');
-        dealCondition.mobile = value;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.mobile = value;
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
 
       //  住址
       const liveInChange = async (e) => {
-        dealCondition.liveIn = e.value.toString();
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.liveIn = e.value.toString();
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
       // 工作地
       const workInChange = async (e) => {
-        dealCondition.workIn = e.value.toString();
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.workIn = e.value.toString();
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
       // 意向地
       const intentionChange = async (e) => {
-        dealCondition.intentionProvince = e.value[0];
-        dealCondition.intentionCity = e.value[1];
-        dealCondition.intentionArea = e.value[2];
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.intentionProvince = e.value[0];
+        invalidCondition.intentionCity = e.value[1];
+        invalidCondition.intentionArea = e.value[2];
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
       // 意向楼盘
       const setProject = async (value) => {
-        dealCondition.intentionProject = value.key.toString();
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.intentionProject = value.key.toString();
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
       const onClear = async () => {
-        dealCondition.intentionProject = '';
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.intentionProject = '';
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
 
       //购房目的
       const purposeChange = async (value) => {
-        dealCondition.purpose = value;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.purpose = value;
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
 
       // 意向强度
       let intentionRange = ref(undefined);
       const intentionRangeSearch = async (value: number) => {
-        dealCondition.buyIntentionRange = value;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        invalidCondition.buyIntentionRange = value;
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
-
-      const dealConst = ref(DealConst);
-
-      const dealResult: DealModel[] = [];
-      let dealList = reactive(dealResult);
 
       const userStore = useUserStore();
 
@@ -235,7 +236,7 @@
         drawerParam.state = '1';
         drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
-        drawerParam.dealId = line.id;
+        drawerParam.invalidId = line.id;
       };
 
       const distributeOne = (line) => {
@@ -243,17 +244,17 @@
         drawerParam.id = line.id;
         drawerParam.title = '分配客户';
         drawerParam.visible = true;
-        drawerParam.fromType = 'deal';
+        drawerParam.fromType = 'invalidate';
       };
 
       const distributeMul = () => {
-        if (selectedDeal.value.length === 0) {
+        if (selectedInvalid.value.length === 0) {
           return;
         }
-        drawerParam.fromType = 'deal';
-        drawerParam.ids = selectedDeal.value;
+        drawerParam.fromType = 'invalidate';
+        drawerParam.ids = selectedInvalid.value;
         drawerParam.state = '0';
-        drawerParam.title = '查看客户信息';
+        drawerParam.title = '分配客户';
         drawerParam.visible = true;
       };
 
@@ -264,13 +265,13 @@
         drawerParam.title = '';
         drawerParam.fromType = '';
         drawerParam.ids.splice(0);
-        drawerParam.dealId = '';
+        drawerParam.invalidId = '';
       };
 
       //选中行id
-      let selectedDeal = ref<string[]>([]);
-      const onSelectChangeDeal = async (selectedRowKeys) => {
-        selectedDeal.value = selectedRowKeys;
+      let selectedInvalid = ref<string[]>([]);
+      const onSelectChangeInvalid = async (selectedRowKeys) => {
+        selectedInvalid.value = selectedRowKeys;
       };
 
       // model
@@ -281,12 +282,12 @@
         visible: false,
         fromType: '',
         ids: [''],
-        dealId: '',
+        invalidId: '',
       });
 
       const { hasPermission } = usePermission();
-      // 成交筛选
-      const dealCondition = reactive({
+      // 无效筛选
+      const invalidCondition = reactive({
         mobile: '',
         liveIn: '',
         workIn: '',
@@ -298,42 +299,41 @@
         demand: '',
         source: '',
         buyIntentionRange: 0,
-        companyId: userStore.getUserInfo.companyId,
       });
       // 成交分页
-      const dealPage: PageParam = {
+      const invalidPage: PageParam = {
         pageNum: 1,
         pageSize: 10,
       };
-      const dealTotal = ref<number>(0);
-      const dealPagination = computed(() => ({
-        total: dealTotal.value,
-        current: dealPage.pageNum,
-        pageSize: dealPage.pageSize,
+      const invalidTotal = ref<number>(0);
+      const invalidPagination = computed(() => ({
+        total: invalidTotal.value,
+        current: invalidPage.pageNum,
+        pageSize: invalidPage.pageSize,
       }));
-      const handleDealTableChange = async (pag: any) => {
-        dealPage.pageSize = pag!.pageSize!;
-        dealPage.pageNum = pag?.current;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+      const handleInvalidTableChange = async (pag: any) => {
+        invalidPage.pageSize = pag!.pageSize!;
+        invalidPage.pageNum = pag?.current;
+        const result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       };
 
       onMounted(async () => {
         let result;
-        result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        result = await getInvalidList();
+        processListByLine(result, invalidList, invalidTotal);
       });
 
-      const dealSort = {
+      const invalidSort = {
         desc: ['createTime'],
         asc: [''],
       };
 
-      const getDealList = async () => {
+      const getInvalidList = async () => {
         loading.value = true;
-        let result: BasePageResult<DealModel> | undefined;
+        let result: BasePageResult<InvalidModel> | undefined;
         try {
-          result = await getByDeal(dealCondition, dealPage, dealSort);
+          result = await getByInvalid(invalidCondition, invalidPage, invalidSort);
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -358,26 +358,26 @@
         contactSearch,
         contactChange,
         contactValue,
-        seeDeal,
         distributeMul,
-        selectedDeal,
-        onSelectChangeDeal,
+        onSelectChangeInvalid,
+        selectedInvalid,
         onClose,
         distributeOne,
-        handleDealTableChange,
-        dealPagination,
-        dealPage,
+        handleInvalidTableChange,
+        invalidPagination,
+        invalidPage,
         t,
         loading,
         prefixCls,
         tip,
-        dealConst,
-        columnsDeal,
-        dealList,
-        dealCondition,
+        invalidConst,
+        columnsInvalid,
+        invalidList,
+        invalidCondition,
         hasPermission,
         userStore,
         drawerParam,
+        seeDeal,
       };
     },
   });

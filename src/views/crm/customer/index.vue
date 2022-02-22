@@ -1,5 +1,55 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <InputSearch
+      :class="`${prefixCls}-select`"
+      v-model:value="contactValue"
+      placeholder="手机号"
+      style="width: 200px"
+      @search="contactSearch"
+      @change="contactChange"
+      :loading="loading"
+      :allowClear="true"
+    />
+    <FCascader
+      @change="liveInChange"
+      class="mr-2"
+      :class="`${prefixCls}-add`"
+      placeholder="居住地"
+    />
+    <FCascader
+      @change="workInChange"
+      class="mr-2"
+      :class="`${prefixCls}-add`"
+      placeholder="工作地"
+    />
+    <FCascader
+      @change="intentionChange"
+      class="mr-2"
+      :class="`${prefixCls}-add`"
+      placeholder="意向地"
+    />
+    <!-- 意向楼盘 -->
+    <FProjectSelect @setProject="setProject" @onClear="onClear" :class="`${prefixCls}-add`" />
+    <!-- 购房用途 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      ref="select"
+      :allowClear="true"
+      style="width: 120px"
+      @change="purposeChange"
+      :options="cityConst.PURPOSES"
+      :pagination="false"
+      placeholder="购房用途"
+    />
+    <InputSearch
+      :class="`${prefixCls}-select`"
+      v-model:value="intentionRange"
+      placeholder="意向强度"
+      style="width: 200px"
+      @search="intentionRangeSearch"
+      :loading="loading"
+      :allowClear="true"
+    />
     <Tabs v-model:activeKey="activeKey">
       <TabPane
         key="1"
@@ -275,7 +325,7 @@
   import { getByCity } from '/@/api/customer/crmCity/city';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { processListByLine, success } from '/@/hooks/web/useList';
-  import { Tabs, TabPane, Table, Tag, Button, Modal } from 'ant-design-vue';
+  import { Tabs, TabPane, Table, Tag, Button, Modal, InputSearch, Select } from 'ant-design-vue';
   import CityForm from './components/CityForm.vue';
   import {
     CompanyModel,
@@ -302,10 +352,13 @@
   import SelectDetail from './components/SelectDetail.vue';
   import DistributeForm from './components/DistributeForm.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import FCascader from '/@/components/FCascader';
+  import FProjectSelect from '/@/components/FProjectSelect';
 
   export default defineComponent({
     name: 'Customer',
     components: {
+      FCascader,
       Loading,
       Tabs,
       TabPane,
@@ -320,6 +373,9 @@
       SelectDetail,
       DistributeForm,
       SelectLevel,
+      InputSearch,
+      FProjectSelect,
+      Select,
     },
     setup() {
       const { t } = useI18n();
@@ -332,6 +388,153 @@
       const companyConst = ref(CompanyConst);
       const groupConst = ref(GroupConst);
       const privateConst = ref(PrivateConst);
+
+      //手机号
+      const contactValue = ref<String>('');
+      const contactChange = (_value) => {
+        if (contactValue.value.length === 3) {
+          contactValue.value = contactValue.value + '****';
+        }
+        if (!contactValue.value) {
+          refreshList();
+        }
+      };
+      const contactSearch = async (value: string) => {
+        value = value.replace('****', '');
+        if (activeKey.value === '1') {
+          cityCondition.mobile = value;
+        } else if (activeKey.value === '2') {
+          companyCondition.mobile = value;
+        } else if (activeKey.value === '3') {
+          groupCondition.mobile = value;
+        } else if (activeKey.value === '4') {
+          privateCondition.mobile = value;
+        }
+        refreshList();
+      };
+
+      //  住址
+      const liveInChange = (e) => {
+        if (activeKey.value === '1') {
+          cityCondition.liveIn = e.value.toString();
+        } else if (activeKey.value === '2') {
+          companyCondition.liveIn = e.value.toString();
+        } else if (activeKey.value === '3') {
+          groupCondition.liveIn = e.value.toString();
+        } else if (activeKey.value === '4') {
+          privateCondition.liveIn = e.value.toString();
+        }
+        refreshList();
+      };
+      // 工作地
+      const workInChange = (e) => {
+        if (activeKey.value === '1') {
+          cityCondition.workIn = e.value.toString();
+        } else if (activeKey.value === '2') {
+          companyCondition.workIn = e.value.toString();
+        } else if (activeKey.value === '3') {
+          groupCondition.workIn = e.value.toString();
+        } else if (activeKey.value === '4') {
+          privateCondition.workIn = e.value.toString();
+        }
+        refreshList();
+      };
+      // 意向地
+      const intentionChange = (e) => {
+        if (activeKey.value === '1') {
+          cityCondition.intentionProvince = e.value[0];
+          cityCondition.intentionCity = e.value[1];
+          cityCondition.intentionArea = e.value[2];
+        } else if (activeKey.value === '2') {
+          companyCondition.intentionProvince = e.value[0];
+          companyCondition.intentionCity = e.value[1];
+          companyCondition.intentionArea = e.value[2];
+        } else if (activeKey.value === '3') {
+          groupCondition.intentionProvince = e.value[0];
+          groupCondition.intentionCity = e.value[1];
+          groupCondition.intentionArea = e.value[2];
+        } else if (activeKey.value === '4') {
+          privateCondition.intentionProvince = e.value[0];
+          privateCondition.intentionCity = e.value[1];
+          privateCondition.intentionArea = e.value[2];
+        }
+        refreshList();
+      };
+      // 意向楼盘
+      const setProject = async (value) => {
+        if (activeKey.value === '1') {
+          cityCondition.intentionProject = value.key.toString();
+        } else if (activeKey.value === '2') {
+          companyCondition.intentionProject = value.key.toString();
+        } else if (activeKey.value === '3') {
+          groupCondition.intentionProject = value.key.toString();
+        } else if (activeKey.value === '4') {
+          privateCondition.intentionProject = value.key.toString();
+        }
+        refreshList();
+      };
+      const onClear = async () => {
+        if (activeKey.value === '1') {
+          cityCondition.intentionProject = '';
+        } else if (activeKey.value === '2') {
+          companyCondition.intentionProject = '';
+        } else if (activeKey.value === '3') {
+          groupCondition.intentionProject = '';
+        } else if (activeKey.value === '4') {
+          privateCondition.intentionProject = '';
+        }
+        refreshList();
+      };
+
+      //购房目的
+      const purposeChange = async (value) => {
+        if (activeKey.value === '1') {
+          cityCondition.purpose = value;
+        } else if (activeKey.value === '2') {
+          companyCondition.purpose = value;
+        } else if (activeKey.value === '3') {
+          groupCondition.purpose = value;
+        } else if (activeKey.value === '4') {
+          privateCondition.purpose = value;
+        }
+        refreshList();
+      };
+
+      // 意向强度
+      let intentionRange = ref(undefined);
+      const intentionRangeSearch = async (value: number) => {
+        if (activeKey.value === '1') {
+          cityCondition.buyIntentionRange = value;
+        } else if (activeKey.value === '2') {
+          companyCondition.buyIntentionRange = value;
+        } else if (activeKey.value === '3') {
+          groupCondition.buyIntentionRange = value;
+        } else if (activeKey.value === '4') {
+          privateCondition.buyIntentionRange = value;
+        }
+        refreshList();
+      };
+
+      const refreshList = async () => {
+        let result;
+        if (activeKey.value === '1') {
+          cityPage.pageNum = 1;
+          result = await getCityList();
+          processListByLine(result, cityList, cityTotal);
+        } else if (activeKey.value === '2') {
+          companyPage.pageNum = 1;
+          result = await getCompanyList();
+          processListByLine(result, companyList, companyTotal);
+        } else if (activeKey.value === '3') {
+          groupPage.pageNum = 1;
+          result = await getGroupList();
+          await processListByLine(result, groupList, groupTotal);
+        } else if (activeKey.value === '4') {
+          privatePage.pageNum = 1;
+          result = await getPrivateList();
+          await processListByLine(result, privateList, privateTotal);
+        }
+      };
 
       // 成交
       const customerDeal = async (line) => {
@@ -771,7 +974,7 @@
         purpose: '',
         demand: '',
         source: '',
-        buyIntentionRange: undefined,
+        buyIntentionRange: 0,
         companyId: '',
         groupId: '',
       });
@@ -841,6 +1044,17 @@
       });
 
       return {
+        intentionRange,
+        intentionRangeSearch,
+        purposeChange,
+        setProject,
+        onClear,
+        intentionChange,
+        workInChange,
+        liveInChange,
+        contactSearch,
+        contactChange,
+        contactValue,
         transferLevel,
         t,
         prefixCls,
@@ -932,7 +1146,6 @@
 
     &-select {
       margin-top: 20px;
-      margin-right: 10px;
       margin-bottom: 20px;
     }
   }

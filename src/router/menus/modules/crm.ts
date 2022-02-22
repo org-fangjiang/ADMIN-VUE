@@ -14,6 +14,10 @@ const crm: MenuModule = {
         path: 'deal',
         name: t('routes.crm.deal'),
       },
+      {
+        path: 'invalid',
+        name: t('routes.crm.invalid'),
+      },
     ],
   },
 };

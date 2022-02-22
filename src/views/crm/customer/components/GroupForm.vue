@@ -391,9 +391,6 @@
       let fetching = ref<boolean>(false);
       const data = ref<Option[]>([]);
       const projectSearch = debounce(async (value) => {
-        if (isUpdate.value) {
-          return;
-        }
         fetching.value = true;
         let result;
         if (value) {
