@@ -10,6 +10,10 @@ const crm: MenuModule = {
         path: 'customer',
         name: t('routes.crm.customer'),
       },
+      {
+        path: 'deal',
+        name: t('routes.crm.deal'),
+      },
     ],
   },
 };

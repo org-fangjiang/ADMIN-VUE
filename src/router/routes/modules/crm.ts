@@ -23,6 +23,15 @@ const crm: AppRouteModule = {
         roles: ['/crm/customer'],
       },
     },
+    {
+      path: 'deal',
+      name: 'Deal',
+      component: () => import('/@/views/crm/deal/index.vue'),
+      meta: {
+        title: t('routes.crm.deal'),
+        roles: ['/crm/deal'],
+      },
+    },
   ],
 };
 

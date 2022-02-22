@@ -96,7 +96,9 @@
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { getCityById } from '/@/api/customer/crmCity/city';
   import { getCompanyById } from '/@/api/customer/crmCompany/company';
+  import { getDealById } from '/@/api/customer/crmDeal/deal';
   import { getGroupById } from '/@/api/customer/crmGroup/group';
+  import { getInvalidById } from '/@/api/customer/crmInvalid/invalid';
   import { getMyById } from '/@/api/customer/crmPrivate/private';
   import { getArea } from '/@/api/sys/area/area';
   import { getCity } from '/@/api/sys/city/city';
@@ -119,6 +121,14 @@
         required: false,
       },
       privateId: {
+        type: String,
+        required: false,
+      },
+      dealId: {
+        type: String,
+        required: false,
+      },
+      invalidId: {
         type: String,
         required: false,
       },
@@ -199,8 +209,18 @@
           follow.value = result.follow;
           look.value = result.look;
           report.value = result.report;
-          // const saleList = await allSale(props.privateId);
-          // console.log(saleList);
+        } else if (props.dealId) {
+          const result = await getDealById(props.dealId);
+          Object.assign(formState, result.content);
+          // follow.value = result.follow;
+          // look.value = result.look;
+          // report.value = result.report;
+        } else if (props.invalidId) {
+          const result = await getInvalidById(props.invalidId);
+          Object.assign(formState, result.content);
+          // follow.value = result.follow;
+          // look.value = result.look;
+          // report.value = result.report;
         }
         if (formState.liveIn) {
           const liveIne: string[] = [];
