@@ -435,7 +435,7 @@
       );
 
       const isInSys = debounce(async (phone) => {
-        if (phone === formState.contact) {
+        if (phone === formState.contact && isUpdate.value) {
           return;
         }
         if (phone) {

@@ -1,4 +1,10 @@
-import { BasePageResult, BaseResult, CustomerResult, PageParam } from '../../model/baseModel';
+import {
+  BasePageResult,
+  BaseResult,
+  CustomerResult,
+  PageParam,
+  SortParam,
+} from '../../model/baseModel';
 import { CompanyCondition, CompanyModel } from './model/companyModel';
 import { ErrorMessageMode } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
@@ -28,11 +34,13 @@ export function getCompanyById(id: string, mode: ErrorMessageMode = 'modal') {
 export function getByCompany(
   condition: CompanyCondition,
   page: PageParam,
+  sort: SortParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();
   reqParam.setData(condition);
   reqParam.setPage(page);
+  reqParam.setSort(sort);
   const data = reqParam.getInstance();
   return defHttp.post<BasePageResult<CompanyModel>>(
     {

@@ -1,4 +1,10 @@
-import { BasePageResult, BaseResult, CustomerResult, PageParam } from '../../model/baseModel';
+import {
+  BasePageResult,
+  BaseResult,
+  CustomerResult,
+  PageParam,
+  SortParam,
+} from '../../model/baseModel';
 import { GroupCondition, GroupModel } from './model/groupModel';
 import { ErrorMessageMode } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
@@ -28,11 +34,13 @@ export function getGroupById(id: string, mode: ErrorMessageMode = 'modal') {
 export function getByGroup(
   condition: GroupCondition,
   page: PageParam,
+  sort: SortParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();
   reqParam.setData(condition);
   reqParam.setPage(page);
+  reqParam.setSort(sort);
   const data = reqParam.getInstance();
   return defHttp.post<BasePageResult<GroupModel>>(
     {

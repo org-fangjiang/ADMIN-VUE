@@ -29,12 +29,12 @@
           <Radio value="0">女</Radio>
         </RadioGroup>
       </FormItem>
-      <!-- <FormItem ref="state" :label="t('marketing.customer.state')" name="state">
+      <!-- <FormItem v-if="isUpdate" ref="state" :label="t('marketing.customer.state')" name="state">
         <Select
           :disabled="isUpdate && !updateFields.includes('state')"
           :allowClear="true"
           v-model:value="formState.state"
-          :options="cityConst.STATES"
+          :options="privateConst.STATES"
         />
       </FormItem> -->
       <FormItem ref="liveIn" :label="t('marketing.customer.liveIn')" name="liveIn">
@@ -440,7 +440,7 @@
       );
 
       const isInSys = debounce(async (phone) => {
-        if (phone === formState.contact) {
+        if (phone === formState.contact && isUpdate.value) {
           return;
         }
         if (phone) {

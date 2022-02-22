@@ -317,6 +317,19 @@
       const groupConst = ref(GroupConst);
       const privateConst = ref(PrivateConst);
 
+      const sortCity = {
+        asc: [''],
+        desc: ['createTime'],
+      };
+      const sortCompany = {
+        asc: [''],
+        desc: ['createTime'],
+      };
+      const sortGroup = {
+        asc: [''],
+        desc: ['createTime'],
+      };
+
       //选中行id
       let selectedCity = ref<string[]>([]);
       const onSelectChangeCity = async (selectedRowKeys) => {
@@ -546,7 +559,7 @@
         loading.value = true;
         let result: BasePageResult<CityModel> | undefined;
         try {
-          result = await getByCity(cityCondition, cityPage);
+          result = await getByCity(cityCondition, cityPage, sortCity);
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -605,7 +618,7 @@
         loading.value = true;
         let result: BasePageResult<CompanyModel> | undefined;
         try {
-          result = await getByCompany(companyCondition, cityPage);
+          result = await getByCompany(companyCondition, cityPage, sortCompany);
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -668,7 +681,7 @@
         loading.value = true;
         let result: BasePageResult<CompanyModel> | undefined;
         try {
-          result = await getByGroup(groupCondition, groupPage);
+          result = await getByGroup(groupCondition, groupPage, sortGroup);
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -722,7 +735,7 @@
         await processListByLine(result, privateList, privateTotal);
       };
       const sortParam = reactive({
-        desc: [''],
+        desc: ['createTime'],
         asc: [''],
       });
       // 个人列表

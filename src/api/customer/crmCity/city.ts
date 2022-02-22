@@ -1,4 +1,10 @@
-import { BasePageResult, BaseResult, CustomerResult, PageParam } from '../../model/baseModel';
+import {
+  BasePageResult,
+  BaseResult,
+  CustomerResult,
+  PageParam,
+  SortParam,
+} from '../../model/baseModel';
 import { CityCondition, CityModel } from './model/CityModel';
 import { ErrorMessageMode } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
@@ -133,11 +139,13 @@ export function addCity(city: CityModel, mode: ErrorMessageMode = 'modal') {
 export function getByCity(
   condition: CityCondition,
   page: PageParam,
+  sort: SortParam,
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();
   reqParam.setData(condition);
   reqParam.setPage(page);
+  reqParam.setSort(sort);
   const data = reqParam.getInstance();
   return defHttp.post<BasePageResult<CityModel>>(
     {
