@@ -15,7 +15,7 @@ export function getInvalidById(id: string, mode: ErrorMessageMode = 'modal') {
   const data = reqParam.getInstance();
   return defHttp.post<BaseResult<InvalidModel>>(
     {
-      url: InvalidApi.GetByInvalid,
+      url: InvalidApi.GetInvalidById,
       data,
     },
     {

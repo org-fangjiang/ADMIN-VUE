@@ -48,8 +48,8 @@ export interface CompanyCondition {
 
 export const CompanyConst = {
   STATES: [
-    { value: '0', label: t('marketing.customer.EFFECTIVE'), color: 'volcano' },
-    { value: '1', label: t('marketing.customer.INVALID'), color: 'geekblue' },
+    { value: '0', label: t('marketing.customer.INVALID'), color: 'volcano' },
+    { value: '1', label: t('marketing.customer.EFFECTIVE'), color: 'geekblue' },
     { value: '2', label: t('marketing.customer.STATE_2'), color: 'geekblue' },
     { value: '3', label: t('marketing.customer.STATE_3'), color: 'geekblue' },
     { value: '4', label: t('marketing.customer.STATE_4'), color: 'geekblue' },
@@ -130,6 +130,7 @@ export const CompanyConst = {
     ADD: 'customer:add:company',
     DISTRIBUTE: 'customer:distribute',
     UPDATE: 'customer:update',
+    TRANSFER_LEVEL: 'customer:transfer:level',
   },
 };
 

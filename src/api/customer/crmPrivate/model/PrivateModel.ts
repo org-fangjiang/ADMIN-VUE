@@ -58,8 +58,8 @@ export interface PrivateCondition {
 
 export const PrivateConst = {
   STATES: [
-    { value: '0', label: t('marketing.customer.EFFECTIVE'), color: 'volcano' },
-    { value: '1', label: t('marketing.customer.INVALID'), color: 'geekblue' },
+    { value: '0', label: t('marketing.customer.INVALID'), color: 'volcano' },
+    { value: '1', label: t('marketing.customer.EFFECTIVE'), color: 'geekblue' },
     { value: '2', label: t('marketing.customer.STATE_2'), color: 'geekblue' },
     { value: '3', label: t('marketing.customer.STATE_3'), color: 'geekblue' },
     { value: '4', label: t('marketing.customer.STATE_4'), color: 'geekblue' },
@@ -140,6 +140,9 @@ export const PrivateConst = {
     ADD: 'customer:add',
     TRANSFER: 'customer:transfer:sale',
     UPDATE: 'customer:update',
+    TRANSFER_LEVEL: 'customer:transfer:level',
+    INVALID: 'customer:invalid',
+    DEAL: 'customer:deal',
   },
 };
 

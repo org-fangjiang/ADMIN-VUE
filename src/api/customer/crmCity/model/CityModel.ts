@@ -47,8 +47,8 @@ export interface CityCondition {
 
 export const CityConst = {
   STATES: [
-    { value: '0', label: t('marketing.customer.EFFECTIVE'), color: 'volcano' },
-    { value: '1', label: t('marketing.customer.INVALID'), color: 'geekblue' },
+    { value: '0', label: t('marketing.customer.INVALID'), color: 'volcano' },
+    { value: '1', label: t('marketing.customer.EFFECTIVE'), color: 'geekblue' },
     { value: '2', label: t('marketing.customer.STATE_2'), color: 'geekblue' },
     { value: '3', label: t('marketing.customer.STATE_3'), color: 'geekblue' },
     { value: '4', label: t('marketing.customer.STATE_4'), color: 'geekblue' },
@@ -86,6 +86,14 @@ export const CityConst = {
   GENDER: [
     { value: '0', label: t('marketing.customer.female'), color: 'red' },
     { value: '1', label: t('marketing.customer.male'), color: 'blue' },
+  ],
+  LEVEL: [
+    { value: 'city', label: t('marketing.CITY'), color: 'geekblue' },
+    { value: 'company', label: t('marketing.COMPANY'), color: 'volcano' },
+    { value: 'group', label: t('marketing.GROUP'), color: 'red' },
+    { value: 'private', label: t('marketing.PRIVATE'), color: 'yellow' },
+    { value: 'deal', label: t('marketing.DEAL'), color: 'green' },
+    { value: 'invalidate', label: t('marketing.INVALIDATE'), color: 'green' },
   ],
   _RULES: {
     contact: [{ required: true, message: t('marketing.customer.contact'), trigger: 'blur' }],
@@ -129,6 +137,7 @@ export const CityConst = {
     ADD: 'customer:add:city',
     DISTRIBUTE: 'customer:distribute',
     UPDATE: 'customer:update',
+    TRANSFER_LEVEL: 'customer:transfer:level',
   },
 };
 

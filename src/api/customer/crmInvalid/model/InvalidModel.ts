@@ -58,8 +58,8 @@ export interface InvalidCondition {
 
 export const InvalidConst = {
   STATES: [
-    { value: '0', label: t('marketing.customer.EFFECTIVE'), color: 'volcano' },
-    { value: '1', label: t('marketing.customer.INVALID'), color: 'geekblue' },
+    { value: '0', label: t('marketing.customer.INVALID'), color: 'volcano' },
+    { value: '1', label: t('marketing.customer.EFFECTIVE'), color: 'geekblue' },
     { value: '2', label: t('marketing.customer.STATE_2'), color: 'geekblue' },
     { value: '3', label: t('marketing.customer.STATE_3'), color: 'geekblue' },
     { value: '4', label: t('marketing.customer.STATE_4'), color: 'geekblue' },
@@ -138,6 +138,7 @@ export const InvalidConst = {
   _PERMS: {
     SELECT: 'customer:select:invalid',
     DISTRIBUTE: 'customer:distribute',
+    TRANSFER_LEVEL: 'customer:transfer:level',
   },
 };
 
