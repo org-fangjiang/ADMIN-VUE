@@ -166,7 +166,7 @@ export const _Const = {
     theme: [{ required: false, message: t('model.user.theme'), trigger: 'blur' }],
     avatar: [{ required: false, message: t('model.user.avatar'), trigger: 'blur' }],
     description: [{ required: false, message: t('model.user.description'), trigger: 'blur' }],
-    deptId: [{ required: false, message: t('model.user.deptId'), trigger: 'blur' }],
+    deptId: [{ required: true, message: t('model.user.deptId'), trigger: 'blur' }],
     deptName: [{ required: false, message: t('model.user.deptName'), trigger: 'blur' }],
     roleId: [{ required: false, message: t('model.user.roleId'), trigger: 'blur' }],
     roleName: [{ required: false, message: t('model.user.roleName'), trigger: 'blur' }],

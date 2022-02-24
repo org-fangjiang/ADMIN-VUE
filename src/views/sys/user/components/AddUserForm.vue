@@ -91,7 +91,15 @@
           change-on-select
         />
       </FormItem>
-
+      <FormItem ref="deptId" :label="t('model.user.deptName')" name="deptId">
+        <Select
+          ref="selectRef"
+          :disabled="!updateFields.includes('deptId')"
+          :options="deptOptions"
+          @change="changeDept"
+          change-on-select
+        />
+      </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('model.user.addUser') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{ t('model.user.reset') }}</Button>
@@ -123,6 +131,7 @@
   import { ApiSource, uploadUserImg } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
   import { getAccessToken } from '/@/utils/auth';
+  import { getAllDepartments } from '/@/api/sys/department/department';
 
   interface Option {
     value: string;
@@ -149,6 +158,8 @@
       const formRef = ref();
       //角色下拉
       const roleOptions = ref<Option[]>([]);
+      // 部门下拉
+      const deptOptions = ref<Option[]>([]);
       //用户信息
       const userStore = useUserStore();
       //上传图片请求头
@@ -206,6 +217,11 @@
           formState.sysRoleBeans?.push({ id: item });
         });
       };
+
+      // 选择部门
+      const changeDept = (value) => {
+        formState.deptId = value;
+      };
       //提交
       const onSubmit = () => {
         formRef.value
@@ -240,6 +256,12 @@
             roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
           });
         }
+        const deptResult = await getAllDepartments({});
+        if (deptResult.content) {
+          deptResult.content.forEach((dept) => {
+            deptOptions.value.push({ value: dept.deptId || '', label: dept.deptName || '' });
+          });
+        }
         loading.value = false;
       });
 
@@ -262,6 +284,8 @@
         changeFile,
         requestHeader,
         customRequest,
+        deptOptions,
+        changeDept,
       };
     },
   });
