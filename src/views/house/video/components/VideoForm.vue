@@ -264,27 +264,29 @@
               }
             } else {
               loading.value = true;
-              const formData = new FormData();
-              if (fileList.value.length === 0) {
-                failed(t('host.video.videoNull'), t('host.video.selectVideo'));
-                loading.value = false;
-                return;
-              }
-              fileList.value.forEach((file: FileItem) => {
-                formData.append('file', file as any);
-                formData.append('provinceId', provinceId || '');
-                formData.append('cityId', cityId || '');
-                formData.append('projectId', formState.projectId || '');
-              });
-              try {
-                const result = await uploadVideo(formData);
-                formState.videoAddress = result.data.data;
-                fileList.value = [];
-              } catch (error: any) {
-                failed(t('host.video.videoAddress'), t('host.action.fail'));
-                return;
-              } finally {
-                loading.value = false;
+              if (!formState.videoAddress) {
+                const formData = new FormData();
+                if (fileList.value.length === 0) {
+                  failed(t('host.video.videoNull'), t('host.video.selectVideo'));
+                  loading.value = false;
+                  return;
+                }
+                fileList.value.forEach((file: FileItem) => {
+                  formData.append('file', file as any);
+                  formData.append('provinceId', provinceId || '');
+                  formData.append('cityId', cityId || '');
+                  formData.append('projectId', formState.projectId || '');
+                });
+                try {
+                  const result = await uploadVideo(formData);
+                  formState.videoAddress = result.data.data;
+                  fileList.value = [];
+                } catch (error: any) {
+                  failed(t('host.video.videoAddress'), t('host.action.fail'));
+                  return;
+                } finally {
+                  loading.value = false;
+                }
               }
               try {
                 await addVideo(formState);
