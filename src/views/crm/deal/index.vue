@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Button @click="distributeMul" v-auth="dealConst._PERMS.DISTRIBUTE">分配</Button>
+    <!-- <Button @click="distributeMul" v-auth="dealConst._PERMS.DISTRIBUTE">分配</Button> -->
     <InputSearch
       :class="`${prefixCls}-select`"
       v-model:value="contactValue"
@@ -52,49 +52,120 @@
       :allowClear="true"
       type="number"
     />
-    <Table
-      :columns="columnsDeal"
-      :data-source="dealList"
-      rowKey="id"
-      :pagination="dealPagination"
-      @change="handleDealTableChange"
-      :row-selection="{ selectedRowKeys: selectedDeal, onChange: onSelectChangeDeal }"
-    >
-      <template #purpose="{ text: purpose }">
-        <span v-if="purpose - 1 > -1">
-          <Tag :color="dealConst.PURPOSES[purpose - 1].color">
-            {{ dealConst.PURPOSES[purpose - 1].label }}
-          </Tag>
-        </span>
-      </template>
-      <template #projectsByIntention="{ text: projectsByIntention }">
-        <span v-if="projectsByIntention && projectsByIntention.length > 0">
-          <span v-for="i in projectsByIntention" :key="i">
-            <Tag color="blue">
-              {{ i.name }}
-            </Tag>
-          </span>
-        </span>
-      </template>
-      <template #gender="{ text: gender }">
-        <span>
-          <Tag :color="dealConst.GENDER[gender].color">
-            {{ dealConst.GENDER[gender].label }}
-          </Tag>
-        </span>
-      </template>
-      <template #state="{ text: state }">
-        <span>
-          <Tag :color="dealConst.STATES[state].color">
-            {{ dealConst.STATES[state].label }}
-          </Tag>
-        </span>
-      </template>
-      <template #operation="{ text: line }">
-        <Button @click="seeDeal(line)">查看</Button>
-        <Button @click="distributeOne(line)" v-auth="dealConst._PERMS.DISTRIBUTE">分配</Button>
-      </template>
-    </Table>
+    <!-- 状态 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      :allowClear="true"
+      style="width: 200px"
+      @change="stateChange"
+      :options="dealConst.STATES"
+      :pagination="false"
+      placeholder="状态"
+    />
+    <Tabs v-model:activeKey="activeKey">
+      <TabPane
+        key="1"
+        tab="已成交"
+        v-auth="dealConst._PERMS.SELECT"
+        v-if="hasPermission(dealConst._PERMS.SELECT)"
+      >
+        <Table
+          :columns="columnsDeal"
+          :data-source="dealList"
+          rowKey="id"
+          :pagination="dealPagination"
+          @change="handleDealTableChange"
+          :row-selection="{ selectedRowKeys: selectedDeal, onChange: onSelectChangeDeal }"
+        >
+          <template #purpose="{ text: purpose }">
+            <span v-if="purpose - 1 > -1">
+              <Tag :color="dealConst.PURPOSES[purpose - 1].color">
+                {{ dealConst.PURPOSES[purpose - 1].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #projectsByIntention="{ text: projectsByIntention }">
+            <span v-if="projectsByIntention && projectsByIntention.length > 0">
+              <span v-for="i in projectsByIntention" :key="i">
+                <Tag color="blue">
+                  {{ i.name }}
+                </Tag>
+              </span>
+            </span>
+          </template>
+          <template #gender="{ text: gender }">
+            <span>
+              <Tag :color="dealConst.GENDER[gender].color">
+                {{ dealConst.GENDER[gender].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #state="{ text: state }">
+            <span>
+              <Tag :color="dealConst.STATES[state].color">
+                {{ dealConst.STATES[state].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #operation="{ text: line }">
+            <Button @click="seeDeal(line)">查看</Button>
+            <!-- <Button @click="distributeOne(line)" v-auth="dealConst._PERMS.DISTRIBUTE">分配</Button> -->
+            <Button @click="transferLevel(line)" v-auth="dealConst._PERMS.TRANSFER_LEVEL"
+              >领取</Button
+            >
+          </template>
+        </Table>
+      </TabPane>
+      <TabPane
+        key="2"
+        tab="待审核"
+        v-auth="dealConst._PERMS.SELECT"
+        v-if="hasPermission(dealConst._PERMS.EXAMINE)"
+      >
+        <Table
+          :columns="columnsDeal"
+          :data-source="examineList"
+          rowKey="id"
+          :pagination="examinePagination"
+          @change="handleExamineTableChange"
+        >
+          <template #purpose="{ text: purpose }">
+            <span v-if="purpose - 1 > -1">
+              <Tag :color="dealConst.PURPOSES[purpose - 1].color">
+                {{ dealConst.PURPOSES[purpose - 1].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #projectsByIntention="{ text: projectsByIntention }">
+            <span v-if="projectsByIntention && projectsByIntention.length > 0">
+              <span v-for="i in projectsByIntention" :key="i">
+                <Tag color="blue">
+                  {{ i.name }}
+                </Tag>
+              </span>
+            </span>
+          </template>
+          <template #gender="{ text: gender }">
+            <span>
+              <Tag :color="dealConst.GENDER[gender].color">
+                {{ dealConst.GENDER[gender].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #state="{ text: state }">
+            <span>
+              <Tag :color="dealConst.STATES[state].color">
+                {{ dealConst.STATES[state].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #operation="{ text: line }">
+            <Button @click="clickOk(line)">审核通过</Button>
+            <Button @click="clickFail(line)">审核不通过</Button>
+          </template>
+        </Table>
+      </TabPane>
+    </Tabs>
     <Modal
       v-model:visible="drawerParam.visible"
       :title="drawerParam.title"
@@ -116,8 +187,8 @@
   </div>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
-  import { Table, Tag, Button, Modal, InputSearch, Select } from 'ant-design-vue';
+  import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue';
+  import { Table, Tag, Button, Modal, InputSearch, Select, Tabs, TabPane } from 'ant-design-vue';
   import { useI18n } from 'vue-i18n';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -129,13 +200,14 @@
   } from '/@/api/customer/crmDeal/model/DealModel';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { getByDeal } from '/@/api/customer/crmDeal/deal';
-  import { processListByLine } from '/@/hooks/web/useList';
+  import { dealFail, dealOk, getByDeal, getExamineDeal } from '/@/api/customer/crmDeal/deal';
+  import { failed, processListByLine, success } from '/@/hooks/web/useList';
   import { useUserStore } from '/@/store/modules/user';
   import DistributeForm from '../customer/components/DistributeForm.vue';
   import SelectDetail from '../customer/components/SelectDetail.vue';
   import FCascader from '/@/components/FCascader';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import { transferLevelTo } from '/@/api/customer/crmCity/city';
 
   export default defineComponent({
     name: 'Deal',
@@ -151,6 +223,8 @@
       Select,
       FCascader,
       FProjectSelect,
+      Tabs,
+      TabPane,
     },
     setup() {
       const { t } = useI18n();
@@ -159,6 +233,31 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
 
+      // 领取客户
+      const transferLevel = async (line) => {
+        let from = 'deal';
+        const result = await transferLevelTo(line.id, from, 'private');
+        if (result.code === 200) {
+          success('成功', '领取成功');
+        } else {
+          failed('失败', '领取客户失败');
+        }
+        refreshList();
+      };
+
+      const activeKey = ref('1');
+
+      watch(
+        () => activeKey.value,
+        () => refreshList()
+      );
+
+      // 状态
+      const stateChange = async (value) => {
+        dealCondition.state = value;
+        refreshList();
+      };
+
       //手机号
       const contactValue = ref<String>('');
       const contactChange = async (_value) => {
@@ -166,68 +265,129 @@
           contactValue.value = contactValue.value + '****';
         }
         if (!contactValue.value) {
-          const result = await getDealList();
-          processListByLine(result, dealList, dealTotal);
+          refreshList();
         }
       };
       const contactSearch = async (value: string) => {
         value = value.replace('****', '');
         dealCondition.mobile = value;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
 
       //  住址
       const liveInChange = async (e) => {
         dealCondition.liveIn = e.value.toString();
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
       // 工作地
       const workInChange = async (e) => {
         dealCondition.workIn = e.value.toString();
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
       // 意向地
       const intentionChange = async (e) => {
         dealCondition.intentionProvince = e.value[0];
         dealCondition.intentionCity = e.value[1];
         dealCondition.intentionArea = e.value[2];
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
       // 意向楼盘
       const setProject = async (value) => {
         dealCondition.intentionProject = value.key.toString();
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
       const onClear = async () => {
         dealCondition.intentionProject = '';
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
 
       //购房目的
       const purposeChange = async (value) => {
         dealCondition.purpose = value;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
 
       // 意向强度
       let intentionRange = ref(undefined);
       const intentionRangeSearch = async (value: number) => {
         dealCondition.buyIntentionRange = value;
-        const result = await getDealList();
-        processListByLine(result, dealList, dealTotal);
+        refreshList();
       };
 
       const dealConst = ref(DealConst);
-
+      // 成交
       const dealResult: DealModel[] = [];
       let dealList = reactive(dealResult);
+
+      // 待审核
+      const examineResult: DealModel[] = [];
+      let examineList = reactive(examineResult);
+
+      const examinePage: PageParam = {
+        pageNum: 1,
+        pageSize: 10,
+      };
+      const examineTotal = ref<number>(0);
+      const examinePagination = computed(() => ({
+        total: examineTotal.value,
+        current: examinePage.pageNum,
+        pageSize: examinePage.pageSize,
+      }));
+      const handleExamineTableChange = async (pag: any) => {
+        examinePage.pageSize = pag!.pageSize!;
+        examinePage.pageNum = pag?.current;
+        const result = await getExamineList();
+        processListByLine(result, examineList, examineTotal);
+      };
+
+      const refreshList = async () => {
+        if (activeKey.value === '1') {
+          dealPage.pageNum = 1;
+          const result = await getDealList();
+          processListByLine(result, dealList, dealTotal);
+        } else if (activeKey.value === '2') {
+          examinePage.pageNum = 1;
+          const result = await getExamineList();
+          processListByLine(result, examineList, examineTotal);
+        }
+      };
+
+      const getExamineList = async () => {
+        loading.value = true;
+        let result: BasePageResult<DealModel> | undefined;
+        try {
+          result = await getExamineDeal(dealCondition, examinePage, dealSort);
+        } catch (error: any) {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
+            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          });
+        } finally {
+          loading.value = false;
+        }
+        return result;
+      };
+
+      const clickOk = async (line) => {
+        try {
+          await dealOk(line.id);
+          success('成功', '操作成功');
+        } catch (error) {
+          failed('失败', '操作失败');
+        }
+        refreshList();
+      };
+
+      const clickFail = async (line) => {
+        try {
+          await dealFail(line.id);
+          success('成功', '操作成功');
+        } catch (error) {
+          failed('失败', '操作失败');
+        }
+        refreshList();
+      };
 
       const userStore = useUserStore();
 
@@ -299,6 +459,7 @@
         source: '',
         buyIntentionRange: 0,
         companyId: userStore.getUserInfo.companyId,
+        state: '',
       });
       // 成交分页
       const dealPage: PageParam = {
@@ -378,6 +539,14 @@
         hasPermission,
         userStore,
         drawerParam,
+        activeKey,
+        examineList,
+        handleExamineTableChange,
+        examinePagination,
+        clickFail,
+        clickOk,
+        transferLevel,
+        stateChange,
       };
     },
   });

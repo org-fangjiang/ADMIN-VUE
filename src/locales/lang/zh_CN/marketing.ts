@@ -161,5 +161,6 @@ export default {
     intentionProject: '意向楼盘',
     companyId: '企业',
     updateUser: '跟进人',
+    examine: '待审核',
   },
 };

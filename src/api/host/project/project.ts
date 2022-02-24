@@ -6,18 +6,18 @@ import { PageParam } from '/@/api/model/baseModel';
 import { HostCondition, HostModel } from './model/projectModel';
 
 enum ApiHost {
-  Search = '/nhouse-server/manageProject/search', //必选参数：name, cityId 可选参数：state, pageParam(0,10)
-  SearchWithCondition = '/nhouse-server/manageProject/searchWithCondition', //必选参数：provinceId, cityId 分页
-  AddProject = '/nhouse-server/manageProject/addProject',
-  UpdateProject = '/nhouse-server/manageProject/updateProject',
-  DeleteProject = '/nhouse-server/manageProject/deleteProject',
-  ReEnableProject = '/nhouse-server/manageProject/reEnableProject',
-  SetProjectEstateCompany = '/nhouse-server/manageProject/setProjectEstateCompany', //为项目设置物业企业,必选参数：projectId, estateCompany
-  SetProjectDeveloper = '/nhouse-server/manageProject/setProjectDeveloper',
-  SetProjectBrand = '/nhouse-server/manageProject/setProjectBrand', // 设置品牌商
-  GetProject = '/nhouse-server/manageProject/getProject',
-  SetProjectOrder = '/nhouse-server/manageProject/setProjectOrder',
-  ClearProjectOrder = '/nhouse-server/manageProject/clearProjectOrder',
+  Search = 'nhouse-server/manageProject/search', //必选参数：name, cityId 可选参数：state, pageParam(0,10)
+  SearchWithCondition = 'nhouse-server/manageProject/searchWithCondition', //必选参数：provinceId, cityId 分页
+  AddProject = 'nhouse-server/manageProject/addProject',
+  UpdateProject = 'nhouse-server/manageProject/updateProject',
+  DeleteProject = 'nhouse-server/manageProject/deleteProject',
+  ReEnableProject = 'nhouse-server/manageProject/reEnableProject',
+  SetProjectEstateCompany = 'nhouse-server/manageProject/setProjectEstateCompany', //为项目设置物业企业,必选参数：projectId, estateCompany
+  SetProjectDeveloper = 'nhouse-server/manageProject/setProjectDeveloper',
+  SetProjectBrand = 'nhouse-server/manageProject/setProjectBrand', // 设置品牌商
+  GetProject = 'nhouse-server/manageProject/getProject',
+  SetProjectOrder = 'nhouse-server/manageProject/setProjectOrder',
+  ClearProjectOrder = 'nhouse-server/manageProject/clearProjectOrder',
 }
 
 export function clearProjectOrder(id: string, mode: ErrorMessageMode = 'modal') {

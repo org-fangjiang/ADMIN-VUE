@@ -1,8 +1,8 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <Button @click="distributeMul" v-auth="invalidConst._PERMS.DISTRIBUTE" class="my-2"
+    <!-- <Button @click="distributeMul" v-auth="invalidConst._PERMS.DISTRIBUTE" class="my-2"
       >分配</Button
-    >
+    > -->
     <InputSearch
       :class="`${prefixCls}-select`"
       v-model:value="contactValue"
@@ -54,49 +54,122 @@
       :allowClear="true"
       type="number"
     />
-    <Table
-      :columns="columnsInvalid"
-      :data-source="invalidList"
-      rowKey="id"
-      :pagination="invalidPagination"
-      @change="handleInvalidTableChange"
-      :row-selection="{ selectedRowKeys: selectedInvalid, onChange: onSelectChangeInvalid }"
-    >
-      <template #purpose="{ text: purpose }">
-        <span v-if="purpose - 1 > -1">
-          <Tag :color="invalidConst.PURPOSES[purpose - 1].color">
-            {{ invalidConst.PURPOSES[purpose - 1].label }}
-          </Tag>
-        </span>
-      </template>
-      <template #projectsByIntention="{ text: projectsByIntention }">
-        <span v-if="projectsByIntention && projectsByIntention.length > 0">
-          <span v-for="i in projectsByIntention" :key="i">
-            <Tag color="blue">
-              {{ i.name }}
-            </Tag>
-          </span>
-        </span>
-      </template>
-      <template #gender="{ text: gender }">
-        <span>
-          <Tag :color="invalidConst.GENDER[gender].color">
-            {{ invalidConst.GENDER[gender].label }}
-          </Tag>
-        </span>
-      </template>
-      <template #state="{ text: state }">
-        <span>
-          <Tag :color="invalidConst.STATES[state].color">
-            {{ invalidConst.STATES[state].label }}
-          </Tag>
-        </span>
-      </template>
-      <template #operation="{ text: line }">
-        <Button @click="seeDeal(line)">查看</Button>
-        <Button @click="distributeOne(line)" v-auth="invalidConst._PERMS.DISTRIBUTE">分配</Button>
-      </template>
-    </Table>
+    <!-- 状态 -->
+    <Select
+      :class="`${prefixCls}-add`"
+      :allowClear="true"
+      style="width: 200px"
+      @change="stateChange"
+      :options="invalidConst.STATES"
+      :pagination="false"
+      placeholder="状态"
+    />
+    <Tabs v-model:activeKey="activeKey">
+      <TabPane
+        key="1"
+        tab="无效"
+        v-auth="invalidConst._PERMS.SELECT"
+        v-if="hasPermission(invalidConst._PERMS.SELECT)"
+      >
+        <Table
+          :columns="columnsInvalid"
+          :data-source="invalidList"
+          rowKey="id"
+          :pagination="invalidPagination"
+          @change="handleInvalidTableChange"
+          :row-selection="{ selectedRowKeys: selectedInvalid, onChange: onSelectChangeInvalid }"
+        >
+          <template #purpose="{ text: purpose }">
+            <span v-if="purpose - 1 > -1">
+              <Tag :color="invalidConst.PURPOSES[purpose - 1].color">
+                {{ invalidConst.PURPOSES[purpose - 1].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #projectsByIntention="{ text: projectsByIntention }">
+            <span v-if="projectsByIntention && projectsByIntention.length > 0">
+              <span v-for="i in projectsByIntention" :key="i">
+                <Tag color="blue">
+                  {{ i.name }}
+                </Tag>
+              </span>
+            </span>
+          </template>
+          <template #gender="{ text: gender }">
+            <span>
+              <Tag :color="invalidConst.GENDER[gender].color">
+                {{ invalidConst.GENDER[gender].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #state="{ text: state }">
+            <span>
+              <Tag :color="invalidConst.STATES[state].color">
+                {{ invalidConst.STATES[state].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #operation="{ text: line }">
+            <Button @click="seeDeal(line)">查看</Button>
+            <!-- <Button @click="distributeOne(line)" v-auth="invalidConst._PERMS.DISTRIBUTE"
+              >分配</Button
+            > -->
+            <Button @click="transferLevel(line)" v-auth="invalidConst._PERMS.TRANSFER_LEVEL"
+              >领取</Button
+            >
+          </template>
+        </Table>
+      </TabPane>
+      <TabPane
+        key="2"
+        tab="待审核"
+        v-auth="invalidConst._PERMS.EXAMINE"
+        v-if="hasPermission(invalidConst._PERMS.EXAMINE)"
+      >
+        <Table
+          :columns="columnsInvalid"
+          :data-source="examineList"
+          rowKey="id"
+          :pagination="examinePagination"
+          @change="handleExamineTableChange"
+        >
+          <template #purpose="{ text: purpose }">
+            <span v-if="purpose - 1 > -1">
+              <Tag :color="invalidConst.PURPOSES[purpose - 1].color">
+                {{ invalidConst.PURPOSES[purpose - 1].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #projectsByIntention="{ text: projectsByIntention }">
+            <span v-if="projectsByIntention && projectsByIntention.length > 0">
+              <span v-for="i in projectsByIntention" :key="i">
+                <Tag color="blue">
+                  {{ i.name }}
+                </Tag>
+              </span>
+            </span>
+          </template>
+          <template #gender="{ text: gender }">
+            <span>
+              <Tag :color="invalidConst.GENDER[gender].color">
+                {{ invalidConst.GENDER[gender].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #state="{ text: state }">
+            <span>
+              <Tag :color="invalidConst.STATES[state].color">
+                {{ invalidConst.STATES[state].label }}
+              </Tag>
+            </span>
+          </template>
+          <template #operation="{ text: line }">
+            <Button @click="clickOk(line)">审核通过</Button>
+            <Button @click="clickFail(line)">审核不通过</Button>
+          </template>
+        </Table>
+      </TabPane>
+    </Tabs>
     <Modal
       v-model:visible="drawerParam.visible"
       :title="drawerParam.title"
@@ -118,8 +191,8 @@
   </div>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
-  import { Table, Tag, Button, Modal, InputSearch, Select } from 'ant-design-vue';
+  import { computed, defineComponent, onMounted, reactive, ref, watch } from 'vue';
+  import { Table, Tag, Button, Modal, InputSearch, Select, Tabs, TabPane } from 'ant-design-vue';
   import { useI18n } from 'vue-i18n';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -131,13 +204,19 @@
   } from '/@/api/customer/crmInvalid/model/InvalidModel';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { processListByLine } from '/@/hooks/web/useList';
-  import { getByInvalid } from '/@/api/customer/crmInvalid/invalid';
+  import { failed, processListByLine, success } from '/@/hooks/web/useList';
+  import {
+    getByInvalid,
+    getExamineInvalid,
+    invalidFail,
+    invalidOk,
+  } from '/@/api/customer/crmInvalid/invalid';
   import { useUserStore } from '/@/store/modules/user';
   import DistributeForm from '../customer/components/DistributeForm.vue';
   import SelectDetail from '../customer/components/SelectDetail.vue';
   import FCascader from '/@/components/FCascader';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import { transferLevelTo } from '/@/api/customer/crmCity/city';
 
   export default defineComponent({
     name: 'Invalid',
@@ -153,6 +232,8 @@
       Select,
       FCascader,
       FProjectSelect,
+      Tabs,
+      TabPane,
     },
     setup() {
       const { t } = useI18n();
@@ -165,6 +246,48 @@
       const invalidResult: InvalidModel[] = [];
       let invalidList = reactive(invalidResult);
 
+      const examineResult: InvalidModel[] = [];
+      let examineList = reactive(examineResult);
+
+      // 领取
+      const transferLevel = async (line) => {
+        let from = 'invalidate';
+        const result = await transferLevelTo(line.id, from, 'private');
+        if (result.code === 200) {
+          success('成功', '领取成功');
+        } else {
+          failed('失败', '领取客户失败');
+        }
+        refreshList();
+      };
+
+      // 待审核
+
+      const activeKey = ref('1');
+
+      watch(
+        () => activeKey.value,
+        () => refreshList()
+      );
+
+      const refreshList = async () => {
+        if (activeKey.value === '1') {
+          invalidPage.pageNum = 1;
+          const result = await getInvalidList();
+          debugger;
+          processListByLine(result, invalidList, invalidTotal);
+        } else if (activeKey.value === '2') {
+          examinePage.pageNum = 1;
+          const result = await getExamineList();
+          processListByLine(result, examineList, examineTotal);
+        }
+      };
+
+      const stateChange = async (value) => {
+        invalidCondition.state = value;
+        refreshList();
+      };
+
       //手机号
       const contactValue = ref<String>('');
       const contactChange = async (_value) => {
@@ -172,62 +295,73 @@
           contactValue.value = contactValue.value + '****';
         }
         if (!contactValue.value) {
-          const result = await getInvalidList();
-          processListByLine(result, invalidList, invalidTotal);
+          refreshList();
         }
       };
       const contactSearch = async (value: string) => {
         value = value.replace('****', '');
         invalidCondition.mobile = value;
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
 
       //  住址
       const liveInChange = async (e) => {
         invalidCondition.liveIn = e.value.toString();
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
       // 工作地
       const workInChange = async (e) => {
         invalidCondition.workIn = e.value.toString();
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
       // 意向地
       const intentionChange = async (e) => {
         invalidCondition.intentionProvince = e.value[0];
         invalidCondition.intentionCity = e.value[1];
         invalidCondition.intentionArea = e.value[2];
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
       // 意向楼盘
       const setProject = async (value) => {
         invalidCondition.intentionProject = value.key.toString();
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
       const onClear = async () => {
         invalidCondition.intentionProject = '';
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
 
       //购房目的
       const purposeChange = async (value) => {
         invalidCondition.purpose = value;
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
       };
 
       // 意向强度
       let intentionRange = ref(undefined);
       const intentionRangeSearch = async (value: number) => {
         invalidCondition.buyIntentionRange = value;
-        const result = await getInvalidList();
-        processListByLine(result, invalidList, invalidTotal);
+        refreshList();
+      };
+
+      const clickOk = async (line) => {
+        try {
+          await invalidOk(line.id);
+          success('成功', '操作成功');
+        } catch (error) {
+          failed('失败', '操作失败');
+        }
+        refreshList();
+      };
+
+      const clickFail = async (line) => {
+        try {
+          await invalidFail(line.id);
+          success('成功', '操作成功');
+        } catch (error) {
+          failed('失败', '操作失败');
+        }
+        refreshList();
       };
 
       const userStore = useUserStore();
@@ -299,6 +433,7 @@
         demand: '',
         source: '',
         buyIntentionRange: 0,
+        state: '',
       });
       // 成交分页
       const invalidPage: PageParam = {
@@ -317,6 +452,23 @@
         const result = await getInvalidList();
         processListByLine(result, invalidList, invalidTotal);
       };
+      // 待审核分页
+      const examinePage: PageParam = {
+        pageNum: 1,
+        pageSize: 10,
+      };
+      const examineTotal = ref<number>(0);
+      const examinePagination = computed(() => ({
+        total: examineTotal.value,
+        current: examinePage.pageNum,
+        pageSize: examinePage.pageSize,
+      }));
+      const handleExamineTableChange = async (pag: any) => {
+        examinePage.pageSize = pag!.pageSize!;
+        examinePage.pageNum = pag?.current;
+        const result = await getExamineList();
+        processListByLine(result, examineList, examineTotal);
+      };
 
       onMounted(async () => {
         let result;
@@ -334,6 +486,22 @@
         let result: BasePageResult<InvalidModel> | undefined;
         try {
           result = await getByInvalid(invalidCondition, invalidPage, invalidSort);
+        } catch (error: any) {
+          createErrorModal({
+            title: t('sys.api.errorTip'),
+            content: error?.response?.data?.message || t('sys.api.networkExceptionMsg'),
+            getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+          });
+        } finally {
+          loading.value = false;
+        }
+        return result;
+      };
+      const getExamineList = async () => {
+        loading.value = true;
+        let result: BasePageResult<InvalidModel> | undefined;
+        try {
+          result = await getExamineInvalid(invalidCondition, examinePage, invalidSort);
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -378,6 +546,14 @@
         userStore,
         drawerParam,
         seeDeal,
+        activeKey,
+        examineList,
+        handleExamineTableChange,
+        examinePagination,
+        clickFail,
+        clickOk,
+        transferLevel,
+        stateChange,
       };
     },
   });

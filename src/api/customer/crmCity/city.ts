@@ -22,7 +22,7 @@ export enum CityApi {
   TransferLevel = '/crm-server/customer/transferLevel', // customer:transfer:level
 }
 
-export function transferLevel(
+export function transferLevelTo(
   id: string,
   from: string,
   to: string,

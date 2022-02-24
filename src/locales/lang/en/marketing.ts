@@ -161,5 +161,6 @@ export default {
     intentionProject: 'intentionProject',
     companyId: 'companyId',
     updateUser: 'updateUser',
+    examine: 'examine',
   },
 };

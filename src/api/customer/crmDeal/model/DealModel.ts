@@ -53,7 +53,6 @@ export interface DealCondition {
   source?: string;
   buyIntentionRange?: number;
   companyId?: string;
-  groupId?: string;
 }
 
 export const DealConst = {
@@ -139,6 +138,7 @@ export const DealConst = {
     SELECT: 'customer:select:deal',
     DISTRIBUTE: 'customer:distribute',
     TRANSFER_LEVEL: 'customer:transfer:level',
+    EXAMINE: 'customer:deal:examine',
   },
 };
 

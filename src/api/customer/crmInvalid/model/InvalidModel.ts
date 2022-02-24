@@ -139,6 +139,7 @@ export const InvalidConst = {
     SELECT: 'customer:select:invalid',
     DISTRIBUTE: 'customer:distribute',
     TRANSFER_LEVEL: 'customer:transfer:level',
+    EXAMINE: 'customer:invalid:examine',
   },
 };
 

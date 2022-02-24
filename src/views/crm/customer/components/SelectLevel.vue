@@ -19,7 +19,7 @@
 <script lang="ts">
   import { Select, Button } from 'ant-design-vue';
   import { defineComponent, onMounted, ref } from 'vue';
-  import { transferLevel } from '/@/api/customer/crmCity/city';
+  import { transferLevelTo } from '/@/api/customer/crmCity/city';
   import { CityConst } from '/@/api/customer/crmCity/model/CityModel';
   import { Loading } from '/@/components/Loading';
   import { failed, success } from '/@/hooks/web/useList';
@@ -60,7 +60,7 @@
       // 确认
       const submit = async () => {
         if (saleId.value) {
-          const result = await transferLevel(props.id, props.fromType, saleId.value);
+          const result = await transferLevelTo(props.id, props.fromType, saleId.value);
           if (result.code === 200) {
             success('成功', '客户流转成功');
           } else {
