@@ -317,6 +317,7 @@ export const _ColumnsHost = [
     ellipsis: 'false',
     slots: { customRender: 'orderNum' },
     sorter: true,
+    width: '5%',
   },
   {
     title: t('host.operation'),

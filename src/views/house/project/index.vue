@@ -50,6 +50,33 @@
         <span>{{ orderNum }}</span>
       </template>
       <template #operation="{ text: link }">
+        <Button
+          v-auth="hostConst._PERMS.UPDATE"
+          type="link"
+          size="small"
+          :class="prefixCls"
+          @click="clickUpdate(link)"
+        >
+          {{ t('host.action.update') }}
+        </Button>
+        <Button
+          v-auth="reportRuleConst._PERMS.SELECT"
+          type="link"
+          size="small"
+          :class="prefixCls"
+          @click="clickRule(link)"
+        >
+          {{ t('host.projectRule') }}
+        </Button>
+        <Button
+          v-auth="reportRuleConst._PERMS.SELECT"
+          type="link"
+          size="small"
+          :class="prefixCls"
+          @click="clickUpdate(link)"
+        >
+          {{ t('host.projectChannel') }}
+        </Button>
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
           <Button type="link">{{ t('host.operation') }}</Button>
@@ -70,17 +97,6 @@
                   :class="prefixCls"
                 >
                   {{ t('host.action.reEnable') }}
-                </Button>
-              </MenuItem>
-              <MenuItem :key="2" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
-                <template #icon></template>
-                <Button
-                  v-auth="hostConst._PERMS.UPDATE"
-                  type="link"
-                  size="small"
-                  :class="prefixCls"
-                >
-                  {{ t('host.action.update') }}
                 </Button>
               </MenuItem>
               <MenuItem :key="3" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
@@ -240,6 +256,7 @@
     >
       <PriceForm :priceInfo="priceInfo" v-if="updatePrice" />
       <OrderForm :id="drawerParam.id" v-if="updateOrder" />
+      <RuleForm :id="drawerParam.id" v-if="smModal" />
     </Modal>
     <Modal
       v-model:visible="projectModal"
@@ -298,6 +315,8 @@
   import { processList, success, failed } from '/@/hooks/web/useList';
   import PriceForm from './components/PriceForm.vue';
   import OrderForm from './components/OrderForm.vue';
+  import { ReportRuleConst } from '/@/api/host/reportRule/model/reportRuleModel';
+  import RuleForm from './components/RuleForm.vue';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -322,6 +341,7 @@
       FProjectSelect,
       PriceForm,
       OrderForm,
+      RuleForm,
     },
     setup() {
       const { t } = useI18n();
@@ -332,6 +352,9 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const columns = reactive(_ColumnsHost);
+
+      // 报备规则
+      const reportRuleConst = ref(ReportRuleConst);
 
       //抽屉
       const drawerParam = reactive({
@@ -528,13 +551,6 @@
               loading.value = false;
             }
             break;
-          case 2:
-            // 更新
-            projectModal.value = true;
-            drawerParam.id = id;
-            drawerParam.state = '0';
-            drawerParam.title = t('host.action.update');
-            break;
           case 3:
             // 设置资源
             drawerParam.id = id;
@@ -601,6 +617,20 @@
         }
       };
 
+      // 更新
+      const clickUpdate = (link) => {
+        projectModal.value = true;
+        drawerParam.id = link.id;
+        drawerParam.state = '0';
+        drawerParam.title = t('host.action.update');
+      };
+      // 报备规则
+      const clickRule = (line) => {
+        drawerParam.title = '报备规则';
+        smModal.value = true;
+        drawerParam.id = line.id;
+      };
+
       //新增项目，打开modal
       const addProject = () => {
         projectModal.value = true;
@@ -644,6 +674,9 @@
       };
 
       return {
+        clickRule,
+        reportRuleConst,
+        clickUpdate,
         t,
         prefixCls,
         hostConst,

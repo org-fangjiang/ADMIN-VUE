@@ -2,6 +2,8 @@ export default {
   EFFECTIVE: 'EFFECTIVE',
   INVALID: 'INVALID',
   upload: 'Upload',
+  projectRule: 'Rule',
+  projectChannel: 'Channel',
   TYPE: {
     HOUSE: 'HOUSE',
     FLATS: 'FLATS',
@@ -324,5 +326,17 @@ export default {
     contact: 'Contact',
     avatar: 'Avatar',
     channelId: 'ChannelId',
+  },
+  reportRule: {
+    isFullNumber: 'isFullNumber',
+    isHasFace: 'isHasFace',
+    isRepeatReport: 'isRepeatReport',
+    reportAfterLook: 'reportAfterLook',
+    reportProtectTime: 'reportProtectTime',
+    visitProtectTime: 'visitProtectTime',
+    revisitProtectTime: 'revisitProtectTime',
+    receiveTimeStart: 'receiveTimeStart',
+    receiveTimeEnd: 'receiveTimeEnd',
+    details: 'details',
   },
 };

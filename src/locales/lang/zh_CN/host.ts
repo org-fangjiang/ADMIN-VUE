@@ -2,6 +2,8 @@ export default {
   EFFECTIVE: '有效',
   INVALID: '无效',
   upload: '上传',
+  projectRule: '规则',
+  projectChannel: '渠道',
   TYPE: {
     HOUSE: '住宅',
     FLATS: '公寓',
@@ -325,5 +327,17 @@ export default {
     contact: '联系方式',
     avatar: '头像',
     channelId: '渠道',
+  },
+  reportRule: {
+    isFullNumber: '是否是全号',
+    isHasFace: '是否有人脸',
+    isRepeatReport: '允许重复报备',
+    reportAfterLook: '报备后多久允许带看',
+    reportProtectTime: '报备保护期',
+    visitProtectTime: '带看保护期',
+    revisitProtectTime: '复访保护期',
+    receiveTimeStart: '案场开始营业',
+    receiveTimeEnd: '案场结束营业',
+    details: '详情',
   },
 };
