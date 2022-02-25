@@ -215,6 +215,8 @@
         try {
           const { content } = await getRule(props.id);
           Object.assign(formState, content);
+          startTime.value = moment(formState.receiveTimeStart, 'HH:mm:ss');
+          endTime.value = moment(formState.receiveTimeEnd, 'HH:mm:ss');
         } catch (error) {
         } finally {
           loading.value = false;
@@ -223,6 +225,7 @@
       onMounted(async () => {
         try {
           loading.value = true;
+          formState.projectId = props.id;
           let result;
           result = await getRule(props.id);
           Object.assign(formState, result.content);

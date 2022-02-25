@@ -38,7 +38,7 @@ export const _ChannelCaseConst = {
   },
 };
 
-export const _ColumnsChannelCase = [
+export const Columns = [
   {
     title: t('host.channelCase.avatar'),
     key: 'avatar',
@@ -74,6 +74,10 @@ export const _ColumnsChannelCase = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+];
+
+export const _ColumnsChannelCase = [
+  ...Columns,
   {
     title: t('host.operation'),
     key: 'operation',

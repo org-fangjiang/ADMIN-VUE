@@ -73,7 +73,7 @@
           type="link"
           size="small"
           :class="prefixCls"
-          @click="clickUpdate(link)"
+          @click="clickChannel(link)"
         >
           {{ t('host.projectChannel') }}
         </Button>
@@ -250,13 +250,14 @@
       :visible="smModal"
       :title="drawerParam.title"
       @cancel="onClose"
-      width=""
+      width="50%"
       :footer="null"
       :destroyOnClose="true"
     >
       <PriceForm :priceInfo="priceInfo" v-if="updatePrice" />
       <OrderForm :id="drawerParam.id" v-if="updateOrder" />
-      <RuleForm :id="drawerParam.id" v-if="smModal" />
+      <RuleForm :id="drawerParam.id" v-if="drawerParam.setRule" />
+      <ChannelForm :id="drawerParam.id" v-if="drawerParam.setChannel" />
     </Modal>
     <Modal
       v-model:visible="projectModal"
@@ -275,6 +276,7 @@
 
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
+  import ChannelForm from './components/ChannelForm.vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import {
@@ -321,6 +323,7 @@
   export default defineComponent({
     name: 'ProjectTable',
     components: {
+      ChannelForm,
       Table,
       Pagination,
       Tag,
@@ -365,6 +368,8 @@
         provinceId: '',
         cityId: '',
         areaId: '',
+        setChannel: false,
+        setRule: false,
       });
       //分页参数
       let pageParam = reactive({
@@ -628,7 +633,16 @@
       const clickRule = (line) => {
         drawerParam.title = '报备规则';
         smModal.value = true;
+        drawerParam.setRule = true;
         drawerParam.id = line.id;
+      };
+
+      // 渠道
+      const clickChannel = (line) => {
+        drawerParam.title = '渠道信息';
+        drawerParam.setChannel = true;
+        drawerParam.id = line.id;
+        smModal.value = true;
       };
 
       //新增项目，打开modal
@@ -644,6 +658,8 @@
           Persistent.removeLocal(HOUSE_PROJECT, true);
         }
         drawerParam.visible = false;
+        drawerParam.setChannel = false;
+        drawerParam.setRule = false;
 
         drawerParam.id = '';
         drawerParam.title = '';
@@ -707,6 +723,7 @@
         projectModal,
         smModal,
         updateOrder,
+        clickChannel,
       };
     },
   });
