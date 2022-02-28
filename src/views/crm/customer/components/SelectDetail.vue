@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:h-[700px] flex flex-row w-full h-full overflow-y-scroll lg:py-2 lg:mb-4">
+  <div class="lg:h-[750px] flex flex-row w-full h-full overflow-y-scroll lg:mb-4">
     <div class="w-1/2">
       <div class="space-x-4 space-y-4 lg:grid lg:grid-cols-2 justify-items-center">
         <div class="place-self-end">用户名：</div>
@@ -74,19 +74,19 @@
       </div>
     </div>
     <div class="w-1/2 mt-4">
-      <div>带看记录</div>
+      <div class="mb-4">跟进信息:</div>
       <div
-        v-show="
-          formState.crmSaleCustomerRelationsById &&
-          formState.crmSaleCustomerRelationsById.length > 0
-        "
+        v-if="follow && follow.content && follow.content.length > 0"
+        class="lg:h-[700px] overflow-auto"
       >
-        <div v-for="item in formState.crmSaleCustomerRelationsById" :key="item.customerId">
-          <div>
-            销售名：{{ item.saleName }}
-            <span v-if="item.isOwner === '1'">（主负责人）</span>
-          </div>
-        </div>
+        <Timeline :reverse="true">
+          <TimelineItem v-for="item in follow.content" :key="item.id" color="green">
+            <div>{{ item.userBySaleId.nickName }}</div>
+            <div>{{ item.description }}</div>
+            <div v-if="item.userByUpdate">{{ item.userByUpdate.createTime.split('T')[0] }}</div>
+            <div v-else>{{ item.userByCreate.createTime.split('T')[0] }}</div>
+          </TimelineItem>
+        </Timeline>
       </div>
     </div>
   </div>
@@ -104,9 +104,14 @@
   import { getCity } from '/@/api/sys/city/city';
   import { getProvince } from '/@/api/sys/province/province';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { Timeline, TimelineItem } from 'ant-design-vue';
 
   export default defineComponent({
     name: 'SelectDetail',
+    components: {
+      Timeline,
+      TimelineItem,
+    },
     props: {
       cityId: {
         type: String,
@@ -171,7 +176,7 @@
 
       let demands = ref<string[]>([]);
       let projects = ref<any[]>([]);
-      const follow = ref<string>('');
+      const follow = ref<any>();
       const look = ref<string>('');
       const report = ref<string>('');
       const livePro = ref<string>('');
