@@ -103,6 +103,7 @@
             <Button @click="transferLevel(line)" v-auth="cityConst._PERMS.TRANSFER_LEVEL"
               >领取</Button
             >
+            <Button @click="clickFollow(line)">跟进</Button>
           </template>
         </Table>
       </TabPane>
@@ -160,6 +161,7 @@
             <Button @click="transferLevel(line)" v-auth="companyConst._PERMS.TRANSFER_LEVEL"
               >领取</Button
             >
+            <Button @click="clickFollow(line)">跟进</Button>
           </template>
         </Table>
       </TabPane>
@@ -215,6 +217,7 @@
             <Button @click="transferLevel(line)" v-auth="groupConst._PERMS.TRANSFER_LEVEL"
               >领取</Button
             >
+            <Button @click="clickFollow(line)">跟进</Button>
           </template>
         </Table>
       </TabPane>
@@ -272,6 +275,7 @@
             <Button @click="customerInvalid(line)" v-auth="privateConst._PERMS.INVALID"
               >无效</Button
             >
+            <Button @click="clickFollow(line)">跟进</Button>
           </template>
         </Table>
       </TabPane>
@@ -302,6 +306,7 @@
         :ids="ids"
         :fromType="fromType"
       />
+      <FollowDetail :fromType="fromType" v-if="drawerParam.state === '6'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -349,6 +354,7 @@
   import { usePermission } from '/@/hooks/web/usePermission';
   import FCascader from '/@/components/FCascader';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import FollowDetail from './components/FollowDetail.vue';
 
   export default defineComponent({
     name: 'Customer',
@@ -370,6 +376,7 @@
       InputSearch,
       FProjectSelect,
       Select,
+      FollowDetail,
     },
     setup() {
       const { t } = useI18n();
@@ -382,6 +389,18 @@
       const companyConst = ref(CompanyConst);
       const groupConst = ref(GroupConst);
       const privateConst = ref(PrivateConst);
+
+      const clickFollow = (line) => {
+        if (activeKey.value === '4') {
+          fromType.value = 'my';
+        } else {
+          fromType.value = 'other';
+        }
+        drawerParam.state = '6';
+        drawerParam.title = '跟进信息';
+        drawerParam.visible = true;
+        drawerParam.id = line.id;
+      };
 
       //手机号
       const contactValue = ref<String>('');
@@ -1036,6 +1055,7 @@
       });
 
       return {
+        clickFollow,
         intentionRange,
         intentionRangeSearch,
         purposeChange,
