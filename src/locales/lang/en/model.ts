@@ -379,4 +379,12 @@ export default {
     delete: 'Delete',
     failed: 'Failed',
   },
+  sale: {
+    maxGetCustomer: 'maxGetCustomer',
+    score: 'score',
+    scoreTime: 'scoreTime',
+    baseScore: 'baseScore',
+    companyId: 'companyId',
+    groupId: 'groupId',
+  },
 };

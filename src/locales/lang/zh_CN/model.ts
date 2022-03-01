@@ -378,4 +378,12 @@ export default {
     delete: '删除',
     failed: '未通过',
   },
+  sale: {
+    maxGetCustomer: '最大获客量',
+    score: '评分',
+    scoreTime: '评分次数',
+    baseScore: '基础评分',
+    companyId: '企业',
+    groupId: '部门',
+  },
 };

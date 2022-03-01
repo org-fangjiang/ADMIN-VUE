@@ -14,4 +14,5 @@ export default {
   violation: 'Violation',
   question: 'Question',
   answer: 'Answer',
+  sale: 'Sale',
 };

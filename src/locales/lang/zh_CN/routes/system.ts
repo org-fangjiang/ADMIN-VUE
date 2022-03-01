@@ -14,4 +14,5 @@ export default {
   violation: '违规词库',
   question: '问题审核',
   answer: '回复审核',
+  sale: '销售管理',
 };

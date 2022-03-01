@@ -68,6 +68,10 @@ const system: MenuModule = {
         path: 'answer',
         name: t('routes.system.answer'),
       },
+      {
+        path: 'sale',
+        name: t('routes.system.sale'),
+      },
     ],
   },
 };

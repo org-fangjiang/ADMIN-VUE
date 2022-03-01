@@ -163,6 +163,16 @@ const system: AppRouteModule = {
         icon: '',
       },
     },
+    {
+      path: 'sale',
+      name: 'Sale',
+      component: () => import('/@/views/sys/sale/index.vue'),
+      meta: {
+        title: t('routes.system.sale'),
+        roles: ['/system/sale'],
+        icon: '',
+      },
+    },
   ],
 };
 
