@@ -6,9 +6,13 @@
         <div></div>
       </template>
       <template #dateCellRender="{ current: value2 }">
-        <ul class="events">
+        <ul class="events" @click.stop="onStop">
           <li v-for="item in getListData(value2)" :key="item.content">
-            <Badge :status="'success'" :text="item.content.description" />
+            <Badge
+              :status="'success'"
+              :text="item.content.description"
+              @click="onClick(item.content)"
+            />
           </li>
         </ul>
       </template>
@@ -18,11 +22,12 @@
       :title="drawerParam.title"
       @cancel="onClose"
       width=""
-      :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
+      :bodyStyle="{ overflow: 'auto' }"
       :destroyOnClose="true"
       :footer="null"
     >
-      <FollowForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+      <FollowForm v-if="drawerParam.state === '0'" :item="drawerParam.content" />
+      <!-- <SelectDetail v-if="drawerParam.state === '0'" :privateId="drawerParam.content.customerId" /> -->
     </Modal>
   </PageWrapper>
 </template>
@@ -32,9 +37,10 @@
   import { PageWrapper } from '/@/components/Page';
   import WorkbenchHeader from './components/WorkbenchHeader.vue';
   import { useUserStore } from '/@/store/modules/user';
-  import { getNextFollow } from '/@/api/customer/crmFollow/follow';
+  import { getNextFollow, getNextFollowInDay } from '/@/api/customer/crmFollow/follow';
   import moment, { Moment } from 'moment';
   import FollowForm from './components/FollowForm.vue';
+  // import SelectDetail from '../../crm/customer/components/SelectDetail.vue';
 
   export default defineComponent({
     components: {
@@ -44,6 +50,7 @@
       Badge,
       FollowForm,
       Modal,
+      // SelectDetail,
     },
     setup() {
       const loading = ref(true);
@@ -58,41 +65,64 @@
       let list: any[] = reactive([]);
 
       onMounted(async () => {
-        const result = await getNextFollow();
-        if (result.content && result.content.length > 0) {
-          list.push(...result.content);
+        if (isShow.value) {
+          const result = await getNextFollow();
+          if (result.content && result.content.length > 0) {
+            list.push(...result.content);
+          }
         }
       });
 
-      const disabledDate = (current: any) => {
-        return current && current < moment();
+      const onStop = () => {
+        const evt = window.event;
+        if (evt && evt.preventDefault) {
+          evt.preventDefault();
+          evt.stopPropagation ? evt.stopPropagation() : (evt.cancelBubble = true);
+        }
       };
 
-      const value = ref<Moment>();
-      const curTime = moment();
+      const disabledDate = (current: any) => {
+        return current < moment().subtract(1, 'day');
+      };
 
-      const getListData = (value: Moment) => {
+      const value = ref<Moment>(moment());
+      const curTime = moment();
+      const clickList: any[] = reactive([]);
+
+      const getListData = (value3: Moment) => {
         let listData;
-        if (value.month() === curTime.month()) {
-          switch (value.date()) {
-            case curTime.date():
-              listData = [...list];
-              break;
-            default:
-          }
+        switch (value3.date()) {
+          case curTime.date():
+            listData = [...list];
+            if (value3.month() != curTime.month()) {
+              listData.splice(0);
+            }
+            break;
+          case value.value.date():
+            if (value3.month() === value.value.month()) {
+              listData = [...clickList];
+            }
+            break;
+          default:
         }
         return listData || [];
       };
 
-      const onSelect = async (value: Moment) => {
+      const onClick = (e) => {
         drawerParam.visible = true;
         drawerParam.state = '0';
-        drawerParam.id = value;
+        drawerParam.content = e;
         drawerParam.title = '今日待跟进';
       };
 
+      const onSelect = async (value: Moment) => {
+        clickList.splice(0);
+        const result = await getNextFollowInDay(value);
+        clickList.push(...result.content);
+      };
+
       const drawerParam = reactive({
-        id: moment().millisecond(0).second(0).minute(0).hour(0),
+        content: undefined,
         state: '',
         title: '',
         visible: false,
@@ -101,7 +131,7 @@
       const onClose = async () => {
         drawerParam.visible = false;
         drawerParam.state = '';
-        drawerParam.id = moment().millisecond(0).second(0).minute(0).hour(0);
+        drawerParam.content = undefined;
         drawerParam.title = '';
       };
 
@@ -119,6 +149,8 @@
         value,
         onSelect,
         disabledDate,
+        onClick,
+        onStop,
       };
     },
   });
