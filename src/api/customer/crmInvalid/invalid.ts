@@ -1,4 +1,10 @@
-import { BasePageResult, BaseResult, PageParam, SortParam } from '../../model/baseModel';
+import {
+  BasePageResult,
+  BaseResult,
+  CustomerResult,
+  PageParam,
+  SortParam,
+} from '../../model/baseModel';
 import { InvalidCondition, InvalidModel } from './model/InvalidModel';
 import { ErrorMessageMode } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
@@ -68,7 +74,7 @@ export function getInvalidById(id: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id: id });
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<InvalidModel>>(
+  return defHttp.post<CustomerResult<InvalidModel>>(
     {
       url: InvalidApi.GetInvalidById,
       data,

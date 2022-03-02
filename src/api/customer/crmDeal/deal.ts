@@ -1,4 +1,10 @@
-import { BasePageResult, BaseResult, PageParam, SortParam } from '../../model/baseModel';
+import {
+  BasePageResult,
+  BaseResult,
+  CustomerResult,
+  PageParam,
+  SortParam,
+} from '../../model/baseModel';
 import { DealCondition, DealModel } from './model/DealModel';
 import { ErrorMessageMode } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
@@ -68,7 +74,7 @@ export function getDealById(id: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id: id });
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<DealModel>>(
+  return defHttp.post<CustomerResult<DealModel>>(
     {
       url: DealApi.GetDealById,
       data,

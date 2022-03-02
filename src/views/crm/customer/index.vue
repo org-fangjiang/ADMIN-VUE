@@ -284,7 +284,7 @@
       v-model:visible="drawerParam.visible"
       :title="drawerParam.title"
       @cancel="onClose"
-      width="40%"
+      width="50%"
       :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
       :destroyOnClose="true"
       :footer="null"

@@ -1,90 +1,101 @@
 <template>
-  <div class="lg:h-[750px] flex flex-row w-full h-full overflow-y-scroll lg:mb-4">
-    <div class="w-1/2">
-      <div class="space-x-4 space-y-4 lg:grid lg:grid-cols-2 justify-items-center">
-        <div class="place-self-end">用户名：</div>
-        <div class="place-self-start">{{ formState.username }}</div>
-        <div class="place-self-end">联系方式：</div>
-        <div class="place-self-start">{{ formState.contact }}</div>
-        <div class="place-self-end">性别：</div>
-        <div class="place-self-start">{{ formState.username }}</div>
-        <div class="place-self-end">用户名：</div>
-        <div class="place-self-start"
-          ><span v-if="formState.gender === '0'">女</span
-          ><span v-if="formState.gender === '1'">男</span></div
-        >
-        <div class="place-self-end">意向楼盘：</div>
-        <div class="place-self-start">{{ projects.toString() }}</div>
-        <div class="place-self-end">居住地：</div>
-        <div class="place-self-start">{{ livePro + liveCity + liveArea }}</div>
-        <div class="place-self-end">工作地：</div>
-        <div class="place-self-start">{{ workPro + workCity + workArea }}</div>
-        <div class="place-self-end">意向地：</div>
-        <div class="place-self-start">{{ inPro + inCity + inArea }}</div>
-        <div class="place-self-end">购房目的：</div>
-        <div class="place-self-start">
-          <span v-if="formState.purpose === '1'">改善</span>
-          <span v-if="formState.purpose === '2'">刚需</span>
-          <span v-if="formState.purpose === '3'">结婚</span>
-          <span v-if="formState.purpose === '4'">投资</span>
-          <span v-if="formState.purpose === '5'">其他</span>
-        </div>
-        <div class="place-self-end">购房需求：</div>
-        <div class="place-self-start">{{ formState.demand.toString() }}</div>
-        <div class="place-self-end">需求描述：</div>
-        <div class="place-self-start">{{ formState.demandDescription }}</div>
-        <div class="place-self-end">客户来源：</div>
-        <div class="place-self-start">
-          <span v-if="formState.source === '1'">关注楼盘</span>
-          <span v-if="formState.source === '2'">变价提醒</span>
-          <span v-if="formState.source === '3'">帮您找房</span>
-          <span v-if="formState.source === '4'">专车找房</span>
-          <span v-if="formState.source === '5'">组团砍价</span>
-          <span v-if="formState.source === '6'">订阅楼盘</span>
-          <span v-if="formState.source === '7'">动态通知</span>
-          <span v-if="formState.source === '8'">成交价查询</span>
-          <span v-if="formState.source === '9'">开盘通知</span>
-          <span v-if="formState.source === '10'">了解周边</span>
-          <span v-if="formState.source === '11'">了解楼盘优缺点</span>
-          <span v-if="formState.source === '12'">快手</span>
-          <span v-if="formState.source === '13'">抖音</span>
-          <span v-if="formState.source === '14'">视频推广</span>
-          <span v-if="formState.source === '15'">活动推广</span>
-          <span v-if="formState.source === '16'">余房查询</span>
-        </div>
-        <div class="place-self-end">意向强度：</div>
-        <div class="place-self-start">{{ formState.buyIntentionRange }}</div>
-        <div class="place-self-end">系统判定意向强度：</div>
-        <div class="place-self-start">{{ formState.autoBugIntentionRange }}</div>
-        <div class="place-self-end">失信次数：</div>
-        <div class="place-self-start">{{ formState.breakPromiseTimes }}</div>
-        <div class="place-self-end">带看次数：</div>
-        <div class="place-self-start">{{ formState.lookTime }}</div>
-        <div class="place-self-end">报备次数：</div>
-        <div class="place-self-start">{{ formState.reportTime }}</div>
-        <div class="place-self-end">被浏览次数：</div>
-        <div class="place-self-start">{{ formState.viewTime }}</div>
-        <div class="place-self-end">流转次数：</div>
-        <div class="place-self-start">{{ formState.transferTime }}</div>
-        <div class="place-self-end">跟进人：</div>
-        <div class="place-self-start">
-          <span v-if="formState.userByUpdate">{{ formState.userByUpdate.realName }}</span>
-          <span v-else>{{ formState.userByCreate.realName }}</span>
-        </div>
+  <div class="lg:h-[600px] flex flex-row w-full h-full overflow-hidden lg:mb-4">
+    <div class="w-1/2 lg:grid lg:grid-cols-4">
+      <div class="">用户名：</div>
+      <div class="place-self-start">{{ formState.username }}</div>
+      <div class="">性别：</div>
+      <div class="">{{ formState.username }}</div>
+      <div class="">意向楼盘：</div>
+      <div class="">{{ projects.toString() }}</div>
+      <div class="">工作地：</div>
+      <div class="">{{ workPro + workCity + workArea }}</div>
+      <div class="">购房目的：</div>
+      <div class="">
+        <span v-if="formState.purpose === '1'">改善</span>
+        <span v-if="formState.purpose === '2'">刚需</span>
+        <span v-if="formState.purpose === '3'">结婚</span>
+        <span v-if="formState.purpose === '4'">投资</span>
+        <span v-if="formState.purpose === '5'">其他</span>
+      </div>
+      <div class="">需求描述：</div>
+      <div class="">{{ formState.demandDescription }}</div>
+      <div class="">意向强度：</div>
+      <div class="">{{ formState.buyIntentionRange }}</div>
+      <div class="">判定意向强度：</div>
+      <div class="">{{ formState.autoBugIntentionRange }}</div>
+      <div class="">失信次数：</div>
+      <div class="">{{ formState.breakPromiseTimes }}</div>
+      <div class="">联系方式：</div>
+      <div class="">{{ formState.contact }}</div>
+      <div class="">用户名：</div>
+      <div class=""
+        ><span v-if="formState.gender === '0'">女</span
+        ><span v-if="formState.gender === '1'">男</span></div
+      >
+      <div class="">居住地：</div>
+      <div class="">{{ livePro + liveCity + liveArea }}</div>
+      <div class="">意向地：</div>
+      <div class="">{{ inPro + inCity + inArea }}</div>
+      <div class="">购房需求：</div>
+      <div class="">{{ formState.demand.toString() }}</div>
+      <div class="">客户来源：</div>
+      <div class="">
+        <span v-if="formState.source === '1'">关注楼盘</span>
+        <span v-if="formState.source === '2'">变价提醒</span>
+        <span v-if="formState.source === '3'">帮您找房</span>
+        <span v-if="formState.source === '4'">专车找房</span>
+        <span v-if="formState.source === '5'">组团砍价</span>
+        <span v-if="formState.source === '6'">订阅楼盘</span>
+        <span v-if="formState.source === '7'">动态通知</span>
+        <span v-if="formState.source === '8'">成交价查询</span>
+        <span v-if="formState.source === '9'">开盘通知</span>
+        <span v-if="formState.source === '10'">了解周边</span>
+        <span v-if="formState.source === '11'">了解楼盘优缺点</span>
+        <span v-if="formState.source === '12'">快手</span>
+        <span v-if="formState.source === '13'">抖音</span>
+        <span v-if="formState.source === '14'">视频推广</span>
+        <span v-if="formState.source === '15'">活动推广</span>
+        <span v-if="formState.source === '16'">余房查询</span>
+      </div>
+      <div class="">带看次数：</div>
+      <div class="">{{ formState.lookTime }}</div>
+      <div class="">报备次数：</div>
+      <div class="">{{ formState.reportTime }}</div>
+      <div class="">被浏览次数：</div>
+      <div class="">{{ formState.viewTime }}</div>
+      <div class="">流转次数：</div>
+      <div class="">{{ formState.transferTime }}</div>
+      <div class="">跟进人：</div>
+      <div class="">
+        <span v-if="formState.userByUpdate">{{ formState.userByUpdate.realName }}</span>
+        <span v-else>{{ formState.userByCreate.realName }}</span>
       </div>
     </div>
-    <div class="w-1/2 mt-4">
-      <div class="mb-4">跟进信息:</div>
-      <div
-        v-if="follow && follow.content && follow.content.length > 0"
-        class="lg:h-[700px] overflow-auto"
-      >
-        <Timeline :reverse="true">
-          <TimelineItem v-for="item in follow.content" :key="item.id" color="green">
+    <div v-if="allNote && allNote.length > 0" class="w-1/2 ml-4">
+      <div class="mb-4 grid grid-cols-2 pr-4">
+        <div>跟进信息:</div>
+        <div class="space-x-4 text-blue-700 place-self-end"
+          ><button @click="onSh" type="link">正序</button
+          ><button @click="onJi" type="link">倒序</button></div
+        >
+      </div>
+      <div v-if="allNote && allNote.length > 0" class="h-[570px] overflow-y-scroll mb-4">
+        <Timeline>
+          <TimelineItem v-for="item in allNote" :key="item.id" color="green">
             <div>{{ item.userBySaleId.nickName }}</div>
             <div>{{ item.description }}</div>
-            <div v-if="item.userByUpdate">{{ item.userByUpdate.createTime.split('T')[0] }}</div>
-            <div v-else>{{ item.userByCreate.createTime.split('T')[0] }}</div>
+            <div>意向楼盘：{{ item.projectById.name }}</div>
+            <div class="space-x-4">
+              上次跟进结果：
+              <span v-if="item.resultType === '1'">未接听</span>
+              <span v-if="item.resultType === '2'">接听后挂断</span>
+              <span v-if="item.resultType === '3'">通话中</span>
+              <span v-if="item.resultType === '4'">拉黑</span>
+              <span v-if="item.resultType === '5'">空号</span>
+              <span v-if="item.resultType === '6'">不买房</span>
+              <span v-if="item.resultType === '7'">同行</span>
+              <span>{{ item.createTime.replace('T', ' ').split('.')[0] }}</span>
+            </div>
           </TimelineItem>
         </Timeline>
       </div>
@@ -177,8 +188,8 @@
       let demands = ref<string[]>([]);
       let projects = ref<any[]>([]);
       const follow = ref<any>();
-      const look = ref<string>('');
-      const report = ref<string>('');
+      const look = ref<any>();
+      const report = ref<any>();
       const livePro = ref<string>('');
       const liveCity = ref<string>('');
       const liveArea = ref<string>('');
@@ -188,6 +199,9 @@
       const inPro = ref<string>('');
       const inCity = ref<string>('');
       const inArea = ref<string>('');
+
+      // 所有跟进/报备/带看记录
+      const allNote = ref<any[]>([]);
 
       onMounted(async () => {
         if (props.cityId) {
@@ -217,16 +231,30 @@
         } else if (props.dealId) {
           const result = await getDealById(props.dealId);
           Object.assign(formState, result.content);
-          // follow.value = result.follow;
-          // look.value = result.look;
-          // report.value = result.report;
+          follow.value = result.follow;
+          look.value = result.look;
+          report.value = result.report;
         } else if (props.invalidId) {
           const result = await getInvalidById(props.invalidId);
           Object.assign(formState, result.content);
-          // follow.value = result.follow;
-          // look.value = result.look;
-          // report.value = result.report;
+          follow.value = result.follow;
+          look.value = result.look;
+          report.value = result.report;
         }
+        if (follow.value && follow.value?.content?.length > 0) {
+          allNote.value.push(...follow.value.content);
+        }
+        if (report.value && report.value?.content?.length > 0) {
+          allNote.value.push(...report.value.content);
+        }
+        if (look.value && look.value?.content?.length > 0) {
+          allNote.value.push(...look.value.content);
+        }
+
+        // 将所有跟进信息倒序排列
+        onJi();
+        // onSh();
+
         if (formState.liveIn) {
           const liveIne: string[] = [];
           liveIne.push(...formState.liveIn.split(','));
@@ -278,6 +306,37 @@
         }
       });
 
+      // 升序
+      const onSh = () => {
+        if (allNote.value && allNote.value.length > 0) {
+          let t;
+          for (let i = 0; i < allNote.value.length - 1; i++) {
+            for (let j = 0; j < allNote.value.length - 1 - i; j++) {
+              if (allNote.value[j].createTime > allNote.value[j + 1].createTime) {
+                t = allNote.value[j];
+                allNote.value[j] = allNote.value[j + 1];
+                allNote.value[j + 1] = t;
+              }
+            }
+          }
+        }
+      };
+      // 降序
+      const onJi = () => {
+        if (allNote.value && allNote.value.length > 0) {
+          let t;
+          for (let i = 0; i < allNote.value.length - 1; i++) {
+            for (let j = 0; j < allNote.value.length - 1 - i; j++) {
+              if (allNote.value[j].createTime < allNote.value[j + 1].createTime) {
+                t = allNote.value[j];
+                allNote.value[j] = allNote.value[j + 1];
+                allNote.value[j + 1] = t;
+              }
+            }
+          }
+        }
+      };
+
       return {
         inCity,
         inPro,
@@ -296,6 +355,9 @@
         workCity,
         workArea,
         inArea,
+        allNote,
+        onSh,
+        onJi,
       };
     },
   });
