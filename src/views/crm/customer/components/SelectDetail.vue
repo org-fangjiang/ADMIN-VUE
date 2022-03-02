@@ -82,7 +82,7 @@
       <div v-if="allNote && allNote.length > 0" class="h-[570px] overflow-y-scroll mb-4">
         <Timeline>
           <TimelineItem v-for="item in allNote" :key="item.id" color="green">
-            <div>{{ item.userBySaleId.nickName }}</div>
+            <div>{{ item.userByCreate.nickName }}</div>
             <div>{{ item.description }}</div>
             <div>意向楼盘：{{ item.projectById.name }}</div>
             <div class="space-x-4">
@@ -250,7 +250,7 @@
         if (look.value && look.value?.content?.length > 0) {
           allNote.value.push(...look.value.content);
         }
-
+        console.log(allNote.value);
         // 将所有跟进信息倒序排列
         onJi();
         // onSh();

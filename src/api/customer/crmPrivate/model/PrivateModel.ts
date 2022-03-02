@@ -143,6 +143,7 @@ export const PrivateConst = {
     TRANSFER_LEVEL: 'customer:transfer:level',
     INVALID: 'customer:invalid',
     DEAL: 'customer:deal',
+    REPORT: 'report:add',
   },
 };
 

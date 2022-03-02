@@ -203,6 +203,8 @@
             if (formState.nextFollowTime) {
               startTime.value = moment(formState.nextFollowTime, 'YYYY-MM-DD HH:mm:ss');
             }
+          } else {
+            formRef.value.resetFields();
           }
         } catch (error) {
         } finally {

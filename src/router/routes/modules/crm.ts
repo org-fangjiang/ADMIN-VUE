@@ -41,6 +41,15 @@ const crm: AppRouteModule = {
         roles: ['/crm/invalid'],
       },
     },
+    {
+      path: 'myReport',
+      name: 'MyReport',
+      component: () => import('/@/views/crm/myReport/index.vue'),
+      meta: {
+        title: t('routes.crm.myReport'),
+        roles: ['/crm/report'],
+      },
+    },
   ],
 };
 

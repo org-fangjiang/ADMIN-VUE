@@ -268,14 +268,38 @@
             </span>
           </template>
           <template #operation="{ text: line }">
-            <Button @click="seePrivate(line)">查看</Button>
-            <Button @click="updateCustomer(line)" v-auth="privateConst._PERMS.UPDATE">编辑</Button>
-            <Button @click="distributeOne(line)" v-auth="privateConst._PERMS.TRANSFER">转移</Button>
             <Button @click="customerDeal(line)" v-auth="privateConst._PERMS.DEAL">成交</Button>
             <Button @click="customerInvalid(line)" v-auth="privateConst._PERMS.INVALID"
               >无效</Button
             >
-            <Button @click="clickFollow(line)">跟进</Button>
+            <Button @click="customerReport(line)" v-auth="privateConst._PERMS.REPORT">报备</Button>
+            <Dropdown placement="bottomCenter" trigger="click">
+              <Button>{{ t('host.operation') }}</Button>
+              <template #overlay>
+                <Menu mode="horizontal">
+                  <MenuItem :key="0">
+                    <template #icon></template>
+                    <Button @click="seePrivate(line)">查看</Button>
+                  </MenuItem>
+                  <MenuItem :key="1">
+                    <template #icon></template>
+                    <Button @click="updateCustomer(line)" v-auth="privateConst._PERMS.UPDATE"
+                      >编辑</Button
+                    >
+                  </MenuItem>
+                  <MenuItem :key="2">
+                    <template #icon></template>
+                    <Button @click="distributeOne(line)" v-auth="privateConst._PERMS.TRANSFER"
+                      >转移</Button
+                    >
+                  </MenuItem>
+                  <MenuItem :key="3">
+                    <template #icon></template>
+                    <Button @click="clickFollow(line)">跟进</Button>
+                  </MenuItem>
+                </Menu>
+              </template>
+            </Dropdown>
           </template>
         </Table>
       </TabPane>
@@ -307,6 +331,7 @@
         :fromType="fromType"
       />
       <FollowDetail :fromType="fromType" v-if="drawerParam.state === '6'" :id="drawerParam.id" />
+      <ReportForm v-if="drawerParam.state === '7'" :customerId="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -325,7 +350,19 @@
   import { getByCity, transferLevelTo } from '/@/api/customer/crmCity/city';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { failed, processListByLine, success } from '/@/hooks/web/useList';
-  import { Tabs, TabPane, Table, Tag, Button, Modal, InputSearch, Select } from 'ant-design-vue';
+  import {
+    Tabs,
+    TabPane,
+    Table,
+    Tag,
+    Button,
+    Modal,
+    InputSearch,
+    Select,
+    Dropdown,
+    Menu,
+    MenuItem,
+  } from 'ant-design-vue';
   import CityForm from './components/CityForm.vue';
   import {
     CompanyModel,
@@ -355,6 +392,7 @@
   import FCascader from '/@/components/FCascader';
   import FProjectSelect from '/@/components/FProjectSelect';
   import FollowDetail from './components/FollowDetail.vue';
+  import ReportForm from './components/ReportForm.vue';
 
   export default defineComponent({
     name: 'Customer',
@@ -377,6 +415,10 @@
       FProjectSelect,
       Select,
       FollowDetail,
+      Dropdown,
+      Menu,
+      MenuItem,
+      ReportForm,
     },
     setup() {
       const { t } = useI18n();
@@ -400,6 +442,14 @@
         drawerParam.title = '跟进信息';
         drawerParam.visible = true;
         drawerParam.id = line.id;
+      };
+
+      // 报备
+      const customerReport = (line) => {
+        drawerParam.id = line.id;
+        drawerParam.state = '7';
+        drawerParam.visible = true;
+        drawerParam.title = '报备';
       };
 
       //手机号
@@ -1133,6 +1183,7 @@
         updateCustomer,
         customerInvalid,
         customerDeal,
+        customerReport,
       };
     },
   });
