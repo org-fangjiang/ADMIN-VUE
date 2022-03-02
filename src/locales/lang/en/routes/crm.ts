@@ -3,4 +3,5 @@ export default {
   deal: 'Deal',
   invalid: 'Invalid',
   myReport: 'myReport',
+  review: 'Review',
 };

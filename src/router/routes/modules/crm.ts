@@ -50,6 +50,15 @@ const crm: AppRouteModule = {
         roles: ['/crm/report'],
       },
     },
+    {
+      path: 'review',
+      name: 'Review',
+      component: () => import('/@/views/crm/review/index.vue'),
+      meta: {
+        title: t('routes.crm.review'),
+        roles: ['/crm/review'],
+      },
+    },
   ],
 };
 

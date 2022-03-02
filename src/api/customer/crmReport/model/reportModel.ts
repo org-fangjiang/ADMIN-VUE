@@ -68,7 +68,7 @@ export const ReportConst = {
   },
 };
 
-export const ReportColumns = [
+export const Columns = [
   {
     title: t('marketing.report.customerId'),
     key: 'customerName',
@@ -111,10 +111,14 @@ export const ReportColumns = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
-  // {
-  //   title: t('host.operation'),
-  //   key: 'operation',
-  //   ellipsis: 'true',
-  //   slots: { customRender: 'operation' },
-  // },
+];
+
+export const ReportColumns = [
+  ...Columns,
+  {
+    title: t('host.operation'),
+    key: 'operation',
+    ellipsis: 'true',
+    slots: { customRender: 'operation' },
+  },
 ];

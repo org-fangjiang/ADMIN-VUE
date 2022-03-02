@@ -1,14 +1,5 @@
 <template>
   <div class="p-4">
-    <!-- 状态 -->
-    <Select
-      :allowClear="true"
-      style="width: 200px"
-      @change="stateChange"
-      :options="reportConst.STATES"
-      :pagination="false"
-      placeholder="状态"
-    />
     <!-- 客户名 -->
     <InputSearch
       :class="`${prefixCls}-select`"
@@ -55,6 +46,9 @@
           {{ lookTime.replace('T', ' ').replace('.000+08:00', '') }}
         </Tag>
       </template>
+      <template #operation="{ text: line }">
+        <Button @click="clickReview(line)" v-auth="reportConst._PERMS.EXAMINE">审核</Button>
+      </template>
     </Table>
     <Pagination
       show-size-changer
@@ -67,34 +61,51 @@
       @change="onChange"
       @showSizeChange="onShowSizeChange"
     />
+    <Modal
+      v-model:visible="drawerParam.visible"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
+      :destroyOnClose="true"
+      :footer="null"
+    >
+      <ReviewForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+    </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { Columns, ReportConst, ReportModel } from '/@/api/customer/crmReport/model/reportModel';
-  import { getMyReport } from '/@/api/customer/crmReport/report';
+  import {
+    ReportColumns,
+    ReportConst,
+    ReportModel,
+  } from '/@/api/customer/crmReport/model/reportModel';
+  import { getResidentReport } from '/@/api/customer/crmReport/report';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useDesign } from '/@/hooks/web/useDesign';
   // import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { processList } from '/@/hooks/web/useList';
-  import { Table, Tag, Pagination, RangePicker, Select, InputSearch } from 'ant-design-vue';
+  import { Table, Tag, Pagination, RangePicker, InputSearch, Modal, Button } from 'ant-design-vue';
   import { Moment } from 'moment';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import ReviewForm from './components/ReviewForm.vue';
 
   export default defineComponent({
-    name: 'MyReport',
+    name: 'Review',
     components: {
       Loading,
       Table,
       Tag,
       Pagination,
       RangePicker,
-      Select,
       InputSearch,
       FProjectSelect,
+      ReviewForm,
+      Modal,
+      Button,
     },
     setup() {
       const { t } = useI18n();
@@ -102,9 +113,30 @@
       const { prefixCls } = useDesign('clue');
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // model
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
+      const onClose = async () => {
+        drawerParam.state = '';
+        drawerParam.title = '';
+        drawerParam.id = '';
+        drawerParam.visible = false;
+      };
+      // 审核
+      const clickReview = (line) => {
+        drawerParam.state = '0';
+        drawerParam.title = '审核';
+        drawerParam.id = line.id;
+        drawerParam.visible = true;
+      };
       const pageSizeList = ref<string[]>(PageSizeList);
 
-      const columns = reactive(Columns);
+      const columns = reactive(ReportColumns);
       const reportConst = ref(ReportConst);
 
       const condition = reactive({
@@ -135,7 +167,7 @@
         loading.value = true;
         let result: BasePageResult<ReportModel> | undefined;
         try {
-          result = await getMyReport(condition, {
+          result = await getResidentReport(condition, {
             pageSize: pageParam.size,
             pageNum: pageParam.number,
           });
@@ -151,14 +183,6 @@
         const result = await getList();
         processList(result, list, pageParam);
       });
-
-      // 状态
-      const stateChange = async (value) => {
-        condition.state = value;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result, list, pageParam);
-      };
 
       // 客户名称
       const intentionRangeSearch = async (value: string) => {
@@ -250,7 +274,9 @@
         loading,
         onChange,
         onShowSizeChange,
-        stateChange,
+        clickReview,
+        onClose,
+        drawerParam,
       };
     },
   });

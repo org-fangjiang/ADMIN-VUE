@@ -22,6 +22,10 @@ const crm: MenuModule = {
         path: 'myReport',
         name: t('routes.crm.myReport'),
       },
+      {
+        path: 'review',
+        name: t('routes.crm.review'),
+      },
     ],
   },
 };
