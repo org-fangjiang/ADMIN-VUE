@@ -86,7 +86,7 @@
             <div>{{ item.description }}</div>
             <div>意向楼盘：{{ item.projectById.name }}</div>
             <div class="space-x-4">
-              上次跟进结果：
+              <span v-if="item.resultType">上次跟进结果：</span>
               <span v-if="item.resultType === '1'">未接听</span>
               <span v-if="item.resultType === '2'">接听后挂断</span>
               <span v-if="item.resultType === '3'">通话中</span>

@@ -4,4 +4,6 @@ export default {
   invalid: 'Invalid',
   myReport: 'myReport',
   review: 'Review',
+  look: 'Look',
+  examineLook: 'examineLook',
 };

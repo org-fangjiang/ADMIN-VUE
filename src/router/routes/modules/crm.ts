@@ -59,6 +59,24 @@ const crm: AppRouteModule = {
         roles: ['/crm/review'],
       },
     },
+    {
+      path: 'look',
+      name: 'Look',
+      component: () => import('/@/views/crm/look/index.vue'),
+      meta: {
+        title: t('routes.crm.look'),
+        roles: ['/crm/look'],
+      },
+    },
+    {
+      path: 'examineLook',
+      name: 'ExamineLook',
+      component: () => import('/@/views/crm/examineLook/index.vue'),
+      meta: {
+        title: t('routes.crm.examineLook'),
+        roles: ['/crm/examineLook'],
+      },
+    },
   ],
 };
 

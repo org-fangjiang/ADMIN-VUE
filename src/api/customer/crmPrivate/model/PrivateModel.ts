@@ -144,6 +144,7 @@ export const PrivateConst = {
     INVALID: 'customer:invalid',
     DEAL: 'customer:deal',
     REPORT: 'report:add',
+    LOOK: 'look:add',
   },
 };
 

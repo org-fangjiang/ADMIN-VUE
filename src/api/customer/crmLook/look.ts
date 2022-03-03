@@ -14,6 +14,118 @@ enum LookApi {
   GetCompanyLook = '/crm-server/look/getCompanyLook',
   GetProjectLook = '/crm-server/look/getProjectLook',
   GetResidentLook = '/crm-server/look/getResidentLook',
+  GetResidentLookById = '/crm-server/look/getResidentLookById',
+  GetMyLookById = '/crm-server/look/getMyLookById',
+  GetMemberLookById = '/crm-server/look/getMemberLookById',
+  GetGroupLookById = '/crm-server/look/getGroupLookById',
+  GetEveryGroupLookById = '/crm-server/look/getEveryGroupLookById',
+  GetCompanyLookById = '/crm-server/look/getCompanyLookById',
+  GetProjectLookById = '/crm-server/look/getProjectLookById',
+}
+
+export function getProjectLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetProjectLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getCompanyLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetCompanyLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getEveryGroupLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetEveryGroupLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getGroupLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetGroupLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getMemberLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetMemberLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getMyLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetMyLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getResidentLookById(lookId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ lookId: lookId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<LookModel>>(
+    {
+      url: LookApi.GetResidentLookById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getResidentLook(

@@ -26,6 +26,14 @@ const crm: MenuModule = {
         path: 'review',
         name: t('routes.crm.review'),
       },
+      {
+        path: 'look',
+        name: t('routes.crm.look'),
+      },
+      {
+        path: 'examineLook',
+        name: t('routes.crm.examineLook'),
+      },
     ],
   },
 };
