@@ -36,10 +36,9 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { getRoles } from '/@/api/sys/role/role';
   import { useUserStore } from '/@/store/modules/user';
   import { Columns, SaleConst, SaleModel } from '/@/api/sys/sale/model/saleModel';
-  import { getUsersByRole } from '/@/api/sys/user/user';
+  import { getUsersBySale } from '/@/api/sys/user/user';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useI18n } from 'vue-i18n';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -80,17 +79,14 @@
         totalElements: 0,
       });
 
-      const getList = async (id: string) => {
+      const getList = async () => {
         loading.value = true;
         let result: BasePageResult<SaleModel> | undefined;
         try {
-          result = result = await getUsersByRole(
-            { roleId: id },
-            {
-              pageSize: pageParam.size,
-              pageNum: pageParam.number,
-            }
-          );
+          result = result = await getUsersBySale('', {
+            pageSize: pageParam.size,
+            pageNum: pageParam.number,
+          });
         } catch (error: any) {
           createErrorModal({
             title: t('sys.api.errorTip'),
@@ -102,20 +98,9 @@
         return result;
       };
 
-      // 销售角色id
-      let roleId = ref('');
-
       onMounted(async () => {
-        const { content } = await getRoles({ companyId });
-        if (content && content.length > 0) {
-          content.forEach(async (item) => {
-            if (item.roleName === 'sale' && item.companyId === companyId) {
-              roleId.value = item.id || '';
-              const result = await getList(roleId.value);
-              processList(result, list, pageParam);
-            }
-          });
-        }
+        const result = await getList();
+        processList(result, list, pageParam);
       });
 
       // 弹窗
@@ -142,7 +127,7 @@
       //页码改变
       const onChange = async (page) => {
         pageParam.number = page;
-        const result = await getList(roleId.value);
+        const result = await getList();
         processList(result, list, pageParam);
       };
       //每页条数改变
@@ -150,7 +135,7 @@
         console.log(current);
         pageParam.size = size;
         pageParam.number = 1;
-        const result = await getList(roleId.value);
+        const result = await getList();
         processList(result, list, pageParam);
       };
 
