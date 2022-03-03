@@ -15,6 +15,102 @@ enum ReportApi {
   GetProjectReport = '/crm-server/report/getProjectReport',
   GetResidentReport = '/crm-server/report/getResidentReport',
   GetResidentReportById = '/crm-server/report/getResidentReportById',
+  GetMyReportById = '/crm-server/report/getMyReportById',
+  GetMemberReportById = '/crm-server/report/getMemberReportById',
+  GetGroupReportById = '/crm-server/report/getGroupReportById',
+  GetEveryGroupReportById = '/crm-server/report/getEveryGroupReportById',
+  GetCompanyReportById = '/crm-server/report/getCompanyReportById',
+  GetProjectReportById = '/crm-server/report/getProjectReportById',
+}
+
+export function getProjectReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetProjectReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getCompanyReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetCompanyReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getEveryGroupReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetEveryGroupReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getGroupReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetGroupReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getMemberReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetMemberReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function getMyReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetMyReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getResidentReportById(reportId: string, mode: ErrorMessageMode = 'modal') {

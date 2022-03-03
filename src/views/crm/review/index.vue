@@ -126,6 +126,8 @@
         drawerParam.title = '';
         drawerParam.id = '';
         drawerParam.visible = false;
+        const result = await getList();
+        processList(result, list, pageParam);
       };
       // 审核
       const clickReview = (line) => {

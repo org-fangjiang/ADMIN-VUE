@@ -208,6 +208,10 @@
   import { HostModel, _HostConst } from '/@/api/host/project/model/projectModel';
   import { useUserStore } from '/@/store/modules/user';
   import { getProject } from '/@/api/host/project/project';
+  import { getProjectChannel } from '/@/api/host/projectChannel/projectChannel';
+  import { ChannelAndCase } from '/@/api/host/projectChannel/model/projectChannelModel';
+  import { getRule } from '/@/api/host/reportRule/reportRule';
+  import { ReportRuleModel } from '/@/api/host/reportRule/model/reportRuleModel';
 
   export default defineComponent({
     name: 'ProjectForm',
@@ -230,6 +234,8 @@
       let provinceId = ref<string>(userStore.getUserInfo.companyProvinceId || '');
 
       const formState: UnwrapRef<HostModel> = reactive({});
+      const formStateChannel: UnwrapRef<ChannelAndCase> = reactive({});
+      const formStateRule: UnwrapRef<ReportRuleModel> = reactive({});
 
       //初始加载
       onMounted(async () => {
@@ -238,6 +244,10 @@
           try {
             const { content } = await getProject(props.id);
             Object.assign(formState, content);
+            const channelResult = await getProjectChannel(props.id);
+            Object.assign(formStateChannel, channelResult.content);
+            const ruleResult = await getRule(props.id);
+            Object.assign(formStateRule, ruleResult.content);
           } catch (error) {
           } finally {
             loading.value = false;
@@ -264,6 +274,8 @@
         props,
         cityId,
         provinceId,
+        formStateChannel,
+        formStateRule,
       };
     },
   });
