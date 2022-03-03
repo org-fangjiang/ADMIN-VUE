@@ -14,6 +14,22 @@ enum ReportApi {
   GetCompanyReport = '/crm-server/report/getCompanyReport',
   GetProjectReport = '/crm-server/report/getProjectReport',
   GetResidentReport = '/crm-server/report/getResidentReport',
+  GetResidentReportById = '/crm-server/report/getResidentReportById',
+}
+
+export function getResidentReportById(reportId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ reportId: reportId });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ReportModel>>(
+    {
+      url: ReportApi.GetResidentReportById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getResidentReport(

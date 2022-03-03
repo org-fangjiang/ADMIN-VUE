@@ -55,6 +55,9 @@
           {{ lookTime.replace('T', ' ').replace('.000+08:00', '') }}
         </Tag>
       </template>
+      <template #operation="{ text: line }">
+        <Button @click="addLook(line)" v-auth="lookConst._PERMS.ADD">录入带看</Button>
+      </template>
     </Table>
     <Pagination
       show-size-changer
@@ -67,22 +70,47 @@
       @change="onChange"
       @showSizeChange="onShowSizeChange"
     />
+    <Modal
+      v-model:visible="drawerParam.visible"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
+      :destroyOnClose="true"
+      :footer="null"
+    >
+      <LookForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+    </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { Columns, ReportConst, ReportModel } from '/@/api/customer/crmReport/model/reportModel';
+  import {
+    ReportColumns,
+    ReportConst,
+    ReportModel,
+  } from '/@/api/customer/crmReport/model/reportModel';
   import { getMyReport } from '/@/api/customer/crmReport/report';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useDesign } from '/@/hooks/web/useDesign';
   // import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { processList } from '/@/hooks/web/useList';
-  import { Table, Tag, Pagination, RangePicker, Select, InputSearch } from 'ant-design-vue';
+  import {
+    Table,
+    Tag,
+    Pagination,
+    RangePicker,
+    Select,
+    InputSearch,
+    Modal,
+    Button,
+  } from 'ant-design-vue';
   import { Moment } from 'moment';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import LookForm from './components/LookForm.vue';
+  import { LookConst } from '/@/api/customer/crmLook/model/lookModel';
 
   export default defineComponent({
     name: 'MyReport',
@@ -95,6 +123,9 @@
       Select,
       InputSearch,
       FProjectSelect,
+      Modal,
+      LookForm,
+      Button,
     },
     setup() {
       const { t } = useI18n();
@@ -102,9 +133,33 @@
       const { prefixCls } = useDesign('clue');
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      // model
+      const drawerParam = reactive({
+        id: '',
+        state: '',
+        title: '',
+        visible: false,
+      });
+
+      const onClose = async () => {
+        drawerParam.state = '';
+        drawerParam.title = '';
+        drawerParam.id = '';
+        drawerParam.visible = false;
+      };
+      // 录入带看
+      const lookConst = ref(LookConst);
+      const addLook = (line) => {
+        drawerParam.state = '0';
+        drawerParam.id = line.id;
+        drawerParam.title = '录入数据';
+        drawerParam.visible = true;
+      };
+
       const pageSizeList = ref<string[]>(PageSizeList);
 
-      const columns = reactive(Columns);
+      const columns = reactive(ReportColumns);
       const reportConst = ref(ReportConst);
 
       const condition = reactive({
@@ -251,6 +306,10 @@
         onChange,
         onShowSizeChange,
         stateChange,
+        drawerParam,
+        onClose,
+        addLook,
+        lookConst,
       };
     },
   });
