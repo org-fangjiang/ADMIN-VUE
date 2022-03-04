@@ -15,4 +15,5 @@ export default {
   question: '问题审核',
   answer: '回复审核',
   sale: '销售管理',
+  resident: '驻场管理',
 };

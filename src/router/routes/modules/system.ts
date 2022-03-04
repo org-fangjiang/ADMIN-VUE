@@ -173,6 +173,16 @@ const system: AppRouteModule = {
         icon: '',
       },
     },
+    {
+      path: 'resident',
+      name: 'Resident',
+      component: () => import('/@/views/sys/resident/index.vue'),
+      meta: {
+        title: t('routes.system.resident'),
+        roles: ['/system/resident'],
+        icon: '',
+      },
+    },
   ],
 };
 

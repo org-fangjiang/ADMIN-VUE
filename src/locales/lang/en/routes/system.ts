@@ -15,4 +15,5 @@ export default {
   question: 'Question',
   answer: 'Answer',
   sale: 'Sale',
+  resident: 'Resident',
 };

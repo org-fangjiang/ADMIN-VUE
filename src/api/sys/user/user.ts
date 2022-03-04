@@ -34,10 +34,31 @@ enum Api {
   ReEnableUser = '/sys-server/user/reEnableUser', // user:update
   GetUserInfo = '/api/auth/getUserInfo',
   GetUsersBySale = '/sys-server/user/getUsersBySale',
+  GetUsersByResident = '/sys-server/user/getUsersByResident',
+}
+
+export function getUsersByResident(
+  realName?: string,
+  page?: PageParam,
+  mode: ErrorMessageMode = 'modal'
+) {
+  const reqParam = new RequestParam();
+  reqParam.setData({ realName });
+  reqParam.setPage(page);
+  const data = reqParam.getInstance();
+  return defHttp.post<BasePageResult<GetUserModel>>(
+    {
+      url: Api.GetUsersByResident,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getUsersBySale(
-  realName: string,
+  realName?: string,
   page?: PageParam,
   mode: ErrorMessageMode = 'modal'
 ) {

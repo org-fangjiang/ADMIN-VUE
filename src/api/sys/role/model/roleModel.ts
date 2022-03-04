@@ -35,10 +35,10 @@ export const RoleConst = {
     remake: [{ required: false, message: t('model.role.remake'), trigger: 'blur' }],
   },
   _PERMS: {
-    SELECT: 'department:select',
-    ADD: 'department:add',
-    UPDATE: 'department:update',
-    DELETE: 'department:delete',
+    SELECT: 'role:select',
+    ADD: 'role:add',
+    UPDATE: 'role:update',
+    DELETE: 'role:delect',
   },
 };
 

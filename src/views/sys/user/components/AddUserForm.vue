@@ -211,7 +211,7 @@
       };
       //选择角色
       const changeRole = (value: string[]) => {
-        formState.roleName = value.toString();
+        formState.roleId = value.toString();
         formState.sysRoleBeans?.splice(0);
         value.forEach((item) => {
           formState.sysRoleBeans?.push({ id: item });

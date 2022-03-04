@@ -14,12 +14,7 @@
         :options="roleConst.STATES"
         :pagination="false"
       />
-      <Button
-        v-if="isSuper"
-        :class="`${prefixCls}-select`"
-        v-auth="roleConst._PERMS.ADD"
-        @click="add"
-      >
+      <Button :class="`${prefixCls}-select`" v-auth="roleConst._PERMS.ADD" @click="add">
         {{ t('model.role.addRole') }}
       </Button>
       <Select
@@ -67,14 +62,9 @@
                   t('model.role.reEnableRole')
                 }}</Button>
               </MenuItem>
-              <MenuItem
-                v-if="isSuper"
-                :key="3"
-                :data-id="role.id"
-                :class="`${prefixCls}-action-menu-item`"
-              >
+              <MenuItem :key="3" :data-id="role.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
-                <Button v-auth="roleConst._PERMS.UPDATE" type="link" size="small">{{
+                <Button v-auth="menuConst._PERMS.UPDATE" type="link" size="small">{{
                   t('model.role.setRoleMenu')
                 }}</Button>
               </MenuItem>
@@ -142,6 +132,7 @@
   import { getCompanies } from '/@/api/sys/compnay/company';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { useUserStore } from '/@/store/modules/user';
+  import { MenuConst } from '/@/api/sys/menu/model/menuModel';
 
   interface Option {
     value: string;
@@ -173,6 +164,8 @@
       const roleConst = ref(RoleConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      const menuConst = ref(MenuConst);
 
       const userStore = useUserStore();
       const roleName = userStore.getUserInfo.roleName;
@@ -365,6 +358,7 @@
         fetchUser,
         stateHandleChange,
         isSuper,
+        menuConst,
       };
     },
   });

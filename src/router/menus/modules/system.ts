@@ -72,6 +72,10 @@ const system: MenuModule = {
         path: 'sale',
         name: t('routes.system.sale'),
       },
+      {
+        path: 'resident',
+        name: t('routes.system.resident'),
+      },
     ],
   },
 };

@@ -1,35 +1,26 @@
 import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 
-export interface SaleModel {
-  saleId?: string;
-  maxGetCustomer?: number;
-  score?: number;
-  scoreTime?: number;
-  baseScore?: number;
-  companyId?: string;
-  groupId?: string;
+export interface ResidentModel {
+  userId?: string;
+  projectId?: string;
+  projectById?: any;
 }
 
-export const SaleConst = {
+export const ResidentConst = {
   STATES: [
     { value: '0', label: t('model.user.invalid'), color: 'volcano' },
     { value: '1', label: t('model.user.effective'), color: 'geekblue' },
   ],
-  _UPDATE_FIELDS: ['maxGetCustomer', 'baseScore'],
-  _RULES: {},
   _PERMS: {
-    SELECT: 'crm:sale:select',
-    UPDATE: 'crm:sale:update',
-    ADD: 'crm:sale:add',
+    MANAGE: 'crm:resident:manage',
   },
 };
 
-export const Columns = [
+export const ResidentColumns = [
   {
     title: t('model.user.userName'),
     key: 'username',
-    width: '20%',
     dataIndex: 'username',
     ellipsis: 'true',
     slots: '',
@@ -37,7 +28,6 @@ export const Columns = [
   {
     title: t('model.user.mobile'),
     key: 'mobile',
-    width: '20%',
     dataIndex: 'mobile',
     ellipsis: 'true',
     slots: '',
@@ -45,7 +35,6 @@ export const Columns = [
   {
     title: t('model.user.state'),
     key: 'state',
-    width: '10%',
     dataIndex: 'state',
     ellipsis: 'true',
     slots: { customRender: 'state' },
@@ -53,7 +42,6 @@ export const Columns = [
   {
     title: t('model.user.action'),
     key: 'operation',
-    width: '20%',
     slots: { customRender: 'operation' },
   },
 ];

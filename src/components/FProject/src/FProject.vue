@@ -54,6 +54,7 @@
   import { search, searchWithCondition } from '/@/api/host/project/project';
   import { processList } from '/@/hooks/web/useList';
   import FProjectSelect from '/@/components/FProjectSelect';
+  import { getProject } from '/@/api/sys/resident/resident';
 
   export default defineComponent({
     name: 'FProject',
@@ -68,11 +69,15 @@
     props: {
       id: {
         type: String,
-        require: true,
+        required: true,
       },
       selected: {
         type: Array,
-        require: true,
+        required: true,
+      },
+      resident: {
+        type: String,
+        required: false,
       },
     },
     emits: ['setNewsProject'],
@@ -176,9 +181,18 @@
       onMounted(async () => {
         const result = await getList();
         processList(result, list, pageParam);
+        if (props.resident) {
+          const { content } = await getProject(props.resident);
+          if (content && content.length > 0) {
+            content.forEach((item) => {
+              selectedRowKeys.value.push(item.projectId || '');
+            });
+          }
+        }
       });
 
       let selectedRowKeys = ref<string[]>((props.selected as string[]) || []); //将之前选中的值展示
+      console.log(props.selected);
       const onSelectChange = (record, selected) => {
         if (selected) {
           selectedRowKeys.value.push(record.id);
