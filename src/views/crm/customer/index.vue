@@ -333,6 +333,22 @@
       <FollowDetail :fromType="fromType" v-if="drawerParam.state === '6'" :id="drawerParam.id" />
       <ReportForm v-if="drawerParam.state === '7'" :customerId="drawerParam.id" />
     </Modal>
+    <Modal
+      v-model:visible="isDeal"
+      title="选择成交楼盘"
+      @cancel="onClose"
+      :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
+      :destroyOnClose="true"
+      :footer="null"
+      wrapClassName="full-modal"
+    >
+      <div>
+        <RadioGroup v-model:value="dealId">
+          <Radio v-for="item in projects" :key="item.id" :value="item.id">{{ item.name }}</Radio>
+        </RadioGroup>
+        <Button @click="dealProject">确认</Button>
+      </div>
+    </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -362,6 +378,8 @@
     Dropdown,
     Menu,
     MenuItem,
+    RadioGroup,
+    Radio,
   } from 'ant-design-vue';
   import CityForm from './components/CityForm.vue';
   import {
@@ -419,6 +437,8 @@
       Menu,
       MenuItem,
       ReportForm,
+      RadioGroup,
+      Radio,
     },
     setup() {
       const { t } = useI18n();
@@ -600,13 +620,22 @@
       };
 
       // 成交
+      let projects = ref();
+      let isDeal = ref(false);
+      let dealId = ref('');
+
       const customerDeal = async (line) => {
+        drawerParam.id = line.id;
+        projects.value = line.projectsByIntention;
+        isDeal.value = true;
+      };
+
+      const dealProject = async () => {
         try {
-          await deal(line.id);
+          dealId.value;
+          debugger;
+          await deal(drawerParam.id, dealId.value);
           success('成功', '客户处理成功');
-          privatePage.pageNum = 1;
-          const result = await getPrivateList();
-          await processListByLine(result, privateList, privateTotal);
         } catch (error) {}
       };
       // 无效
@@ -806,6 +835,7 @@
       });
 
       const onClose = async () => {
+        isDeal.value = false;
         drawerParam.state = '';
         drawerParam.title = '';
         drawerParam.id = '';
@@ -1105,6 +1135,10 @@
       });
 
       return {
+        dealId,
+        dealProject,
+        projects,
+        isDeal,
         clickFollow,
         intentionRange,
         intentionRangeSearch,
@@ -1210,6 +1244,12 @@
     &-select {
       margin-top: 20px;
       margin-bottom: 20px;
+    }
+  }
+
+  .full-modal {
+    .ant-modal-content {
+      @apply pb-4;
     }
   }
 </style>

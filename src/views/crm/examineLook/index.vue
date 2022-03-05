@@ -49,9 +49,9 @@
           {{ projectById.name }}
         </Tag>
       </template>
-      <template #lookTime="{ text: lookTime }">
+      <template #realLookTime="{ text: realLookTime }">
         <Tag :color="'red'">
-          {{ lookTime.replace('T', ' ').replace('.000+08:00', '') }}
+          {{ realLookTime.replace('T', ' ').replace('.000+08:00', '') }}
         </Tag>
       </template>
       <template #operation="{ text: line }">

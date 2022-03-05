@@ -9,7 +9,7 @@
     <div v-if="formState.id">
       <div>客户名称：{{ formState.customerName }}</div>
       <div>项目名称：{{ formState.projectById.name }}</div>
-      <div>预计带看时间：{{ formState.lookTime }}</div>
+      <div>预计带看时间：{{ formState.lookTime.replace('T', ' ').replace('.000+08:00', '') }}</div>
     </div>
   </div>
 </template>

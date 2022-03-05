@@ -35,9 +35,9 @@ export function invalid(id: string, mode: ErrorMessageMode = 'modal') {
   );
 }
 
-export function deal(id: string, mode: ErrorMessageMode = 'modal') {
+export function deal(id: string, projectId: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
-  reqParam.setData({ id: id });
+  reqParam.setData({ id: id, projectId: projectId });
   const data = reqParam.getInstance();
   return defHttp.post<BaseResult<PrivateModel>>(
     {

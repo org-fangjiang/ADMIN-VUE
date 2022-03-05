@@ -68,6 +68,7 @@
       :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
       :destroyOnClose="true"
       :footer="null"
+      wrapClassName="full-modal"
     >
       <ReviewForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
     </Modal>
@@ -283,3 +284,10 @@
     },
   });
 </script>
+<style lang="less">
+  .full-modal {
+    .ant-modal-content {
+      @apply pb-4;
+    }
+  }
+</style>
