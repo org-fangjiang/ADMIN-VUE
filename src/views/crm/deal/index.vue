@@ -30,6 +30,7 @@
       placeholder="意向地"
       :provinceId="curProvince"
       :cityId="curCity"
+      :disProCity="true"
     />
     <!-- 意向楼盘 -->
     <FProjectSelect @setProject="setProject" @onClear="onClear" :class="`${prefixCls}-add`" />
