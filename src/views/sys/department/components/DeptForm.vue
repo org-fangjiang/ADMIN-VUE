@@ -10,7 +10,7 @@
       <FormItem ref="parentName" :label="t('model.department.parentName')" name="parentName">
         <Input
           :disabled="isUpdate && !updateFields.includes('parentId')"
-          v-model:value="parentName"
+          v-model:value="parentNamee"
           autoComplete="off"
         />
       </FormItem>
@@ -21,11 +21,17 @@
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="companyName" :label="t('model.department.companyName')" name="companyname">
+      <FormItem
+        v-if="isSuper"
+        ref="companyName"
+        :label="t('model.department.companyName')"
+        name="companyname"
+      >
         <Select
+          v-if="isSuper"
           ref="selectRef"
           :disabled="isUpdate && !updateFields.includes('companyId')"
-          v-model:value="companyName"
+          v-model:value="companyNamee"
           label-in-value
           style="width: 100%"
           :filter-option="false"
@@ -66,6 +72,7 @@
   import { debounce } from 'lodash-es';
   import { getCompanies, getCompany } from '/@/api/sys/compnay/company';
   import { success, failed } from '/@/hooks/web/useList';
+  import { useUserStore } from '/@/store/modules/user';
 
   interface Option {
     value: string;
@@ -97,6 +104,9 @@
       const departmentConst = ref(DepartmentConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      const isSuper = ref(false);
+
       const formRef = ref();
 
       const options = ref<Option[]>([]);
@@ -106,8 +116,8 @@
         isUpdate.value = true;
       }
       //企业名称，上级名称
-      let companyName = ref();
-      let parentName = ref();
+      let companyNamee = ref();
+      let parentNamee = ref('');
       const formState: UnwrapRef<DepartmentModel> = reactive({
         deptId: props.id || '',
         parentId: props.parentId || '',
@@ -194,12 +204,16 @@
         }
         loading.value = false;
       };
-
+      const userStore = useUserStore();
+      const role = userStore.getUserInfo.roleName;
       onMounted(async () => {
         loading.value = true;
         //添加一级部门
         if (props.id === '' && props.parentId === '') {
-          parentName.value = '';
+          parentNamee.value = '';
+        }
+        if (role === 'super_admin') {
+          isSuper.value = true;
         }
         if (props.id) {
           const { content } = await getDepartment({ deptId: props.id });
@@ -207,7 +221,7 @@
             Object.assign(formState, content);
             //获取企业名称
             const result = await getCompany(content.companyId || '');
-            companyName.value = result.content.name;
+            companyNamee.value = result.content.name;
             //判断修改的是否是一级部门，是的话，上级名称为空
             const allDept = await getAllDepartments({});
             const ids = [''];
@@ -218,10 +232,10 @@
             });
             if (content.deptId) {
               if (ids.includes(content.deptId)) {
-                parentName.value = '';
+                parentNamee.value = '';
               } else {
                 const dept = await getDepartment({ deptId: content.parentId });
-                parentName.value = dept.content.deptName;
+                parentNamee.value = dept.content.deptName || '';
               }
             }
           }
@@ -230,7 +244,7 @@
         if (props.parentId) {
           const { content } = await getDepartment({ deptId: props.parentId });
           if (content) {
-            parentName.value = content.deptName;
+            parentNamee.value = content.deptName || '';
           }
         }
         loading.value = false;
@@ -240,8 +254,8 @@
         t,
         props,
         isUpdate,
-        companyName,
-        parentName,
+        companyNamee,
+        parentNamee,
         departmentConst,
         tip,
         updateFields: DepartmentConst._UPDATE_FIELDS,
@@ -255,6 +269,7 @@
         formState,
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
+        isSuper,
       };
     },
   });
