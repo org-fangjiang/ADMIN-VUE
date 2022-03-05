@@ -30,6 +30,8 @@
       class="mr-2"
       :class="`${prefixCls}-add`"
       placeholder="意向地"
+      :provinceId="curProvince"
+      :cityId="curCity"
     />
     <!-- 意向楼盘 -->
     <FProjectSelect @setProject="setProject" @onClear="onClear" :class="`${prefixCls}-add`" />
@@ -299,9 +301,12 @@
         }
       };
       const contactSearch = async (value: string) => {
-        value = value.replace('****', '');
-        invalidCondition.mobile = value;
-        refreshList();
+        const a = value.split('****');
+        if (a[0].length === 3 && a[1].length === 4) {
+          value = value.replace('****', '');
+          invalidCondition.mobile = value;
+          refreshList();
+        }
       };
 
       //  住址
@@ -514,7 +519,12 @@
         return result;
       };
 
+      const curProvince = userStore.getUserInfo.companyProvinceId;
+      const curCity = userStore.getUserInfo.companyCityId;
+
       return {
+        curProvince,
+        curCity,
         intentionRange,
         intentionRangeSearch,
         purposeChange,

@@ -233,11 +233,14 @@
         }
       };
       const contactSearch = async (value: string) => {
-        value = value.replace('****', '');
-        condition.mobile = value;
-        pageParam.number = 1;
-        const result = await getList();
-        processList(result, list, pageParam);
+        const a = value.split('****');
+        if (a[0].length === 3 && a[1].length === 4) {
+          value = value.replace('****', '');
+          condition.mobile = value;
+          pageParam.number = 1;
+          const result = await getList();
+          processList(result, list, pageParam);
+        }
       };
 
       // 意向楼盘

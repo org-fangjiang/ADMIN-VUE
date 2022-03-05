@@ -14,7 +14,6 @@
           v-model:value="formState.contact"
           autoComplete="off"
           style="width: 100%"
-          type="number"
         />
       </FormItem>
       <FormItem ref="username" :label="t('marketing.customer.username')" name="username">
@@ -61,7 +60,11 @@
         :label="t('marketing.customer.intentionProvince')"
         name="intentionProvince"
       >
-        <FProvince :provinceId="formState.intentionProvince" @change="changeProvince" />
+        <FProvince
+          :provinceId="formState.intentionProvince"
+          @change="changeProvince"
+          :disabledProvince="true"
+        />
       </FormItem>
       <FormItem
         ref="intentionCity"
@@ -72,6 +75,7 @@
           :cityId="formState.intentionCity"
           :provinceId="formState.intentionProvince"
           @change="changeCity"
+          :disabledCity="true"
         />
       </FormItem>
       <FormItem
@@ -196,6 +200,7 @@
   import { search, searchWithCondition } from '/@/api/host/project/project';
   import { PrivateConst, PrivateModel } from '/@/api/customer/crmPrivate/model/PrivateModel';
   import { addPrivate, getMyById, update } from '/@/api/customer/crmPrivate/private';
+  import { useUserStore } from '/@/store/modules/user';
 
   interface Option {
     value: string;
@@ -248,8 +253,14 @@
       const workIne = reactive<string[]>([]);
       let demands = ref<string[]>([]);
 
+      const userStore = useUserStore();
+      const curProvince = userStore.getUserInfo.companyProvinceId;
+      const curCity = userStore.getUserInfo.companyCityId;
+
       onMounted(async () => {
         loading.value = true;
+        formState.intentionProvince = curProvince;
+        formState.intentionCity = curCity;
         if (props.id) {
           const result = await getMyById(props.id);
           const { content } = result;
@@ -283,7 +294,6 @@
                 formState.demand = demands.value.toString();
                 const pro = formState.intentionProject?.toString();
                 formState.intentionProject = pro;
-                debugger;
                 await update(formState);
                 success(t('marketing.action.update'), t('marketing.action.success'));
               } catch (error: any) {

@@ -27,6 +27,8 @@
       class="mr-2"
       :class="`${prefixCls}-add`"
       placeholder="意向地"
+      :provinceId="curProvince"
+      :cityId="curCity"
     />
     <!-- 意向楼盘 -->
     <FProjectSelect @setProject="setProject" @onClear="onClear" :class="`${prefixCls}-add`" />
@@ -411,6 +413,7 @@
   import FProjectSelect from '/@/components/FProjectSelect';
   import FollowDetail from './components/FollowDetail.vue';
   import ReportForm from './components/ReportForm.vue';
+  import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Customer',
@@ -446,6 +449,11 @@
       const { prefixCls } = useDesign('customer');
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      const userStore = useUserStore();
+      const curProvince = userStore.getUserInfo.companyProvinceId;
+      const curCity = userStore.getUserInfo.companyCityId;
+
       let activeKey = ref('1');
       const cityConst = ref(CityConst);
       const companyConst = ref(CompanyConst);
@@ -483,17 +491,20 @@
         }
       };
       const contactSearch = async (value: string) => {
-        value = value.replace('****', '');
-        if (activeKey.value === '1') {
-          cityCondition.mobile = value;
-        } else if (activeKey.value === '2') {
-          companyCondition.mobile = value;
-        } else if (activeKey.value === '3') {
-          groupCondition.mobile = value;
-        } else if (activeKey.value === '4') {
-          privateCondition.mobile = value;
+        const a = value.split('****');
+        if (a[0].length === 3 && a[1].length === 4) {
+          value = value.replace('****', '');
+          if (activeKey.value === '1') {
+            cityCondition.mobile = value;
+          } else if (activeKey.value === '2') {
+            companyCondition.mobile = value;
+          } else if (activeKey.value === '3') {
+            groupCondition.mobile = value;
+          } else if (activeKey.value === '4') {
+            privateCondition.mobile = value;
+          }
+          refreshList();
         }
-        refreshList();
       };
 
       //  住址
@@ -1135,6 +1146,8 @@
       });
 
       return {
+        curProvince,
+        curCity,
         dealId,
         dealProject,
         projects,

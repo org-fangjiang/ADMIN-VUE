@@ -422,9 +422,12 @@
         }
       };
       const contactSearch = async (value: string) => {
-        value = value.replace('****', '');
-        condition.mobile = value;
-        refreshList();
+        const a = value.split('****');
+        if (a[0].length === 3 && a[1].length === 4) {
+          value = value.replace('****', '');
+          condition.mobile = value;
+          refreshList();
+        }
       };
 
       // 意向楼盘
