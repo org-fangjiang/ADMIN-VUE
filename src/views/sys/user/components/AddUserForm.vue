@@ -89,6 +89,7 @@
           :options="roleOptions"
           @change="changeRole"
           change-on-select
+          @focus="selectRole"
         />
       </FormItem>
       <FormItem ref="deptId" :label="t('model.user.deptName')" name="deptId">
@@ -248,14 +249,6 @@
 
       onMounted(async () => {
         loading.value = true;
-        const userInfo = userStore.getUserInfo;
-        const result = await getRoles({ companyId: userInfo.companyId });
-        if (result.content) {
-          result.content.forEach((role) => {
-            //角色下拉信息
-            roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
-          });
-        }
         const deptResult = await getAllDepartments({});
         if (deptResult.content) {
           deptResult.content.forEach((dept) => {
@@ -264,6 +257,17 @@
         }
         loading.value = false;
       });
+
+      const selectRole = async () => {
+        const userInfo = userStore.getUserInfo;
+        const result = await getRoles({ companyId: userInfo.companyId });
+        if (result.content) {
+          result.content.forEach((role) => {
+            //角色下拉信息
+            roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
+          });
+        }
+      };
 
       return {
         t,
@@ -286,6 +290,7 @@
         customRequest,
         deptOptions,
         changeDept,
+        selectRole,
       };
     },
   });
