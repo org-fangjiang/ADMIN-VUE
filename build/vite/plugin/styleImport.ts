@@ -23,6 +23,7 @@ export function configStyleImportPlugin(isBuild: boolean) {
             'select-option',
             'tab-pane',
             'timeline-item',
+            'range-picker',
           ];
           if (item.includes(name)) {
             return '';
