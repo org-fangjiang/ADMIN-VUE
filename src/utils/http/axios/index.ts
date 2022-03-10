@@ -168,21 +168,8 @@ const transform: AxiosTransform = {
       return Promise.reject(err);
     }
     config.retry = config.retry - 1;
-    // debugger;
-    // if (false && (config.file || config.otherParam)) {
-    //   config.headers['Content-Type'] = 'multipart/form-data;';
-    //   const form = new FormData();
-    //   form.append('file', config.file);
-    //   if (config.otherParam) {
-    //     const keys: string[] = Object.keys(config.otherParam);
-    //     let i = 0;
-    //     for (i; i < keys.length; i++) {
-    //       const key = keys[i];
-    //       form.append(key, config.otherParam[key]);
-    //     }
-    //   }
-    //   config.data = form;
-    // }
+    const s: string = config.url;
+    config.url = s.replace('https://api.fangjiang.com/', '');
     const data = await defHttp.request(config);
     const result: AxiosResponse<Result> = {
       data: {
@@ -206,6 +193,8 @@ const transform: AxiosTransform = {
     const { code, message, config } = err || {};
     if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1 && config.timeOutRetry != 0) {
       config.timeOutRetry = config.timeOutRetry - 1;
+      const s: string = config.url;
+      config.url = s.replace('https://api.fangjiang.com/', '');
       const data = await defHttp.request(config);
       const result: AxiosResponse<Result> = {
         data: {
