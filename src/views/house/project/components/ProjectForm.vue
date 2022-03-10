@@ -938,14 +938,12 @@
       // poi change
       const poiChange = async (result) => {
         if (result === '') {
-          formState.id = '';
           formState.name = '';
           formState.longitude = '';
           formState.latitude = '';
           formState.sysAreaByAreaId = {};
           return;
         }
-        formState.id = '';
         formState.name = result.value.name;
         formState.longitude = result.value.location.lng;
         formState.latitude = result.value.location.lat;
