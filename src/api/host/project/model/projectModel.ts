@@ -176,6 +176,7 @@ export const _HostConst = {
     EstateCompanySet: 'project:estateCompany:set',
     DeveloperSet: 'project:developer:set',
     BrandSet: 'project:brand:set',
+    MANAGE: 'house:select',
   },
   _UPDATE_fIELDS: [
     'name',

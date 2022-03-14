@@ -82,6 +82,12 @@
           <Button type="link">{{ t('host.operation') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
+              <MenuItem :key="11" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button :class="prefixCls" v-auth="hostConst._PERMS.MANAGE" type="link" size="small"
+                  >{{ t('host.action.manageHouse') }}
+                </Button>
+              </MenuItem>
               <MenuItem :key="0" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="hostConst._PERMS.DELETE" type="link" size="small"
@@ -258,6 +264,7 @@
       <OrderForm :id="drawerParam.id" v-if="updateOrder" />
       <RuleForm :id="drawerParam.id" v-if="drawerParam.setRule" />
       <ChannelForm :id="drawerParam.id" v-if="drawerParam.setChannel" />
+      <ManageHouse :id="drawerParam.id" v-if="drawerParam.state === '11'" />
     </Modal>
     <Modal
       v-model:visible="projectModal"
@@ -319,10 +326,12 @@
   import OrderForm from './components/OrderForm.vue';
   import { ReportRuleConst } from '/@/api/host/reportRule/model/reportRuleModel';
   import RuleForm from './components/RuleForm.vue';
+  import ManageHouse from './components/ManageHouse.vue';
 
   export default defineComponent({
     name: 'ProjectTable',
     components: {
+      ManageHouse,
       ChannelForm,
       Table,
       Pagination,
@@ -618,6 +627,13 @@
             } finally {
               loading.value = false;
             }
+            break;
+          case 11:
+            // 房源管理
+            drawerParam.title = t('host.action.manageHouse');
+            smModal.value = true;
+            drawerParam.id = id;
+            drawerParam.state = '11';
             break;
         }
       };
