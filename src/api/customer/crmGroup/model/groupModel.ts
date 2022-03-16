@@ -89,7 +89,19 @@ export const GroupConst = {
     { value: '1', label: t('marketing.customer.male'), color: 'blue' },
   ],
   _RULES: {
-    contact: [{ required: true, message: t('marketing.customer.contact'), trigger: 'blur' }],
+    contact: [
+      {
+        required: true,
+        // message: t('marketing.customer.contact'),
+        trigger: 'change',
+        validator: function async(_rule, contact: string) {
+          if (!/^1[3-9]{1}[0-9]{9}$/.test(contact)) {
+            return Promise.reject('输入正确手机号');
+          }
+          return Promise.resolve();
+        },
+      },
+    ],
     username: [{ required: true, message: t('marketing.customer.username'), trigger: 'blur' }],
     gender: [{ required: true, message: t('marketing.customer.gender'), trigger: 'blur' }],
     intentionCity: [
