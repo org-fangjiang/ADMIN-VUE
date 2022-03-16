@@ -95,6 +95,16 @@
         >
           {{ t('marketing.action.addFollow') }}
         </Button>
+        <Button
+          v-show="props.tabState === '1'"
+          @click="clickAddCustomer(operation)"
+          v-auth="clueConst._PERMS.CUSTOMER_ADD"
+          type="link"
+          size="small"
+          :class="prefixCls"
+        >
+          {{ t('marketing.action.addCustomer') }}
+        </Button>
       </template>
     </Table>
     <Modal
@@ -108,6 +118,7 @@
     >
       <AddFollow v-if="drawerParam.state === '0'" :id="drawerParam.id" />
     </Modal>
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
 <script lang="ts">
@@ -117,6 +128,10 @@
   import { ColumnsClue, ClueConst } from '/@/api/marketing/clue/model/clueModel';
   import { useDesign } from '/@/hooks/web/useDesign';
   import AddFollow from '/@/views/marketing/clue/components/AddFollow.vue';
+  import { addByClue } from '/@/api/customer/crmCity/city';
+  import { success } from '/@/hooks/web/useList';
+  import { getById } from '/@/api/marketing/clue/clue';
+  import { Loading } from '/@/components/Loading';
 
   export default defineComponent({
     name: 'FClueTable',
@@ -126,6 +141,7 @@
       Tag,
       Modal,
       AddFollow,
+      Loading,
     },
     props: {
       list: {
@@ -139,12 +155,28 @@
     },
     emits: ['tableAction'],
     setup(props, { emit }) {
+      let loading = ref<boolean>(true);
+      let tip = ref<string>('加载中...');
       const { t } = useI18n();
       const { prefixCls } = useDesign('clue');
       const clueColumns = reactive(ColumnsClue);
       const clueConst = ref(ClueConst);
 
-      onMounted(async () => {});
+      const clickAddCustomer = async (value) => {
+        try {
+          loading.value = true;
+          const { content } = await getById(value.id);
+          await addByClue(content);
+          success('成功', '线索转客户成功');
+        } catch (error) {
+        } finally {
+          loading.value = false;
+        }
+      };
+
+      onMounted(async () => {
+        loading.value = false;
+      });
 
       let key = { code: 0, id: '' };
       const clickDelete = (record) => {
@@ -204,6 +236,9 @@
         drawerParam,
         onClose,
         clickReceiveInvalid,
+        clickAddCustomer,
+        loading,
+        tip,
       };
     },
   });

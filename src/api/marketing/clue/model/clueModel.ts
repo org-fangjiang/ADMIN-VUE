@@ -140,6 +140,7 @@ export const ClueConst = {
     UPDATE_FOLLOW: 'clue-follow:update',
     ADD_FOLLOW: 'clue-follow:add',
     SELECT_CREATE: 'clue:select:create',
+    CUSTOMER_ADD: 'customer:add',
   },
   _UPDATE_FIELDS: [
     'contact',
@@ -187,6 +188,7 @@ export const Columns = [
     dataIndex: 'username',
     ellipsis: 'true',
     slots: '',
+    width: '8%',
   },
   {
     title: t('marketing.clue.contact'),
@@ -194,6 +196,7 @@ export const Columns = [
     dataIndex: 'contact',
     ellipsis: 'true',
     slots: '',
+    width: '10%',
   },
   {
     title: t('marketing.clue.purpose'),
@@ -201,6 +204,7 @@ export const Columns = [
     dataIndex: 'purpose',
     ellipsis: 'true',
     slots: { customRender: 'purpose' },
+    width: '6%',
   },
   {
     title: t('marketing.clue.demand'),
@@ -222,6 +226,7 @@ export const Columns = [
     dataIndex: 'state',
     ellipsis: 'true',
     slots: { customRender: 'state' },
+    width: '6%',
   },
   {
     title: t('marketing.clue.createTime'),
@@ -229,6 +234,7 @@ export const Columns = [
     dataIndex: 'createTime',
     ellipsis: 'true',
     slots: { customRender: 'createTime' },
+    width: '10%',
   },
 ];
 

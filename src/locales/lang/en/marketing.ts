@@ -1,5 +1,6 @@
 export default {
   action: {
+    addCustomer: 'addCustomer',
     preview: 'preview',
     add: 'add',
     update: 'update',

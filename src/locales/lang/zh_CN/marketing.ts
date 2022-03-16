@@ -1,5 +1,6 @@
 export default {
   action: {
+    addCustomer: '转客户',
     preview: '预览',
     add: '添加',
     update: '更新',
@@ -12,8 +13,8 @@ export default {
     onSubmit: '提交',
     transfer: '转移',
     receive: '领取',
-    addFollow: '添加跟进信息',
-    updateFollow: '更新跟进信息',
+    addFollow: '添加跟进',
+    updateFollow: '更新跟进',
     publish: '发布',
     addPC: '添加PC端',
     addSale: '销售添加',

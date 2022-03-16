@@ -1,3 +1,4 @@
+import { ClueModel } from '../../marketing/clue/model/clueModel';
 import {
   BasePageResult,
   BaseResult,
@@ -20,6 +21,22 @@ export enum CityApi {
   Distribute = '/crm-server/customer/distribute', //from cusId saleId
   DistributeBatch = '/crm-server/customer/distributeBatch',
   TransferLevel = '/crm-server/customer/transferLevel', // customer:transfer:level
+  AddByClue = '/crm-server/customer/addByClue',
+}
+
+export function addByClue(clue: ClueModel, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData(clue);
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: CityApi.AddByClue,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function transferLevelTo(
