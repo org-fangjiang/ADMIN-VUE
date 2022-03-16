@@ -6,6 +6,9 @@
           <Tag color="blue">{{ item.name }}</Tag>
         </span>
       </template>
+      <template #createTime="{ text: createTime }">
+        <span>{{ createTime.replace('T', ' ').replace('.000+08:00', '') }}</span>
+      </template>
       <template #state="{ text: state }">
         <span>
           <Tag :color="clueConst.STATES[state].color">

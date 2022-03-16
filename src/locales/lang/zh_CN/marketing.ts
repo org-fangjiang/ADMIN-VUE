@@ -60,6 +60,7 @@ export default {
   DEAL: '成交池',
   INVALIDATE: '无效池',
   clue: {
+    createTime: '提交时间',
     username: '用户名',
     purpose: '购房用途',
     intentionProject: '意向楼盘',

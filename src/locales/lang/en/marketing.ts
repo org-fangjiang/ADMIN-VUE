@@ -60,6 +60,7 @@ export default {
   DEAL: 'deal',
   INVALIDATE: 'invalidate',
   clue: {
+    createTime: 'createTime',
     username: 'username',
     purpose: 'purpose',
     intentionProject: 'intentionProject',

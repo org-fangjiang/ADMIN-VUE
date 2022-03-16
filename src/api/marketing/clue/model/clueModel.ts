@@ -223,6 +223,13 @@ export const Columns = [
     ellipsis: 'true',
     slots: { customRender: 'state' },
   },
+  {
+    title: t('marketing.clue.createTime'),
+    key: 'createTime',
+    dataIndex: 'createTime',
+    ellipsis: 'true',
+    slots: { customRender: 'createTime' },
+  },
 ];
 
 export const ColumnsClue = [
