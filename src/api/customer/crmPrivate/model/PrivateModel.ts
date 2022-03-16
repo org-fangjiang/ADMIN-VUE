@@ -157,6 +157,7 @@ export const PrivateConst = {
     DEAL: 'customer:deal',
     REPORT: 'report:add',
     LOOK: 'look:add',
+    ADD_SALE: 'customer:sale:add',
   },
 };
 
