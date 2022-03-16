@@ -284,21 +284,21 @@
                     <template #icon></template>
                     <Button @click="seePrivate(line)">查看</Button>
                   </MenuItem>
-                  <MenuItem :key="1">
+                  <MenuItem :key="1" v-auth="privateConst._PERMS.UPDATE">
                     <template #icon></template>
-                    <Button @click="updateCustomer(line)" v-auth="privateConst._PERMS.UPDATE"
-                      >编辑</Button
-                    >
+                    <Button @click="updateCustomer(line)">编辑</Button>
                   </MenuItem>
-                  <MenuItem :key="2">
+                  <MenuItem :key="2" v-auth="privateConst._PERMS.TRANSFER">
                     <template #icon></template>
-                    <Button @click="distributeOne(line)" v-auth="privateConst._PERMS.TRANSFER"
-                      >转移</Button
-                    >
+                    <Button @click="distributeOne(line)">转移</Button>
                   </MenuItem>
                   <MenuItem :key="3">
                     <template #icon></template>
                     <Button @click="clickFollow(line)">跟进</Button>
+                  </MenuItem>
+                  <MenuItem :key="4" v-auth="privateConst._PERMS.ADD_SALE">
+                    <template #icon></template>
+                    <Button @click="addSale(line)">添加销售</Button>
                   </MenuItem>
                 </Menu>
               </template>
@@ -335,6 +335,7 @@
       />
       <FollowDetail :fromType="fromType" v-if="drawerParam.state === '6'" :id="drawerParam.id" />
       <ReportForm v-if="drawerParam.state === '7'" :customerId="drawerParam.id" />
+      <AddSaleForm v-if="drawerParam.state === '8'" :id="drawerParam.id" />
     </Modal>
     <Modal
       v-model:visible="isDeal"
@@ -415,10 +416,12 @@
   import FollowDetail from './components/FollowDetail.vue';
   import ReportForm from './components/ReportForm.vue';
   import { useUserStore } from '/@/store/modules/user';
+  import AddSaleForm from './components/AddSaleForm.vue';
 
   export default defineComponent({
     name: 'Customer',
     components: {
+      AddSaleForm,
       FCascader,
       Loading,
       Tabs,
@@ -471,6 +474,13 @@
         drawerParam.title = '跟进信息';
         drawerParam.visible = true;
         drawerParam.id = line.id;
+      };
+      // 添加销售
+      const addSale = (line) => {
+        drawerParam.id = line.id;
+        drawerParam.state = '8';
+        drawerParam.visible = true;
+        drawerParam.title = '添加销售';
       };
 
       // 报备
@@ -654,7 +664,7 @@
       const customerInvalid = async (line) => {
         try {
           await invalid(line.id);
-          success('成功', '客户处理成功');
+          success('无效', '客户无效待审核中');
           privatePage.pageNum = 1;
           const result = await getPrivateList();
           await processListByLine(result, privateList, privateTotal);
@@ -791,10 +801,6 @@
       };
 
       const seeCity = (line) => {
-        // drawerParam.title = '查看城市';
-        // drawerParam.state = '0';
-        // drawerParam.visible = true;
-        // drawerParam.id = line.id;
         drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
@@ -802,10 +808,6 @@
       };
 
       const seeCompany = (line) => {
-        // drawerParam.title = '查看公司';
-        // drawerParam.state = '1';
-        // drawerParam.visible = true;
-        // drawerParam.id = line.id;
         drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
@@ -813,10 +815,6 @@
       };
 
       const seeGroup = (line) => {
-        // drawerParam.title = '查看小组';
-        // drawerParam.state = '2';
-        // drawerParam.visible = true;
-        // drawerParam.id = line.id;
         drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
@@ -824,10 +822,6 @@
       };
 
       const seePrivate = (line) => {
-        // drawerParam.title = '查看个人';
-        // drawerParam.state = '3';
-        // drawerParam.visible = true;
-        // drawerParam.id = line.id;
         drawerParam.title = '查看客户信息';
         drawerParam.visible = true;
         drawerParam.state = '4';
@@ -1147,6 +1141,7 @@
       });
 
       return {
+        addSale,
         curProvince,
         curCity,
         dealId,

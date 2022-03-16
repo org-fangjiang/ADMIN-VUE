@@ -65,10 +65,12 @@
       <div class="">{{ formState.viewTime }}</div>
       <div class="">流转次数：</div>
       <div class="">{{ formState.transferTime }}</div>
-      <div class="">跟进人：</div>
+      <div class="">负责销售：</div>
       <div class="">
-        <span v-if="formState.userByUpdate">{{ formState.userByUpdate.realName }}</span>
-        <span v-else>{{ formState.userByCreate.realName }}</span>
+        <div v-for="item in formState.crmSaleCustomerRelationsById" :key="item.saleId">
+          <span v-if="item.isOwner === '1'">主负责人：{{ item.saleName }}</span>
+          <span v-if="item.isOwner === '0'">协助销售：{{ item.saleName }}</span>
+        </div>
       </div>
     </div>
     <div v-if="allNote && allNote.length > 0" class="w-1/2 ml-4">
