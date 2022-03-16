@@ -33,6 +33,7 @@ export const RoleConst = {
   _RULES: {
     roleName: [{ required: true, message: t('model.role.roleName'), trigger: 'blur' }],
     remake: [{ required: false, message: t('model.role.remake'), trigger: 'blur' }],
+    companyId: [{ required: false, message: t('model.role.companyId'), trigger: 'blur' }],
   },
   _PERMS: {
     SELECT: 'role:select',

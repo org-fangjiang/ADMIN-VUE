@@ -177,6 +177,7 @@ export const _Const = {
     ADD: 'user:add',
     UPDATE: 'user:update',
     DELETE: 'user:delete',
+    SET_ROLE: 'user:set:role',
   },
 };
 

@@ -78,6 +78,17 @@
                   {{ t('model.user.setMobile') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="5" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button
+                  v-auth="userConst._PERMS.SET_ROLE"
+                  type="link"
+                  size="small"
+                  :class="prefixCls"
+                >
+                  {{ t('model.user.setRole') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -106,9 +117,10 @@
       @close="onClose"
     >
       <AddUserForm v-if="drawerParam.state === '1'" :id="drawerParam.id" />
+      <SetRole v-if="drawerParam.state === '2'" :id="drawerParam.id" />
+      <SetMobileTable v-if="drawerParam.state === '3'" :id="drawerParam.id" />
+      <SetEmailTable v-if="drawerParam.state === '4'" :id="drawerParam.id" />
     </Drawer>
-    <SetMobileTable :visible="isMobile" @handleCancel="isCancel" />
-    <SetEmailTable :visible="isEmail" @handleCancel="isCancel" />
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
 </template>
@@ -136,6 +148,7 @@
   import AddUserForm from './components/AddUserForm.vue';
   import SetMobileTable from './components/SetMobileTable.vue';
   import SetEmailTable from './components/SetEmailTable.vue';
+  import SetRole from './components/SetRole.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
   export default defineComponent({
     name: 'UserTable',
@@ -153,6 +166,7 @@
       AddUserForm,
       SetMobileTable,
       SetEmailTable,
+      SetRole,
     },
     setup() {
       const { t } = useI18n();
@@ -216,9 +230,7 @@
         const result = await getList();
         processList(result, list, pageParam);
       });
-      //设置手机号和邮箱
-      let isMobile = ref(false);
-      let isEmail = ref(false);
+
       // 操作
       const action = async (key) => {
         const code = key.key;
@@ -254,11 +266,25 @@
             break;
           case 3:
             //设置邮箱
-            isEmail.value = true;
+            drawerParam.state = '4';
+            drawerParam.id = id;
+            drawerParam.visible = true;
+            drawerParam.title = t('model.user.setEmail');
             break;
           case 4:
             //设置手机号
-            isMobile.value = true;
+            drawerParam.state = '3';
+            drawerParam.id = id;
+            drawerParam.visible = true;
+            drawerParam.title = t('model.user.setMobile');
+            break;
+          case 5:
+            // 设置角色
+            drawerParam.id = id;
+            drawerParam.visible = true;
+            drawerParam.state = '2';
+            drawerParam.title = t('model.user.setRole');
+            break;
         }
       };
       //添加新用户
@@ -284,11 +310,6 @@
         drawerParam.title = '';
         const result = await getList();
         processList(result, list, pageParam);
-      };
-      //关闭邮箱和手机的modal
-      const isCancel = () => {
-        isMobile.value = false;
-        isEmail.value = false;
       };
 
       //页码改变
@@ -326,9 +347,6 @@
         drawerParam,
         addUser,
         onClose,
-        isMobile,
-        isEmail,
-        isCancel,
       };
     },
   });

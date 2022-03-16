@@ -1,8 +1,15 @@
 <template>
   <div>
     <Form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <FormItem ref="mobile" :label="t('model.user.mobile')" name="mobile">
-        <Input v-model:value="formState.mobile" autoComplete="off" />
+      <FormItem ref="mobile" :label="t('model.user.roleName')" name="mobile">
+        <Select
+          ref="selectRef"
+          mode="multiple"
+          :options="roleOptions"
+          @change="changeRole"
+          change-on-select
+          v-model:value="ids"
+        />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
@@ -15,16 +22,20 @@
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-
   import { useUserStore } from '/@/store/modules/user';
-  import { Button, Form, FormItem, Input } from 'ant-design-vue';
+  import { Button, Form, FormItem, Select } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
-  import { getUserInfo, setUserMobile } from '/@/api/sys/user/user';
   import { success, failed } from '/@/hooks/web/useList';
-
+  import { SysUserBean } from '/@/api/sys/user/model/userModel';
+  import { getRoles } from '/@/api/sys/role/role';
+  import { setUserRole, getUserInfo } from '/@/api/sys/user/user';
+  interface Option {
+    value: string;
+    label: string;
+  }
   export default defineComponent({
-    name: 'SetMobileTable',
-    components: { Button, Form, FormItem, Input, Loading },
+    name: 'SetRole',
+    components: { Button, Form, FormItem, Select, Loading },
     props: {
       id: {
         type: String,
@@ -39,11 +50,22 @@
       const userStore = useUserStore();
       const userInfo = userStore.getUserInfo;
 
+      //角色下拉
+      const roleOptions = ref<Option[]>([]);
+      let ids = ref<string[]>([]);
+      //选择角色
+      const changeRole = (value: string[]) => {
+        // formState.roleId = value.toString();
+        formState.sysRoleBeans?.splice(0);
+        value.forEach((item) => {
+          formState.sysRoleBeans?.push({ id: item });
+        });
+      };
+
       // fromRef 获取form
       const formRef = ref();
-      let formState = reactive({
-        id: '',
-        mobile: '',
+      let formState: SysUserBean = reactive({
+        id: props.id,
       });
 
       //提交
@@ -53,8 +75,8 @@
           .then(async () => {
             loading.value = true;
             try {
-              await setUserMobile(formState.id, formState.mobile);
-              success(t('model.user.setMobile'), t('host.action.success'));
+              await setUserRole(formState.id || '', formState.sysRoleBeans || []);
+              success(t('model.user.setRole'), t('host.action.success'));
             } catch (error: any) {
               failed(error?.response?.data?.message, t('host.action.fail'));
             } finally {
@@ -78,10 +100,20 @@
 
       onMounted(async () => {
         loading.value = true;
+        const result = await getRoles({ companyId: userInfo.companyId || '' });
+        if (result.content) {
+          result.content.forEach((role) => {
+            //角色下拉信息
+            roleOptions.value.push({ value: role.id || '', label: role.roleName || '' });
+          });
+        }
+
         const userResult = await getUser();
-        debugger;
         if (userResult) {
           Object.assign(formState, userResult);
+          userResult.sysRoleBeans?.forEach((item) => {
+            ids.value.push(item.id);
+          });
         }
         loading.value = false;
       });
@@ -102,6 +134,9 @@
         wrapperCol: { span: 14 },
         loading,
         tip,
+        roleOptions,
+        changeRole,
+        ids,
       };
     },
   });

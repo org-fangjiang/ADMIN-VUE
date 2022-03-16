@@ -84,7 +84,7 @@ export function getUserInfo(id: string, mode: ErrorMessageMode = 'modal') {
     id,
   });
   const data = reqParam.getInstance();
-  return defHttp.post<BaseResult<SysUserBean>>(
+  return defHttp.post<SysUserBean>(
     {
       url: Api.GetUserInfo,
       data,
@@ -166,7 +166,7 @@ export function setUserDeptId(id: string, deptId: string, mode: ErrorMessageMode
   );
 }
 // 设置用户角色
-export function setUserRole(id: string, sysRoleBeans: string[], mode: ErrorMessageMode = 'modal') {
+export function setUserRole(id: string, sysRoleBeans: any[], mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({
     id,
