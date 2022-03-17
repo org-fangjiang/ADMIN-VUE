@@ -69,7 +69,7 @@
           {{ t('host.projectRule') }}
         </Button>
         <Button
-          v-auth="reportRuleConst._PERMS.SELECT"
+          v-auth="channelConst._PERMS.SELECT"
           type="link"
           size="small"
           :class="prefixCls"
@@ -82,19 +82,48 @@
           <Button type="link">{{ t('host.operation') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="11" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="isSale"
+                :key="14"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
+                <template #icon></template>
+                <Button :class="prefixCls" type="link" size="small"
+                  >{{ t('crm.selectSale') }}
+                </Button>
+              </MenuItem>
+              <MenuItem
+                :key="11"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.MANAGE"
+                v-if="hasPermission(hostConst._PERMS.MANAGE)"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="hostConst._PERMS.MANAGE" type="link" size="small"
                   >{{ t('host.action.manageHouse') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="0" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="0"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.DELETE"
+                v-if="hasPermission(hostConst._PERMS.DELETE)"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="hostConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('host.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="1"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -105,7 +134,13 @@
                   {{ t('host.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="3"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -116,7 +151,13 @@
                   {{ t('host.action.setResource') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="6" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="6"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -127,7 +168,13 @@
                   {{ t('host.action.setLicense') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="4" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="4"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -138,7 +185,13 @@
                   {{ t('host.action.setLayout') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="5" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="5"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -149,7 +202,13 @@
                   {{ t('host.action.setBuild') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="8" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="8"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -160,7 +219,13 @@
                   {{ t('host.action.setQuestion') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="7" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="7"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -171,7 +236,13 @@
                   {{ t('host.action.setDynamicNews') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="9" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="9"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -182,7 +253,13 @@
                   {{ t('host.action.setProjectOrder') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="10" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                :key="10"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+                v-auth="hostConst._PERMS.UPDATE"
+                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="hostConst._PERMS.UPDATE"
@@ -250,6 +327,7 @@
         :areaId="drawerParam.areaId"
       />
       <QuestionTable v-if="drawerParam.state === '6'" :id="drawerParam.id" />
+      <ProjectSale v-if="drawerParam.state === '7'" :id="drawerParam.id" />
     </Modal>
     <Modal
       :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
@@ -327,10 +405,16 @@
   import { ReportRuleConst } from '/@/api/host/reportRule/model/reportRuleModel';
   import RuleForm from './components/RuleForm.vue';
   import ManageHouse from './components/ManageHouse.vue';
+  import { _ChannelConst } from '/@/api/host/channel/model/channelModel';
+  import { getUserInfo } from '/@/api/sys/user';
+  import ProjectSale from './components/ProjectSale.vue';
+  import { SaleProjectConst } from '/@/api/customer/crmSale/model/crmSaleModel';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'ProjectTable',
     components: {
+      ProjectSale,
       ManageHouse,
       ChannelForm,
       Table,
@@ -364,9 +448,14 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const columns = reactive(_ColumnsHost);
+      const saleProjectConst = reactive(SaleProjectConst);
+
+      const { hasPermission } = usePermission();
 
       // 报备规则
       const reportRuleConst = ref(ReportRuleConst);
+      // 渠道
+      const channelConst = ref(_ChannelConst);
 
       //抽屉
       const drawerParam = reactive({
@@ -479,7 +568,15 @@
       });
 
       //初始加载
+      let isSale = ref(false);
       onMounted(async () => {
+        const userInfo = await getUserInfo();
+        debugger;
+        userInfo.sysRoleBeans.forEach((item) => {
+          if (item.roleName === 'sale') {
+            isSale.value = true;
+          }
+        });
         provinceId.value = ref<string>(userStore.getUserInfo.companyProvinceId || '');
         const result = await getList();
         processList(result, list, pageParam);
@@ -635,6 +732,12 @@
             drawerParam.id = id;
             drawerParam.state = '11';
             break;
+          case 14:
+            drawerParam.visible = true;
+            drawerParam.state = '7';
+            drawerParam.title = '查看驻守列表';
+            drawerParam.id = id;
+            break;
         }
       };
 
@@ -740,6 +843,10 @@
         smModal,
         updateOrder,
         clickChannel,
+        channelConst,
+        isSale,
+        saleProjectConst,
+        hasPermission,
       };
     },
   });
