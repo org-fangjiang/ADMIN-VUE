@@ -211,12 +211,14 @@
         }
       };
       //选择角色
-      const changeRole = (value: string[]) => {
+      const changeRole = (value: string[], option: Option[]) => {
         formState.roleId = value.toString();
         formState.sysRoleBeans?.splice(0);
-        value.forEach((item) => {
-          formState.sysRoleBeans?.push({ id: item });
-        });
+        if (option && option.length > 0) {
+          option.forEach((item) => {
+            formState.sysRoleBeans?.push({ id: item.value, roleName: item.label });
+          });
+        }
       };
 
       // 选择部门
