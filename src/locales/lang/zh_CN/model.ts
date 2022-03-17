@@ -242,6 +242,7 @@ export default {
     reEnableLink: '恢复链接',
   },
   user: {
+    extNumber: '400分机号',
     id: '编号',
     userName: '用户名',
     password: '密码',

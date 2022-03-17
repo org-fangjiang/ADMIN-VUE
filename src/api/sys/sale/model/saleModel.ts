@@ -9,6 +9,7 @@ export interface SaleModel {
   baseScore?: number;
   companyId?: string;
   groupId?: string;
+  extNumber?: string;
 }
 
 export const SaleConst = {
@@ -16,7 +17,7 @@ export const SaleConst = {
     { value: '0', label: t('model.user.invalid'), color: 'volcano' },
     { value: '1', label: t('model.user.effective'), color: 'geekblue' },
   ],
-  _UPDATE_FIELDS: ['maxGetCustomer', 'baseScore'],
+  _UPDATE_FIELDS: ['maxGetCustomer', 'baseScore', 'extNumber'],
   _RULES: {},
   _PERMS: {
     SELECT: 'crm:sale:select',
@@ -39,6 +40,14 @@ export const Columns = [
     key: 'mobile',
     width: '20%',
     dataIndex: 'mobile',
+    ellipsis: 'true',
+    slots: '',
+  },
+  {
+    title: t('model.user.extNumber'),
+    key: 'extNumber',
+    width: '20%',
+    dataIndex: 'extNumber',
     ellipsis: 'true',
     slots: '',
   },

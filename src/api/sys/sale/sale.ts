@@ -10,7 +10,7 @@ enum SaleApi {
   SaveSale = 'crm-server/saleInfo/save',
 }
 
-export function getSale(saleId: string, mode: ErrorMessageMode = 'modal') {
+export function getSale(saleId: string, mode: ErrorMessageMode = 'none') {
   const reqParam = new RequestParam();
   reqParam.setData({ saleId });
   const data = reqParam.getInstance();

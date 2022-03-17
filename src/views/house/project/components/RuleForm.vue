@@ -34,12 +34,13 @@
         :label="t('host.reportRule.reportAfterLook')"
         name="reportAfterLook"
       >
-        <InputNumber
+        <!-- <InputNumber
           v-model:value="formState.reportAfterLook"
           autoComplete="off"
           :formatter="(value) => `${value}分钟`"
           :parser="(value) => value.replace('分钟', '')"
-        />
+        /> -->
+        <Input v-model:value="formState.reportAfterLook" autoComplete="off" type="number" />
       </FormItem>
       <FormItem
         ref="reportProtectTime"
@@ -119,6 +120,7 @@
     Radio,
     Textarea,
     TimePicker,
+    Input,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { success, failed } from '/@/hooks/web/useList';
@@ -138,6 +140,7 @@
       Radio,
       Textarea,
       TimePicker,
+      Input,
     },
     props: {
       id: {

@@ -13,18 +13,12 @@
           :disabled="isUpdate && !uPDATE_FIELDS.includes('maxGetCustomer')"
         />
       </FormItem>
-      <!-- <FormItem :label="t('model.sale.score')" name="score">
-        <InputNumber
-          v-model:value="formState.score"
-          :disabled="isUpdate && !saleConst._UPDATE_FIELDS.includes('score')"
+      <FormItem :label="t('model.user.extNumber')" name="extNumber">
+        <Input
+          v-model:value="formState.extNumber"
+          :disabled="isUpdate && !uPDATE_FIELDS.includes('extNumber')"
         />
       </FormItem>
-      <FormItem :label="t('model.sale.scoreTime')" name="scoreTime">
-        <InputNumber
-          v-model:value="formState.scoreTime"
-          :disabled="isUpdate && !saleConst._UPDATE_FIELDS.includes('scoreTime')"
-        />
-      </FormItem> -->
       <FormItem :label="t('model.sale.baseScore')" name="baseScore">
         <InputNumber
           v-model:value="formState.baseScore"
@@ -33,7 +27,7 @@
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button v-if="!isUpdate" type="primary" @click="onSubmit">添加</Button>
-        <Button v-else type="primary" @click="onSubmit">更新</Button>
+        <Button v-if="isUpdate" type="primary" @click="onSubmit">更新</Button>
         <Button style="margin-left: 10px" @click="onReset">重置</Button>
       </FormItem>
     </Form>
@@ -44,12 +38,12 @@
   import { SaleConst, SaleModel } from '/@/api/sys/sale/model/saleModel';
   import { getSale, saveSale, updateSale } from '/@/api/sys/sale/sale';
   import { failed, success } from '/@/hooks/web/useList';
-  import { Form, FormItem, Button, InputNumber } from 'ant-design-vue';
+  import { Form, FormItem, Button, InputNumber, Input } from 'ant-design-vue';
   import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     name: 'SaleForm',
-    components: { Form, FormItem, Button, InputNumber },
+    components: { Form, FormItem, Button, InputNumber, Input },
     props: {
       id: {
         type: String,

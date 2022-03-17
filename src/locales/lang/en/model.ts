@@ -243,6 +243,7 @@ export default {
     reEnableLink: 'ReEnable Link',
   },
   user: {
+    extNumber: 'extNumber',
     id: 'Id',
     userName: 'UserName',
     password: 'Password',
