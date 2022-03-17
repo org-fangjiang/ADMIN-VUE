@@ -325,6 +325,13 @@
             :type="'number'"
           />
         </FormItem>
+        <FormItem ref="parkingRatio" :label="t('host.park')" name="parkingRatio">
+          <Input
+            :disabled="isUpdate && !updateFields.includes('formState.parkingRatio')"
+            v-model:value="formState.parkingRatio"
+            autoComplete="off"
+          />
+        </FormItem>
         <FormItem ref="parking" :label="t('host.parking')" name="parking">
           <Input
             :disabled="isUpdate && !updateFields.includes('parking')"
@@ -385,6 +392,23 @@
       <Divider orientation="left">其他信息</Divider>
       <br />
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
+        <FormItem ref="divideCar" :label="t('host.people')" name="divideCar">
+          <Select
+            ref="select"
+            :allowClear="true"
+            v-model:value="formState.divideCar"
+            style="width: 120px"
+            @change="divideChange"
+            :options="hostConst.DIVIDE"
+            :pagination="false"
+          />
+        </FormItem>
+        <FormItem ref="cng" :label="t('host.cng')" name="cng">
+          <RadioGroup v-model:value="formState.cng">
+            <Radio value="0">否</Radio>
+            <Radio value="1">是</Radio>
+          </RadioGroup>
+        </FormItem>
         <FormItem ref="waterMethod" :label="t('host.waterMethod')" name="waterMethod">
           <Select
             ref="select"
@@ -655,6 +679,11 @@
         0: '0%',
         100: '100%',
       });
+
+      // 人车分流
+      const divideChange = (value) => {
+        formState.divideCar = value;
+      };
 
       //标签
       const changeLabels = async (e) => {
@@ -1014,6 +1043,7 @@
         estateName,
         selectedRow,
         selectedLabel,
+        divideChange,
       };
     },
   });

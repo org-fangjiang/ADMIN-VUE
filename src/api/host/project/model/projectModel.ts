@@ -14,6 +14,9 @@ import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 
 export interface HostModel {
+  parkingRatio?: string;
+  cng?: string;
+  divideCar?: string;
   id?: string;
   name?: string;
   aliasName?: string;
@@ -109,6 +112,11 @@ export const _HostConst = {
   STATES: [
     { value: '0', label: t('host.INVALID'), color: 'volcano' },
     { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
+  ],
+  DIVIDE: [
+    { value: '0', label: t('host.NO'), color: 'volcano' },
+    { value: '1', label: t('host.YES'), color: 'geekblue' },
+    { value: '2', label: t('host.YES2'), color: 'geekblue' },
   ],
   TYPES: [
     { value: '1', label: t('host.TYPE.HOUSE'), color: 'volcano' }, //住宅 TYPE_HOUSE

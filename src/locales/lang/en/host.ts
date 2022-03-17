@@ -1,4 +1,7 @@
 export default {
+  NO: 'NO',
+  YES: 'YES',
+  YES2: 'devide electricCar',
   EFFECTIVE: 'EFFECTIVE',
   INVALID: 'INVALID',
   upload: 'Upload',
@@ -96,6 +99,9 @@ export default {
     OVER_BUILD: 'OVER_BUILD',
     PRICE_INFO: 'PRICE_INFO',
   },
+  people: 'divideCar',
+  cng: 'cng',
+  park: 'parkingRatio',
   name: 'Name',
   type: 'Project Type',
   buildType: 'Build Type',

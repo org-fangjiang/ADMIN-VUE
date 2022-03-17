@@ -1,4 +1,7 @@
 export default {
+  NO: '否',
+  YES: '是',
+  YES2: '是(含电动车)',
   EFFECTIVE: '有效',
   INVALID: '无效',
   upload: '上传',
@@ -96,6 +99,9 @@ export default {
     OVER_BUILD: '楼栋售罄',
     PRICE_INFO: '特价信息',
   },
+  people: '人车分流',
+  cng: '有天然气',
+  park: '车位配比',
   name: '名称',
   type: '项目类型',
   buildType: '建筑类型',
