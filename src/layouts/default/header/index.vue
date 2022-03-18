@@ -33,7 +33,7 @@
 
     <!-- action  -->
     <div :class="`${prefixCls}-action`">
-      <AppSearch :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
+      <AppSearch :class="`${prefixCls}-action__item `" v-if="false" />
 
       <ErrorAction v-if="getUseErrorHandle" :class="`${prefixCls}-action__item error-action`" />
 
