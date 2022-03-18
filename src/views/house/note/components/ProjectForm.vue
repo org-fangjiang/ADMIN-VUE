@@ -235,11 +235,12 @@
             :class="i.saleState !== saleType ? 'hidden' : ''"
           >
             <div v-if="i.saleState === saleType">
-              <img
+              <Image
                 v-if="i.saleState === saleType"
                 :src="i?.hResourceByResourceId?.address"
                 alt=""
                 class="w-[160px] h-[122px] rounded-[10px] shadow"
+                style="width: 160px; height: 122px"
               />
             </div>
           </span>
@@ -713,10 +714,13 @@
   import { DynamicNewsModel } from '/@/api/host/dynamicNews/model/dynamicNewsModel';
   import { getDynamicNews } from '/@/api/host/dynamicNews/dynamicNews';
   import { getLicense } from '/@/api/host/license/license';
+  import { Image } from 'ant-design-vue';
 
   export default defineComponent({
     name: 'ProjectForm',
-    components: {},
+    components: {
+      Image,
+    },
     props: {
       id: {
         type: String,
@@ -727,11 +731,6 @@
       const { t } = useI18n();
       let estate = ref();
       let develop = ref();
-
-      const copyText = (e) => {
-        debugger;
-        alert('You just copied: ' + e.text);
-      };
 
       //加载动画
       const loading = ref<boolean>(false);
@@ -1018,7 +1017,6 @@
         buildType,
         buildId,
         changeBuildId,
-        copyText,
         estate,
         develop,
         channelMore,
