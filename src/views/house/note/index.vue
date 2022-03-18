@@ -16,11 +16,13 @@
     <!-- 根据名称筛选 -->
     <FProjectSelect @setProject="setProject" @onClear="onClear" :class="`${prefixCls}-add`" />
     <Table
+      :scroll="{ x: true }"
       :columns="columns"
       :data-source="list"
       rowKey="id"
       :pagination="false"
       @change="sortChange"
+      :customRow="clickRow"
     >
       <template #state="{ text: state }">
         <span>
@@ -42,9 +44,9 @@
       <template #createTime="{ text: createTime }">
         <span>{{ createTime.replace('T', ' ').replace('.000+08:00', '') }}</span>
       </template>
-      <template #operation="{ text: link }">
+      <!-- <template #operation="{ text: link }">
         <Button type="link" @click="seeProject(link)">{{ t('host.action.see') }}</Button>
-      </template>
+      </template> -->
     </Table>
     <Pagination
       show-size-changer
@@ -64,7 +66,7 @@
       width="100%"
       :destroyOnClose="true"
       :footer="null"
-      :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
+      :bodyStyle="{ overflowY: 'auto' }"
       wrapClassName="full-modal"
     >
       <ProjectForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
@@ -77,11 +79,11 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
-  import { Table, Pagination, Tag, Button, Select, Modal } from 'ant-design-vue';
+  import { Table, Pagination, Tag, Select, Modal } from 'ant-design-vue';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
-  import { HostModel, _ColumnsHost, _HostConst } from '/@/api/host/project/model/projectModel';
+  import { HostModel, NoteColumns, _HostConst } from '/@/api/host/project/model/projectModel';
   import { search, searchWithCondition } from '/@/api/host/project/project';
   // 用户store
   import { useUserStore } from '/@/store/modules/user';
@@ -95,7 +97,6 @@
       Table,
       Pagination,
       Tag,
-      Button,
       Select,
       Loading,
       Modal,
@@ -110,7 +111,7 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
-      const columns = reactive(_ColumnsHost);
+      const columns = reactive(NoteColumns);
 
       //抽屉
       const drawerParam = reactive({
@@ -129,6 +130,18 @@
         totalPages: 0,
         totalElements: 0,
       });
+
+      // 点击行
+      const clickRow = (record) => {
+        return {
+          onClick: (_e) => {
+            projectModal.value = true;
+            drawerParam.state = '0';
+            drawerParam.id = record.id;
+            drawerParam.title = t('host.action.see');
+          },
+        };
+      };
 
       //根据名称筛选
       const setProject = async (value) => {
@@ -284,6 +297,7 @@
         sortChange,
         sortParam,
         projectModal,
+        clickRow,
       };
     },
   });
@@ -326,6 +340,9 @@
 
     .ant-modal-body {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   }
 </style>
