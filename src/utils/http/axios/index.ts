@@ -78,7 +78,7 @@ const transform: AxiosTransform = {
       createMessage.error(timeoutMsg);
     }
 
-    throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
+    // throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
   },
 
   // 请求之前处理config
@@ -164,7 +164,7 @@ const transform: AxiosTransform = {
     if (err.response.data.code === 401) {
       await userStore.refreshToken();
     }
-    if (retry <= 0 || !refreshToken) {
+    if (retry <= 0 || !refreshToken || err.response.data.code != 401) {
       return Promise.reject(err);
     }
     config.retry = config.retry - 1;

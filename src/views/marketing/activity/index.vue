@@ -133,6 +133,10 @@
         </Table>
       </TabPane>
       <TabPane
+        v-if="
+          hasPermission(activityCOnst._PERMS.SELECT_ALL) ||
+          hasPermission(activityCOnst._PERMS.SELECT_CITY)
+        "
         v-auth="[activityCOnst._PERMS.SELECT_ALL, activityCOnst._PERMS.SELECT_CITY]"
         key="1"
         tab="所有活动"
@@ -734,6 +738,7 @@
         allClickPublish,
         isPreview,
         clickPreview,
+        hasPermission,
       };
     },
   });

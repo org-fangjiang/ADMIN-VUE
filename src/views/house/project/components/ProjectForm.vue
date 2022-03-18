@@ -289,6 +289,17 @@
       <Divider orientation="left">规划信息</Divider>
       <br />
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
+        <FormItem
+          ref="ladderHouseRatio"
+          :label="t('host.ladderHouseRatio')"
+          name="ladderHouseRatio"
+        >
+          <Input
+            :disabled="isUpdate && !updateFields.includes('ladderHouseRatio')"
+            v-model:value="formState.ladderHouseRatio"
+            autoComplete="off"
+          />
+        </FormItem>
         <FormItem ref="landArea" :label="t('host.landArea')" name="landArea">
           <Input
             :disabled="isUpdate && !updateFields.includes('landArea')"

@@ -20,6 +20,29 @@ enum ApiHost {
   ClearProjectOrder = 'nhouse-server/manageProject/clearProjectOrder',
 }
 
+// https://restapi.amap.com/v3/place/around?key=<用户的key>&location=116.473168,39.993015&radius=10000&types=011100
+const key = '0e91d4576951619f26c117b96bf4415f';
+export function getLocation(location: string, type: string, mode: ErrorMessageMode = 'modal') {
+  return defHttp.get(
+    {
+      url:
+        'https://restapi.amap.com/v3/place/around?key=' +
+        key +
+        '&location=' +
+        location +
+        '&radius=10000&types=' +
+        type +
+        '&offset=10',
+      // headers: { 'Access-Control-Allow-Origin': '*' },
+    },
+    {
+      errorMessageMode: mode,
+      withToken: false,
+      isTransformResponse: false,
+    }
+  );
+}
+
 export function clearProjectOrder(id: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
   reqParam.setData({ id });

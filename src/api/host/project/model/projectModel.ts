@@ -14,6 +14,9 @@ import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 
 export interface HostModel {
+  unitNumber?: number;
+  houseNumber?: number;
+  ladderHouseRatio?: string;
   parkingRatio?: string;
   cng?: string;
   divideCar?: string;
@@ -276,6 +279,7 @@ export const _Columns = [
     key: 'name',
     dataIndex: 'name',
     ellipsis: 'true',
+    fixed: 'left',
     slots: '',
   },
   {
@@ -333,5 +337,27 @@ export const _ColumnsHost = [
     key: 'operation',
     ellipsis: 'true',
     slots: { customRender: 'operation' },
+  },
+];
+
+export const NoteColumns = [
+  ..._Columns,
+  {
+    title: t('host.news.createTime'),
+    key: 'createTime',
+    dataIndex: 'createTime',
+    ellipsis: 'false',
+    slots: { customRender: 'createTime' },
+    defaultSortOrder: 'descend',
+    sorter: true,
+  },
+  {
+    title: t('host.orderNum'),
+    key: 'orderNum',
+    dataIndex: 'orderNum',
+    ellipsis: 'false',
+    slots: { customRender: 'orderNum' },
+    sorter: true,
+    width: '5%',
   },
 ];

@@ -571,7 +571,6 @@
       let isSale = ref(false);
       onMounted(async () => {
         const userInfo = await getUserInfo();
-        debugger;
         userInfo.sysRoleBeans.forEach((item) => {
           if (item.roleName === 'sale') {
             isSale.value = true;

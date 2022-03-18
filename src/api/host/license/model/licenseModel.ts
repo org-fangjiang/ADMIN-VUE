@@ -13,6 +13,7 @@ export interface LicenseModel {
   updateBy?: string;
   updateTime?: string;
   hBuildsById?: BuildEntity[];
+  resourceEntity?: any;
 }
 
 export interface LicenseCondition {
