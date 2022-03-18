@@ -107,7 +107,7 @@ export const _Component_Columns = [
   {
     title: t('model.perms.menuName'),
     key: 'menuName',
-    width: '20%',
+    width: '15%',
     dataIndex: 'menuName',
     ellipsis: 'true',
     slots: '',
@@ -115,7 +115,7 @@ export const _Component_Columns = [
   {
     title: t('model.perms.path'),
     key: 'path',
-    width: '10%',
+    width: '20%',
     dataIndex: 'path',
     ellipsis: 'true',
     slots: '',
@@ -123,7 +123,7 @@ export const _Component_Columns = [
   {
     title: t('model.perms.perms'),
     key: 'perms',
-    width: '10%',
+    width: '20%',
     dataIndex: 'perms',
     ellipsis: 'true',
     slots: '',
@@ -131,7 +131,7 @@ export const _Component_Columns = [
   {
     title: t('model.perms.icon'),
     key: 'icon',
-    width: '10%',
+    width: '7%',
     dataIndex: 'icon',
     ellipsis: 'true',
     slots: '',
@@ -139,7 +139,7 @@ export const _Component_Columns = [
   {
     title: t('model.perms.type'),
     key: 'type',
-    width: '10%',
+    width: '7%',
     dataIndex: 'type',
     ellipsis: 'true',
     slots: { customRender: 'type' },
@@ -159,7 +159,7 @@ export const _Columns = [
   {
     title: t('model.perms.action'),
     key: 'operation',
-    width: '30%',
+    width: '20%',
     slots: { customRender: 'operation' },
   },
 ];
