@@ -344,12 +344,12 @@
       :bodyStyle="{ overflowY: 'auto', margin: '16px' }"
       :destroyOnClose="true"
       :footer="null"
-      wrapClassName="full-modal"
     >
-      <div>
-        <RadioGroup v-model:value="dealId">
+      <div class="pb-4">
+        <!-- <RadioGroup v-model:value="dealId">
           <Radio v-for="item in projects" :key="item.id" :value="item.id">{{ item.name }}</Radio>
-        </RadioGroup>
+        </RadioGroup> -->
+        <FProjectSelect @setProject="selectOneDeal" :class="`${prefixCls}-add`" />
         <Button @click="dealProject">确认</Button>
       </div>
     </Modal>
@@ -382,8 +382,6 @@
     Dropdown,
     Menu,
     MenuItem,
-    RadioGroup,
-    Radio,
   } from 'ant-design-vue';
   import CityForm from './components/CityForm.vue';
   import {
@@ -444,8 +442,6 @@
       Menu,
       MenuItem,
       ReportForm,
-      RadioGroup,
-      Radio,
     },
     setup() {
       const { t } = useI18n();
@@ -463,6 +459,11 @@
       const companyConst = ref(CompanyConst);
       const groupConst = ref(GroupConst);
       const privateConst = ref(PrivateConst);
+
+      // 设置成交楼盘
+      const selectOneDeal = (value) => {
+        dealId.value = value.key.toString();
+      };
 
       const clickFollow = (line) => {
         if (activeKey.value === '4') {
@@ -654,8 +655,6 @@
 
       const dealProject = async () => {
         try {
-          dealId.value;
-          debugger;
           await deal(drawerParam.id, dealId.value);
           success('成功', '客户处理成功');
         } catch (error) {}
@@ -1227,6 +1226,7 @@
         customerInvalid,
         customerDeal,
         customerReport,
+        selectOneDeal,
       };
     },
   });
@@ -1258,7 +1258,7 @@
 
   .full-modal {
     .ant-modal-content {
-      @apply pb-4;
+      @apply p-4;
     }
   }
 </style>
