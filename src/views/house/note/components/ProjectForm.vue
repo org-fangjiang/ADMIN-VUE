@@ -74,11 +74,12 @@
             <div class="text-[#999999] text-[12px]">参考单价</div>
           </div>
           <div>
-            <div class="text-[#333333]"
+            <div v-if="formState.lowTotalPrice && formState.highTotalPrice" class="text-[#333333]"
               ><span class="text-[20px] font-medium"
                 >{{ formState.lowTotalPrice }}-{{ formState.highTotalPrice }}</span
               ><span class="text-[18px]">万/套</span></div
             >
+            <div v-else class="text-[18px]">暂无数据</div>
             <div class="text-[#999999] text-[12px]">总价区间</div>
           </div>
         </div>
@@ -604,6 +605,7 @@
             <span class="text-[#999999]">物业费用：</span>
             <span>{{ formState?.estatePrice || '暂无数据' }}元/月</span>
           </div>
+          <div class="text-[#999999]">物业描述：</div>
           <div class="mt-2 bg-[#F9F9F9] p-2">
             <span
               ref="estate"
