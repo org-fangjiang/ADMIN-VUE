@@ -1,4 +1,3 @@
-// 楼栋信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4 min-h-[500px]">
     <Button v-auth="buildConst._PERMS.ADD" @click="addBuild" :class="`${prefixCls}-sel`">{{
@@ -28,7 +27,7 @@
           <div v-if="item.saleState === '2'" class="col-span-2">待售</div>
           <div v-if="item.saleState === '3'" class="col-span-2">售罄</div>
           <div>预售证：</div>
-          <div class="col-span-2"><img src="item.licenseId" alt="" /></div>
+          <div class="col-span-2"><img :src="item.licenseId" alt="" /></div>
           <div>开盘时间：</div>
           <div class="col-span-2">{{ item.openTime }}</div>
           <div>交付时间：</div>
