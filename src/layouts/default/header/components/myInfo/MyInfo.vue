@@ -53,7 +53,7 @@
           <Input v-model:value="formState.description" autoComplete="off" />
         </FormItem>
         <FormItem ref="companyName" :label="t('model.user.companyName')" name="companyName">
-          <Input v-model:value="formState.companyName" autoComplete="off" />
+          <Input disabled v-model:value="formState.companyName" autoComplete="off" />
         </FormItem>
         <FormItem :wrapper-col="{ span: 14, offset: 4 }">
           <Button type="primary" @click="onSubmit">{{ t('layout.header.updateUserInfo') }}</Button>

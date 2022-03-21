@@ -56,6 +56,16 @@
           {{ t('marketing.action.see') }}
         </Button>
         <Button
+          v-show="props.tabState === '1'"
+          v-auth="clueConst._PERMS.UPDATE"
+          type="link"
+          size="small"
+          :class="prefixCls"
+          @click="clickUpdate(operation)"
+        >
+          {{ t('marketing.action.update') }}
+        </Button>
+        <Button
           v-show="props.tabState === '2'"
           @click="clickReceiveInvalid(operation)"
           v-auth="clueConst._PERMS.RECEIVE_INVALID"
@@ -196,6 +206,11 @@
         emit('tableAction', key);
       };
 
+      const clickUpdate = (record) => {
+        Object.assign(key, { code: 5, id: record.id });
+        emit('tableAction', key);
+      };
+
       const clickReceiveInvalid = (record) => {
         Object.assign(key, { code: 1, id: record.id });
         emit('tableAction', key);
@@ -239,6 +254,7 @@
         clickAddCustomer,
         loading,
         tip,
+        clickUpdate,
       };
     },
   });
