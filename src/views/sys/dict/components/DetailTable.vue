@@ -22,13 +22,23 @@
           <Button type="link">{{ t('model.dict.detail.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="detail.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="detail.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="dictConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('model.dict.detail.deleteDetail') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="detail.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="detail.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="dictConst._PERMS.UPDATE"
@@ -39,7 +49,12 @@
                   {{ t('model.dict.detail.recoveryDetail') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="detail.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="detail.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="dictConst._PERMS.UPDATE"
@@ -85,6 +100,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'DetailTable',
@@ -108,6 +124,10 @@
     setup(props, { emit }) {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
+
+      // 判断权限
+      const { hasPermission } = usePermission();
+
       //样式前缀
       const { prefixCls } = useDesign('dict');
       const dictConst = ref(DictConst);
@@ -251,6 +271,7 @@
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         refresh,
+        hasPermission,
       };
     },
   });

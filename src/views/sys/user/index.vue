@@ -39,13 +39,23 @@
           <Button type="link">{{ t('model.user.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(userConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="user.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="userConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('model.user.deleteUser') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(userConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="user.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="userConst._PERMS.UPDATE"
@@ -56,7 +66,12 @@
                   {{ t('model.user.reEnableUser') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(userConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="user.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="userConst._PERMS.UPDATE"
@@ -67,7 +82,12 @@
                   {{ t('model.user.setEmail') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="4" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(userConst._PERMS.UPDATE)"
+                :key="4"
+                :data-id="user.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="userConst._PERMS.UPDATE"
@@ -78,7 +98,12 @@
                   {{ t('model.user.setMobile') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="5" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(userConst._PERMS.SET_ROLE)"
+                :key="5"
+                :data-id="user.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="userConst._PERMS.SET_ROLE"
@@ -150,6 +175,7 @@
   import SetEmailTable from './components/SetEmailTable.vue';
   import SetRole from './components/SetRole.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
   export default defineComponent({
     name: 'UserTable',
     components: {
@@ -175,6 +201,8 @@
       const userConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       const columns = reactive(_Columns);
 
@@ -347,6 +375,7 @@
         drawerParam,
         addUser,
         onClose,
+        hasPermission,
       };
     },
   });

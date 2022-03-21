@@ -29,7 +29,12 @@
           <Button type="link">{{ t('model.location.province.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(provinceConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="province.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
@@ -39,7 +44,12 @@
                   >{{ t('model.location.province.deleteProvince') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(provinceConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="province.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="provinceConst._PERMS.UPDATE"
@@ -50,7 +60,12 @@
                   {{ t('model.location.province.recoveryProvince') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(provinceConst._PERMS.ADD)"
+                :key="2"
+                :data-id="province.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="provinceConst._PERMS.ADD"
@@ -61,7 +76,12 @@
                   {{ t('model.location.city.addCity') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="province.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(provinceConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="province.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="provinceConst._PERMS.UPDATE"
@@ -110,6 +130,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'ProvinceTable',
@@ -133,6 +154,8 @@
       const provinceConst = ref(ProvinceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // 判断权限
+      const { hasPermission } = usePermission();
       const pageSizeList = ref<string[]>(PageSizeList);
       //列
       const provinceColumns = reactive(ProvinceColumns);
@@ -283,6 +306,7 @@
         onShowSizeChange,
         refresh,
         addProvince,
+        hasPermission,
       };
     },
   });

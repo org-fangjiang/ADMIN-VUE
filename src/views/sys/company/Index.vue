@@ -37,14 +37,22 @@
           <Button type="link">{{ t('model.company.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(companyConst.COMPANY_PERMS.UPDATE)"
+                :key="0"
+                :data-id="company.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">{{
                   t('model.company.updateInfo')
                 }}</Button>
               </MenuItem>
               <MenuItem
-                v-if="company.state !== companyConst.LOCKED"
+                v-if="
+                  company.state !== companyConst.LOCKED &&
+                  hasPermission(companyConst.COMPANY_PERMS.UPDATE)
+                "
                 :key="1"
                 :data-id="company.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -59,19 +67,30 @@
                 :key="2"
                 :data-id="company.id"
                 :class="`${prefixCls}-action-menu-item`"
+                v-show="hasPermission(companyConst.COMPANY_PERMS.UPDATE)"
               >
                 <template #icon></template>
                 <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
                   {{ t('model.company.updateUnLocked') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(companyConst.COMPANY_PERMS.UPDATE)"
+                :key="3"
+                :data-id="company.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
                   {{ t('model.company.changeCreateBy') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="4" :data-id="company.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(companyConst.COMPANY_PERMS.UPDATE)"
+                :key="4"
+                :data-id="company.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="companyConst.COMPANY_PERMS.UPDATE" type="link" size="small">
                   {{ t('model.company.updateRenewalData') }}
@@ -170,6 +189,7 @@
   } from 'ant-design-vue';
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'Company',
@@ -203,6 +223,9 @@
       //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       //抽屉参数
       const drawerParam = reactive({
@@ -414,6 +437,7 @@
         action,
         add,
         onClose,
+        hasPermission,
         locationChange,
       };
     },

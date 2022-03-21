@@ -54,7 +54,12 @@
               <Button type="link">{{ t('marketing.operation') }}</Button>
               <template #overlay>
                 <Menu mode="horizontal" @click="action">
-                  <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.DELETE_USER)"
+                    :key="0"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       :class="prefixCls"
@@ -64,7 +69,12 @@
                       >{{ t('marketing.action.delete') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.UPDATE_USER)"
+                    :key="1"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.UPDATE_USER"
@@ -75,7 +85,12 @@
                       {{ t('marketing.action.reEnable') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.UPDATE_USER)"
+                    :key="2"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.UPDATE_USER"
@@ -86,7 +101,12 @@
                       {{ t('marketing.action.update') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="3" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.PUBLISH)"
+                    :key="3"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.PUBLISH"
@@ -97,7 +117,12 @@
                       {{ t('marketing.action.publish') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="4" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.SELECT)"
+                    :key="4"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.SELECT"
@@ -179,7 +204,12 @@
               <Button type="link">{{ t('marketing.operation') }}</Button>
               <template #overlay>
                 <Menu mode="horizontal" @click="allAction">
-                  <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.DELETE_ALL)"
+                    :key="0"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       :class="prefixCls"
@@ -189,7 +219,12 @@
                       >{{ t('marketing.action.delete') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.UPDATE_ALL)"
+                    :key="1"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.UPDATE_ALL"
@@ -200,7 +235,12 @@
                       {{ t('marketing.action.reEnable') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.UPDATE_ALL)"
+                    :key="2"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.UPDATE_ALL"
@@ -211,7 +251,12 @@
                       {{ t('marketing.action.update') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="3" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.PUBLISH)"
+                    :key="3"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.PUBLISH"
@@ -222,7 +267,12 @@
                       {{ t('marketing.action.publish') }}
                     </Button>
                   </MenuItem>
-                  <MenuItem :key="4" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+                  <MenuItem
+                    v-if="hasPermission(activityCOnst._PERMS.SELECT)"
+                    :key="4"
+                    :data-id="line.id"
+                    :class="`${prefixCls}-action-menu-item`"
+                  >
                     <template #icon></template>
                     <Button
                       v-auth="activityCOnst._PERMS.SELECT"

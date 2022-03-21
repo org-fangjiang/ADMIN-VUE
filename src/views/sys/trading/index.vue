@@ -37,7 +37,12 @@
           <Button type="link">{{ t('component.action.index') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(tradingConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="tradingConst._PERMS.DELETE"
@@ -47,7 +52,12 @@
                   >{{ t('component.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(tradingConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="tradingConst._PERMS.UPDATE"
@@ -58,7 +68,12 @@
                   {{ t('component.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(tradingConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="tradingConst._PERMS.UPDATE"
@@ -142,6 +157,7 @@
   import FTrading from '/@/components/FTrading';
   import { getCityWithAllArea } from '/@/api/sys/city/city';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'TradingTable',
@@ -163,6 +179,8 @@
     setup() {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
+      // 判断权限
+      const { hasPermission } = usePermission();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('trading');
@@ -382,6 +400,7 @@
         cityId,
         province,
         stateHandleChange,
+        hasPermission,
       };
     },
   });

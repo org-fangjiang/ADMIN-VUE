@@ -50,7 +50,12 @@
           <Button type="link">{{ t('component.action.index') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(violationConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="violationConst._PERMS.DELETE"
@@ -60,7 +65,12 @@
                   >{{ t('component.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(violationConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="violationConst._PERMS.UPDATE"
@@ -71,7 +81,12 @@
                   {{ t('component.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(violationConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="violationConst._PERMS.UPDATE"
@@ -147,6 +162,7 @@
     reEnableAll,
   } from '/@/api/sys/violation/violation';
   import ViolationForm from './components/ViolationForm.vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'ViolationTable',
@@ -170,6 +186,8 @@
       const violationConst = ref(_Const);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // 判断权限
+      const { hasPermission } = usePermission();
       // 分页
       const pageSizeList = ref<string[]>(PageSizeList);
       let pageParam = reactive({
@@ -369,6 +387,7 @@
         deleteViolation,
         selected,
         stateHandleChange,
+        hasPermission,
       };
     },
   });

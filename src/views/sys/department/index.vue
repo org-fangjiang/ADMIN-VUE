@@ -26,6 +26,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
+                v-if="hasPermission(departmentConst._PERMS.UPDATE)"
                 :key="0"
                 :data-id="department.deptId"
                 :class="`${prefixCls}-action-menu-item`"
@@ -36,6 +37,7 @@
                 }}</Button>
               </MenuItem>
               <MenuItem
+                v-if="hasPermission(departmentConst._PERMS.ADD)"
                 :key="1"
                 :data-id="department.deptId"
                 :class="`${prefixCls}-action-menu-item`"
@@ -46,6 +48,7 @@
                 }}</Button>
               </MenuItem>
               <MenuItem
+                v-if="hasPermission(departmentConst._PERMS.DELETE)"
                 :key="2"
                 :data-id="department.deptId"
                 :class="`${prefixCls}-action-menu-item`"
@@ -101,6 +104,7 @@
   import DeptForm from './components/DeptForm.vue';
   import { success, failed } from '/@/hooks/web/useList';
   import AddUser from './components/AddUser.vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   interface Options {
     deptId?: string;
@@ -139,6 +143,9 @@
       //数据类型
       const depts: Options[] = [];
       let list = reactive(depts);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       //获取最外层数据
       const loadData = async () => {
@@ -347,6 +354,7 @@
         drawerParam,
         onClose,
         action,
+        hasPermission,
         add,
       };
     },

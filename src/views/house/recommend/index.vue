@@ -30,6 +30,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
+                v-if="hasPermission(recommendConst._PERMS.DELETE)"
                 :key="0"
                 :data-id="operation.projectId"
                 :class="`${prefixCls}-action-menu-item`"
@@ -44,6 +45,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
+                v-if="hasPermission(recommendConst._PERMS.UPDATE)"
                 :key="1"
                 :data-id="operation.projectId"
                 :class="`${prefixCls}-action-menu-item`"
@@ -123,6 +125,7 @@
   } from '/@/api/host/recommend/model/recommendModel';
 
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'RecommendTable',
@@ -151,6 +154,9 @@
 
       const columnsRecommend = reactive(_ColumnsRecommend);
       const recommendConst = ref(_RecommendConst);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       //控制添加热门楼盘的modal
       let isModal = ref<boolean>(false);
@@ -308,6 +314,7 @@
         success,
         action,
         stateHandleChange,
+        hasPermission,
       };
     },
   });

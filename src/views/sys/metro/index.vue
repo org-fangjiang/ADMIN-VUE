@@ -45,7 +45,12 @@
           <Button type="link">{{ t('component.action.index') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(metroConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
@@ -55,7 +60,12 @@
                   >{{ t('component.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(metroConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="metroConst._PERMS.UPDATE"
@@ -66,7 +76,12 @@
                   {{ t('component.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(metroConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="metroConst._PERMS.UPDATE"
@@ -77,7 +92,12 @@
                   {{ t('component.action.update') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(metroConst._PERMS.ADD)"
+                :key="3"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="metroConst._PERMS.ADD" type="link" size="small" :class="prefixCls">
                   {{ t('model.metroLine.result.addStation') }}
@@ -147,6 +167,7 @@
   import MetroLineForm from './components/MetroLineForm.vue';
   import StationTable from './components/StationTable.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'LinkTable',
@@ -168,6 +189,8 @@
     setup() {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
+      // 判断权限
+      const { hasPermission } = usePermission();
       // 获取用户store
       const userStore = useUserStore();
       const { prefixCls } = useDesign('metro');
@@ -352,6 +375,7 @@
         action,
         stateHandleChange,
         condition,
+        hasPermission,
       };
     },
   });

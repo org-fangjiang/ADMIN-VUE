@@ -44,25 +44,45 @@
           <Button type="link">{{ t('model.role.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="role.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(roleConst._PERMS.UPDATE)"
+                :key="0"
+                :data-id="role.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="roleConst._PERMS.UPDATE" type="link" size="small">{{
                   t('model.role.updateRole')
                 }}</Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="role.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(roleConst._PERMS.DELETE)"
+                :key="1"
+                :data-id="role.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="roleConst._PERMS.DELETE" type="link" size="small">{{
                   t('model.role.deleteRole')
                 }}</Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="role.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(roleConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="role.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="roleConst._PERMS.UPDATE" type="link" size="small">{{
                   t('model.role.reEnableRole')
                 }}</Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="role.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(menuConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="role.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="menuConst._PERMS.UPDATE" type="link" size="small">{{
                   t('model.role.setRoleMenu')
@@ -133,6 +153,7 @@
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { useUserStore } from '/@/store/modules/user';
   import { MenuConst } from '/@/api/sys/menu/model/menuModel';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   interface Option {
     value: string;
@@ -157,6 +178,8 @@
     setup() {
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
+      // 判断权限
+      const { hasPermission } = usePermission();
       // 修改为其它对应的组件名称
       const { prefixCls } = useDesign('role');
       const pageSizeList = ref<string[]>(PageSizeList);
@@ -359,6 +382,7 @@
         stateHandleChange,
         isSuper,
         menuConst,
+        hasPermission,
       };
     },
   });

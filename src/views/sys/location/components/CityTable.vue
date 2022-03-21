@@ -16,13 +16,23 @@
           <Button type="link">{{ t('model.location.city.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(cityConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="city.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="cityConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('model.location.city.deleteCity') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(cityConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="city.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="cityConst._PERMS.UPDATE"
@@ -33,13 +43,23 @@
                   {{ t('model.location.city.recoveryCity') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(areaConst._PERMS.ADD)"
+                :key="2"
+                :data-id="city.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="areaConst._PERMS.ADD" type="link" size="small" :class="prefixCls">
                   {{ t('model.location.area.addArea') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="city.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(cityConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="city.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="cityConst._PERMS.UPDATE"
@@ -86,6 +106,7 @@
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'CityTable',
@@ -112,6 +133,8 @@
       const { prefixCls } = useDesign('location');
       const cityConst = ref(CityConst);
       const areaConst = ref(AreaConst);
+      // 判断权限
+      const { hasPermission } = usePermission();
       //加载动画
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -281,6 +304,7 @@
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         refresh,
+        hasPermission,
       };
     },
   });

@@ -16,13 +16,23 @@
           <Button type="link">{{ t('model.location.area.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="area.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(areaConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="area.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="areaConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('model.location.area.deleteArea') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="area.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(areaConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="area.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="areaConst._PERMS.UPDATE"
@@ -33,7 +43,12 @@
                   {{ t('model.location.area.recoveryArea') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="area.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(areaConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="area.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="areaConst._PERMS.UPDATE"
@@ -75,6 +90,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'AreaTable',
@@ -102,6 +118,8 @@
       const areaConst = ref(AreaConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // 判断权限
+      const { hasPermission } = usePermission();
       //每页条数列表
       const pageSizeList = ref<string[]>(PageSizeList);
       const areaColumns = reactive(AreaColumns);
@@ -236,6 +254,7 @@
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         refresh,
+        hasPermission,
       };
     },
   });

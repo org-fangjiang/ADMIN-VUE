@@ -59,7 +59,12 @@
           <Button type="link">{{ t('host.operation') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelCaseConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
@@ -69,7 +74,12 @@
                   >{{ t('host.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelCaseConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="channelCaseConst._PERMS.UPDATE"
@@ -80,7 +90,12 @@
                   {{ t('host.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelCaseConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="channelCaseConst._PERMS.UPDATE"
@@ -159,6 +174,7 @@
   } from '/@/api/host/channelCase/channelCase';
   import ChannelCaseForm from './ChannelCaseForm.vue';
   import { debounce } from 'lodash-es';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'ChannelCase',
@@ -194,6 +210,9 @@
 
       const channelCaseColumns = reactive(_ColumnsChannelCase);
       const channelCaseConst = ref(_ChannelCaseConst);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       // 分页
       let pageParam = reactive({
@@ -368,6 +387,7 @@
         props,
         contactChange,
         fetching,
+        hasPermission,
       };
     },
   });

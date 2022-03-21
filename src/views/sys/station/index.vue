@@ -49,7 +49,12 @@
           <Button type="link">{{ t('component.action.index') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(stationConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
@@ -59,7 +64,12 @@
                   >{{ t('component.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(stationConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="stationConst._PERMS.UPDATE"
@@ -70,7 +80,12 @@
                   {{ t('component.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(stationConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="stationConst._PERMS.UPDATE"
@@ -151,6 +166,7 @@
   import FCascader from '/@/components/FCascader';
   import StationForm from './components/StationForm.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   interface Option {
     value: string;
@@ -185,6 +201,8 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const metroStation: MetroStationModel[] = [];
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       // 分页
       let pageParam = reactive({
@@ -424,6 +442,7 @@
         cityId,
         changeStation,
         stateHandleChange,
+        hasPermission,
       };
     },
   });

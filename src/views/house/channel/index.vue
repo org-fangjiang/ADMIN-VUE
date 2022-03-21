@@ -29,7 +29,12 @@
           <Button type="link">{{ t('host.operation') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
@@ -39,7 +44,12 @@
                   >{{ t('host.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="channelConst._PERMS.UPDATE"
@@ -50,7 +60,12 @@
                   {{ t('host.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="channelConst._PERMS.UPDATE"
@@ -61,7 +76,12 @@
                   {{ t('host.action.update') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="operation.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(channelConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="operation.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="channelConst._PERMS.UPDATE"
@@ -133,6 +153,7 @@
   import { deleteChannel, getChannels, reEnableChannel } from '/@/api/host/channel/channel';
   import ChannelForm from './components/ChannelForm.vue';
   import ChannelCase from './components/ChannelCase.vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'ChannelTable',
@@ -160,6 +181,9 @@
 
       const channelColumns = reactive(_ColumnsChannel);
       const channelConst = ref(_ChannelConst);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       // 分页
       let pageParam = reactive({
@@ -324,6 +348,7 @@
         success,
         action,
         stateHandleChange,
+        hasPermission,
       };
     },
   });

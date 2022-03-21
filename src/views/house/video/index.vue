@@ -54,7 +54,12 @@
           <Button type="link">{{ t('host.operation') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(videoConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   :class="prefixCls"
@@ -64,7 +69,12 @@
                   >{{ t('host.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(videoConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="videoConst._PERMS.UPDATE"
@@ -75,7 +85,12 @@
                   {{ t('host.action.reEnable') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(videoConst._PERMS.UPDATE)"
+                :key="2"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="videoConst._PERMS.UPDATE"
@@ -86,7 +101,12 @@
                   {{ t('host.action.update') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(videoConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="videoConst._PERMS.UPDATE"
@@ -97,7 +117,12 @@
                   {{ t('host.video.setTop') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="4" :data-id="line.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(videoConst._PERMS.UPDATE)"
+                :key="4"
+                :data-id="line.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="videoConst._PERMS.UPDATE"
@@ -167,6 +192,7 @@
   import VideoForm from './components/VideoForm.vue';
   import FProjectSelect from '/@/components/FProjectSelect';
   import { useUserStore } from '/@/store/modules/user';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'VideoTable',
@@ -192,6 +218,9 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       // 分页
       let pageParam = reactive({
@@ -408,6 +437,7 @@
         provinceId,
         cityId,
         proClear,
+        hasPermission,
       };
     },
   });

@@ -35,7 +35,12 @@
           <Button type="link">{{ t('model.user.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="user.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(userConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="user.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="userConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('model.company.deleteCompanyUser') }}
@@ -101,6 +106,7 @@
   import { deleteCompanyUser, getAllUsers } from '/@/api/sys/user/user';
   import AddAdminForm from './AddAdminForm.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'AdminForm',
@@ -136,6 +142,9 @@
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
       const columns = reactive(_Columns);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
 
       let pageParam = reactive({
         size: 10,
@@ -277,6 +286,7 @@
         drawerParam,
         addUser,
         onClose,
+        hasPermission,
       };
     },
   });

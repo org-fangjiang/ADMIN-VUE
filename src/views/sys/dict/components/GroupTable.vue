@@ -30,13 +30,23 @@
           <Button type="link">{{ t('model.dict.group.action') }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
-              <MenuItem :key="0" :data-id="group.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.DELETE)"
+                :key="0"
+                :data-id="group.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="dictConst._PERMS.DELETE" type="link" size="small"
                   >{{ t('model.dict.group.deleteGroup') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="1" :data-id="group.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.UPDATE)"
+                :key="1"
+                :data-id="group.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="dictConst._PERMS.UPDATE"
@@ -47,13 +57,23 @@
                   {{ t('model.dict.group.recoveryGroup') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="2" :data-id="group.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.ADD)"
+                :key="2"
+                :data-id="group.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button v-auth="dictConst._PERMS.ADD" type="link" size="small" :class="prefixCls">
                   {{ t('model.dict.detail.addDetail') }}
                 </Button>
               </MenuItem>
-              <MenuItem :key="3" :data-id="group.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="hasPermission(dictConst._PERMS.UPDATE)"
+                :key="3"
+                :data-id="group.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button
                   v-auth="dictConst._PERMS.UPDATE"
@@ -98,6 +118,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'GroupTable',
@@ -122,6 +143,10 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
+
+      // 判断权限
+      const { hasPermission } = usePermission();
+
       //列
       const groupColumns = reactive(GroupColumns);
       //分页参数
@@ -268,6 +293,7 @@
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
         refresh,
+        hasPermission,
       };
     },
   });
