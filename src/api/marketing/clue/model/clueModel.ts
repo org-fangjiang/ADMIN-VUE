@@ -141,6 +141,7 @@ export const ClueConst = {
     ADD_FOLLOW: 'clue-follow:add',
     SELECT_CREATE: 'clue:select:create',
     CUSTOMER_ADD: 'customer:add',
+    UPDATE: 'clue:update',
   },
   _UPDATE_FIELDS: [
     'contact',
@@ -196,7 +197,7 @@ export const Columns = [
     dataIndex: 'contact',
     ellipsis: 'true',
     slots: '',
-    width: '10%',
+    width: '7%',
   },
   {
     title: t('marketing.clue.purpose'),

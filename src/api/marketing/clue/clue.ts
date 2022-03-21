@@ -6,6 +6,7 @@ import { PageParam } from '/@/api/model/baseModel';
 import { ClueCondition, clueFollow, ClueModel } from './model/clueModel';
 
 enum ApiClue {
+  Update = '/clue-server/manageClue/update',
   AddByUser = '/clue-server/manageClue/addByUser',
   GetById = '/clue-server/manageClue/getById',
   Receive = '/clue-server/manageClue/receive',
@@ -22,6 +23,21 @@ enum ApiClue {
 enum ApiClueFollow {
   Add = '/clue-server/manageClueFollow/add',
   Update = '/clue-server/manageClueFollow/update',
+}
+
+export function updateClue(clue: ClueModel, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData(clue);
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<ClueModel>>(
+    {
+      url: ApiClue.Update,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function update(follow: clueFollow, mode: ErrorMessageMode = 'modal') {

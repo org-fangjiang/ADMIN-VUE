@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <div class="flex flex-row">
+    <div class="flex flex-row max-h-[500px]">
       <div class="w-full h-full">
         <Form
           :rules="clueConst._RULES"
@@ -10,28 +10,20 @@
           :wrapper-col="wrapperCol"
         >
           <FormItem ref="contact" :label="t('marketing.clue.contact')" name="contact">
-            <Input
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('contact')"
-              v-model:value="formState.contact"
-              autoComplete="off"
-            />
+            <Input :disabled="isUpdate" v-model:value="formState.contact" autoComplete="off" />
           </FormItem>
           <FormItem ref="username" :label="t('marketing.clue.username')" name="username">
-            <Input
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('username')"
-              v-model:value="formState.username"
-              autoComplete="off"
-            />
+            <Input :disabled="isUpdate" v-model:value="formState.username" autoComplete="off" />
           </FormItem>
           <FormItem ref="nickname" :label="t('marketing.clue.nickname')" name="nickname">
-            <Input
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('nickname')"
-              v-model:value="formState.nickname"
-              autoComplete="off"
-            />
+            <Input :disabled="isUpdate" v-model:value="formState.nickname" autoComplete="off" />
           </FormItem>
           <FormItem ref="gender" :label="t('marketing.clue.gender')" name="gender">
-            <RadioGroup v-model:value="formState.gender" :options="genderOption" />
+            <RadioGroup
+              v-model:value="formState.gender"
+              :disabled="isUpdate"
+              :options="genderOption"
+            />
           </FormItem>
           <FormItem ref="liveInProvince" :label="t('marketing.clue.liveIn')" name="liveInProvince">
             <FCascader
@@ -39,6 +31,8 @@
               :provinceId="formState.liveInProvince"
               :cityId="formState.liveInCity"
               :areaId="formState.liveInArea"
+              :disabled="isUpdate"
+              @change="liveChange"
             />
           </FormItem>
           <FormItem
@@ -47,7 +41,7 @@
             name="liveInAddress"
           >
             <Input
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('liveInAddress')"
+              :disabled="isUpdate"
               v-model:value="formState.liveInAddress"
               autoComplete="off"
             />
@@ -58,6 +52,8 @@
               :provinceId="formState.workInProvince"
               :cityId="formState.workInCity"
               :areaId="formState.workInArea"
+              :disabled="isUpdate"
+              @change="workChange"
             />
           </FormItem>
           <FormItem
@@ -66,7 +62,7 @@
             name="workInAddress"
           >
             <Input
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('workInAddress')"
+              :disabled="isUpdate"
               v-model:value="formState.workInAddress"
               autoComplete="off"
             />
@@ -77,7 +73,8 @@
               :provinceId="formState.intentionProvince"
               :cityId="formState.intentionCity"
               :areaId="formState.intentionArea"
-              :disProCity="true"
+              :disabled="isUpdate"
+              @change="intentionChange"
             />
           </FormItem>
           <FormItem
@@ -86,28 +83,36 @@
             name="intentionProject"
           >
             <Select
+              :disabled="isUpdate"
               :showSearch="true"
               v-model:value="projects"
               :options="projectOption"
               :filter-option="false"
               mode="multiple"
-              style="width: 120px"
-            />
+              @change="projectChange"
+              @search="projectSearch"
+              :not-found-content="fetching ? undefined : null"
+            >
+              <template v-if="fetching" #notFoundContent>
+                <Spin size="small" />
+              </template>
+            </Select>
           </FormItem>
           <FormItem ref="purpose" :label="t('marketing.clue.purpose')" name="purpose">
             <Select
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('purpose')"
+              :disabled="isUpdate"
               ref="select"
               :allowClear="true"
               v-model:value="formState.purpose"
               style="width: 120px"
               :options="clueConst.PURPOSES"
               :pagination="false"
+              @change="changePurpose"
             />
           </FormItem>
           <FormItem ref="demand" :label="t('marketing.clue.demand')" name="demand">
             <Select
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('demand')"
+              :disabled="isUpdate"
               v-model:value="purposes"
               mode="tags"
               style="width: 100%"
@@ -121,14 +126,14 @@
             name="demandDescription"
           >
             <Textarea
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('demandDescription')"
+              :disabled="isUpdate"
               v-model:value="formState.demandDescription"
               autoComplete="off"
             />
           </FormItem>
           <FormItem ref="source" :label="t('marketing.clue.source')" name="source">
             <Select
-              :disabled="isUpdate && !clueConst._UPDATE_FIELDS.includes('source')"
+              :disabled="isUpdate"
               ref="select"
               :allowClear="true"
               v-model:value="formState.source"
@@ -145,10 +150,12 @@
               :allowClear="true"
               :showSearch="true"
               :filter-option="false"
+              :disabled="true"
             />
           </FormItem>
           <FormItem :label="t('marketing.clue.activityId')" name="activityId">
             <Select
+              :disabled="true"
               v-model:value="formState.activityId"
               autoComplete="off"
               :allowClear="true"
@@ -156,6 +163,12 @@
               :filter-option="false"
               :options="activityOptions"
             />
+          </FormItem>
+          <FormItem v-show="!isUpdate" :wrapper-col="{ span: 14, offset: 8 }">
+            <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
+            <Button style="margin-left: 10px" @click="resetForm">{{
+              t('component.cropper.btn_reset')
+            }}</Button>
           </FormItem>
         </Form>
       </div>
@@ -213,12 +226,18 @@
     Timeline,
     TimelineItem,
     Textarea,
+    Button,
+    Spin,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { getById } from '/@/api/marketing/clue/clue';
   import { ClueConst, ClueModel } from '/@/api/marketing/clue/model/clueModel';
   import AddFollow from './AddFollow.vue';
   import FCascader from '/@/components/FCascader';
+  import { failed, success } from '/@/hooks/web/useList';
+  import { updateClue } from '/@/api/marketing/clue/clue';
+  import { debounce } from 'lodash-es';
+  import { search, searchWithCondition } from '/@/api/host/project/project';
 
   interface Option {
     value: string;
@@ -239,9 +258,15 @@
       RadioGroup,
       FCascader,
       Textarea,
+      Button,
+      Spin,
     },
     props: {
       id: {
+        type: String,
+        required: true,
+      },
+      openType: {
         type: String,
         required: true,
       },
@@ -255,7 +280,7 @@
 
       //判断更新还是新增
       let isUpdate = ref<boolean>(false);
-      if (props.id && props.id !== '') {
+      if (props.openType === '查看') {
         isUpdate.value = true;
       }
 
@@ -264,6 +289,63 @@
         { value: '0', label: '女' },
         { value: '1', label: '男' },
       ];
+
+      // 购房用途
+      const changePurpose = (value) => {
+        formState.purpose = value;
+      };
+
+      // 居住地
+      const liveChange = (e) => {
+        formState.liveInProvince = e.value[0] || '';
+        formState.liveInCity = e.value[1] || '';
+        formState.liveInArea = e.value[2] || '';
+      };
+      // work
+      const workChange = (e) => {
+        formState.workInProvince = e.value[0] || '';
+        formState.workInCity = e.value[1] || '';
+        formState.workInArea = e.value[2] || '';
+      };
+      // intention
+      const intentionChange = (e) => {
+        formState.intentionProvince = e.value[0] || '';
+        formState.intentionCity = e.value[1] || '';
+        formState.intentionArea = e.value[2] || '';
+      };
+
+      //搜索项目
+      let fetching = ref<boolean>(false);
+      const projectSearch = debounce(async (value) => {
+        fetching.value = true;
+        let result;
+        if (value) {
+          result = await search({
+            name: value,
+            provinceId: formState.intentionProvince || '',
+            cityId: formState.intentionCity,
+            state: '1',
+          });
+        } else {
+          result = await searchWithCondition({
+            provinceId: formState.intentionProvince || '',
+            cityId: formState.intentionCity,
+            state: '1',
+          });
+        }
+        if (result.content && result.content.length > 0) {
+          projectOption.value.splice(0);
+          result.content.forEach((item) => {
+            projectOption.value.push({ value: item.id || '', label: item.name || '' });
+          });
+        }
+        fetching.value = false;
+      }, 800);
+
+      //选中项目
+      const projectChange = (value) => {
+        projects.value = value;
+      };
 
       // fromRef 获取form
       const formRef = ref();
@@ -278,15 +360,14 @@
 
       //初始加载
       onMounted(async () => {
-        debugger;
         loading.value = true;
         projects.value.splice(0);
         if (props.id) {
           try {
             const { content } = await getById(props.id);
             Object.assign(formState, content);
-            if (content.purpose) {
-              purposes.value = content.purpose.split(',');
+            if (content.demand) {
+              purposes.value = content.demand.split(',');
             }
             if (content.sysClueFollowEntities && content.sysClueFollowEntities.length > 0) {
               let t;
@@ -305,7 +386,7 @@
             }
             if (content.projectRelationEntities && content.projectRelationEntities.length > 0) {
               content.projectRelationEntities.forEach((item) => {
-                projects.value.push(item.name || '');
+                projects.value.push(item.id || '');
                 projectOption.value.push({ value: item.id || '', label: item.name || '' });
               });
             }
@@ -328,6 +409,78 @@
           }
         }
       });
+
+      const onSubmit = () => {
+        formRef.value
+          .validate()
+          .then(async () => {
+            loading.value = true;
+            try {
+              const pro = projects.value.toString();
+              formState.intentionProject = pro;
+              formState.demand = purposes.value.toString();
+              await updateClue(formState);
+              success(t('marketing.action.update'), t('marketing.action.success'));
+            } catch (error: any) {
+              failed(error?.response?.data?.message, t('marketing.action.fail'));
+            } finally {
+              loading.value = false;
+            }
+          })
+          .catch((error: any) => {
+            console.log('error', error);
+          });
+      };
+
+      //重置
+      const resetForm = async () => {
+        loading.value = true;
+        try {
+          const { content } = await getById(props.id);
+          Object.assign(formState, content);
+          if (content.purpose) {
+            purposes.value = content.purpose.split(',');
+          }
+          if (content.sysClueFollowEntities && content.sysClueFollowEntities.length > 0) {
+            let t;
+            for (let i = 0; i < content.sysClueFollowEntities.length - 1; i++) {
+              for (let j = 0; j < content.sysClueFollowEntities.length - 1 - i; j++) {
+                if (
+                  (content.sysClueFollowEntities[j].createTime || '') <
+                  (content.sysClueFollowEntities[j + 1].createTime || '')
+                ) {
+                  t = content.sysClueFollowEntities[j];
+                  content.sysClueFollowEntities[j] = content.sysClueFollowEntities[j + 1];
+                  content.sysClueFollowEntities[j + 1] = t;
+                }
+              }
+            }
+          }
+          if (content.projectRelationEntities && content.projectRelationEntities.length > 0) {
+            content.projectRelationEntities.forEach((item) => {
+              projects.value.push(item.name || '');
+              projectOption.value.push({ value: item.id || '', label: item.name || '' });
+            });
+          }
+          if (formState.userByUpdate) {
+            updateUsers.value.push({
+              value: formState.userByUpdate.id,
+              label: formState.userByUpdate.realName || '',
+            });
+          }
+          if (formState.activityByActivityId) {
+            activityOptions.value.push({
+              value: formState.activityByActivityId.id || '',
+              label: formState.activityByActivityId.title || '',
+            });
+          }
+        } catch (error) {
+        } finally {
+          isHidden.value = true;
+          loading.value = false;
+        }
+        loading.value = false;
+      };
 
       const addFollow = () => {
         drawerParam.state = '0';
@@ -385,8 +538,8 @@
         tip,
         formRef,
         formState,
-        // onSubmit,
-        // resetForm,
+        onSubmit,
+        resetForm,
         labelCol: { span: 8 },
         wrapperCol: { span: 12 },
         isUpdate,
@@ -402,6 +555,13 @@
         projectOption,
         updateUsers,
         activityOptions,
+        projectSearch,
+        fetching,
+        projectChange,
+        liveChange,
+        workChange,
+        intentionChange,
+        changePurpose,
       };
     },
   });
