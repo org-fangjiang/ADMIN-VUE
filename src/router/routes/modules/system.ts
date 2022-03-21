@@ -169,7 +169,7 @@ const system: AppRouteModule = {
       component: () => import('/@/views/sys/sale/index.vue'),
       meta: {
         title: t('routes.system.sale'),
-        roles: ['/system/sale'],
+        roles: ['/system/saleInfo'],
         icon: '',
       },
     },

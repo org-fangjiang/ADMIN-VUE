@@ -107,6 +107,9 @@ export const useUserStore = defineStore({
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag;
     },
+    setRoleList() {
+      // 修改用户当前角色
+    },
     resetState() {
       this.userInfo = null;
       this.perms = [];
@@ -175,16 +178,23 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<UserInfo> {
       const userInfo = await getUserInfo();
       this.setUserInfo(userInfo);
-      const roleId = userInfo.roleId;
-      const roleList = userInfo.sysRoleBeans.filter((roleInfo) => {
-        return roleInfo.id === roleId;
-      });
+      // const roleId = userInfo.roleId;
+      const roleList = userInfo.sysRoleBeans;
+      // .filter((roleInfo) => {
+      //   return roleInfo.id === roleId;
+      // });
       if (roleList.length > 0) {
         const perms: string[] = [];
-        roleList[0].menus.forEach((menu) => {
-          if (menu.type === MenuConst.EFFECTIVE && menu.perms) {
-            perms.push(menu.perms);
-          }
+        roleList.forEach((role) => {
+          role.menus.forEach((menu) => {
+            if (
+              menu.state === MenuConst.EFFECTIVE &&
+              menu.type === MenuConst.BUTTON &&
+              menu.perms
+            ) {
+              perms.push(menu.perms);
+            }
+          });
         });
         this.setPerms(perms);
       }

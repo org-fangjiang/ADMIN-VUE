@@ -68,7 +68,7 @@ export function usePermission() {
       if (!isArray(value)) {
         return userStore.getPerms?.includes(value as string);
       }
-      return (intersection(value, userStore.perms) as string[]).length > 0;
+      return (intersection(value, userStore.getPerms) as string[]).length > 0;
     }
 
     if (PermissionModeEnum.BACK === permMode) {
@@ -95,7 +95,7 @@ export function usePermission() {
     if (!isArray(roles)) {
       roles = [roles];
     }
-    userStore.setRoleList(roles);
+    // userStore.setRoleList(roles);
     await resume();
   }
 

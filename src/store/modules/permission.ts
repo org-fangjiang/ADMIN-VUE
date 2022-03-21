@@ -24,6 +24,7 @@ import { getPermCode } from '/@/api/sys/user';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
 import { MenuConst } from '../../api/sys/menu/model/permsModel';
+import { MenuInfo } from '/@/api/sys/model/userModel';
 
 interface PermissionState {
   // Permission code list
@@ -107,19 +108,26 @@ export const usePermissionStore = defineStore({
 
       const routeFilter = (route: AppRouteRecordRaw) => {
         const roleList = toRaw(
-          userStore.getUserInfo.sysRoleBeans.filter(
-            (roleInfo) => roleInfo.roleName === userStore.getUserInfo.roleName
-          )
+          userStore.getUserInfo.sysRoleBeans
+          // .filter(
+          //   (roleInfo) => roleInfo.roleName === userStore.getUserInfo.roleName
+          // )
         );
         if (roleList.length < 1) {
           return false;
         }
-        let menus = roleList[0].menus;
-        menus = menus.filter((menu) => menu.type === MenuConst.INVALID);
+        let menus: MenuInfo[] = [];
+        roleList.forEach((role) => {
+          menus.push(...role.menus);
+        });
+        menus = menus.filter(
+          (menu) => menu.state === MenuConst.EFFECTIVE && menu.type === MenuConst.MENU
+        );
         const { meta } = route;
         const { roles } = meta || {};
         if (!roles) return true;
-        return menus.some((menu) => roles.includes(menu.path));
+        return roles.some((role) => menus.some((menu) => menu.path == role));
+        // return menus.some((menu) => roles.includes(menu.path));
       };
 
       const routeRmoveIgnoreFilter = (route: AppRouteRecordRaw) => {
