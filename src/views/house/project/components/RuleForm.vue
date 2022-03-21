@@ -96,11 +96,15 @@
         <Textarea v-model:value="formState.details" autoComplete="off" />
       </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 7 }">
-        <Button v-if="isAdd" type="primary" @click="onAdd">{{ t('component.action.add') }}</Button>
-        <Button v-else type="primary" @click="onSubmit">{{ t('component.action.update') }}</Button>
-        <Button style="margin-left: 10px" @click="resetForm">{{
-          t('component.cropper.btn_reset')
+        <Button v-if="isAdd" v-auth="reportRuleConst._PERMS.ADD" type="primary" @click="onAdd">{{
+          t('component.action.add')
         }}</Button>
+        <Button v-else v-auth="reportRuleConst._PERMS.UPDATE" type="primary" @click="onSubmit">{{
+          t('component.action.update')
+        }}</Button>
+        <Button v-auth="reportRuleConst._PERMS.UPDATE" style="margin-left: 10px" @click="resetForm">
+          {{ t('component.cropper.btn_reset') }}
+        </Button>
       </FormItem>
     </Form>
     <Loading :loading="loading" :absolute="false" :tip="tip" />

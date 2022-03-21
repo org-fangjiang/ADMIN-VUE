@@ -166,7 +166,11 @@
       :destroyOnClose="true"
       centered
     >
-      <ClueForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+      <ClueForm
+        v-if="drawerParam.state === '0'"
+        :id="drawerParam.id"
+        :openType="drawerParam.title"
+      />
       <TransferForm v-if="drawerParam.state === '1'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -592,6 +596,13 @@
             drawerParam.state = '0';
             drawerParam.id = id;
             drawerParam.title = t('marketing.action.see');
+            break;
+          case 5:
+            // 更新
+            drawerParam.visible = true;
+            drawerParam.state = '0';
+            drawerParam.id = id;
+            drawerParam.title = t('marketing.action.update');
             break;
         }
       };
