@@ -27,7 +27,17 @@
       <template #action="{ text: group }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('model.dict.group.action') }}</Button>
+          <Button
+            v-if="
+              hasPermission([
+                dictConst._PERMS.ADD,
+                dictConst._PERMS.DELETE,
+                dictConst._PERMS.UPDATE,
+              ])
+            "
+            type="link"
+            >{{ t('model.dict.group.action') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

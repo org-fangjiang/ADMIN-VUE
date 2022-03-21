@@ -51,7 +51,18 @@
           <template #operation="{ text: line }">
             <!-- 操作下拉框 -->
             <Dropdown placement="bottomCenter" trigger="click">
-              <Button type="link">{{ t('marketing.operation') }}</Button>
+              <Button
+                v-if="
+                  hasPermission([
+                    activityCOnst._PERMS.DELETE_USER,
+                    activityCOnst._PERMS.UPDATE_USER,
+                    activityCOnst._PERMS.PUBLISH,
+                    activityCOnst._PERMS.SELECT,
+                  ])
+                "
+                type="link"
+                >{{ t('marketing.operation') }}</Button
+              >
               <template #overlay>
                 <Menu mode="horizontal" @click="action">
                   <MenuItem
@@ -201,7 +212,18 @@
           <template #operation="{ text: line }">
             <!-- 操作下拉框 -->
             <Dropdown placement="bottomCenter" trigger="click">
-              <Button type="link">{{ t('marketing.operation') }}</Button>
+              <Button
+                v-if="
+                  hasPermission([
+                    activityCOnst._PERMS.DELETE_ALL,
+                    activityCOnst._PERMS.UPDATE_ALL,
+                    activityCOnst._PERMS.PUBLISH,
+                    activityCOnst._PERMS.SELECT,
+                  ])
+                "
+                type="link"
+                >{{ t('marketing.operation') }}</Button
+              >
               <template #overlay>
                 <Menu mode="horizontal" @click="allAction">
                   <MenuItem

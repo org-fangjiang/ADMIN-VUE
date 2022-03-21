@@ -13,7 +13,17 @@
       <template #action="{ text: city }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('model.location.city.action') }}</Button>
+          <Button
+            v-if="
+              hasPermission([
+                cityConst._PERMS.DELETE,
+                cityConst._PERMS.UPDATE,
+                areaConst._PERMS.ADD,
+              ])
+            "
+            type="link"
+            >{{ t('model.location.city.action') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

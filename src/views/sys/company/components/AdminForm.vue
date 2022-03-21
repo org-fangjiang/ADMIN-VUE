@@ -32,7 +32,9 @@
       <template #operation="{ text: user }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('model.user.action') }}</Button>
+          <Button v-if="hasPermission(userConst._PERMS.DELETE)" type="link">{{
+            t('model.user.action')
+          }}</Button>
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

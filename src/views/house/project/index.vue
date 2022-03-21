@@ -79,7 +79,17 @@
         </Button>
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('host.operation') }}</Button>
+          <Button
+            v-if="
+              hasPermission([
+                hostConst._PERMS.MANAGE,
+                hostConst._PERMS.DELETE,
+                hostConst._PERMS.UPDATE,
+              ]) || isSale
+            "
+            type="link"
+            >{{ t('host.operation') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

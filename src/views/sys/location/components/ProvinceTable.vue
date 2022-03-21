@@ -26,7 +26,17 @@
       <template #action="{ text: province }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('model.location.province.action') }}</Button>
+          <Button
+            v-if="
+              hasPermission([
+                provinceConst._PERMS.DELETE,
+                provinceConst._PERMS.UPDATE,
+                provinceConst._PERMS.ADD,
+              ])
+            "
+            type="link"
+            >{{ t('model.location.province.action') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

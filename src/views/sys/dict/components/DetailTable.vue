@@ -19,7 +19,11 @@
       <template #action="{ text: detail }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('model.dict.detail.action') }}</Button>
+          <Button
+            v-if="hasPermission([dictConst._PERMS.DELETE, dictConst._PERMS.UPDATE])"
+            type="link"
+            >{{ t('model.dict.detail.action') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

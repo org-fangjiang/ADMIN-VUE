@@ -41,7 +41,11 @@
       </template>
       <template #action="{ text: role }">
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('model.role.action') }}</Button>
+          <Button
+            v-if="hasPermission([roleConst._PERMS.UPDATE, roleConst._PERMS.DELETE])"
+            type="link"
+            >{{ t('model.role.action') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

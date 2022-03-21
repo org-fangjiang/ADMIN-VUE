@@ -26,7 +26,11 @@
       <template #operation="{ text: operation }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('host.operation') }}</Button>
+          <Button
+            v-if="hasPermission([recommendConst._PERMS.DELETE, recommendConst._PERMS.UPDATE])"
+            type="link"
+            >{{ t('host.operation') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem

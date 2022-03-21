@@ -46,7 +46,11 @@
       <template #operation="{ text: line }">
         <!-- 操作下拉框 -->
         <Dropdown placement="bottomCenter" trigger="click">
-          <Button type="link">{{ t('component.action.index') }}</Button>
+          <Button
+            v-if="hasPermission([stationConst._PERMS.DELETE, stationConst._PERMS.UPDATE])"
+            type="link"
+            >{{ t('component.action.index') }}</Button
+          >
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
