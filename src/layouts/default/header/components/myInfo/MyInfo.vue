@@ -89,6 +89,7 @@
   import { ApiSource, uploadUserImg } from '/@/api/host/source/source';
   import { success, failed } from '/@/hooks/web/useList';
   import { getAccessToken } from '/@/utils/auth';
+  import { AesEncryption } from '/@/utils/cipher';
 
   export default defineComponent({
     name: 'MyInfo',
@@ -148,6 +149,9 @@
           .then(async () => {
             loading.value = true;
             try {
+              const aes = new AesEncryption({ key: 'hebeifangjiangkj', iv: 'hebeifangjiangkj' });
+              formState.password = aes.encryptByAES(formState.password || '');
+              debugger;
               await updateMyInfo(formState);
               success(t('host.action.update'), t('host.action.success'));
             } catch (error: any) {
