@@ -18,6 +18,23 @@ enum ApiHost {
   GetProject = 'nhouse-server/manageProject/getProject',
   SetProjectOrder = 'nhouse-server/manageProject/setProjectOrder',
   ClearProjectOrder = 'nhouse-server/manageProject/clearProjectOrder',
+  Around = 'nhouse-server/place/around',
+}
+
+export function around(location: string, type: string, mode: ErrorMessageMode = 'modal') {
+  return defHttp.get(
+    {
+      url: ApiHost.Around,
+      params: {
+        location: location,
+        type: type,
+        offset: 10,
+      },
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 // https://restapi.amap.com/v3/place/around?key=<用户的key>&location=116.473168,39.993015&radius=10000&types=011100

@@ -1,7 +1,7 @@
 <template>
   <div class="lg:w-[375px] sm:w-full h-full relative">
     <div class="absolute top-0 right-0 w-full h-[400px] rounded-b-full bg-blue-600 z-10"></div>
-    <div class="absolute p-2 px-3 z-20 w-full">
+    <div class="absolute z-20 w-full p-2 px-3">
       <!-- 第一块，标题描述 -->
       <div>
         <div class="text-white mb-[16px] text-[24px]">{{ formState.name }}</div>
@@ -20,7 +20,7 @@
             item.name
           }}</span>
         </div>
-        <div class="flex flex-row space-x-4 my-2">
+        <div class="flex flex-row my-2 space-x-4">
           <div class="p-2 text-white text-[12px]">
             <span
               class="w-[100px] bg-[#80ADEF] px-2 py-1 rounded"
@@ -120,7 +120,7 @@
           <span
             v-for="item in formState.sysDictDetailBeans"
             :key="item"
-            class="space-x-1 flex flex-row items-center justify-items-center"
+            class="flex flex-row items-center space-x-1 justify-items-center"
           >
             <img src="../../../../assets/images/selected.png" alt="" class="w-[10px] h-[10px]" />
             <span>{{ item.value }}</span>
@@ -297,7 +297,7 @@
               class="text-[12px] text-[#333333] flex flex-row justify-between"
             >
               <span
-                class="text-left leading-5"
+                class="leading-5 text-left"
                 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                 >{{ item.name }}</span
               >
@@ -312,7 +312,7 @@
               class="text-[12px] text-[#333333] flex flex-row justify-between"
             >
               <span
-                class="text-left leading-5"
+                class="leading-5 text-left"
                 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                 >{{ item.name }}</span
               >
@@ -327,7 +327,7 @@
               class="text-[12px] text-[#333333] flex flex-row justify-between"
             >
               <span
-                class="text-left leading-5"
+                class="leading-5 text-left"
                 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                 >{{ item.name }}</span
               >
@@ -342,7 +342,7 @@
               class="text-[12px] text-[#333333] flex flex-row justify-between"
             >
               <span
-                class="text-left leading-5"
+                class="leading-5 text-left"
                 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                 >{{ item.name }}</span
               >
@@ -357,7 +357,7 @@
               class="text-[12px] text-[#333333] flex flex-row justify-between"
             >
               <span
-                class="text-left leading-5"
+                class="leading-5 text-left"
                 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                 >{{ item.name }}</span
               >
@@ -365,7 +365,7 @@
             </div>
           </div>
           <div
-            class="w-full text-center flex flex-row justify-center items-center"
+            class="flex flex-row items-center justify-center w-full text-center"
             @click="clickInfoMore"
           >
             <div v-if="!infoMore" class="text-sm text-[#999999]">查看全部配套</div>
@@ -383,7 +383,7 @@
       <!-- 小区概况 -->
       <div class="mt-5">
         <div class="text-[18px] text-[#333333]">小区概况</div>
-        <div class="grid grid-cols-3 justify-between mt-3 gap-3">
+        <div class="grid justify-between grid-cols-3 gap-3 mt-3">
           <div class="border-r border-r-[#EFEFEF]">
             <div class="text-[18px] text-[#333333]">{{ formState.volumeRate || '暂无数据' }}</div>
             <div class="text-[#999999] text-[12px]">容积率</div>
@@ -488,7 +488,7 @@
             style="width: 100%; height: 100%"
           />
         </div>
-        <div class="mt-3 flex flex-row space-x-3">
+        <div class="flex flex-row mt-3 space-x-3">
           <div @click="changeBuildType('1')" class="flex flex-row items-center">
             <div
               class="w-[10px] h-[10px] rounded-sm"
@@ -526,7 +526,7 @@
         <div class="grid grid-cols-6 mt-4">
           <div
             @click="changeBuildId(item.number)"
-            class="px-2 rounded-full text-center"
+            class="px-2 text-center rounded-full"
             v-for="item in formState.hBuildsById"
             :key="item.id"
             :class="item.number === buildId ? 'bg-[#135CE3] text-white' : ''"
@@ -706,7 +706,7 @@
   import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { HostModel, _HostConst } from '/@/api/host/project/model/projectModel';
   import { useUserStore } from '/@/store/modules/user';
-  import { getLocation, getProject } from '/@/api/host/project/project';
+  import { around, getProject } from '/@/api/host/project/project';
   import { getProjectChannel } from '/@/api/host/projectChannel/projectChannel';
   import { ChannelAndCase } from '/@/api/host/projectChannel/model/projectChannelModel';
   import { getRule } from '/@/api/host/reportRule/reportRule';
@@ -828,7 +828,7 @@
       // 医疗配套 090000
       let medicalArray = ref<any[]>([]);
       const getMedicalInfo = async () => {
-        const midicalResult = await getLocation(
+        const midicalResult = await around(
           formState.longitude + ',' + formState.latitude,
           '090000'
         );
@@ -839,7 +839,7 @@
       // 交通配套
       let trafficArray = ref<any[]>([]);
       const getTrafficInfo = async () => {
-        const trafficResult = await getLocation(
+        const trafficResult = await around(
           formState.longitude + ',' + formState.latitude,
           '150000'
         );
@@ -850,7 +850,7 @@
       // 教育配套
       let eduArray = ref<any[]>([]);
       const getEduInfo = async () => {
-        const eduResult = await getLocation(formState.longitude + ',' + formState.latitude, '学校');
+        const eduResult = await around(formState.longitude + ',' + formState.latitude, '学校');
         if (eduResult.info === 'OK') {
           eduArray.value.push(...eduResult.pois);
         }
@@ -858,7 +858,7 @@
       // 周边住宅
       let houseArray = ref<any[]>([]);
       const getHouse = async () => {
-        const houseResult = await getLocation(
+        const houseResult = await around(
           formState.longitude + ',' + formState.latitude,
           '120300|120301|120302'
         );
@@ -869,10 +869,7 @@
       // 商业配套
       let matchArray = ref<any[]>([]);
       const getMatch = async () => {
-        const houseResult = await getLocation(
-          formState.longitude + ',' + formState.latitude,
-          '060000'
-        );
+        const houseResult = await around(formState.longitude + ',' + formState.latitude, '060000');
         if (houseResult.info === 'OK') {
           matchArray.value.push(...houseResult.pois);
         }
