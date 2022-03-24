@@ -19,7 +19,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { Button, Form, FormItem, Input } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
-  import { getUserInfo, setUserEmail } from '/@/api/sys/user/user';
+  import { getUserById, setUserEmail } from '/@/api/sys/user/user';
   import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
@@ -79,14 +79,14 @@
       onMounted(async () => {
         loading.value = true;
         const userResult = await getUser();
-        if (userResult) {
-          Object.assign(formState, userResult);
+        if (userResult.content) {
+          Object.assign(formState, userResult.content);
         }
         loading.value = false;
       });
 
       const getUser = async () => {
-        const result = await getUserInfo(props.id);
+        const result = await getUserById(props.id);
         return result;
       };
 

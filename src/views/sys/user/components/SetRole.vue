@@ -28,7 +28,7 @@
   import { success, failed } from '/@/hooks/web/useList';
   import { SysUserBean } from '/@/api/sys/user/model/userModel';
   import { getRoles } from '/@/api/sys/role/role';
-  import { setUserRole, getUserInfo } from '/@/api/sys/user/user';
+  import { setUserRole, getUserById } from '/@/api/sys/user/user';
   interface Option {
     value: string;
     label: string;
@@ -54,11 +54,11 @@
       const roleOptions = ref<Option[]>([]);
       let ids = ref<string[]>([]);
       //选择角色
-      const changeRole = (value: string[]) => {
-        // formState.roleId = value.toString();
+      const changeRole = (value: string[], option: Option[]) => {
+        formState.roleId = value.toString();
         formState.sysRoleBeans?.splice(0);
-        value.forEach((item) => {
-          formState.sysRoleBeans?.push({ id: item });
+        option.forEach((item) => {
+          formState.sysRoleBeans?.push({ id: item.value, roleName: item.label });
         });
       };
 
@@ -66,6 +66,8 @@
       const formRef = ref();
       let formState: SysUserBean = reactive({
         id: props.id,
+        roleId: '',
+        sysRoleBeans: [],
       });
 
       //提交
@@ -109,9 +111,9 @@
         }
 
         const userResult = await getUser();
-        if (userResult) {
-          Object.assign(formState, userResult);
-          userResult.sysRoleBeans?.forEach((item) => {
+        if (userResult.content) {
+          Object.assign(formState, userResult.content);
+          userResult.content.sysUserRolesById?.forEach((item) => {
             ids.value.push(item.id);
           });
         }
@@ -119,7 +121,7 @@
       });
 
       const getUser = async () => {
-        const result = await getUserInfo(props.id);
+        const result = await getUserById(props.id);
         return result;
       };
 

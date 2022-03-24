@@ -15,11 +15,9 @@
 <script lang="ts">
   import { defineComponent, onMounted, reactive, ref } from 'vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-
-  import { useUserStore } from '/@/store/modules/user';
   import { Button, Form, FormItem, Input } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
-  import { getUserInfo, setUserMobile } from '/@/api/sys/user/user';
+  import { getUserById, setUserMobile } from '/@/api/sys/user/user';
   import { success, failed } from '/@/hooks/web/useList';
 
   export default defineComponent({
@@ -35,9 +33,6 @@
       const { t } = useI18n();
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
-      //获取当前用户信息
-      const userStore = useUserStore();
-      const userInfo = userStore.getUserInfo;
 
       // fromRef 获取form
       const formRef = ref();
@@ -79,21 +74,19 @@
       onMounted(async () => {
         loading.value = true;
         const userResult = await getUser();
-        debugger;
-        if (userResult) {
-          Object.assign(formState, userResult);
+        if (userResult.content) {
+          Object.assign(formState, userResult.content);
         }
         loading.value = false;
       });
 
       const getUser = async () => {
-        const result = await getUserInfo(props.id);
+        const result = await getUserById(props.id);
         return result;
       };
 
       return {
         t,
-        userInfo,
         formRef,
         formState,
         onSubmit,

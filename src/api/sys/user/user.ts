@@ -32,9 +32,25 @@ enum Api {
   SetUserMobile = '/sys-server/user/setUserMobile', // user:update
   SetUserEmail = '/sys-server/user/setUserEmail', // user:update
   ReEnableUser = '/sys-server/user/reEnableUser', // user:update
-  GetUserInfo = '/api/auth/getUserInfo',
+  GetUserInfo = '/api/auth/getUserInfo', // 获取当前用户信息
   GetUsersBySale = '/sys-server/user/getUsersBySale',
   GetUsersByResident = '/sys-server/user/getUsersByResident',
+  GetUserById = '/sys-server/user/getUserById', //获取指定用户信息
+}
+
+export function getUserById(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id });
+  const data = reqParam.getInstance();
+  return defHttp.post<BaseResult<GetUserModel>>(
+    {
+      url: Api.GetUserById,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getUsersByResident(
