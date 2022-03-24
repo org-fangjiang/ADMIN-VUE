@@ -19,7 +19,7 @@ export function success(message: any, description: any) {
   notification.success({
     message: message,
     description: description,
-    duration: 3,
+    duration: 0,
   });
 }
 

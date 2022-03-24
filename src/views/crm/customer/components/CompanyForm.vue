@@ -340,17 +340,17 @@
         if (phone) {
           const result = await inSystem(phone || '');
           if (result.exist === 'company') {
-            message.info({ content: '当前手机号存在于公司列表', duration: 3 });
+            message.info({ content: '当前手机号存在于公司列表', duration: 0 });
           } else if (result.exist === 'city') {
-            message.info({ content: '当前手机号存在于城市列表', duration: 3 });
+            message.info({ content: '当前手机号存在于城市列表', duration: 0 });
           } else if (result.exist === 'group') {
-            message.info({ content: '当前手机号存在于小组列表', duration: 3 });
+            message.info({ content: '当前手机号存在于小组列表', duration: 0 });
           } else if (result.exist === 'private') {
-            message.info({ content: '当前手机号存在于个人列表', duration: 3 });
+            message.info({ content: '当前手机号存在于个人列表', duration: 0 });
           } else if (result.exist === 'deal') {
-            message.info({ content: '当前手机号存在于成交列表', duration: 3 });
+            message.info({ content: '当前手机号存在于成交列表', duration: 0 });
           } else if (result.exist === 'invalidate') {
-            message.info({ content: '当前手机号存在于无效列表', duration: 3 });
+            message.info({ content: '当前手机号存在于无效列表', duration: 0 });
           }
         }
       }, 2000);

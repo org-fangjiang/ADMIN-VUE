@@ -104,7 +104,7 @@ function createWarningModal(options: ModalOptionsPartial) {
 
 notification.config({
   placement: 'topRight',
-  duration: 3,
+  duration: 0,
 });
 
 /**

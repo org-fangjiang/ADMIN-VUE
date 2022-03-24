@@ -294,8 +294,8 @@
 
       //批量通过
       const mulPass = async () => {
-        if (!selected.value) {
-          message.error({ content: '请正确选择信息，然后点击', duration: 3 });
+        if (selected.value.length === 0) {
+          message.error({ content: '请正确选择信息，然后点击' });
         } else {
           try {
             loading.value = true;
@@ -314,8 +314,8 @@
 
       //批量不通过
       const mulFail = async () => {
-        if (!selected.value) {
-          message.error({ content: '请正确选择信息，然后点击', duration: 3 });
+        if (selected.value.length === 0) {
+          message.error({ content: '请正确选择信息，然后点击' });
         } else {
           try {
             loading.value = true;
@@ -335,7 +335,7 @@
       // 批量删除
       const deleteMul = async () => {
         if (!selectedFailed.value) {
-          message.error({ content: '请正确选择信息，然后点击', duration: 3 });
+          message.error({ content: '请正确选择信息，然后点击', duration: 0 });
         } else {
           try {
             loading.value = true;
