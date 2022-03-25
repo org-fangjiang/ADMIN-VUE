@@ -60,7 +60,7 @@
                 }}</Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(roleConst._PERMS.DELETE)"
+                v-if="hasPermission(roleConst._PERMS.DELETE) && deleteOrEnable(role.state)"
                 :key="1"
                 :data-id="role.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -71,7 +71,7 @@
                 }}</Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(roleConst._PERMS.UPDATE)"
+                v-if="hasPermission(roleConst._PERMS.UPDATE) && !deleteOrEnable(role.state)"
                 :key="2"
                 :data-id="role.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -158,6 +158,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { MenuConst } from '/@/api/sys/menu/model/menuModel';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   interface Option {
     value: string;
@@ -387,6 +388,7 @@
         isSuper,
         menuConst,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

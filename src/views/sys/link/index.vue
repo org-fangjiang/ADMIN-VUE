@@ -55,7 +55,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(linkConst._PERMS.DELETE)"
+                v-if="hasPermission(linkConst._PERMS.DELETE) && deleteOrEnable(link.state)"
                 :key="0"
                 :data-id="link.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -66,7 +66,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(linkConst._PERMS.UPDATE)"
+                v-if="hasPermission(linkConst._PERMS.UPDATE) && !deleteOrEnable(link.state)"
                 :key="1"
                 :data-id="link.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -155,6 +155,7 @@
   import LinkForm from './components/LinkForm.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'LinkTable',
@@ -366,6 +367,7 @@
         addLink,
         onClose,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

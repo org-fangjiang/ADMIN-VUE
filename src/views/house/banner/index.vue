@@ -42,7 +42,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(bannerConst._PERMS.DELETE)"
+                v-if="hasPermission(bannerConst._PERMS.DELETE) && deleteOrEnable(operation.state)"
                 :key="0"
                 :data-id="operation.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -57,7 +57,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(bannerConst._PERMS.UPDATE)"
+                v-if="hasPermission(bannerConst._PERMS.UPDATE) && !deleteOrEnable(operation.state)"
                 :key="1"
                 :data-id="operation.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -145,6 +145,7 @@
   import BannerForm from './components/BannerForm.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'BannerTable',
@@ -337,6 +338,7 @@
         action,
         stateHandleChange,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

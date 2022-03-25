@@ -40,10 +40,12 @@
           type="link"
           size="small"
           @click="deleteOneLicense(line)"
+          v-if="line.state != '0'"
         >
           {{ t('host.action.delete') }}
         </Button>
         <Button
+          v-else
           :class="prefixCls"
           v-auth="licenseConst._PERMS.UPDATE"
           type="link"

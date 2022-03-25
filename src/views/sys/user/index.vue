@@ -50,7 +50,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(userConst._PERMS.DELETE)"
+                v-if="hasPermission(userConst._PERMS.DELETE) && deleteOrEnable(user.state)"
                 :key="0"
                 :data-id="user.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -61,7 +61,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(userConst._PERMS.UPDATE)"
+                v-if="hasPermission(userConst._PERMS.UPDATE) && !deleteOrEnable(user.state)"
                 :key="1"
                 :data-id="user.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -186,6 +186,7 @@
   import SetRole from './components/SetRole.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
   export default defineComponent({
     name: 'UserTable',
     components: {
@@ -386,6 +387,7 @@
         addUser,
         onClose,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

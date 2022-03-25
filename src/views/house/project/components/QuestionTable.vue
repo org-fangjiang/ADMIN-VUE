@@ -37,11 +37,13 @@
           type="link"
           size="small"
           @click="deleteOneQuestion(line)"
+          v-if="line.state != '0'"
         >
           {{ t('host.action.delete') }}
         </Button>
         <Button
           :class="prefixCls"
+          v-else
           v-auth="questionConst._PERMS.UPDATE"
           type="link"
           size="small"

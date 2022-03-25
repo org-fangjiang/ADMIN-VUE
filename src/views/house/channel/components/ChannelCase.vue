@@ -64,7 +64,9 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(channelCaseConst._PERMS.DELETE)"
+                v-if="
+                  hasPermission(channelCaseConst._PERMS.DELETE) && deleteOrEnable(operation.state)
+                "
                 :key="0"
                 :data-id="operation.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -79,7 +81,9 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(channelCaseConst._PERMS.UPDATE)"
+                v-if="
+                  hasPermission(channelCaseConst._PERMS.UPDATE) && !deleteOrEnable(operation.state)
+                "
                 :key="1"
                 :data-id="operation.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -179,6 +183,7 @@
   import ChannelCaseForm from './ChannelCaseForm.vue';
   import { debounce } from 'lodash-es';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'ChannelCase',
@@ -392,6 +397,7 @@
         contactChange,
         fetching,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

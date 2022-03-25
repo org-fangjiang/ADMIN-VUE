@@ -27,7 +27,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(cityConst._PERMS.DELETE)"
+                v-if="hasPermission(cityConst._PERMS.DELETE) && deleteOrEnable(city.state)"
                 :key="0"
                 :data-id="city.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -38,7 +38,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(cityConst._PERMS.UPDATE)"
+                v-if="hasPermission(cityConst._PERMS.UPDATE) && !deleteOrEnable(city.state)"
                 :key="1"
                 :data-id="city.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -117,6 +117,7 @@
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'CityTable',
@@ -315,6 +316,7 @@
         wrapperCol: { span: 14 },
         refresh,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

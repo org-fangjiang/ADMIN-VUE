@@ -71,7 +71,9 @@
               <template #overlay>
                 <Menu mode="horizontal" @click="action">
                   <MenuItem
-                    v-if="hasPermission(activityCOnst._PERMS.DELETE_USER)"
+                    v-if="
+                      hasPermission(activityCOnst._PERMS.DELETE_USER) && deleteOrEnable(line.state)
+                    "
                     :key="0"
                     :data-id="line.id"
                     :class="`${prefixCls}-action-menu-item`"
@@ -86,7 +88,9 @@
                     </Button>
                   </MenuItem>
                   <MenuItem
-                    v-if="hasPermission(activityCOnst._PERMS.UPDATE_USER)"
+                    v-if="
+                      hasPermission(activityCOnst._PERMS.UPDATE_USER) && !deleteOrEnable(line.state)
+                    "
                     :key="1"
                     :data-id="line.id"
                     :class="`${prefixCls}-action-menu-item`"
@@ -232,7 +236,9 @@
               <template #overlay>
                 <Menu mode="horizontal" @click="allAction">
                   <MenuItem
-                    v-if="hasPermission(activityCOnst._PERMS.DELETE_ALL)"
+                    v-if="
+                      hasPermission(activityCOnst._PERMS.DELETE_ALL) && deleteOrEnable(line.state)
+                    "
                     :key="0"
                     :data-id="line.id"
                     :class="`${prefixCls}-action-menu-item`"
@@ -247,7 +253,9 @@
                     </Button>
                   </MenuItem>
                   <MenuItem
-                    v-if="hasPermission(activityCOnst._PERMS.UPDATE_ALL)"
+                    v-if="
+                      hasPermission(activityCOnst._PERMS.UPDATE_ALL) && !deleteOrEnable(line.state)
+                    "
                     :key="1"
                     :data-id="line.id"
                     :class="`${prefixCls}-action-menu-item`"
@@ -419,6 +427,7 @@
   import ActivityForm from './components/ActivityForm.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
   import PreviewActivity from './components/PreviewActivity.vue';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'ActivityTable',
@@ -822,6 +831,7 @@
         isPreview,
         clickPreview,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

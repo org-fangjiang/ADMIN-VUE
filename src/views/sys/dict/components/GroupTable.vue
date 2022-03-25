@@ -41,7 +41,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(dictConst._PERMS.DELETE)"
+                v-if="hasPermission(dictConst._PERMS.DELETE) && deleteOrEnable(group.state)"
                 :key="0"
                 :data-id="group.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -52,7 +52,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(dictConst._PERMS.UPDATE)"
+                v-if="hasPermission(dictConst._PERMS.UPDATE) && !deleteOrEnable(group.state)"
                 :key="1"
                 :data-id="group.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -129,6 +129,7 @@
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'GroupTable',
@@ -304,6 +305,7 @@
         wrapperCol: { span: 14 },
         refresh,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

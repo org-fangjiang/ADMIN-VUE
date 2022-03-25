@@ -120,7 +120,7 @@
                 :data-id="link.id"
                 :class="`${prefixCls}-action-menu-item`"
                 v-auth="hostConst._PERMS.DELETE"
-                v-if="hasPermission(hostConst._PERMS.DELETE)"
+                v-if="hasPermission(hostConst._PERMS.DELETE) && deleteOrEnable(link.state)"
               >
                 <template #icon></template>
                 <Button :class="prefixCls" v-auth="hostConst._PERMS.DELETE" type="link" size="small"
@@ -132,7 +132,7 @@
                 :data-id="link.id"
                 :class="`${prefixCls}-action-menu-item`"
                 v-auth="hostConst._PERMS.UPDATE"
-                v-if="hasPermission(hostConst._PERMS.UPDATE)"
+                v-if="hasPermission(hostConst._PERMS.UPDATE) && !deleteOrEnable(link.state)"
               >
                 <template #icon></template>
                 <Button
@@ -420,6 +420,7 @@
   import ProjectSale from './components/ProjectSale.vue';
   import { SaleProjectConst } from '/@/api/customer/crmSale/model/crmSaleModel';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'ProjectTable',
@@ -856,6 +857,7 @@
         isSale,
         saleProjectConst,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

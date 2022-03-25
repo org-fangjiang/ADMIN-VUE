@@ -37,6 +37,7 @@
           type="link"
           size="small"
           @click="deleteOneAnswer(line)"
+          v-if="deleteOrEnable(line.state)"
         >
           {{ t('host.action.delete') }}
         </Button>
@@ -46,6 +47,7 @@
           type="link"
           size="small"
           @click="reEnableOneAnswer(line)"
+          v-if="!deleteOrEnable(line.state)"
         >
           {{ t('host.action.reEnable') }}
         </Button>
@@ -82,6 +84,7 @@
   import { deleteAnswer, getAnswers, reEnableAnswer } from '/@/api/host/answer/answer';
   import AnswerForm from './AnswerForm.vue';
   import { processListByLine, success, failed } from '/@/hooks/web/useList';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'AnswerTable',
@@ -240,6 +243,7 @@
         addAnswer,
         props,
         stateHandleChange,
+        deleteOrEnable,
       };
     },
   });

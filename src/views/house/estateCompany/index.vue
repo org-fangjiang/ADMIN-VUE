@@ -40,7 +40,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(estateCompanyConst._PERMS.DELETE)"
+                v-if="hasPermission(estateCompanyConst._PERMS.DELETE) && deleteOrEnable(line.state)"
                 :key="0"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -55,7 +55,9 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(estateCompanyConst._PERMS.UPDATE)"
+                v-if="
+                  hasPermission(estateCompanyConst._PERMS.UPDATE) && !deleteOrEnable(line.state)
+                "
                 :key="1"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -148,6 +150,7 @@
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'EstateCompanyTable',
@@ -331,6 +334,7 @@
         action,
         stateHandleChange,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

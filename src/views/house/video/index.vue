@@ -59,7 +59,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(videoConst._PERMS.DELETE)"
+                v-if="hasPermission(videoConst._PERMS.DELETE) && deleteOrEnable(line.state)"
                 :key="0"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -74,7 +74,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(videoConst._PERMS.UPDATE)"
+                v-if="hasPermission(videoConst._PERMS.UPDATE) && !deleteOrEnable(line.state)"
                 :key="1"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -197,6 +197,7 @@
   import FProjectSelect from '/@/components/FProjectSelect';
   import { useUserStore } from '/@/store/modules/user';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'VideoTable',
@@ -442,6 +443,7 @@
         cityId,
         proClear,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

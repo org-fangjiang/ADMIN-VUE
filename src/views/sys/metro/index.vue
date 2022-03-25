@@ -56,7 +56,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(metroConst._PERMS.DELETE)"
+                v-if="hasPermission(metroConst._PERMS.DELETE) && deleteOrEnable(line.state)"
                 :key="0"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -71,7 +71,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(metroConst._PERMS.UPDATE)"
+                v-if="hasPermission(metroConst._PERMS.UPDATE) && !deleteOrEnable(line.state)"
                 :key="1"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -178,6 +178,7 @@
   import StationTable from './components/StationTable.vue';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'LinkTable',
@@ -386,6 +387,7 @@
         stateHandleChange,
         condition,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

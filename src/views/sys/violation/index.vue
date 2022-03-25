@@ -55,7 +55,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(violationConst._PERMS.DELETE)"
+                v-if="hasPermission(violationConst._PERMS.DELETE) && deleteOrEnable(line.state)"
                 :key="0"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -70,7 +70,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(violationConst._PERMS.UPDATE)"
+                v-if="hasPermission(violationConst._PERMS.UPDATE) && !deleteOrEnable(line.state)"
                 :key="1"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -167,6 +167,7 @@
   } from '/@/api/sys/violation/violation';
   import ViolationForm from './components/ViolationForm.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'ViolationTable',
@@ -392,6 +393,7 @@
         selected,
         stateHandleChange,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

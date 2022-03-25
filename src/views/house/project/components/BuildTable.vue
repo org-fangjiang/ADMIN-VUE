@@ -39,6 +39,7 @@
       </template>
       <template #operation="{ text: line }">
         <Button
+          v-if="deleteOrEnable(line.state)"
           :class="prefixCls"
           v-auth="buildConst._PERMS.DELETE"
           type="link"
@@ -48,6 +49,7 @@
           {{ t('host.action.delete') }}
         </Button>
         <Button
+          v-if="!deleteOrEnable(line.state)"
           :class="prefixCls"
           v-auth="buildConst._PERMS.UPDATE"
           type="link"
@@ -143,6 +145,7 @@
   import FLicense from '/@/components/Flicense';
   import { BuildLayoutBean } from '/@/api/host/build/model/BuildLayoutEntity';
   import { processListByLine, success, failed } from '/@/hooks/web/useList';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'BuildTable',
@@ -380,6 +383,7 @@
         setBuildLicense,
         isVisible,
         stateHandleChange,
+        deleteOrEnable,
       };
     },
   });

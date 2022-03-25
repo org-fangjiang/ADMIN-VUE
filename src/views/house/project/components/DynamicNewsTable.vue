@@ -40,6 +40,7 @@
       <template #operation="{ text: line }">
         <Button
           :class="prefixCls"
+          v-if="deleteOrEnable(line.state)"
           v-auth="dynamicNewsConst._PERMS.DELETE"
           type="link"
           size="small"
@@ -49,6 +50,7 @@
         </Button>
         <Button
           :class="prefixCls"
+          v-if="!deleteOrEnable(line.state)"
           v-auth="dynamicNewsConst._PERMS.UPDATE"
           type="link"
           size="small"
@@ -106,6 +108,7 @@
   } from '/@/api/host/dynamicNews/dynamicNews';
   import DynamicNewsForm from './DynamicNewsForm.vue';
   import { processListByLine, success, failed } from '/@/hooks/web/useList';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'DynamicNewsTable',
@@ -273,6 +276,7 @@
         addDynamicNew,
         props,
         stateHandleChange,
+        deleteOrEnable,
       };
     },
   });

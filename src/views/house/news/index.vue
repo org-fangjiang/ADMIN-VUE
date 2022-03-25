@@ -81,7 +81,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(newsConst._PERMS.DELETE)"
+                v-if="hasPermission(newsConst._PERMS.DELETE) && deleteOrEnable(line.state)"
                 :key="0"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -92,7 +92,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(newsConst._PERMS.UPDATE)"
+                v-if="hasPermission(newsConst._PERMS.UPDATE) && !deleteOrEnable(line.state)"
                 :key="1"
                 :data-id="line.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -192,6 +192,7 @@
   import { HOUSE_NEWS } from '/@/enums/cacheEnum';
   import { Persistent } from '/@/utils/cache/persistent';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'NewsTable',
@@ -428,6 +429,7 @@
         stateHandleChange,
         sortHandleChange,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });

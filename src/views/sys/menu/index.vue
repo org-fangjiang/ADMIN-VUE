@@ -40,12 +40,17 @@
         <Button v-auth="menuConst._PERMS.UPDATE" type="link" @click="handleUpdate(record)">{{
           t('model.perms.updateMenu')
         }}</Button>
-        <Button v-auth="menuConst._PERMS.DELETE" type="link" @click="handleDelete(record)">{{
-          t('model.perms.deleteMenu')
-        }}</Button>
-        <Button v-auth="menuConst._PERMS.UPDATE" type="link" @click="handleReEnable(record)">{{
-          t('model.perms.reEnableMenu')
-        }}</Button>
+        <Button
+          v-if="record.state != '0'"
+          v-auth="menuConst._PERMS.DELETE"
+          type="link"
+          @click="handleDelete(record)"
+        >
+          {{ t('model.perms.deleteMenu') }}
+        </Button>
+        <Button v-else v-auth="menuConst._PERMS.UPDATE" type="link" @click="handleReEnable(record)">
+          {{ t('model.perms.reEnableMenu') }}
+        </Button>
       </template>
     </Table>
     <Drawer

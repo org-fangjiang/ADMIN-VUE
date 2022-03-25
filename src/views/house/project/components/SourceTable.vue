@@ -48,6 +48,7 @@
       <template #operation="{ text: line }">
         <Button
           :class="prefixCls"
+          v-if="line.state != '0'"
           v-auth="sourceConst._PERMS.DELETE"
           type="link"
           size="small"
@@ -57,6 +58,7 @@
         </Button>
         <Button
           :class="prefixCls"
+          v-else
           v-auth="sourceConst._PERMS.UPDATE"
           type="link"
           size="small"

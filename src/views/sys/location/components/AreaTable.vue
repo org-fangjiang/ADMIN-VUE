@@ -21,7 +21,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="hasPermission(areaConst._PERMS.DELETE)"
+                v-if="hasPermission(areaConst._PERMS.DELETE) && deleteOrEnable(area.state)"
                 :key="0"
                 :data-id="area.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -32,7 +32,7 @@
                 </Button>
               </MenuItem>
               <MenuItem
-                v-if="hasPermission(areaConst._PERMS.UPDATE)"
+                v-if="hasPermission(areaConst._PERMS.UPDATE) && !deleteOrEnable(area.state)"
                 :key="1"
                 :data-id="area.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -95,6 +95,7 @@
   import { Loading } from '/@/components/Loading';
   import { processList, success, failed } from '/@/hooks/web/useList';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import { deleteOrEnable } from '/@/hooks/web/useButton';
 
   export default defineComponent({
     name: 'AreaTable',
@@ -259,6 +260,7 @@
         wrapperCol: { span: 14 },
         refresh,
         hasPermission,
+        deleteOrEnable,
       };
     },
   });
