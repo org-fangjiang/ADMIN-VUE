@@ -15,7 +15,12 @@
       {{ t('marketing.action.addSale') }}
     </Button>
     <Tabs v-model:activeKey="activeKey" type="card">
-      <TabPane v-auth="activityCOnst._PERMS.SELECT_CREATE" key="0" tab="自创建">
+      <TabPane
+        v-if="hasPermission(activityCOnst._PERMS.SELECT_CREATE)"
+        v-auth="activityCOnst._PERMS.SELECT_CREATE"
+        key="0"
+        tab="自创建"
+      >
         <Table :columns="activityColumns" :data-source="list" rowKey="id" :pagination="false">
           <template #projectEntities="{ text: projectEntities }">
             <span v-for="(item, index) in projectEntities" :key="index">
@@ -464,8 +469,14 @@
 
       //初始加载
       onMounted(async () => {
-        const result = await getList();
-        processList(result, list, pageParam);
+        if (hasPermission(activityCOnst.value._PERMS.SELECT_CREATE)) {
+          const result = await getList();
+          processList(result, list, pageParam);
+        } else {
+          const allResult = await getCityList();
+          processList(allResult, allList, pageParam);
+          activeKey.value = '1';
+        }
       });
 
       watch(
