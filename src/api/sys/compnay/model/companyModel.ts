@@ -152,6 +152,13 @@ export const CompanyColumns = [
     slots: { customRender: 'companySize' },
   },
   {
+    title: t('model.company.expirationData'),
+    key: 'expirationData',
+    dataIndex: 'expirationData',
+    ellipsis: 'true',
+    slots: { customRender: 'expirationData' },
+  },
+  {
     title: t('model.company.state'),
     key: 'state',
     dataIndex: 'state',

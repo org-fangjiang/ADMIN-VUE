@@ -18,6 +18,13 @@
       }}</Button>
     </div>
     <Table :columns="columns" :data-source="list" rowKey="id" :pagination="false">
+      <template #expirationData="{ text: expirationData }">
+        <span>
+          <Tag color="blue">
+            {{ expirationData.replace('T', ' ').replace('.000+08:00', '') }}
+          </Tag>
+        </span>
+      </template>
       <template #companySize="{ text: size }">
         <span>
           <Tag :color="companyConst.COMPANY_SIZES[size].color">
