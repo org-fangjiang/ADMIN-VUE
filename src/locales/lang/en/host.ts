@@ -7,6 +7,9 @@ export default {
   upload: 'Upload',
   projectRule: 'Rule',
   projectChannel: 'Channel',
+  isExisting: 'isExisting',
+  notExisting: 'notExisting',
+  existHouse: 'existHouse',
   TYPE: {
     HOUSE: 'HOUSE',
     FLATS: 'FLATS',

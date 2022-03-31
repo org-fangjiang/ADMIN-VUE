@@ -43,6 +43,17 @@
             suffix="天"
           />
         </FormItem>
+        <FormItem ref="existingHome" :label="t('host.existHouse')" name="existingHome">
+          <Select
+            ref="select"
+            :allowClear="true"
+            v-model:value="formState.existingHome"
+            style="width: 120px"
+            @change="existingHomeChange"
+            :options="hostConst.EXISTINGHOUSE"
+            :pagination="false"
+          />
+        </FormItem>
         <FormItem ref="type" :label="t('host.type')" name="type">
           <Select
             ref="select"
@@ -691,6 +702,11 @@
         100: '100%',
       });
 
+      // 期房还是现房
+      const existingHomeChange = (value) => {
+        formState.existingHome = value;
+      };
+
       // 人车分流
       const divideChange = (value) => {
         formState.divideCar = value;
@@ -998,6 +1014,7 @@
       };
 
       return {
+        existingHomeChange,
         t,
         formRef,
         formState,

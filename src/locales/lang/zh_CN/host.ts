@@ -7,6 +7,9 @@ export default {
   upload: '上传',
   projectRule: '规则',
   projectChannel: '渠道',
+  isExisting: '现房',
+  notExisting: '期房',
+  existHouse: '期房还是现房',
   TYPE: {
     HOUSE: '住宅',
     FLATS: '公寓',

@@ -14,6 +14,7 @@ import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 
 export interface HostModel {
+  existingHome?: string;
   unitNumber?: number;
   houseNumber?: number;
   ladderHouseRatio?: string;
@@ -112,6 +113,10 @@ export interface HostCondition {
 export const _HostConst = {
   EFFECTIVE: '1', // 有效
   INVALID: '0', // 无效
+  EXISTINGHOUSE: [
+    { value: '2', label: t('host.notExisting'), color: 'volcano' },
+    { value: '1', label: t('host.isExisting'), color: 'geekblue' },
+  ],
   STATES: [
     { value: '0', label: t('host.INVALID'), color: 'volcano' },
     { value: '1', label: t('host.EFFECTIVE'), color: 'geekblue' },
