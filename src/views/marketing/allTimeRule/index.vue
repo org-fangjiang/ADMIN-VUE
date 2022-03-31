@@ -14,6 +14,18 @@
       <template #companyId="{ text: comId }">
         <span>{{ comId.companyById?.name || comId.companyId }}</span>
       </template>
+      <template #privateToGroup="{ text: clue }">
+        <span>{{ clue.privateToGroup }}分钟</span>
+      </template>
+      <template #groupToCompany="{ text: clue }">
+        <span>{{ clue.groupToCompany }}分钟</span>
+      </template>
+      <template #companyToCity="{ text: clue }">
+        <span>{{ clue.companyToCity }}分钟</span>
+      </template>
+      <template #afterFollow="{ text: clue }">
+        <span>{{ clue.afterFollow }}分钟</span>
+      </template>
       <template #operation="{ text: link }">
         <Button type="link" @click="updateRule(link)">{{ t('host.action.update') }}</Button>
       </template>

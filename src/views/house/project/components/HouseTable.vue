@@ -477,9 +477,11 @@
           onJi();
         }
         list.forEach((item) => {
-          const float = Number(item.number?.substring(0, 2)) - 1;
-          const house = Number(item.number?.substring(2)) - 1;
-          allHouse.value[float][house] = item;
+          if (item.state != '0') {
+            const float = Number(item.number?.substring(0, 2)) - 1;
+            const house = Number(item.number?.substring(2)) - 1;
+            allHouse.value[float][house] = item;
+          }
         });
         loading.value = false;
       });
@@ -566,9 +568,11 @@
           list.push(...content);
         }
         list.forEach((item) => {
-          const float = Number(item.number?.substring(0, 2)) - 1;
-          const house = Number(item.number?.substring(2)) - 1;
-          allHouse.value[float][house] = item;
+          if (item.state != '0') {
+            const float = Number(item.number?.substring(0, 2)) - 1;
+            const house = Number(item.number?.substring(2)) - 1;
+            allHouse.value[float][house] = item;
+          }
         });
       };
 
