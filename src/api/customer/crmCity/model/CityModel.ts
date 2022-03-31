@@ -2,6 +2,13 @@ import { useI18n } from '/@/hooks/web/useI18n';
 const { t } = useI18n();
 
 export interface CityModel {
+  rooms?: string;
+  hall?: string;
+  toilet?: string;
+  existingHome?: string;
+  downPayments?: number;
+  lowArea?: number;
+  heightArea?: number;
   id?: string;
   userId?: string;
   contact?: string;

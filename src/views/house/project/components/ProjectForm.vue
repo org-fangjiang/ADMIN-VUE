@@ -44,15 +44,10 @@
           />
         </FormItem>
         <FormItem ref="existingHome" :label="t('host.existHouse')" name="existingHome">
-          <Select
-            ref="select"
-            :allowClear="true"
-            v-model:value="formState.existingHome"
-            style="width: 120px"
-            @change="existingHomeChange"
-            :options="hostConst.EXISTINGHOUSE"
-            :pagination="false"
-          />
+          <RadioGroup v-model:value="formState.existingHome">
+            <Radio value="2">期房</Radio>
+            <Radio value="1">现房</Radio>
+          </RadioGroup>
         </FormItem>
         <FormItem ref="type" :label="t('host.type')" name="type">
           <Select

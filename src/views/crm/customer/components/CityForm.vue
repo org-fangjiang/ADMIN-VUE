@@ -38,6 +38,64 @@
           :options="cityConst.STATES"
         />
       </FormItem> -->
+      <FormItem ref="rooms" :label="t('marketing.customer.rooms')" name="rooms">
+        <Input
+          :disabled="isUpdate && !updateFields.includes('rooms')"
+          v-model:value="formState.rooms"
+          autoComplete="off"
+          type="number"
+        />
+      </FormItem>
+      <FormItem ref="hall" :label="t('marketing.customer.hall')" name="hall">
+        <Input
+          :disabled="isUpdate && !updateFields.includes('hall')"
+          v-model:value="formState.hall"
+          autoComplete="off"
+          type="number"
+        />
+      </FormItem>
+      <FormItem ref="toilet" :label="t('marketing.customer.toilet')" name="toilet">
+        <Input
+          :disabled="isUpdate && !updateFields.includes('toilet')"
+          v-model:value="formState.toilet"
+          autoComplete="off"
+          type="number"
+        />
+      </FormItem>
+      <FormItem
+        ref="existingHome"
+        :label="t('marketing.customer.existingHome')"
+        name="existingHome"
+      >
+        <RadioGroup v-model:value="formState.existingHome">
+          <Radio value="1">现房</Radio>
+          <Radio value="2">期房</Radio>
+        </RadioGroup>
+      </FormItem>
+      <FormItem
+        ref="downPayments"
+        :label="t('marketing.customer.downPayments')"
+        name="downPayments"
+      >
+        <Input
+          :disabled="isUpdate && !updateFields.includes('downPayments')"
+          v-model:value="formState.downPayments"
+          autoComplete="off"
+          suffix="万元"
+          type="number"
+        />
+      </FormItem>
+      <FormItem ref="lowArea" :label="t('marketing.customer.area')" name="lowArea">
+        <Slider
+          range
+          v-model:value="areaValue"
+          :disabled="isUpdate && !updateFields.includes('lowArea')"
+          :min="0"
+          :max="300"
+          :marks="marks"
+          @change="changeLowArea"
+        />
+      </FormItem>
       <FormItem ref="liveIn" :label="t('marketing.customer.liveIn')" name="liveIn">
         <FCascader
           :disabled="isUpdate && !updateFields.includes('liveIn')"
@@ -240,6 +298,17 @@
       //验证规则
       const rules = reactive(CityConst._RULES);
       const cityConst = ref(CityConst);
+
+      // 面积区域
+      const marks = ref<Record<number, any>>({
+        0: '0㎡',
+        300: '300㎡',
+      });
+      let areaValue = ref([0, 300]);
+      const changeLowArea = (value) => {
+        formState.lowArea = value[0];
+        formState.heightArea = value[1];
+      };
 
       const formRef = ref();
       const formState: UnwrapRef<CityModel> = reactive({});
@@ -449,6 +518,9 @@
         liveIne,
         workIne,
         demands,
+        marks,
+        areaValue,
+        changeLowArea,
       };
     },
   });

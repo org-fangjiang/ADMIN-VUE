@@ -5,6 +5,19 @@
       <div class="place-self-start">{{ formState.username }}</div>
       <div class="">性别：</div>
       <div class="">{{ formState.username }}</div>
+      <div class="">卧室：</div>
+      <div class="">{{ formState.rooms }}</div>
+      <div class="">客厅：</div>
+      <div class="">{{ formState.hall }}</div>
+      <div class="">卫生间：</div>
+      <div class="">{{ formState.toilet }}</div>
+      <div class="">期房还是现房：</div>
+      <div class="">
+        <span v-if="formState.existingHome === '1'">现房</span>
+        <span v-if="formState.existingHome === '2'">期房</span>
+      </div>
+      <div class="">面积：</div>
+      <div class="">{{ formState.lowArea }}~{{ formState.heightArea }}</div>
       <div class="">意向楼盘：</div>
       <div class="">{{ projects.toString() }}</div>
       <div class="">工作地：</div>
