@@ -17,7 +17,7 @@
         <span v-if="formState.existingHome === '2'">期房</span>
       </div>
       <div class="">面积：</div>
-      <div class="">{{ formState.lowArea }}~{{ formState.heightArea }}</div>
+      <div class="">{{ formState.lowArea }}~{{ formState.heightArea }}㎡</div>
       <div class="">意向楼盘：</div>
       <div class="">{{ projects.toString() }}</div>
       <div class="">工作地：</div>
@@ -87,7 +87,7 @@
       </div>
     </div>
     <div v-if="allNote && allNote.length > 0" class="w-1/2 ml-4">
-      <div class="mb-4 grid grid-cols-2 pr-4">
+      <div class="grid grid-cols-2 pr-4 mb-4">
         <div>跟进信息:</div>
         <div class="space-x-4 text-blue-700 place-self-end"
           ><button @click="onSh" type="link">正序</button
@@ -168,6 +168,9 @@
       const { prefixCls } = useDesign('customer');
       const formRef = ref();
       const formState = reactive({
+        rooms: '',
+        hall: '',
+        toilet: '',
         id: '',
         userId: '',
         contact: '',
