@@ -39,24 +39,27 @@
         />
       </FormItem> -->
       <FormItem ref="rooms" :label="t('marketing.customer.rooms')" name="rooms">
-        <Input
+        <Select
           :disabled="isUpdate && !updateFields.includes('rooms')"
+          :allowClear="true"
           v-model:value="formState.rooms"
-          autoComplete="off"
+          :options="companyConst.ROOMS"
         />
       </FormItem>
       <FormItem ref="hall" :label="t('marketing.customer.hall')" name="hall">
-        <Input
+        <Select
           :disabled="isUpdate && !updateFields.includes('hall')"
+          :allowClear="true"
           v-model:value="formState.hall"
-          autoComplete="off"
+          :options="companyConst.HAIL"
         />
       </FormItem>
       <FormItem ref="toilet" :label="t('marketing.customer.toilet')" name="toilet">
-        <Input
+        <Select
           :disabled="isUpdate && !updateFields.includes('toilet')"
+          :allowClear="true"
           v-model:value="formState.toilet"
-          autoComplete="off"
+          :options="companyConst.TOILET"
         />
       </FormItem>
       <FormItem

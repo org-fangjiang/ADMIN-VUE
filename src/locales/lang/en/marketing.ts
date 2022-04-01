@@ -1,4 +1,17 @@
 export default {
+  rooms1: 'rooms1',
+  rooms2: 'rooms2',
+  rooms3: 'rooms3',
+  rooms4: 'rooms4',
+  rooms5: 'rooms5',
+  hall1: 'hall1',
+  hall2: 'hall2',
+  hall3: 'hall3',
+  hall4: 'hall4',
+  toilet1: 'toilet1',
+  toilet2: 'toilet2',
+  toilet3: 'toilet3',
+  toilet4: 'toilet4',
   action: {
     addCustomer: 'addCustomer',
     preview: 'preview',

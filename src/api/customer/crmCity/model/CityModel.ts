@@ -53,6 +53,25 @@ export interface CityCondition {
 }
 
 export const CityConst = {
+  ROOMS: [
+    { value: '1', label: t('marketing.rooms1'), color: 'geekblue' },
+    { value: '2', label: t('marketing.rooms2'), color: 'volcano' },
+    { value: '3', label: t('marketing.rooms3'), color: 'red' },
+    { value: '4', label: t('marketing.rooms4'), color: 'yellow' },
+    { value: '5', label: t('marketing.rooms5'), color: 'green' },
+  ],
+  HAIL: [
+    { value: '1', label: t('marketing.hall1'), color: 'geekblue' },
+    { value: '2', label: t('marketing.hall2'), color: 'volcano' },
+    { value: '3', label: t('marketing.hall3'), color: 'red' },
+    { value: '4', label: t('marketing.hall4'), color: 'yellow' },
+  ],
+  TOILET: [
+    { value: '1', label: t('marketing.toilet1'), color: 'geekblue' },
+    { value: '2', label: t('marketing.toilet2'), color: 'volcano' },
+    { value: '3', label: t('marketing.toilet3'), color: 'red' },
+    { value: '4', label: t('marketing.toilet4'), color: 'yellow' },
+  ],
   STATES: [
     { value: '0', label: t('marketing.customer.INVALID'), color: 'volcano' },
     { value: '1', label: t('marketing.customer.EFFECTIVE'), color: 'geekblue' },

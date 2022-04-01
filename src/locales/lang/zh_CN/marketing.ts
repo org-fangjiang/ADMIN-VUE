@@ -1,4 +1,17 @@
 export default {
+  rooms1: '一室',
+  rooms2: '两室',
+  rooms3: '三室',
+  rooms4: '四室',
+  rooms5: '五室及以上',
+  hall1: '一厅',
+  hall2: '两厅',
+  hall3: '三厅',
+  hall4: '四厅及以上',
+  toilet1: '一卫',
+  toilet2: '两卫',
+  toilet3: '三卫',
+  toilet4: '四卫及以上',
   action: {
     addCustomer: '转客户',
     preview: '预览',
