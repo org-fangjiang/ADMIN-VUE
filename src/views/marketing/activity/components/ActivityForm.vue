@@ -261,7 +261,7 @@
       //不可选的日期
       const disabledDate = (current: any) => {
         // Can not select days before today and today
-        return current && current < moment().endOf('day');
+        return current && current < moment().add('day', -1).endOf('day');
       };
 
       //过期时间
