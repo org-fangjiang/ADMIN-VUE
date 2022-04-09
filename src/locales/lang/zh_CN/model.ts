@@ -223,7 +223,7 @@ export default {
   },
   link: {
     id: '编号',
-    page: '页码',
+    page: '页面',
     title: '标题',
     address: '地址',
     state: '状态',
