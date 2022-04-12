@@ -143,6 +143,7 @@ export const OProjectConst = {
     ADD: 'oproject:add',
     DELETE: 'oproject:delete',
     UPDATE: 'oproject:update',
+    CHANGE: 'oproject:check:state',
   },
   _UPDATE_FIELDS: [
     'name',

@@ -23,6 +23,15 @@ const ohouse: AppRouteModule = {
         roles: ['/ohouse/oproject'],
       },
     },
+    {
+      path: 'approval',
+      name: 'Approval',
+      component: () => import('/@/views/ohouse/approval/index.vue'),
+      meta: {
+        title: t('routes.ohouse.approval'),
+        roles: ['/ohouse/approval'],
+      },
+    },
   ],
 };
 
