@@ -184,6 +184,10 @@ export class VAxios {
     };
   }
 
+  patch<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+    return this.request({ ...config, method: 'PATCH' }, options);
+  }
+
   get<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
     return this.request({ ...config, method: 'GET' }, options);
   }
