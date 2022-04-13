@@ -1,0 +1,298 @@
+<template>
+  <div :class="prefixCls">
+    <Form
+      ref="formRef"
+      :model="formState"
+      :rules="sourceConst._RULES"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+    >
+      <FormItem ref="title" :label="t('host.source.title')" name="title">
+        <Input
+          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('title')"
+          v-model:value="formState.title"
+          autoComplete="off"
+        />
+      </FormItem>
+      <FormItem ref="keyword" :label="t('host.source.keyword')" name="keyword">
+        <Select
+          v-model:value="tags"
+          mode="tags"
+          style="width: 100%"
+          :token-separators="[',']"
+          :options="options"
+          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('keyword')"
+          @change="tagsChange"
+        />
+      </FormItem>
+      <FormItem ref="description" :label="t('host.source.description')" name="description">
+        <Input
+          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('description')"
+          v-model:value="formState.description"
+          autoComplete="off"
+        />
+      </FormItem>
+      <FormItem ref="sort" :label="t('host.source.sort')" name="sort">
+        <Select
+          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('sort')"
+          ref="select"
+          :allowClear="true"
+          v-model:value="formState.sort"
+          style="width: 120px"
+          @change="sortChange"
+          :options="sourceConst.SORT"
+          :pagination="false"
+        />
+      </FormItem>
+      <FormItem ref="address" :label="t('host.source.address')" name="address">
+        <Upload
+          :customRequest="customRequest"
+          :disabled="isUpdate && !sourceConst._UPDATE_FIELDS.includes('address')"
+          @change="changeFile"
+          v-model:file-list="fileList"
+          :headers="requestHeader"
+        >
+          <Button> Upload </Button>
+        </Upload>
+        <img v-if="imgUrl" :src="imgUrl" alt="资源图" />
+      </FormItem>
+      <FormItem :wrapper-col="{ span: 14, offset: 4 }">
+        <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
+        <Button style="margin-left: 10px" @click="resetForm">{{
+          t('component.cropper.btn_reset')
+        }}</Button>
+      </FormItem>
+    </Form>
+    <Loading :loading="loading" :absolute="false" :tip="tip" />
+  </div>
+</template>
+
+<script lang="ts">
+  import { useI18n } from '/@/hooks/web/useI18n';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { Button, Form, FormItem, Input, message, Select, Upload } from 'ant-design-vue';
+  import { Loading } from '/@/components/Loading';
+  import { success, failed } from '/@/hooks/web/useList';
+  import { getAccessToken } from '/@/utils/auth';
+  import {
+    ProjectResourceConst,
+    ProjectResourceModel,
+  } from '/@/api/ohouse/projectResource/model/projectResourceModel';
+  import { upload } from '/@/api/host/source/source';
+  import {
+    addOResource,
+    GetResourceId,
+    updateOResource,
+  } from '/@/api/ohouse/projectResource/projectRecource';
+
+  interface Option {
+    value: string;
+    label: string;
+  }
+
+  interface FileItem {
+    uid: string;
+    name?: string;
+    status?: string;
+    response?: string;
+    url?: string;
+  }
+
+  export default defineComponent({
+    name: 'SourceForm',
+    components: {
+      Button,
+      Form,
+      FormItem,
+      Input,
+      Loading,
+      Select,
+      Upload,
+    },
+    props: {
+      id: {
+        type: String,
+        require: true,
+      },
+      provinceId: {
+        type: String,
+        require: true,
+      },
+      cityId: {
+        type: String,
+        require: true,
+      },
+      areaId: {
+        type: String,
+        require: true,
+      },
+      projectId: {
+        type: String,
+        require: true,
+      },
+    },
+    setup(props) {
+      const { t } = useI18n();
+      const { prefixCls } = useDesign('project');
+      const sourceConst = ref(ProjectResourceConst);
+      let loading = ref<boolean>(true);
+      let tip = ref<string>('加载中...');
+
+      let isUpdate = ref<boolean>(false);
+      if (props.id && props.id !== '') {
+        isUpdate.value = true;
+      }
+
+      //上传图片请求头
+      const requestHeader = ref({ Authorization: '' });
+      requestHeader.value.Authorization = getAccessToken() as string;
+
+      const customRequest = (options) => {
+        const formData = new FormData();
+        formData.append('file', options.file as any);
+        formData.append('type', formState.sort || '');
+        formData.append('areaId', props.areaId || '');
+        formData.append('cityId', props.cityId || '');
+        formData.append('provinceId', props.provinceId || '');
+        formData.append('projectId', props.projectId || '');
+        upload(formData)
+          .then((res) => {
+            options.onSuccess(res, options.file);
+            formState.address = res.data.data;
+            imgUrl.value = res.data.data;
+            formState.title = options.file.name;
+            formState.projectId = props.projectId;
+          })
+          .catch(() => {
+            options.onError();
+            message.error('上传失败，请删除重试');
+          });
+      };
+
+      //关键词
+      const options = ref<Option[]>([]);
+      let tags = ref<string[]>([]);
+      const tagsChange = async (value) => {
+        let selectTags = '';
+        if (value && value.length > 0) {
+          value.forEach((item: string) => {
+            selectTags = selectTags + ',' + item;
+          });
+        }
+        const x = selectTags.indexOf(',');
+        selectTags = selectTags.substring(x + 1);
+        formState.keyword = selectTags;
+      };
+      //上传资源
+      const fileList = ref<FileItem[]>([]);
+      let imgUrl = ref('');
+      const changeFile = async (info) => {
+        if (info.file.status === 'done') {
+          fileList.value.splice(0);
+          formState.title = info.file.name;
+          formState.projectId = props.projectId;
+          formState.address = info.file.response.data;
+          imgUrl.value = info.file.response.data;
+        }
+      };
+      //类型选择
+      const sortChange = async (value) => {
+        formState.sort = value;
+      };
+
+      // fromRef 获取form
+      const formRef = ref();
+      const formState: UnwrapRef<ProjectResourceModel> = reactive({});
+      //提交
+      const onSubmit = () => {
+        formRef.value
+          .validate()
+          .then(async () => {
+            if (props.id) {
+              loading.value = true;
+              try {
+                await updateOResource(formState);
+                success(t('host.action.update'), t('host.action.success'));
+              } catch (error: any) {
+                failed(error?.response?.data?.message, t('host.action.fail'));
+              } finally {
+                loading.value = false;
+              }
+            } else {
+              loading.value = true;
+              try {
+                await addOResource(formState);
+                success(t('host.action.add'), t('host.action.success'));
+              } catch (error: any) {
+                failed(error?.response?.data?.message, t('host.action.fail'));
+              } finally {
+                loading.value = false;
+              }
+            }
+          })
+          .catch((error: any) => {
+            console.log('error', error);
+          });
+      };
+      //重置
+      const resetForm = async () => {
+        loading.value = true;
+        try {
+          if (props.id) {
+            const { content } = await GetResourceId(props.id);
+            Object.assign(formState, content);
+          } else {
+            formRef.value.resetFields();
+          }
+        } catch (error) {
+        } finally {
+          loading.value = false;
+        }
+      };
+
+      //初始加载
+      onMounted(async () => {
+        loading.value = true;
+        if (props.id) {
+          const { content } = await GetResourceId(props.id);
+          Object.assign(formState, content);
+          //关键词赋值
+          if (formState.keyword) {
+            const detags = formState.keyword.split(',');
+            detags.forEach((tag) => {
+              options.value.push({ value: tag, label: tag });
+              tags.value.push(tag);
+            });
+          }
+        }
+        loading.value = false;
+      });
+
+      return {
+        t,
+        prefixCls,
+        sourceConst,
+        loading,
+        tip,
+        sortChange,
+        formRef,
+        formState,
+        onSubmit,
+        resetForm,
+        labelCol: { span: 6 },
+        wrapperCol: { span: 14 },
+        isUpdate,
+        changeFile,
+        props,
+        tagsChange,
+        tags,
+        options,
+        fileList,
+        imgUrl,
+        requestHeader,
+        customRequest,
+      };
+    },
+  });
+</script>

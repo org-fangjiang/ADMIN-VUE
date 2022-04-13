@@ -6,6 +6,23 @@ export default {
   SALE_OVER: '售罄',
   SALE_OFF: '待售',
   SALE_ON: '在售',
+  SORT: {
+    SORT_1: '户型',
+    SORT_2: '卧室',
+    SORT_3: '客厅',
+    SORT_4: '卫生间',
+    SORT_5: '实拍',
+    SORT_6: '视频',
+  },
+  projectResource: {
+    projectId: '项目',
+    title: '标题',
+    keyword: '关键字',
+    description: '描述',
+    address: '图片',
+    sort: '类型',
+    state: '状态',
+  },
   project: {
     name: '名称',
     type: '类型',

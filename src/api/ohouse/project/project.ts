@@ -10,6 +10,7 @@ enum oHouseApi {
   List = 'ohouse-server/oproject/list',
   ById = 'ohouse-server/oproject',
   Add = 'ohouse-server/oproject',
+  ReEnable = 'ohouse-server/oproject/reEnable',
   Exist = 'ohouse-server/oproject/exist',
 }
 
@@ -108,7 +109,7 @@ export function reEnableOHouse(id: string, mode: ErrorMessageMode = 'modal') {
   const data = reqParam.getInstance();
   return defHttp.post<BaseResult<OProjectModel>>(
     {
-      url: oHouseApi.Add,
+      url: oHouseApi.ReEnable,
       data,
     },
     {

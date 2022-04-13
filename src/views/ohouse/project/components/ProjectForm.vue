@@ -169,12 +169,12 @@
         <FormItem ref="sandImg" :label="t('host.sandImg')" name="brandId">
           <Button @click="setSandImg" :disabled="props.isSee">设置沙盘图</Button>
           <br />
-          <img :src="sandAddress" alt="" width="120px" />
+          <Image :src="sandAddress" alt="" width="120px" />
         </FormItem>
         <FormItem ref="firstImg" :label="t('host.firstImg')" name="firstImg">
           <Button @click="setFirstImg" :disabled="props.isSee">设置首图</Button>
           <br />
-          <img :src="firstAddress" alt="" width="120px" />
+          <Image :src="firstAddress" alt="" width="120px" />
         </FormItem>
       </div>
       <br />
@@ -492,7 +492,7 @@
     </Modal>
     <Modal
       v-model:visible="isSet"
-      title=""
+      title="设置"
       width="800px"
       :footer="null"
       :bodyStyle="{ overflow: 'auto', 'margin-top': '16px' }"
@@ -501,6 +501,12 @@
       <DeveloperTable v-if="state === 1" @setDeveloper="setDeveloper" :checkedKeys="selectedRow" />
       <BrandTable v-if="state === 2" @setBrandName="setBrandName" :checkedKeys="selectedRow" />
       <EstateTable v-if="state === 3" @setEstateName="setEstateName" :checkedKeys="selectedRow" />
+      <SandTable
+        v-if="state === 4 || 5"
+        @setAddress="setAddress"
+        :checkedKeys="selectedRow"
+        :projectId="props.id"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -523,6 +529,7 @@
     Modal,
     Textarea,
     Divider,
+    Image,
   } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { useUserStore } from '/@/store/modules/user';
@@ -539,6 +546,7 @@
   import { failed, success } from '/@/hooks/web/useList';
   import { OProjectConst, OProjectModel } from '/@/api/ohouse/project/model/projectModel';
   import { getOHouse, addOHouse, updateOHouse, exist } from '/@/api/ohouse/project/project';
+  import SandTable from './SandTable.vue';
 
   export default defineComponent({
     name: 'ProjectForm',
@@ -563,6 +571,8 @@
       BrandTable,
       EstateTable,
       Divider,
+      SandTable,
+      Image,
     },
     props: {
       id: {
@@ -710,10 +720,28 @@
       };
       // 沙盘图
       let sandAddress = ref();
-      const setSandImg = () => {};
+      const setSandImg = () => {
+        isSet.value = true;
+        state.value = 4;
+      };
+      const setAddress = async (value) => {
+        if (state.value === 4) {
+          formState.sandImg = value.name;
+          sandAddress.value = value.name;
+        } else if (state.value === 5) {
+          formState.firstImg = value.name;
+          firstAddress.value = value.name;
+        }
+        isSet.value = false;
+        state.value = 0;
+        selectedRow.value = '';
+      };
       // 首图
       let firstAddress = ref();
-      const setFirstImg = () => {};
+      const setFirstImg = () => {
+        isSet.value = true;
+        state.value = 5;
+      };
 
       //提交
       const onSubmit = () => {
@@ -801,6 +829,12 @@
             if (formState.estateCompany) {
               const { content } = await getEstateCompany(formState.estateCompany);
               estateName.value = content.name || '';
+            }
+            if (formState.sandImg) {
+              sandAddress.value = formState.sandImg;
+            }
+            if (formState.firstImg) {
+              firstAddress.value = formState.firstImg;
             }
           } catch (error) {
           } finally {
@@ -895,6 +929,7 @@
         setFirstImg,
         sandAddress,
         firstAddress,
+        setAddress,
       };
     },
   });

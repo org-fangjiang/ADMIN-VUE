@@ -6,6 +6,23 @@ export default {
   SALE_OVER: 'SALE_OVER',
   SALE_OFF: 'SALE_OFF',
   SALE_ON: 'SALE_ON',
+  SORT: {
+    SORT_1: 'SORT_1',
+    SORT_2: 'SORT_2',
+    SORT_3: 'SORT_3',
+    SORT_4: 'SORT_4',
+    SORT_5: 'SORT_5',
+    SORT_6: 'SORT_6',
+  },
+  projectResource: {
+    projectId: 'projectId',
+    title: 'title',
+    keyword: 'keyword',
+    description: 'description',
+    address: 'address',
+    sort: 'sort',
+    state: 'state',
+  },
   project: {
     name: 'name',
     type: 'type',

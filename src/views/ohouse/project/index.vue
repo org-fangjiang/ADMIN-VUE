@@ -177,7 +177,7 @@
           <template #overlay>
             <Menu mode="horizontal" @click="action">
               <MenuItem
-                v-if="link.state != '0'"
+                v-if="link.state != '0' && hasPermission(oHouseConst._PERMS.DELETE)"
                 :key="0"
                 :data-id="link.id"
                 :class="`${prefixCls}-action-menu-item`"
@@ -187,10 +187,21 @@
                   >{{ t('host.action.delete') }}
                 </Button>
               </MenuItem>
-              <MenuItem v-else :key="1" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+              <MenuItem
+                v-if="link.state === '0' && hasPermission(oHouseConst._PERMS.DELETE)"
+                :key="1"
+                :data-id="link.id"
+                :class="`${prefixCls}-action-menu-item`"
+              >
                 <template #icon></template>
                 <Button :class="prefixCls" type="link" size="small"
                   >{{ t('host.action.reEnable') }}
+                </Button>
+              </MenuItem>
+              <MenuItem :key="2" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button :class="prefixCls" type="link" size="small"
+                  >{{ t('host.action.setResource') }}
                 </Button>
               </MenuItem>
             </Menu>
@@ -219,6 +230,13 @@
       :footer="null"
     >
       <ProjectForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+      <ResourceTable
+        v-if="drawerParam.state === '1'"
+        :id="drawerParam.id"
+        :provinceId="drawerParam.provinceId"
+        :cityId="drawerParam.cityId"
+        :areaId="drawerParam.areaId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -233,7 +251,12 @@
     OProjectConst,
     OProjectModel,
   } from '/@/api/ohouse/project/model/projectModel';
-  import { deleteOHouse, projectList, reEnableOHouse } from '/@/api/ohouse/project/project';
+  import {
+    deleteOHouse,
+    getOHouse,
+    projectList,
+    reEnableOHouse,
+  } from '/@/api/ohouse/project/project';
   import { BasePageResult, PageSizeList } from '/@/api/model/baseModel';
   import { failed, processList, success } from '/@/hooks/web/useList';
   import { Loading } from '/@/components/Loading';
@@ -256,6 +279,8 @@
   import { getDevelopers } from '/@/api/host/developer/developer';
   import { getBrands } from '/@/api/host/brand/brand';
   import ProjectForm from './components/ProjectForm.vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
+  import ResourceTable from './components/ResourceTable.vue';
   interface Option {
     value: String;
     label: String;
@@ -278,6 +303,7 @@
       Dropdown,
       Menu,
       MenuItem,
+      ResourceTable,
     },
     setup() {
       const { t } = useI18n();
@@ -286,6 +312,8 @@
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
       const pageSizeList = ref<string[]>(PageSizeList);
+
+      const { hasPermission } = usePermission();
 
       const columns = reactive(oHouseColumns);
       const oHouseConst = reactive(OProjectConst);
@@ -470,6 +498,9 @@
         state: '',
         title: '',
         visible: false,
+        provinceId: '',
+        cityId: '',
+        areaId: '',
       });
       // 添加
       const addOld = () => {
@@ -489,6 +520,10 @@
       const action = async (key) => {
         const code = key.key;
         const id = key?.item['data-id'] || undefined;
+        const { content } = await getOHouse(id);
+        drawerParam.provinceId = content.provinceId || '';
+        drawerParam.cityId = content.cityId || '';
+        drawerParam.areaId = content.areaId || '';
         switch (code) {
           case 0:
             try {
@@ -496,6 +531,8 @@
               loading.value = true;
               await deleteOHouse(id);
               success('成功', '删除成功');
+              const result = await getList();
+              processList(result, list, pageParam);
             } catch (error) {
               failed('失败', '删除失败');
             } finally {
@@ -508,11 +545,19 @@
               loading.value = true;
               await reEnableOHouse(id);
               success('成功', '恢复成功');
+              const result = await getList();
+              processList(result, list, pageParam);
             } catch (error) {
               failed('失败', '恢复失败');
             } finally {
               loading.value = false;
             }
+            break;
+          case 2:
+            drawerParam.visible = true;
+            drawerParam.title = t('host.action.setResource');
+            drawerParam.state = '1';
+            drawerParam.id = id;
             break;
         }
       };
@@ -522,6 +567,9 @@
         drawerParam.id = '';
         drawerParam.title = '';
         drawerParam.state = '';
+        drawerParam.provinceId = '';
+        drawerParam.cityId = '';
+        drawerParam.areaId = '';
         const result = await getList();
         processList(result, list, pageParam);
       };
@@ -580,6 +628,7 @@
         onClose,
         clickUpdate,
         action,
+        hasPermission,
       };
     },
   });
