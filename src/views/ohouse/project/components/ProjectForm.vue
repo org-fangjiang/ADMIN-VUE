@@ -762,19 +762,20 @@
               loading.value = true;
               try {
                 const result = await exist(cityId.value, formState.name || '');
-                if (result.code === 200) {
-                  console.log('existResult:', result);
+                if (result) {
+                  failed('添加失败', '项目已存在');
+                  loading.value = false;
+                  return;
                 }
               } catch (error) {
                 loading.value = false;
-                failed('添加失败', '项目已存在');
                 return;
               }
               try {
                 await addOHouse(formState);
                 success(t('host.action.add'), t('host.action.success'));
               } catch (error: any) {
-                // failed(error?.response?.data?.message, t('host.action.fail'));
+                failed(error?.response?.data?.message, t('host.action.fail'));
               } finally {
                 loading.value = false;
               }

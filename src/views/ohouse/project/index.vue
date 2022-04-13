@@ -204,6 +204,12 @@
                   >{{ t('host.action.setResource') }}
                 </Button>
               </MenuItem>
+              <MenuItem :key="3" :data-id="link.id" :class="`${prefixCls}-action-menu-item`">
+                <template #icon></template>
+                <Button :class="prefixCls" type="link" size="small"
+                  >{{ t('host.action.setBuild') }}
+                </Button>
+              </MenuItem>
             </Menu>
           </template>
         </Dropdown>
@@ -237,6 +243,7 @@
         :cityId="drawerParam.cityId"
         :areaId="drawerParam.areaId"
       />
+      <OBuildTable v-if="drawerParam.state === '2'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -281,6 +288,7 @@
   import ProjectForm from './components/ProjectForm.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
   import ResourceTable from './components/ResourceTable.vue';
+  import OBuildTable from '../obuild/index.vue';
   interface Option {
     value: String;
     label: String;
@@ -304,6 +312,7 @@
       Menu,
       MenuItem,
       ResourceTable,
+      OBuildTable,
     },
     setup() {
       const { t } = useI18n();
@@ -557,6 +566,12 @@
             drawerParam.visible = true;
             drawerParam.title = t('host.action.setResource');
             drawerParam.state = '1';
+            drawerParam.id = id;
+            break;
+          case 3:
+            drawerParam.visible = true;
+            drawerParam.title = t('host.action.setBuild');
+            drawerParam.state = '2';
             drawerParam.id = id;
             break;
         }
