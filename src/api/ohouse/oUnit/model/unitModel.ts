@@ -52,13 +52,6 @@ export const UnitColumns = [
     slots: '',
   },
   {
-    title: t('ohouse.unit.buildId'),
-    key: 'buildId',
-    dataIndex: 'buildId',
-    ellipsis: 'true',
-    slots: '',
-  },
-  {
     title: t('ohouse.unit.floor'),
     key: 'floor',
     dataIndex: 'floor',

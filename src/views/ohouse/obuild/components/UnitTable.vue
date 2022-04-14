@@ -60,6 +60,9 @@
         >
           {{ t('host.action.update') }}
         </Button>
+        <Button :class="prefixCls" type="link" size="small" @click="manageHouse(line)">
+          {{ t('host.action.manageHouse') }}
+        </Button>
       </template>
     </Table>
     <Modal
@@ -73,7 +76,18 @@
       wrapClassName="full-modal"
       centered
     >
-      <UnitForm :buildId="props.id" :projectId="props.projectId" :id="drawerParam.id" />
+      <UnitForm
+        v-if="drawerParam.state === '0'"
+        :buildId="props.id"
+        :projectId="props.projectId"
+        :id="drawerParam.id"
+      />
+      <HouseTable
+        v-if="drawerParam.state === '1'"
+        :buildId="props.id"
+        :projectId="props.projectId"
+        :unitId="drawerParam.id"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -96,6 +110,7 @@
   } from '/@/api/ohouse/oUnit/model/unitModel';
   import { deleteUnit, getUnitList, reEnableUnit } from '/@/api/ohouse/oUnit/unit';
   import UnitForm from './UnitForm.vue';
+  import HouseTable from './HouseTable.vue';
 
   export default defineComponent({
     name: 'OBuildTable',
@@ -107,6 +122,7 @@
       Loading,
       Select,
       UnitForm,
+      HouseTable,
     },
     props: {
       id: {
@@ -256,7 +272,7 @@
         drawerParam.title = t('host.action.update');
       };
       // 设置房号
-      const updateUnit = (line) => {
+      const manageHouse = (line) => {
         drawerParam.visible = true;
         drawerParam.state = '1';
         drawerParam.id = line.id;
@@ -283,7 +299,7 @@
         props,
         stateHandleChange,
         deleteOrEnable,
-        updateUnit,
+        manageHouse,
       };
     },
   });
