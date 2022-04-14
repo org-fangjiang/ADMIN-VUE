@@ -29,7 +29,7 @@ export function changeState(id: string, state: string, mode: ErrorMessageMode = 
   const data = reqParam.getInstance();
   return defHttp.patch<BaseResult<UnitModel>>(
     {
-      url: oUnitApi.ReEnableUnit,
+      url: oUnitApi.UnitById,
       data,
     },
     {

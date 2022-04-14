@@ -55,6 +55,24 @@
         >
           {{ t('host.action.update') }}
         </Button>
+        <Button
+          :class="prefixCls"
+          v-if="line.state === '2' && hasPermission(houseConst._PERMS.CHANGE_STATE)"
+          type="link"
+          size="small"
+          @click="clickPass(line)"
+        >
+          审核通过
+        </Button>
+        <Button
+          :class="prefixCls"
+          v-if="line.state === '2' && hasPermission(houseConst._PERMS.CHANGE_STATE)"
+          type="link"
+          size="small"
+          @click="clickFail(line)"
+        >
+          审核不通过
+        </Button>
       </template>
     </Table>
     <Modal
@@ -93,9 +111,15 @@
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { failed, processListByLine, success } from '/@/hooks/web/useList';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { deleteOHouse, getOHouseList, reEnableOHouse } from '/@/api/ohouse/house/house';
+  import {
+    changeState,
+    deleteOHouse,
+    getOHouseList,
+    reEnableOHouse,
+  } from '/@/api/ohouse/house/house';
   import HouseForm from './HouseForm.vue';
   import { deleteOrEnable } from '/@/hooks/web/useButton';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'HouseTable',
@@ -128,6 +152,9 @@
 
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+
+      // 权限
+      const { hasPermission } = usePermission();
 
       const houseConst = ref(HouseConst);
       const condition = reactive({
@@ -222,6 +249,34 @@
           loading.value = false;
         }
       };
+      // 审核不通过
+      const clickFail = async (line) => {
+        try {
+          loading.value = true;
+          await changeState('3', line.id, line.title, line.keyword, line.description);
+          success('审核不通过', t('host.action.success'));
+          const result = await getList();
+          processListByLine(result, list, total);
+        } catch (error: any) {
+          failed(error?.response?.data?.message, t('host.action.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
+      // 审核通过
+      const clickPass = async (line) => {
+        try {
+          loading.value = true;
+          await changeState('1', line.id, line.title, line.keyword, line.description);
+          success('审核通过', t('host.action.success'));
+          const result = await getList();
+          processListByLine(result, list, total);
+        } catch (error: any) {
+          failed(error?.response?.data?.message, t('host.action.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
 
       //添加，打开modal
       const addHouse = async () => {
@@ -285,6 +340,9 @@
         list,
         props,
         deleteOrEnable,
+        hasPermission,
+        clickPass,
+        clickFail,
       };
     },
   });

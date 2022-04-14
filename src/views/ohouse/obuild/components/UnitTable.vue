@@ -63,6 +63,24 @@
         <Button :class="prefixCls" type="link" size="small" @click="manageHouse(line)">
           {{ t('host.action.manageHouse') }}
         </Button>
+        <Button
+          :class="prefixCls"
+          v-if="line.state === '2' && hasPermission(unitConst._PERMS.CHANGE)"
+          type="link"
+          size="small"
+          @click="clickPass(line)"
+        >
+          审核通过
+        </Button>
+        <Button
+          :class="prefixCls"
+          v-if="line.state === '2' && hasPermission(unitConst._PERMS.CHANGE)"
+          type="link"
+          size="small"
+          @click="clickFail(line)"
+        >
+          审核不通过
+        </Button>
       </template>
     </Table>
     <Modal
@@ -108,9 +126,10 @@
     UnitModel,
     UnitColumns as ColumnsUnit,
   } from '/@/api/ohouse/oUnit/model/unitModel';
-  import { deleteUnit, getUnitList, reEnableUnit } from '/@/api/ohouse/oUnit/unit';
+  import { changeState, deleteUnit, getUnitList, reEnableUnit } from '/@/api/ohouse/oUnit/unit';
   import UnitForm from './UnitForm.vue';
   import HouseTable from './HouseTable.vue';
+  import { usePermission } from '/@/hooks/web/usePermission';
 
   export default defineComponent({
     name: 'OBuildTable',
@@ -144,6 +163,8 @@
 
       //参数权限
       const unitConst = ref(UnitConst);
+      // 权限
+      const { hasPermission } = usePermission();
 
       // 添加分页
       const pageParam: PageParam = reactive({
@@ -257,6 +278,35 @@
         }
       };
 
+      // 审核不通过
+      const clickFail = async (line) => {
+        try {
+          loading.value = true;
+          await changeState(line.id, '3');
+          success('审核不通过', t('host.action.success'));
+          const result = await getList();
+          processListByLine(result, list, total);
+        } catch (error: any) {
+          failed(error?.response?.data?.message, t('host.action.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
+      // 审核通过
+      const clickPass = async (line) => {
+        try {
+          loading.value = true;
+          await changeState(line.id, '1');
+          success('审核通过', t('host.action.success'));
+          const result = await getList();
+          processListByLine(result, list, total);
+        } catch (error: any) {
+          failed(error?.response?.data?.message, t('host.action.fail'));
+        } finally {
+          loading.value = false;
+        }
+      };
+
       //添加，打开modal
       const addBuild = async () => {
         drawerParam.visible = true;
@@ -300,6 +350,9 @@
         stateHandleChange,
         deleteOrEnable,
         manageHouse,
+        hasPermission,
+        clickPass,
+        clickFail,
       };
     },
   });

@@ -43,7 +43,7 @@
 </template>
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { defineComponent, onMounted, reactive, ref } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, watch } from 'vue';
   import { Loading } from '/@/components/Loading';
   import { Form, FormItem, Input, Button, InputNumber } from 'ant-design-vue';
   import { failed, success } from '/@/hooks/web/useList';
@@ -100,6 +100,18 @@
         loading.value = false;
       });
 
+      watch(
+        () => formState.number,
+        async () => {
+          const result = await unitExist(props.buildId, formState.number || '');
+          if (result) {
+            failed('失败', '当前单元已存在列表中');
+            loading.value = false;
+            return;
+          }
+        }
+      );
+
       //提交
       const onSubmit = () => {
         formRef.value
@@ -118,12 +130,6 @@
             } else {
               loading.value = true;
               try {
-                const result = await unitExist(props.buildId, formState.number || '');
-                if (result) {
-                  failed('失败', '当前单元已存在列表中');
-                  loading.value = false;
-                  return;
-                }
                 await addUnit(formState);
                 success(t('host.action.add'), t('host.action.success'));
               } catch (error: any) {

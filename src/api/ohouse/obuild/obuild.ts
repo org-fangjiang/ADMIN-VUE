@@ -11,9 +11,9 @@ enum oBuildApi {
   Exist = 'ohouse-server/obuild/exist',
 }
 
-export function changeState(projectId: string, number: string, mode: ErrorMessageMode = 'modal') {
+export function changeState(id: string, state: string, mode: ErrorMessageMode = 'modal') {
   const reqParam = new RequestParam();
-  reqParam.setData({ projectId: projectId, number: number });
+  reqParam.setData({ id: id, state: state });
   const data = reqParam.getInstance();
   return defHttp.patch(
     {

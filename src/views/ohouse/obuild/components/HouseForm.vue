@@ -315,7 +315,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef, watch } from 'vue';
   import {
     Button,
     Form,
@@ -405,6 +405,22 @@
         unitId: props.unitId,
       });
 
+      watch(
+        () => formState.number,
+        async () => {
+          const result = await isExist(
+            formState.projectId || '',
+            formState.buildId || '',
+            formState.unitId || '',
+            formState.number || ''
+          );
+          if (result) {
+            failed('添加失败', '当前房号已存在');
+            return;
+          }
+        }
+      );
+
       //提交
       const onSubmit = () => {
         formRef.value
@@ -422,21 +438,6 @@
               }
             } else {
               loading.value = true;
-              try {
-                const result = await isExist(
-                  formState.projectId || '',
-                  formState.buildId || '',
-                  formState.unitId || '',
-                  formState.number || ''
-                );
-                if (result) {
-                  failed('添加失败', '当前房号已存在');
-                  loading.value = false;
-                  return;
-                }
-              } catch (error) {
-                loading.value = false;
-              }
               try {
                 await addOHouse(formState);
                 success(t('host.action.add'), t('host.action.success'));

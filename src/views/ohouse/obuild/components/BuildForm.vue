@@ -96,7 +96,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
+  import { defineComponent, onMounted, reactive, ref, UnwrapRef, watch } from 'vue';
   import {
     Button,
     Form,
@@ -177,6 +177,16 @@
         formState.remark = value;
       };
 
+      watch(
+        () => formState.number,
+        async () => {
+          const result = await existBuild(props.projectId, formState.number || '');
+          if (result) {
+            failed('添加失败', '当前楼栋已存在');
+          }
+        }
+      );
+
       //提交
       const onSubmit = () => {
         formRef.value
@@ -194,16 +204,6 @@
               }
             } else {
               loading.value = true;
-              try {
-                const result = await existBuild(props.projectId, formState.number || '');
-                if (result) {
-                  failed('添加失败', '当前楼栋已存在');
-                  loading.value = false;
-                  return;
-                }
-              } catch (error) {
-                loading.value = false;
-              }
               try {
                 await addBuild(formState);
                 success(t('host.action.add'), t('host.action.success'));

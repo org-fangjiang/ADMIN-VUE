@@ -70,6 +70,7 @@ export function isExist(
 }
 
 export function changeState(
+  state: string,
   id: string,
   title: string,
   keyword: string,
@@ -77,7 +78,13 @@ export function changeState(
   mode: ErrorMessageMode = 'modal'
 ) {
   const reqParam = new RequestParam();
-  reqParam.setData({ id: id, title: title, keyword: keyword, description: description });
+  reqParam.setData({
+    state: state,
+    id: id,
+    title: title,
+    keyword: keyword,
+    description: description,
+  });
   const data = reqParam.getInstance();
   return defHttp.patch(
     {
