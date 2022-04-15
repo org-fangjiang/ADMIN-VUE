@@ -292,7 +292,7 @@ export const HouseColumns = [
     key: 'price',
     dataIndex: 'price',
     ellipsis: 'true',
-    slots: '',
+    slots: { customRender: 'price' },
   },
   {
     title: t('ohouse.house.state'),

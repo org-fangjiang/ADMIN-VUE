@@ -11,6 +11,22 @@ enum oHouseApi {
   IsExist = 'ohouse-server/ohouse/exist',
   Transfer = 'ohouse-server/ohouse/transfer',
   TransferAll = 'ohouse-server/ohouse/transferAll',
+  UpdatePrice = 'ohouse-server/ohousep',
+}
+
+export function updateHousePrice(houseId: string, price: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ houseId: houseId, price: price });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: oHouseApi.UpdatePrice,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function transferAll(saleId: string, mode: ErrorMessageMode = 'modal') {

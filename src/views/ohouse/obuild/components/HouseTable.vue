@@ -209,6 +209,9 @@
           </Tag>
         </span>
       </template>
+      <template #price="{ record }">
+        <span @dblclick="clickPrice(record)">{{ record.price }}</span>
+      </template>
       <template #userByCreate="{ text: userByCreate }">
         <span>
           {{ userByCreate.nickName }}
@@ -292,6 +295,7 @@
         :cityId="props.cityId"
         :areaId="props.areaId"
       />
+      <PriceForm v-if="drawerParam.state === '1'" :priceInfo="drawerParam.priceInfo" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -328,6 +332,7 @@
   import HouseForm from './HouseForm.vue';
   import { deleteOrEnable } from '/@/hooks/web/useButton';
   import { usePermission } from '/@/hooks/web/usePermission';
+  import PriceForm from './PriceForm.vue';
 
   export default defineComponent({
     name: 'HouseTable',
@@ -342,6 +347,7 @@
       InputSearch,
       InputGroup,
       Input,
+      PriceForm,
     },
     props: {
       projectId: {
@@ -448,7 +454,17 @@
         title: '',
         visible: false,
         selected: [''],
+        priceInfo: { id: '', price: '' },
       });
+
+      // 更新价格
+      const clickPrice = async (line) => {
+        drawerParam.title = '更新价格';
+        drawerParam.state = '1';
+        drawerParam.visible = true;
+        drawerParam.priceInfo.id = line.id;
+        drawerParam.priceInfo.price = line.price;
+      };
 
       //删除
       const deleteOneHouse = async (line) => {
@@ -530,6 +546,7 @@
         drawerParam.id = '';
         drawerParam.title = '';
         drawerParam.selected = [''];
+        drawerParam.priceInfo = { id: '', price: '' };
         const result = await getList();
         processListByLine(result, list, total);
       };
@@ -575,6 +592,7 @@
         clickFail,
         condition,
         refreshList,
+        clickPrice,
       };
     },
   });
