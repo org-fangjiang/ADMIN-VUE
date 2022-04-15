@@ -103,11 +103,13 @@
       watch(
         () => formState.number,
         async () => {
-          const result = await unitExist(props.buildId, formState.number || '');
-          if (result) {
-            failed('失败', '当前单元已存在列表中');
-            loading.value = false;
-            return;
+          if (formState.number) {
+            const result = await unitExist(props.buildId, formState.number || '');
+            if (result) {
+              failed('失败', '当前单元已存在列表中');
+              loading.value = false;
+              return;
+            }
           }
         }
       );

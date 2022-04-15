@@ -292,15 +292,6 @@
           autoComplete="off"
         />
       </FormItem>
-      <FormItem ref="provinceId" :label="t('ohouse.house.provinceId')" name="provinceId">
-        <FProvince :provinceId="formState.provinceId" @change="changeProvince" />
-      </FormItem>
-      <FormItem ref="cityId" :label="t('ohouse.house.cityId')" name="cityId">
-        <FCity :cityId="formState.cityId" :provinceId="formState.provinceId" @change="changeCity" />
-      </FormItem>
-      <FormItem ref="areaId" :label="t('ohouse.house.areaId')" name="areaId">
-        <FArea :areaId="formState.areaId" :cityId="formState.cityId" @change="changeArea" />
-      </FormItem>
       <FormItem :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
@@ -332,7 +323,6 @@
   import { HouseConst, HouseModel } from '/@/api/ohouse/house/model/houseModel';
   import { isExist, addOHouse, updateOHouse, getOHouse } from '/@/api/ohouse/house/house';
   import { FGroup } from '/@/components/FGroup';
-  import { FProvince, FCity, FArea } from '/@/components/FLocation';
 
   interface Option {
     value: string;
@@ -350,9 +340,6 @@
       Loading,
       Select,
       Textarea,
-      FProvince,
-      FCity,
-      FArea,
       FGroup,
       Radio,
       RadioGroup,
@@ -371,6 +358,18 @@
         required: true,
       },
       unitId: {
+        type: String,
+        required: true,
+      },
+      provinceId: {
+        type: String,
+        required: true,
+      },
+      cityId: {
+        type: String,
+        required: true,
+      },
+      areaId: {
         type: String,
         required: true,
       },
@@ -403,20 +402,25 @@
         projectId: props.projectId,
         buildId: props.buildId,
         unitId: props.unitId,
+        provinceId: props.provinceId,
+        cityId: props.cityId,
+        areaId: props.areaId,
       });
 
       watch(
         () => formState.number,
         async () => {
-          const result = await isExist(
-            formState.projectId || '',
-            formState.buildId || '',
-            formState.unitId || '',
-            formState.number || ''
-          );
-          if (result) {
-            failed('添加失败', '当前房号已存在');
-            return;
+          if (formState.number) {
+            const result = await isExist(
+              formState.projectId || '',
+              formState.buildId || '',
+              formState.unitId || '',
+              formState.number || ''
+            );
+            if (result) {
+              failed('添加失败', '当前房号已存在');
+              return;
+            }
           }
         }
       );
@@ -426,6 +430,8 @@
         formRef.value
           .validate()
           .then(async () => {
+            formState;
+            debugger;
             if (props.id) {
               loading.value = true;
               try {

@@ -10,10 +10,10 @@ const ohouse: MenuModule = {
         path: 'oproject',
         name: t('routes.ohouse.adminProject'),
       },
-      {
-        path: 'approval',
-        name: t('routes.ohouse.approval'),
-      },
+      // {
+      //   path: 'approval',
+      //   name: t('routes.ohouse.approval'),
+      // },
     ],
   },
 };

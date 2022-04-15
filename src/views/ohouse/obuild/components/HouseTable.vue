@@ -92,6 +92,9 @@
         :projectId="props.projectId"
         :buildId="props.buildId"
         :unitId="props.unitId"
+        :provinceId="props.provinceId"
+        :cityId="props.cityId"
+        :areaId="props.areaId"
       />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
@@ -141,6 +144,18 @@
         required: true,
       },
       unitId: {
+        type: String,
+        required: true,
+      },
+      provinceId: {
+        type: String,
+        required: true,
+      },
+      cityId: {
+        type: String,
+        required: true,
+      },
+      areaId: {
         type: String,
         required: true,
       },

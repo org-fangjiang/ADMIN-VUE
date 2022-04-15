@@ -95,7 +95,14 @@
       centered
     >
       <BuildForm v-if="drawerParam.state === '0'" :id="drawerParam.id" :projectId="props.id" />
-      <UnitTable v-if="drawerParam.state === '1'" :id="drawerParam.id" :projectId="props.id" />
+      <UnitTable
+        v-if="drawerParam.state === '1'"
+        :id="drawerParam.id"
+        :projectId="props.id"
+        :provinceId="props.provinceId"
+        :cityId="props.cityId"
+        :areaId="props.areaId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -141,7 +148,19 @@
     props: {
       id: {
         type: String,
-        require: true,
+        required: true,
+      },
+      provinceId: {
+        type: String,
+        required: true,
+      },
+      cityId: {
+        type: String,
+        required: true,
+      },
+      areaId: {
+        type: String,
+        required: true,
       },
     },
     setup(props) {
@@ -236,6 +255,7 @@
 
       //初始加载
       onMounted(async () => {
+        console.log('props:', props);
         const result = await getList();
         processListByLine(result, list, total);
       });

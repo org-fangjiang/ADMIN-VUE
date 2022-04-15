@@ -180,9 +180,11 @@
       watch(
         () => formState.number,
         async () => {
-          const result = await existBuild(props.projectId, formState.number || '');
-          if (result) {
-            failed('添加失败', '当前楼栋已存在');
+          if (formState.number) {
+            const result = await existBuild(props.projectId, formState.number || '');
+            if (result) {
+              failed('添加失败', '当前楼栋已存在');
+            }
           }
         }
       );

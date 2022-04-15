@@ -243,7 +243,13 @@
         :cityId="drawerParam.cityId"
         :areaId="drawerParam.areaId"
       />
-      <OBuildTable v-if="drawerParam.state === '2'" :id="drawerParam.id" />
+      <OBuildTable
+        v-if="drawerParam.state === '2'"
+        :id="drawerParam.id"
+        :provinceId="drawerParam.provinceId"
+        :cityId="drawerParam.cityId"
+        :areaId="drawerParam.areaId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
