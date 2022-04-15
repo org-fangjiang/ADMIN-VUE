@@ -4,6 +4,7 @@
     <!-- 状态筛选 -->
     <Select
       :class="`${prefixCls}-sel`"
+      placeholder="状态"
       ref="select"
       :allowClear="true"
       v-model:value="condition.state"
@@ -11,6 +12,18 @@
       @change="stateHandleChange"
       :options="buildConst.STATE"
       :pagination="false"
+    />
+    <InputSearch
+      v-model:value="condition.number"
+      placeholder="楼栋号"
+      style="width: 200px"
+      @search="onSearch"
+    />
+    <InputSearch
+      v-model:value="condition.floors"
+      placeholder="层高"
+      style="width: 200px"
+      @search="onFloorSearch"
     />
     <Button v-auth="buildConst._PERMS.ADD" @click="addBuild" :class="`${prefixCls}-sel`">{{
       t('host.action.add')
@@ -114,7 +127,7 @@
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { Table, Tag, Button, Modal, Select } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Select, InputSearch } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import BuildForm from './components/BuildForm.vue';
   import { processListByLine, success, failed } from '/@/hooks/web/useList';
@@ -144,6 +157,7 @@
       BuildForm,
       Select,
       UnitTable,
+      InputSearch,
     },
     props: {
       id: {
@@ -207,6 +221,20 @@
       //根据状态筛选
       const stateHandleChange = async (value) => {
         condition.state = value;
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+      // 楼栋号
+      const onSearch = async (value) => {
+        condition.number = value;
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+      // 层高
+      const onFloorSearch = async (value) => {
+        condition.floors = value;
         pageParam.pageNum = 1;
         const result = await getList();
         processListByLine(result, list, total);
@@ -365,6 +393,8 @@
         hasPermission,
         clickPass,
         clickFail,
+        onSearch,
+        onFloorSearch,
       };
     },
   });

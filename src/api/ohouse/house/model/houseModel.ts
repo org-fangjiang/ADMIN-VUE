@@ -302,6 +302,13 @@ export const HouseColumns = [
     slots: { customRender: 'state' },
   },
   {
+    title: t('ohouse.house.userByCreate'),
+    key: 'userByCreate',
+    dataIndex: 'userByCreate',
+    ellipsis: 'true',
+    slots: { customRender: 'userByCreate' },
+  },
+  {
     title: t('host.operation'),
     key: 'operation',
     width: '30%',

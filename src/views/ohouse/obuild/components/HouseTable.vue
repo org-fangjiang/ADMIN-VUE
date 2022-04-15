@@ -1,8 +1,199 @@
 <template>
   <div>
-    <Button v-auth="houseConst._PERMS.ADD" @click="addHouse" :class="`${prefixCls}-sel`">{{
-      t('host.action.add')
-    }}</Button>
+    <Button v-auth="houseConst._PERMS.ADD" @click="addHouse">{{ t('host.action.add') }}</Button>
+    <!-- 房号 -->
+    <InputSearch
+      v-model:value="condition.number"
+      placeholder="房号"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <!-- title -->
+    <InputSearch
+      v-model:value="condition.title"
+      placeholder="标题"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <!-- 层高 -->
+    <InputSearch
+      v-model:value="condition.floor"
+      placeholder="层高"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <!-- floorType -->
+    <Select
+      ref="select"
+      placeholder="层高类型"
+      :allowClear="true"
+      v-model:value="condition.floorType"
+      style="width: 120px"
+      @change="refreshList"
+      :options="houseConst.FLOORS"
+      :pagination="false"
+    />
+    <!-- identifier -->
+    <InputSearch
+      v-model:value="condition.identifier"
+      placeholder="编号"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <InputSearch
+      v-model:value="condition.rooms"
+      placeholder="几室"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <InputSearch
+      v-model:value="condition.hall"
+      placeholder="几厅"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <InputSearch
+      v-model:value="condition.toilet"
+      placeholder="几卫"
+      style="width: 200px"
+      @search="refreshList"
+    />
+    <Select
+      ref="select"
+      placeholder="朝向"
+      :allowClear="true"
+      v-model:value="condition.orientation"
+      style="width: 120px"
+      @change="refreshList"
+      :options="houseConst.ORIENTATION"
+      :pagination="false"
+    />
+    <Select
+      ref="select"
+      placeholder="装修程度"
+      :allowClear="true"
+      v-model:value="condition.renovation"
+      style="width: 120px"
+      @change="refreshList"
+      :options="houseConst.RENOVATION_"
+      :pagination="false"
+    />
+    <Select
+      ref="select"
+      placeholder="类型"
+      :allowClear="true"
+      v-model:value="condition.type"
+      style="width: 120px"
+      @change="refreshList"
+      :options="houseConst.TYPES"
+      :pagination="false"
+    />
+    <Select
+      ref="select"
+      placeholder="是否唯一"
+      :allowClear="true"
+      v-model:value="condition.isOnly"
+      style="width: 120px"
+      @change="refreshList"
+      :options="houseConst.ONLY"
+      :pagination="false"
+    />
+    <Select
+      ref="select"
+      placeholder="年限"
+      :allowClear="true"
+      v-model:value="condition.fullYears"
+      style="width: 120px"
+      @change="refreshList"
+      :options="houseConst.FULL_YEARS"
+      :pagination="false"
+    />
+    <div class="flex flex-row flex-wrap">
+      <InputGroup compact class="classGroup">
+        <Button>价格区间(万元)</Button>
+        <InputSearch
+          v-model:value="condition.lowPrice"
+          style="width: 120px; text-align: center"
+          placeholder="最低价"
+          @search="refreshList"
+        />
+        <Input
+          value=""
+          style="width: 30px; border-left: 0; pointer-events: none; background-color: #fff"
+          placeholder="~"
+          disabled
+        />
+        <InputSearch
+          v-model:value="condition.heightPrice"
+          style="width: 120px; text-align: center; border-left: 0"
+          placeholder="最高价"
+          @search="refreshList"
+        />
+      </InputGroup>
+      <InputGroup compact class="classGroup">
+        <Button>总价区间(万元)</Button>
+        <InputSearch
+          v-model:value="condition.lowTotalPrice"
+          style="width: 120px; text-align: center"
+          placeholder="最低价"
+          @search="refreshList"
+        />
+        <Input
+          value=""
+          style="width: 30px; border-left: 0; pointer-events: none; background-color: #fff"
+          placeholder="~"
+          disabled
+        />
+        <InputSearch
+          v-model:value="condition.heightTotalPrice"
+          style="width: 120px; text-align: center; border-left: 0"
+          placeholder="最高价"
+          @search="refreshList"
+        />
+      </InputGroup>
+      <InputGroup compact class="classGroup">
+        <Button>屋内面积(平方米)</Button>
+        <InputSearch
+          v-model:value="condition.lowArea"
+          style="width: 120px; text-align: center"
+          placeholder="最小面积"
+          @search="refreshList"
+        />
+        <Input
+          value=""
+          style="width: 30px; border-left: 0; pointer-events: none; background-color: #fff"
+          placeholder="~"
+          disabled
+        />
+        <InputSearch
+          v-model:value="condition.heightArea"
+          style="width: 120px; text-align: center; border-left: 0"
+          placeholder="最大面积"
+          @search="refreshList"
+        />
+      </InputGroup>
+      <InputGroup compact class="classGroup">
+        <Button>建筑面积(平方米)</Button>
+        <InputSearch
+          v-model:value="condition.lowBuildArea"
+          style="width: 120px; text-align: center"
+          placeholder="最小面积"
+          @search="refreshList"
+        />
+        <Input
+          value=""
+          style="width: 30px; border-left: 0; pointer-events: none; background-color: #fff"
+          placeholder="~"
+          disabled
+        />
+        <InputSearch
+          v-model:value="condition.heightBuildArea"
+          style="width: 120px; text-align: center; border-left: 0"
+          placeholder="最大面积"
+          @search="refreshList"
+        />
+      </InputGroup>
+    </div>
     <Table
       :columns="houseColumns"
       :data-source="list"
@@ -16,6 +207,11 @@
           <Tag :color="houseConst.STATE[state].color">
             {{ houseConst.STATE[state].label }}
           </Tag>
+        </span>
+      </template>
+      <template #userByCreate="{ text: userByCreate }">
+        <span>
+          {{ userByCreate.nickName }}
         </span>
       </template>
       <template #type="{ text: type }">
@@ -102,7 +298,16 @@
 </template>
 <script lang="ts">
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
-  import { Table, Tag, Button, Modal } from 'ant-design-vue';
+  import {
+    Table,
+    Tag,
+    Button,
+    Modal,
+    Select,
+    InputSearch,
+    InputGroup,
+    Input,
+  } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -133,6 +338,10 @@
       Modal,
       Loading,
       HouseForm,
+      Select,
+      InputSearch,
+      InputGroup,
+      Input,
     },
     props: {
       projectId: {
@@ -177,7 +386,7 @@
         title: '',
         number: '',
         floor: '',
-        floorType: '',
+        floorType: undefined,
         lowPrice: '',
         heightPrice: '',
         lowTotalPrice: '',
@@ -189,11 +398,11 @@
         rooms: undefined,
         hall: undefined,
         toilet: undefined,
-        orientation: '',
-        renovation: '',
-        type: '',
-        isOnly: '',
-        fullYears: '',
+        orientation: undefined,
+        renovation: undefined,
+        type: undefined,
+        isOnly: undefined,
+        fullYears: undefined,
         projectId: props.projectId,
         buildId: props.buildId,
         unitId: props.unitId,
@@ -219,6 +428,12 @@
           loading.value = false;
         }
         return result;
+      };
+
+      const refreshList = async () => {
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
       };
 
       onMounted(async () => {
@@ -358,7 +573,14 @@
         hasPermission,
         clickPass,
         clickFail,
+        condition,
+        refreshList,
       };
     },
   });
 </script>
+<style>
+  .classGroup {
+    @apply w-[500px] flex-shrink-0;
+  }
+</style>

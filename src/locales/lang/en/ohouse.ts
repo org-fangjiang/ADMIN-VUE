@@ -15,6 +15,7 @@ export default {
     SORT_6: 'VIDEO',
   },
   house: {
+    userByCreate: 'userByCreate',
     identifier: 'identifier',
     title: 'title',
     number: 'number',

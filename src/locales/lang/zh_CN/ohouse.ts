@@ -15,6 +15,7 @@ export default {
     SORT_6: '视频',
   },
   house: {
+    userByCreate: '创建人',
     identifier: '二手房编号',
     title: '标题',
     number: '房号',

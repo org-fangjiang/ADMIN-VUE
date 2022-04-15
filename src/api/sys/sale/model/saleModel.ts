@@ -48,14 +48,6 @@ export const Columns = [
     slots: '',
   },
   {
-    title: t('model.user.extNumber'),
-    key: 'extNumber',
-    width: '20%',
-    dataIndex: 'extNumber',
-    ellipsis: 'true',
-    slots: '',
-  },
-  {
     title: t('model.user.state'),
     key: 'state',
     width: '10%',

@@ -14,6 +14,7 @@ export interface UnitCondition {
   id?: string;
   oBuildId?: string;
   number?: string;
+  floor?: string;
   everyRooms?: number;
   state?: string;
 }

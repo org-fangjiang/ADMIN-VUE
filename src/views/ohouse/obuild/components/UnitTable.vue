@@ -1,10 +1,13 @@
 // 楼栋信息管理页面
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
+    <Button v-auth="unitConst._PERMS.ADD" @click="addBuild" :class="`${prefixCls}-sel`">{{
+      t('host.action.add')
+    }}</Button>
     <!-- 状态筛选 -->
     <Select
-      :class="`${prefixCls}-sel`"
       ref="select"
+      placeholder="状态"
       :allowClear="true"
       v-model:value="condition.state"
       style="width: 120px"
@@ -12,9 +15,27 @@
       :options="unitConst.STATE"
       :pagination="false"
     />
-    <Button v-auth="unitConst._PERMS.ADD" @click="addBuild" :class="`${prefixCls}-sel`">{{
-      t('host.action.add')
-    }}</Button>
+    <!-- 单元号 -->
+    <InputSearch
+      v-model:value="condition.number"
+      placeholder="单元号"
+      style="width: 200px"
+      @search="onSearch"
+    />
+    <!-- onFloorSearch -->
+    <InputSearch
+      v-model:value="condition.floor"
+      placeholder="层高"
+      style="width: 200px"
+      @search="onFloorSearch"
+    />
+    <!-- onRoomSearch -->
+    <InputSearch
+      v-model:value="condition.everyRooms"
+      placeholder="每层户数"
+      style="width: 200px"
+      @search="onRoomSearch"
+    />
     <Table
       :columns="ColumnsUnit"
       :data-source="list"
@@ -120,7 +141,7 @@
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
-  import { Table, Tag, Button, Modal, Select } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Select, InputSearch } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { processListByLine, success, failed } from '/@/hooks/web/useList';
   import { deleteOrEnable } from '/@/hooks/web/useButton';
@@ -145,6 +166,7 @@
       Select,
       UnitForm,
       HouseTable,
+      InputSearch,
     },
     props: {
       id: {
@@ -215,6 +237,27 @@
         const result = await getList();
         processListByLine(result, list, total);
       };
+      // 单元号
+      const onSearch = async (value) => {
+        condition.number = value;
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+      // 多少户
+      const onRoomSearch = async (value) => {
+        condition.everyRooms = value;
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
+      // 层高
+      const onFloorSearch = async (value) => {
+        condition.floor = value;
+        pageParam.pageNum = 1;
+        const result = await getList();
+        processListByLine(result, list, total);
+      };
 
       //关闭抽屉
       const onClose = async () => {
@@ -233,7 +276,8 @@
         projectId: props.id || '',
         id: '',
         number: '',
-        floors: '',
+        floor: '',
+        everyRooms: undefined,
       });
       // 列表结果
       const build: UnitModel[] = [];
@@ -368,6 +412,9 @@
         hasPermission,
         clickPass,
         clickFail,
+        onSearch,
+        onFloorSearch,
+        onRoomSearch,
       };
     },
   });
