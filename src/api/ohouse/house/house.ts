@@ -12,6 +12,22 @@ enum oHouseApi {
   Transfer = 'ohouse-server/ohouse/transfer',
   TransferAll = 'ohouse-server/ohouse/transferAll',
   UpdatePrice = 'ohouse-server/ohousep',
+  GetInfo = 'ohouse-server/ohouse/getInfo',
+}
+
+export function getInfo(houseId: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ houseId: houseId });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: oHouseApi.GetInfo,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function updateHousePrice(houseId: string, price: string, mode: ErrorMessageMode = 'modal') {
@@ -63,7 +79,7 @@ export function isExist(
   projectId: string,
   buildId: string,
   unitId: string,
-  number: string,
+  number: number,
   mode: ErrorMessageMode = 'modal'
 ) {
   return defHttp.get(

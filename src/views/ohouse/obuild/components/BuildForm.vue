@@ -180,7 +180,7 @@
       watch(
         () => formState.number,
         async () => {
-          if (formState.number) {
+          if (formState.number && !isUpdate.value) {
             const result = await existBuild(props.projectId, formState.number || '');
             if (result) {
               failed('添加失败', '当前楼栋已存在');

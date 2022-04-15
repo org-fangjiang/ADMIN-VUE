@@ -6,15 +6,15 @@ export interface HouseModel {
   id?: string;
   identifier?: string;
   title?: string;
-  number?: string;
-  floor?: string;
+  number?: number;
+  floor?: number;
   floorType?: string;
-  price?: string;
+  price?: number;
   labels?: string;
   totalPrice?: number;
   downPayments?: number;
-  area?: string;
-  buildArea?: string;
+  area?: number;
+  buildArea?: number;
   rooms?: number;
   hall?: number;
   toilet?: number;
@@ -195,14 +195,20 @@ export const HouseConst = {
     identifier: [{ required: true, message: t('ohouse.house.identifier'), trigger: 'blur' }],
     title: [{ required: true, message: t('ohouse.house.title'), trigger: 'blur' }],
     number: [{ required: true, message: t('ohouse.house.number'), trigger: 'blur' }],
-    floor: [{ required: true, message: t('ohouse.house.floor'), trigger: 'blur' }],
+    floor: [{ required: true, type: 'number', message: t('ohouse.house.floor'), trigger: 'blur' }],
     floorType: [{ required: true, message: t('ohouse.house.floorType'), trigger: 'blur' }],
-    price: [{ required: true, message: t('ohouse.house.price'), trigger: 'blur' }],
+    price: [{ required: true, type: 'number', message: t('ohouse.house.price'), trigger: 'blur' }],
     labels: [{ required: true, message: t('ohouse.house.labels'), trigger: 'blur' }],
-    totalPrice: [{ required: true, message: t('ohouse.house.totalPrice'), trigger: 'blur' }],
-    downPayments: [{ required: true, message: t('ohouse.house.downPayments'), trigger: 'blur' }],
-    area: [{ required: true, message: t('ohouse.house.area'), trigger: 'blur' }],
-    buildArea: [{ required: true, message: t('ohouse.house.buildArea'), trigger: 'blur' }],
+    totalPrice: [
+      { required: true, type: 'number', message: t('ohouse.house.totalPrice'), trigger: 'blur' },
+    ],
+    downPayments: [
+      { required: true, type: 'number', message: t('ohouse.house.downPayments'), trigger: 'blur' },
+    ],
+    area: [{ required: true, type: 'number', message: t('ohouse.house.area'), trigger: 'blur' }],
+    buildArea: [
+      { required: true, type: 'number', message: t('ohouse.house.buildArea'), trigger: 'blur' },
+    ],
     rooms: [{ required: true, type: 'number', message: t('ohouse.house.rooms'), trigger: 'blur' }],
     hall: [{ required: true, type: 'number', message: t('ohouse.house.hall'), trigger: 'blur' }],
     toilet: [

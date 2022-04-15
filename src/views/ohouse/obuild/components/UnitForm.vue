@@ -103,7 +103,7 @@
       watch(
         () => formState.number,
         async () => {
-          if (formState.number) {
+          if (formState.number && !isUpdate.value) {
             const result = await unitExist(props.buildId, formState.number || '');
             if (result) {
               failed('失败', '当前单元已存在列表中');

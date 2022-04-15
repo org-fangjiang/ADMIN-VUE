@@ -30,11 +30,11 @@
         />
       </FormItem>
       <FormItem ref="floor" :label="t('ohouse.house.floor')" name="floor">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('floor')"
           v-model:value="formState.floor"
           autoComplete="off"
-        />
+        />&nbsp;&nbsp;&nbsp;层
       </FormItem>
       <FormItem ref="floorType" :label="t('ohouse.house.floorType')" name="floorType">
         <Select
@@ -49,47 +49,47 @@
         />
       </FormItem>
       <FormItem ref="price" :label="t('ohouse.house.price')" name="price">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('price')"
           v-model:value="formState.price"
           autoComplete="off"
-          suffix="万元"
-        />
+          type="number"
+        />&nbsp;&nbsp;&nbsp;万元
       </FormItem>
       <FormItem ref="labels" :label="t('ohouse.house.labels')" name="labels">
         <FGroup @change="changeLabels" :selectedLabel="selectLabel" />
       </FormItem>
       <FormItem ref="totalPrice" :label="t('ohouse.house.totalPrice')" name="totalPrice">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('totalPrice')"
           v-model:value="formState.totalPrice"
           autoComplete="off"
           suffix="万元"
-        />
+        />&nbsp;&nbsp;&nbsp;万元
       </FormItem>
       <FormItem ref="downPayments" :label="t('ohouse.house.downPayments')" name="downPayments">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('downPayments')"
           v-model:value="formState.downPayments"
           autoComplete="off"
           suffix="万元"
-        />
+        />&nbsp;&nbsp;&nbsp;万元
       </FormItem>
       <FormItem ref="area" :label="t('ohouse.house.area')" name="area">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('area')"
           v-model:value="formState.area"
           autoComplete="off"
           suffix="㎡"
-        />
+        />&nbsp;&nbsp;&nbsp;㎡
       </FormItem>
       <FormItem ref="buildArea" :label="t('ohouse.house.buildArea')" name="buildArea">
-        <Input
+        <InputNumber
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('buildArea')"
           v-model:value="formState.buildArea"
           autoComplete="off"
           suffix="㎡"
-        />
+        />&nbsp;&nbsp;&nbsp;㎡
       </FormItem>
       <FormItem ref="rooms" :label="t('ohouse.house.rooms')" name="rooms">
         <InputNumber
@@ -197,21 +197,21 @@
         />
       </FormItem>
       <FormItem ref="ownerName" :label="t('ohouse.house.ownerName')" name="ownerName">
-        <Input
+        <InputPassword
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('ownerName')"
           v-model:value="formState.ownerName"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="ownerMobile" :label="t('ohouse.house.ownerMobile')" name="ownerMobile">
-        <Input
+        <InputPassword
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('ownerMobile')"
           v-model:value="formState.ownerMobile"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="otherMobile" :label="t('ohouse.house.otherMobile')" name="otherMobile">
-        <Input
+        <InputPassword
           :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('otherMobile')"
           v-model:value="formState.otherMobile"
           autoComplete="off"
@@ -317,12 +317,14 @@
     InputNumber,
     Radio,
     RadioGroup,
+    InputPassword,
   } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { success, failed } from '/@/hooks/web/useList';
   import { HouseConst, HouseModel } from '/@/api/ohouse/house/model/houseModel';
-  import { isExist, addOHouse, updateOHouse, getOHouse } from '/@/api/ohouse/house/house';
+  import { isExist, addOHouse, updateOHouse, getOHouse, getInfo } from '/@/api/ohouse/house/house';
   import { FGroup } from '/@/components/FGroup';
+  import { useUserStore } from '/@/store/modules/user';
 
   interface Option {
     value: string;
@@ -343,6 +345,7 @@
       FGroup,
       Radio,
       RadioGroup,
+      InputPassword,
     },
     props: {
       id: {
@@ -410,16 +413,18 @@
       watch(
         () => formState.number,
         async () => {
-          if (formState.number) {
-            const result = await isExist(
-              formState.projectId || '',
-              formState.buildId || '',
-              formState.unitId || '',
-              formState.number || ''
-            );
-            if (result) {
-              failed('添加失败', '当前房号已存在');
-              return;
+          if (!props.id) {
+            if (formState.number) {
+              const result = await isExist(
+                formState.projectId || '',
+                formState.buildId || '',
+                formState.unitId || '',
+                formState.number
+              );
+              if (result) {
+                failed('添加失败', '当前房号已存在');
+                return;
+              }
             }
           }
         }
@@ -430,8 +435,6 @@
         formRef.value
           .validate()
           .then(async () => {
-            formState;
-            debugger;
             if (props.id) {
               loading.value = true;
               try {
@@ -475,6 +478,10 @@
         }
       };
 
+      //获取当前用户信息
+      const userStore = useUserStore();
+      const userInfo = userStore.getUserInfo;
+
       //初始加载
       let selectLabel = ref<String[]>([]);
       onMounted(async () => {
@@ -495,6 +502,14 @@
             if (formState.labels.length > 0) {
               selectLabel.value = formState.labels.split(',');
             }
+          }
+          if (content.userByCreate.id === userInfo.id) {
+            const { content } = await getInfo(props.id);
+            formState.number = content.number;
+            formState.floor = content.floor;
+            formState.ownerName = content.ownerName;
+            formState.ownerMobile = content.ownerMobile;
+            formState.otherMobile = content.otherMobile;
           }
         }
         loading.value = false;
