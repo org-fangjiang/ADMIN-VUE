@@ -1,6 +1,7 @@
 <template>
   <div>
     <Button v-auth="houseConst._PERMS.ADD" @click="addHouse">{{ t('host.action.add') }}</Button>
+    <Button @click="clickAllTransfer"> 全部转移 </Button>
     <!-- 房号 -->
     <InputSearch
       v-model:value="condition.number"
@@ -272,6 +273,9 @@
         >
           审核不通过
         </Button>
+        <Button :class="prefixCls" type="link" size="small" @click="clickTransfer(line)">
+          转移
+        </Button>
       </template>
     </Table>
     <Modal
@@ -296,6 +300,18 @@
         :areaId="props.areaId"
       />
       <PriceForm v-if="drawerParam.state === '1'" :priceInfo="drawerParam.priceInfo" />
+    </Modal>
+    <Modal
+      :bodyStyle="{ overflow: 'auto', margin: '16px' }"
+      :visible="drawerParam.smModal"
+      :title="drawerParam.title"
+      @cancel="onClose"
+      :footer="null"
+      :destroyOnClose="true"
+      centered
+    >
+      <PriceForm v-if="drawerParam.state === '1'" :priceInfo="drawerParam.priceInfo" />
+      <TransferForm v-if="drawerParam.state === '2'" :id="drawerParam.id" />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -333,6 +349,7 @@
   import { deleteOrEnable } from '/@/hooks/web/useButton';
   import { usePermission } from '/@/hooks/web/usePermission';
   import PriceForm from './PriceForm.vue';
+  import TransferForm from './TransferForm.vue';
 
   export default defineComponent({
     name: 'HouseTable',
@@ -348,6 +365,7 @@
       InputGroup,
       Input,
       PriceForm,
+      TransferForm,
     },
     props: {
       projectId: {
@@ -447,6 +465,20 @@
         processListByLine(result, list, total);
       });
 
+      // 全部转移
+      const clickAllTransfer = async () => {
+        drawerParam.smModal = true;
+        drawerParam.title = '全部转移';
+        drawerParam.state = '2';
+      };
+      // 单个转移
+      const clickTransfer = async (line) => {
+        drawerParam.smModal = true;
+        drawerParam.title = '转移';
+        drawerParam.state = '2';
+        drawerParam.id = line.id;
+      };
+
       // 抽屉参数
       const drawerParam = reactive({
         id: '',
@@ -455,13 +487,14 @@
         visible: false,
         selected: [''],
         priceInfo: { id: '', price: '' },
+        smModal: false,
       });
 
       // 更新价格
       const clickPrice = async (line) => {
         drawerParam.title = '更新价格';
         drawerParam.state = '1';
-        drawerParam.visible = true;
+        drawerParam.smModal = true;
         drawerParam.priceInfo.id = line.id;
         drawerParam.priceInfo.price = line.price;
       };
@@ -546,6 +579,7 @@
         drawerParam.id = '';
         drawerParam.title = '';
         drawerParam.selected = [''];
+        drawerParam.smModal = false;
         drawerParam.priceInfo = { id: '', price: '' };
         const result = await getList();
         processListByLine(result, list, total);
@@ -593,6 +627,8 @@
         condition,
         refreshList,
         clickPrice,
+        clickAllTransfer,
+        clickTransfer,
       };
     },
   });
