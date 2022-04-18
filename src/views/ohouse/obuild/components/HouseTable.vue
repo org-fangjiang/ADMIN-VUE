@@ -276,6 +276,9 @@
         <Button :class="prefixCls" type="link" size="small" @click="clickTransfer(line)">
           转移
         </Button>
+        <Button :class="prefixCls" type="link" size="small" @click="clickResource(line)">
+          资源
+        </Button>
       </template>
     </Table>
     <Modal
@@ -299,7 +302,14 @@
         :cityId="props.cityId"
         :areaId="props.areaId"
       />
-      <PriceForm v-if="drawerParam.state === '1'" :priceInfo="drawerParam.priceInfo" />
+      <SourceTable
+        v-if="drawerParam.state === '3'"
+        :id="drawerParam.id"
+        :projectId="props.projectId"
+        :provinceId="props.provinceId"
+        :cityId="props.cityId"
+        :areaId="props.areaId"
+      />
     </Modal>
     <Modal
       :bodyStyle="{ overflow: 'auto', margin: '16px' }"
@@ -350,6 +360,7 @@
   import { usePermission } from '/@/hooks/web/usePermission';
   import PriceForm from './PriceForm.vue';
   import TransferForm from './TransferForm.vue';
+  import SourceTable from './SourceTable.vue';
 
   export default defineComponent({
     name: 'HouseTable',
@@ -366,6 +377,7 @@
       Input,
       PriceForm,
       TransferForm,
+      SourceTable,
     },
     props: {
       projectId: {
@@ -498,6 +510,13 @@
         drawerParam.priceInfo.id = line.id;
         drawerParam.priceInfo.price = line.price;
       };
+      // 资源
+      const clickResource = async (line) => {
+        drawerParam.visible = true;
+        drawerParam.title = '资源列表';
+        drawerParam.state = '3';
+        drawerParam.id = line.id;
+      };
 
       //删除
       const deleteOneHouse = async (line) => {
@@ -629,6 +648,7 @@
         clickPrice,
         clickAllTransfer,
         clickTransfer,
+        clickResource,
       };
     },
   });

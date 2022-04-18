@@ -14,6 +14,13 @@ export default {
     SORT_5: 'SHIFTING',
     SORT_6: 'VIDEO',
   },
+  resource: {
+    title: 'title',
+    keyword: 'keyword',
+    description: 'description',
+    address: 'address',
+    sort: 'sort',
+  },
   house: {
     userByCreate: 'userByCreate',
     identifier: 'identifier',

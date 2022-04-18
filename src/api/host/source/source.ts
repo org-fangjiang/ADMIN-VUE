@@ -25,6 +25,41 @@ export enum ApiSource {
   UploadActivityImg = 'sys-server/file/uploadActivityImg',
   UploadBrand = 'sys-server/file/uploadBrand',
   UploadLookPhoto = 'sys-server/file/uploadLookPhoto',
+  UploadOHouse = 'sys-server/file/uploadOHouse',
+}
+
+export async function uploadOHouse(formData, mode: ErrorMessageMode = 'modal') {
+  try {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadOHouse,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 1,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  } catch (e) {
+    const result = await defHttp.post(
+      {
+        url: ApiSource.UploadOHouse,
+        params: formData,
+        headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+        retry: 0,
+      },
+      {
+        errorMessageMode: mode,
+        isReturnNativeResponse: true,
+        isTransformResponse: false,
+      }
+    );
+    return result;
+  }
 }
 
 export async function uploadLookPhoto(formData, mode: ErrorMessageMode = 'modal') {

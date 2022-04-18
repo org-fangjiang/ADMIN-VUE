@@ -14,6 +14,13 @@ export default {
     SORT_5: '实拍',
     SORT_6: '视频',
   },
+  resource: {
+    title: '标题',
+    keyword: '关键词',
+    description: '描述',
+    address: '图片',
+    sort: '分类',
+  },
   house: {
     userByCreate: '创建人',
     identifier: '二手房编号',
