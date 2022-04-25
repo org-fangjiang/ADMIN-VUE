@@ -36,7 +36,7 @@
         </span>
       </template>
       <template #address="{ text: address }">
-        <img :src="address" alt="" width="120px" />
+        <img :src="address" alt="" width="100" />
       </template>
       <template #operation="{ text: line }">
         <Button
