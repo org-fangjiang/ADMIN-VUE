@@ -6,6 +6,7 @@ export default {
   SALE_OVER: 'SALE_OVER',
   SALE_OFF: 'SALE_OFF',
   SALE_ON: 'SALE_ON',
+  DEAL: 'DEAL',
   SORT: {
     SORT_1: 'LAYOUT',
     SORT_2: 'BEDROOM',
@@ -20,6 +21,12 @@ export default {
     description: 'description',
     address: 'address',
     sort: 'sort',
+  },
+  deal: {
+    cName: 'cName',
+    cMobile: 'cMobile',
+    price: 'price',
+    dealTime: 'dealTime',
   },
   house: {
     userByCreate: 'userByCreate',

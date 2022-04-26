@@ -176,6 +176,7 @@ export default {
   defect: 'defect',
   advantage: 'advantage',
   action: {
+    deal: 'deal',
     add: 'add',
     update: 'update',
     delete: 'delete',

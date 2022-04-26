@@ -176,6 +176,7 @@ export default {
   defect: '项目缺点',
   advantage: '项目优点',
   action: {
+    deal: '成交',
     add: '添加',
     update: '更新',
     delete: '删除',

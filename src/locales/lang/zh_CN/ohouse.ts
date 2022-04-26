@@ -6,6 +6,7 @@ export default {
   SALE_OVER: '售罄',
   SALE_OFF: '待售',
   SALE_ON: '在售',
+  DEAL: '成交',
   SORT: {
     SORT_1: '户型',
     SORT_2: '卧室',
@@ -20,6 +21,12 @@ export default {
     description: '描述',
     address: '图片',
     sort: '分类',
+  },
+  deal: {
+    cName: '名称',
+    cMobile: '联系方式',
+    price: '成交价',
+    dealTime: '成交时间',
   },
   house: {
     userByCreate: '创建人',
