@@ -9,14 +9,14 @@
     >
       <FormItem ref="number" :label="t('ohouse.unit.number')" name="number">
         <Input
-          :disabled="isUpdate && !unitConst._UPDATE_FIELDS.includes('number')"
+          :disabled="(isUpdate && !unitConst._UPDATE_FIELDS.includes('number')) || props.isSee"
           v-model:value="formState.number"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="floor" :label="t('ohouse.unit.floor')" name="floor">
         <InputNumber
-          :disabled="isUpdate && !unitConst._UPDATE_FIELDS.includes('floor')"
+          :disabled="(isUpdate && !unitConst._UPDATE_FIELDS.includes('floor')) || props.isSee"
           v-model:value="formState.floor"
           autoComplete="off"
           type="number"
@@ -24,14 +24,14 @@
       </FormItem>
       <FormItem ref="everyRooms" :label="t('ohouse.unit.everyRooms')" name="everyRooms">
         <InputNumber
-          :disabled="isUpdate && !unitConst._UPDATE_FIELDS.includes('everyRooms')"
+          :disabled="(isUpdate && !unitConst._UPDATE_FIELDS.includes('everyRooms')) || props.isSee"
           v-model:value="formState.everyRooms"
           autoComplete="off"
           type="number"
         />
       </FormItem>
 
-      <FormItem :wrapper-col="{ span: 14, offset: 4 }">
+      <FormItem v-if="!isSee" :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('component.cropper.btn_reset')
@@ -67,11 +67,16 @@
       },
       buildId: {
         type: String,
-        required: true,
+        required: false,
       },
       projectId: {
         type: String,
-        required: true,
+        required: false,
+      },
+      isSee: {
+        type: Boolean,
+        required: false,
+        default: false,
       },
     },
     setup(props) {
@@ -104,7 +109,7 @@
         () => formState.number,
         async () => {
           if (formState.number && !isUpdate.value) {
-            const result = await unitExist(props.buildId, formState.number || '');
+            const result = await unitExist(props.buildId || '', formState.number || '');
             if (result) {
               failed('失败', '当前单元已存在列表中');
               loading.value = false;
@@ -169,6 +174,7 @@
         resetForm,
         onSubmit,
         t,
+        props,
       };
     },
   });

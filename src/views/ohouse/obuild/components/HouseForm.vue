@@ -10,35 +10,35 @@
     >
       <FormItem ref="identifier" :label="t('ohouse.house.identifier')" name="identifier">
         <Input
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('identifier')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('identifier')) || props.isSee"
           v-model:value="formState.identifier"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="title" :label="t('ohouse.house.title')" name="title">
         <Input
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('title')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('title')) || props.isSee"
           v-model:value="formState.title"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="number" :label="t('ohouse.house.number')" name="number">
         <Input
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('number')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('number')) || props.isSee"
           v-model:value="formState.number"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="floor" :label="t('ohouse.house.floor')" name="floor">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('floor')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('floor')) || props.isSee"
           v-model:value="formState.floor"
           autoComplete="off"
         />&nbsp;&nbsp;&nbsp;层
       </FormItem>
       <FormItem ref="floorType" :label="t('ohouse.house.floorType')" name="floorType">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('floorType')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('floorType')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.floorType"
@@ -50,7 +50,7 @@
       </FormItem>
       <FormItem ref="price" :label="t('ohouse.house.price')" name="price">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('price')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('price')) || props.isSee"
           v-model:value="formState.price"
           autoComplete="off"
           type="number"
@@ -61,7 +61,7 @@
       </FormItem>
       <FormItem ref="totalPrice" :label="t('ohouse.house.totalPrice')" name="totalPrice">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('totalPrice')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('totalPrice')) || props.isSee"
           v-model:value="formState.totalPrice"
           autoComplete="off"
           suffix="万元"
@@ -69,7 +69,9 @@
       </FormItem>
       <FormItem ref="downPayments" :label="t('ohouse.house.downPayments')" name="downPayments">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('downPayments')"
+          :disabled="
+            (isUpdate && !houseConst._UPDATE_FIELDS.includes('downPayments')) || props.isSee
+          "
           v-model:value="formState.downPayments"
           autoComplete="off"
           suffix="万元"
@@ -77,7 +79,7 @@
       </FormItem>
       <FormItem ref="area" :label="t('ohouse.house.area')" name="area">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('area')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('area')) || props.isSee"
           v-model:value="formState.area"
           autoComplete="off"
           suffix="㎡"
@@ -85,7 +87,7 @@
       </FormItem>
       <FormItem ref="buildArea" :label="t('ohouse.house.buildArea')" name="buildArea">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('buildArea')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('buildArea')) || props.isSee"
           v-model:value="formState.buildArea"
           autoComplete="off"
           suffix="㎡"
@@ -93,7 +95,7 @@
       </FormItem>
       <FormItem ref="rooms" :label="t('ohouse.house.rooms')" name="rooms">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('rooms')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('rooms')) || props.isSee"
           v-model:value="formState.rooms"
           autoComplete="off"
           type="number"
@@ -101,7 +103,7 @@
       </FormItem>
       <FormItem ref="hall" :label="t('ohouse.house.hall')" name="hall">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('hall')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('hall')) || props.isSee"
           v-model:value="formState.hall"
           autoComplete="off"
           type="number"
@@ -109,7 +111,7 @@
       </FormItem>
       <FormItem ref="toilet" :label="t('ohouse.house.toilet')" name="toilet">
         <InputNumber
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('toilet')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('toilet')) || props.isSee"
           v-model:value="formState.toilet"
           autoComplete="off"
           type="number"
@@ -117,7 +119,9 @@
       </FormItem>
       <FormItem ref="orientation" :label="t('ohouse.house.orientation')" name="orientation">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('orientation')"
+          :disabled="
+            (isUpdate && !houseConst._UPDATE_FIELDS.includes('orientation')) || props.isSee
+          "
           ref="select"
           :allowClear="true"
           v-model:value="formState.orientation"
@@ -129,7 +133,7 @@
       </FormItem>
       <FormItem ref="renovation" :label="t('ohouse.house.renovation')" name="renovation">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('renovation')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('renovation')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.renovation"
@@ -141,7 +145,7 @@
       </FormItem>
       <FormItem ref="type" :label="t('ohouse.house.type')" name="type">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('type')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('type')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.type"
@@ -153,28 +157,32 @@
       </FormItem>
       <FormItem ref="sellingPoint" :label="t('ohouse.house.sellingPoint')" name="sellingPoint">
         <Textarea
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('sellingPoint')"
+          :disabled="
+            (isUpdate && !houseConst._UPDATE_FIELDS.includes('sellingPoint')) || props.isSee
+          "
           v-model:value="formState.sellingPoint"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="mentality" :label="t('ohouse.house.mentality')" name="mentality">
         <Textarea
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('mentality')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('mentality')) || props.isSee"
           v-model:value="formState.mentality"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="description" :label="t('ohouse.house.description')" name="description">
         <Textarea
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('description')"
+          :disabled="
+            (isUpdate && !houseConst._UPDATE_FIELDS.includes('description')) || props.isSee
+          "
           v-model:value="formState.description"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="isOnly" :label="t('ohouse.house.isOnly')" name="isOnly">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('isOnly')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('isOnly')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.isOnly"
@@ -186,7 +194,7 @@
       </FormItem>
       <FormItem ref="fullYears" :label="t('ohouse.house.fullYears')" name="fullYears">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('fullYears')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('fullYears')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.fullYears"
@@ -198,21 +206,25 @@
       </FormItem>
       <FormItem ref="ownerName" :label="t('ohouse.house.ownerName')" name="ownerName">
         <InputPassword
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('ownerName')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('ownerName')) || props.isSee"
           v-model:value="formState.ownerName"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="ownerMobile" :label="t('ohouse.house.ownerMobile')" name="ownerMobile">
         <InputPassword
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('ownerMobile')"
+          :disabled="
+            (isUpdate && !houseConst._UPDATE_FIELDS.includes('ownerMobile')) || props.isSee
+          "
           v-model:value="formState.ownerMobile"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="otherMobile" :label="t('ohouse.house.otherMobile')" name="otherMobile">
         <InputPassword
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('otherMobile')"
+          :disabled="
+            (isUpdate && !houseConst._UPDATE_FIELDS.includes('otherMobile')) || props.isSee
+          "
           v-model:value="formState.otherMobile"
           autoComplete="off"
         />
@@ -224,13 +236,13 @@
           style="width: 100%"
           :token-separators="[',']"
           :options="options"
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('keyword')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('keyword')) || props.isSee"
           @change="tagsChange"
         />
       </FormItem>
       <FormItem ref="status" :label="t('ohouse.house.status')" name="status">
         <Select
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('status')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('status')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.status"
@@ -243,7 +255,7 @@
       <FormItem ref="isShare" :label="t('ohouse.house.isShare')" name="isShare">
         <RadioGroup
           v-model:value="formState.isShare"
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('isShare')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('isShare')) || props.isSee"
         >
           <Radio value="1">共有</Radio>
           <Radio value="0">非公有</Radio>
@@ -252,7 +264,7 @@
       <FormItem ref="isMortgage" :label="t('ohouse.house.isMortgage')" name="isMortgage">
         <RadioGroup
           v-model:value="formState.isMortgage"
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('isMortgage')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('isMortgage')) || props.isSee"
         >
           <Radio value="1">有抵押</Radio>
           <Radio value="0">无抵押</Radio>
@@ -261,7 +273,7 @@
       <FormItem ref="hasXf" :label="t('ohouse.house.hasXf')" name="hasXf">
         <RadioGroup
           v-model:value="formState.hasXf"
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('hasXf')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('hasXf')) || props.isSee"
         >
           <Radio value="1">有</Radio>
           <Radio value="0">无</Radio>
@@ -270,7 +282,7 @@
       <FormItem ref="hasCw" :label="t('ohouse.house.hasCw')" name="hasCw">
         <RadioGroup
           v-model:value="formState.hasCw"
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('hasCw')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('hasCw')) || props.isSee"
         >
           <Radio value="1">有</Radio>
           <Radio value="0">无</Radio>
@@ -279,7 +291,7 @@
       <FormItem ref="hasDxs" :label="t('ohouse.house.hasDxs')" name="hasDxs">
         <RadioGroup
           v-model:value="formState.hasDxs"
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('hasDxs')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('hasDxs')) || props.isSee"
         >
           <Radio value="1">有</Radio>
           <Radio value="0">无</Radio>
@@ -287,12 +299,12 @@
       </FormItem>
       <FormItem ref="mobile" :label="t('ohouse.house.mobile')" name="mobile">
         <Input
-          :disabled="isUpdate && !houseConst._UPDATE_FIELDS.includes('mobile')"
+          :disabled="(isUpdate && !houseConst._UPDATE_FIELDS.includes('mobile')) || props.isSee"
           v-model:value="formState.mobile"
           autoComplete="off"
         />
       </FormItem>
-      <FormItem :wrapper-col="{ span: 14, offset: 4 }">
+      <FormItem v-if="!isSee" :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('component.cropper.btn_reset')
@@ -354,27 +366,32 @@
       },
       projectId: {
         type: String,
-        required: true,
+        required: false,
       },
       buildId: {
         type: String,
-        required: true,
+        required: false,
       },
       unitId: {
         type: String,
-        required: true,
+        required: false,
       },
       provinceId: {
         type: String,
-        required: true,
+        required: false,
       },
       cityId: {
         type: String,
-        required: true,
+        required: false,
       },
       areaId: {
         type: String,
-        required: true,
+        required: false,
+      },
+      isSee: {
+        type: Boolean,
+        required: false,
+        default: false,
       },
     },
     setup(props) {

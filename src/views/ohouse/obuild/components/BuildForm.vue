@@ -10,14 +10,14 @@
     >
       <FormItem ref="number" :label="t('ohouse.build.number')" name="number">
         <Input
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('number')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('number')) || props.isSee"
           v-model:value="formState.number"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="floors" :label="t('ohouse.build.floors')" name="floors">
         <InputNumber
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('floors')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('floors')) || props.isSee"
           v-model:value="formState.floors"
           autoComplete="off"
           type="number"
@@ -25,7 +25,7 @@
       </FormItem>
       <FormItem ref="unitNumber" :label="t('ohouse.build.unitNumber')" name="unitNumber">
         <InputNumber
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('unitNumber')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('unitNumber')) || props.isSee"
           v-model:value="formState.unitNumber"
           autoComplete="off"
           type="number"
@@ -33,7 +33,9 @@
       </FormItem>
       <FormItem ref="description" :label="t('ohouse.build.description')" name="description">
         <Textarea
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('description')"
+          :disabled="
+            (isUpdate && !buildConst._UPDATE_FIELDS.includes('description')) || props.isSee
+          "
           v-model:value="formState.description"
           autoComplete="off"
         />
@@ -41,7 +43,7 @@
       <FormItem ref="openTime" :label="t('ohouse.build.openTime')" name="openTime">
         <DatePicker
           showTime
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('openTime')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('openTime')) || props.isSee"
           format="YYYY-MM-DD HH:mm:ss"
           :value="formState.openTime"
           @change="openTimechange"
@@ -50,7 +52,7 @@
       <FormItem ref="payTime" :label="t('ohouse.build.payTime')" name="payTime">
         <DatePicker
           showTime
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('payTime')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('payTime')) || props.isSee"
           format="YYYY-MM-DD HH:mm:ss"
           :value="formState.payTime"
           @change="payTimechange"
@@ -58,21 +60,21 @@
       </FormItem>
       <FormItem ref="locationX" :label="t('ohouse.build.locationX')" name="locationX">
         <Input
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('locationX')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('locationX')) || props.isSee"
           v-model:value="formState.locationX"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="locationY" :label="t('ohouse.build.locationY')" name="locationY">
         <Input
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('locationY')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('locationY')) || props.isSee"
           v-model:value="formState.locationY"
           autoComplete="off"
         />
       </FormItem>
       <FormItem ref="remark" :label="t('ohouse.build.remark')" name="remark">
         <Select
-          :disabled="isUpdate && !buildConst._UPDATE_FIELDS.includes('remark')"
+          :disabled="(isUpdate && !buildConst._UPDATE_FIELDS.includes('remark')) || props.isSee"
           ref="select"
           :allowClear="true"
           v-model:value="formState.remark"
@@ -82,7 +84,7 @@
           :pagination="false"
         />
       </FormItem>
-      <FormItem :wrapper-col="{ span: 14, offset: 4 }">
+      <FormItem v-if="!isSee" :wrapper-col="{ span: 14, offset: 4 }">
         <Button type="primary" @click="onSubmit">{{ t('component.modal.okText') }}</Button>
         <Button style="margin-left: 10px" @click="resetForm">{{
           t('component.cropper.btn_reset')
@@ -126,13 +128,18 @@
       InputNumber,
     },
     props: {
+      isSee: {
+        type: Boolean,
+        required: false,
+        default: false,
+      },
       id: {
         type: String,
-        require: true,
+        required: false,
       },
       projectId: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     setup(props) {
@@ -181,7 +188,7 @@
         () => formState.number,
         async () => {
           if (formState.number && !isUpdate.value) {
-            const result = await existBuild(props.projectId, formState.number || '');
+            const result = await existBuild(props.projectId || '', formState.number || '');
             if (result) {
               failed('添加失败', '当前楼栋已存在');
             }

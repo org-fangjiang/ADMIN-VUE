@@ -20,8 +20,12 @@ export const SaleConst = {
   _UPDATE_FIELDS: ['maxGetCustomer', 'baseScore', 'extNumber'],
   _RULES: {
     extNumber: [{ required: true, message: t('model.user.extNumber'), trigger: 'blur' }],
-    maxGetCustomer: [{ required: true, message: t('model.sale.maxGetCustomer'), trigger: 'blur' }],
-    baseScore: [{ required: true, message: t('model.sale.baseScore'), trigger: 'blur' }],
+    maxGetCustomer: [
+      { required: true, type: 'number', message: t('model.sale.maxGetCustomer'), trigger: 'blur' },
+    ],
+    baseScore: [
+      { required: true, type: 'number', message: t('model.sale.baseScore'), trigger: 'blur' },
+    ],
   },
   _PERMS: {
     SELECT: 'crm:sale:select',

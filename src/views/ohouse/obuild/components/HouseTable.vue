@@ -1,115 +1,117 @@
 <template>
   <div>
     <Button v-auth="houseConst._PERMS.ADD" @click="addHouse">{{ t('host.action.add') }}</Button>
-    <Button @click="clickAllTransfer"> 全部转移 </Button>
-    <!-- 房号 -->
-    <InputSearch
-      v-model:value="condition.number"
-      placeholder="房号"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <!-- title -->
-    <InputSearch
-      v-model:value="condition.title"
-      placeholder="标题"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <!-- 层高 -->
-    <InputSearch
-      v-model:value="condition.floor"
-      placeholder="层高"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <!-- floorType -->
-    <Select
-      ref="select"
-      placeholder="层高类型"
-      :allowClear="true"
-      v-model:value="condition.floorType"
-      style="width: 120px"
-      @change="refreshList"
-      :options="houseConst.FLOORS"
-      :pagination="false"
-    />
-    <!-- identifier -->
-    <InputSearch
-      v-model:value="condition.identifier"
-      placeholder="编号"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <InputSearch
-      v-model:value="condition.rooms"
-      placeholder="几室"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <InputSearch
-      v-model:value="condition.hall"
-      placeholder="几厅"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <InputSearch
-      v-model:value="condition.toilet"
-      placeholder="几卫"
-      style="width: 200px"
-      @search="refreshList"
-    />
-    <Select
-      ref="select"
-      placeholder="朝向"
-      :allowClear="true"
-      v-model:value="condition.orientation"
-      style="width: 120px"
-      @change="refreshList"
-      :options="houseConst.ORIENTATION"
-      :pagination="false"
-    />
-    <Select
-      ref="select"
-      placeholder="装修程度"
-      :allowClear="true"
-      v-model:value="condition.renovation"
-      style="width: 120px"
-      @change="refreshList"
-      :options="houseConst.RENOVATION_"
-      :pagination="false"
-    />
-    <Select
-      ref="select"
-      placeholder="类型"
-      :allowClear="true"
-      v-model:value="condition.type"
-      style="width: 120px"
-      @change="refreshList"
-      :options="houseConst.TYPES"
-      :pagination="false"
-    />
-    <Select
-      ref="select"
-      placeholder="是否唯一"
-      :allowClear="true"
-      v-model:value="condition.isOnly"
-      style="width: 120px"
-      @change="refreshList"
-      :options="houseConst.ONLY"
-      :pagination="false"
-    />
-    <Select
-      ref="select"
-      placeholder="年限"
-      :allowClear="true"
-      v-model:value="condition.fullYears"
-      style="width: 120px"
-      @change="refreshList"
-      :options="houseConst.FULL_YEARS"
-      :pagination="false"
-    />
-    <div class="flex flex-row flex-wrap">
+    <!-- <Button @click="clickAllTransfer"> 全部转移 </Button> -->
+    <div class="grid grid-cols-5 gap-y-2">
+      <!-- 房号 -->
+      <InputSearch
+        v-model:value="condition.number"
+        placeholder="房号"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <!-- title -->
+      <InputSearch
+        v-model:value="condition.title"
+        placeholder="标题"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <!-- 层高 -->
+      <InputSearch
+        v-model:value="condition.floor"
+        placeholder="层高"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <!-- floorType -->
+      <Select
+        ref="select"
+        placeholder="层高类型"
+        :allowClear="true"
+        v-model:value="condition.floorType"
+        style="width: 200px"
+        @change="refreshList"
+        :options="houseConst.FLOORS"
+        :pagination="false"
+      />
+      <!-- identifier -->
+      <InputSearch
+        v-model:value="condition.identifier"
+        placeholder="编号"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <InputSearch
+        v-model:value="condition.rooms"
+        placeholder="几室"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <InputSearch
+        v-model:value="condition.hall"
+        placeholder="几厅"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <InputSearch
+        v-model:value="condition.toilet"
+        placeholder="几卫"
+        style="width: 200px"
+        @search="refreshList"
+      />
+      <Select
+        ref="select"
+        placeholder="朝向"
+        :allowClear="true"
+        v-model:value="condition.orientation"
+        style="width: 200px"
+        @change="refreshList"
+        :options="houseConst.ORIENTATION"
+        :pagination="false"
+      />
+      <Select
+        ref="select"
+        placeholder="装修程度"
+        :allowClear="true"
+        v-model:value="condition.renovation"
+        style="width: 200px"
+        @change="refreshList"
+        :options="houseConst.RENOVATION_"
+        :pagination="false"
+      />
+      <Select
+        ref="select"
+        placeholder="类型"
+        :allowClear="true"
+        v-model:value="condition.type"
+        style="width: 200px"
+        @change="refreshList"
+        :options="houseConst.TYPES"
+        :pagination="false"
+      />
+      <Select
+        ref="select"
+        placeholder="是否唯一"
+        :allowClear="true"
+        v-model:value="condition.isOnly"
+        style="width: 200px"
+        @change="refreshList"
+        :options="houseConst.ONLY"
+        :pagination="false"
+      />
+      <Select
+        ref="select"
+        placeholder="年限"
+        :allowClear="true"
+        v-model:value="condition.fullYears"
+        style="width: 200px"
+        @change="refreshList"
+        :options="houseConst.FULL_YEARS"
+        :pagination="false"
+      />
+    </div>
+    <div class="grid grid-cols-2 gap-y-2 my-2">
       <InputGroup compact class="classGroup">
         <Button>价格区间(万元)</Button>
         <InputSearch
@@ -253,9 +255,18 @@
           size="small"
           @click="updateHouse(line)"
         >
-          {{ t('host.action.update') }}
+          {{ t('host.action.see') }}
         </Button>
         <Button
+          :class="prefixCls"
+          v-auth="houseConst._PERMS.DEAL"
+          type="link"
+          size="small"
+          @click="dealHouse(line)"
+        >
+          {{ t('host.action.deal') }}
+        </Button>
+        <!-- <Button
           :class="prefixCls"
           v-if="line.state === '2' && hasPermission(houseConst._PERMS.CHANGE_STATE)"
           type="link"
@@ -272,10 +283,10 @@
           @click="clickFail(line)"
         >
           审核不通过
-        </Button>
-        <Button :class="prefixCls" type="link" size="small" @click="clickTransfer(line)">
+        </Button> -->
+        <!-- <Button :class="prefixCls" type="link" size="small" @click="clickTransfer(line)">
           转移
-        </Button>
+        </Button> -->
         <Button :class="prefixCls" type="link" size="small" @click="clickResource(line)">
           资源
         </Button>
@@ -301,6 +312,7 @@
         :provinceId="props.provinceId"
         :cityId="props.cityId"
         :areaId="props.areaId"
+        :isSee="true"
       />
       <SourceTable
         v-if="drawerParam.state === '3'"
@@ -322,6 +334,11 @@
     >
       <PriceForm v-if="drawerParam.state === '1'" :priceInfo="drawerParam.priceInfo" />
       <TransferForm v-if="drawerParam.state === '2'" :id="drawerParam.id" />
+      <DealForm
+        v-if="drawerParam.state === '4'"
+        :houseId="drawerParam.id"
+        :projectId="props.projectId"
+      />
     </Modal>
     <Loading :loading="loading" :absolute="false" :tip="tip" />
   </div>
@@ -361,6 +378,7 @@
   import PriceForm from './PriceForm.vue';
   import TransferForm from './TransferForm.vue';
   import SourceTable from './SourceTable.vue';
+  import DealForm from './DealForm.vue';
 
   export default defineComponent({
     name: 'HouseTable',
@@ -378,6 +396,7 @@
       PriceForm,
       TransferForm,
       SourceTable,
+      DealForm,
     },
     props: {
       projectId: {
@@ -477,18 +496,26 @@
         processListByLine(result, list, total);
       });
 
-      // 全部转移
-      const clickAllTransfer = async () => {
+      // // 全部转移
+      // const clickAllTransfer = async () => {
+      //   drawerParam.smModal = true;
+      //   drawerParam.title = '全部转移';
+      //   drawerParam.state = '2';
+      // };
+      // // 单个转移
+      // const clickTransfer = async (line) => {
+      //   drawerParam.smModal = true;
+      //   drawerParam.title = '转移';
+      //   drawerParam.state = '2';
+      //   drawerParam.id = line.id;
+      // };
+
+      // 成交
+      const dealHouse = (item) => {
         drawerParam.smModal = true;
-        drawerParam.title = '全部转移';
-        drawerParam.state = '2';
-      };
-      // 单个转移
-      const clickTransfer = async (line) => {
-        drawerParam.smModal = true;
-        drawerParam.title = '转移';
-        drawerParam.state = '2';
-        drawerParam.id = line.id;
+        drawerParam.title = '成交';
+        drawerParam.state = '4';
+        drawerParam.id = item.id;
       };
 
       // 抽屉参数
@@ -588,7 +615,7 @@
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = line.id;
-        drawerParam.title = t('host.action.update');
+        drawerParam.title = t('host.action.see');
       };
 
       //关闭抽屉
@@ -646,8 +673,7 @@
         condition,
         refreshList,
         clickPrice,
-        clickAllTransfer,
-        clickTransfer,
+        dealHouse,
         clickResource,
       };
     },
