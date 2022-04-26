@@ -88,6 +88,8 @@ export interface HouseCondition {
   provinceId?: string;
   cityId?: string;
   areaId?: string;
+  state?: string;
+  createBy?: string;
 }
 
 export const HouseConst = {
@@ -148,6 +150,7 @@ export const HouseConst = {
     { value: '1', label: t('ohouse.EFFECTIVE'), color: 'geekblue' },
     { value: '2', label: t('ohouse.PENDING_APPROVAL'), color: 'volcano' },
     { value: '3', label: t('ohouse.FAILED'), color: 'geekblue' },
+    { value: '4', label: t('ohouse.DEAL'), color: 'geekblue' },
   ],
   _UPDATE_FIELDS: [
     'title',
@@ -190,6 +193,7 @@ export const HouseConst = {
     UPDATE: 'ohouse:update',
     DELETE: 'ohouse:delete',
     CHANGE_STATE: 'ohouse:check:state',
+    DEAL: 'ohouse:deal',
   },
   _RULES: {
     identifier: [{ required: true, message: t('ohouse.house.identifier'), trigger: 'blur' }],
