@@ -59,13 +59,13 @@ export const ResourceColumns = [
     ellipsis: 'true',
     slots: '',
   },
-  {
-    title: t('ohouse.projectResource.projectId'),
-    key: 'projectId',
-    dataIndex: 'projectId',
-    ellipsis: 'true',
-    slots: { customRender: 'projectId' },
-  },
+  // {
+  //   title: t('ohouse.projectResource.projectId'),
+  //   key: 'projectId',
+  //   dataIndex: 'projectId',
+  //   ellipsis: 'true',
+  //   slots: { customRender: 'projectId' },
+  // },
   {
     title: t('ohouse.projectResource.address'),
     key: 'address',
@@ -96,5 +96,6 @@ export const ProjectResourceColumns = [
     key: 'operation',
     ellipsis: 'true',
     slots: { customRender: 'operation' },
+    width: '30%',
   },
 ];

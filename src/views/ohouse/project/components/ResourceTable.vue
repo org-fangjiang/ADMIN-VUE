@@ -79,6 +79,12 @@
         >
           {{ t('host.action.update') }}
         </Button>
+        <Button :class="prefixCls" type="link" size="small" @click="setSand(line)">
+          设置沙盘图
+        </Button>
+        <Button :class="prefixCls" type="link" size="small" @click="setFirst(line)">
+          设置项目首图
+        </Button>
       </template>
     </Table>
     <Modal
@@ -106,7 +112,7 @@
 <script lang="ts">
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
+  import { computed, defineComponent, onMounted, reactive, ref, UnwrapRef } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasePageResult, PageParam } from '/@/api/model/baseModel';
   import { Table, Tag, Button, Modal, Image, Select } from 'ant-design-vue';
@@ -123,6 +129,8 @@
     reEnableOResource,
   } from '/@/api/ohouse/projectResource/projectRecource';
   import SourceForm from './ResourceForm.vue';
+  import { OProjectModel } from '/@/api/ohouse/project/model/projectModel';
+  import { updateOHouse } from '/@/api/ohouse/project/project';
 
   interface Option {
     value: string;
@@ -165,6 +173,26 @@
       const sourceConst = ref(ProjectResourceConst);
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
+      // 首图
+      const setFirst = async (item) => {
+        const formState: UnwrapRef<OProjectModel> = reactive({
+          id: props.id,
+          firstImg: item.address,
+        });
+        debugger;
+        await updateOHouse(formState);
+        success('设置项目首图成功', t('host.action.success'));
+      };
+      // 沙盘图
+      const setSand = async (item) => {
+        const formState: UnwrapRef<OProjectModel> = reactive({
+          id: props.id,
+          sandImg: item.address,
+        });
+        debugger;
+        await updateOHouse(formState);
+        success('设置沙盘图', t('host.action.success'));
+      };
 
       //分页
       const pageParam: PageParam = reactive({
@@ -308,6 +336,8 @@
         addSource,
         props,
         stateHandleChange,
+        setFirst,
+        setSand,
       };
     },
   });

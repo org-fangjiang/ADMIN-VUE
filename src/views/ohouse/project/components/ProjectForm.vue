@@ -13,14 +13,14 @@
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="name" :label="t('host.name')" name="name">
           <Input
-            :disabled="isUpdate && !updateFields.includes('name') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('name')) || props.isSee"
             v-model:value="formState.name"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="aliasName" :label="t('host.aliasName')" name="aliasName">
           <Input
-            :disabled="isUpdate && !updateFields.includes('aliasName') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('aliasName')) || props.isSee"
             v-model:value="formState.aliasName"
             autoComplete="off"
           />
@@ -51,7 +51,7 @@
         </FormItem>
         <FormItem ref="property" :label="t('host.property')" name="property">
           <InputNumber
-            :disabled="isUpdate && !updateFields.includes('property') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('property')) || props.isSee"
             v-model:value="formState.property"
             :type="'number'"
             autoComplete="off"
@@ -60,7 +60,7 @@
         <FormItem ref="getLandTime" :label="t('host.getLandTime')" name="getLandTime">
           <DatePicker
             showTime
-            :disabled="isUpdate && !updateFields.includes('getLandTime') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('getLandTime')) || props.isSee"
             format="YYYY-MM-DD HH:mm:ss"
             :value="formState.getLandTime"
             @change="getLandTimechange"
@@ -70,7 +70,7 @@
           <InputNumber
             :min="1.0"
             :max="5.0"
-            :disabled="isUpdate && !updateFields.includes('locationScore') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('locationScore')) || props.isSee"
             v-model:value="formState.locationScore"
             autoComplete="off"
             placeholder="1.0～5.0"
@@ -80,7 +80,7 @@
           <InputNumber
             :min="1.0"
             :max="5.0"
-            :disabled="isUpdate && !updateFields.includes('educationScore') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('educationScore')) || props.isSee"
             v-model:value="formState.educationScore"
             autoComplete="off"
             placeholder="1.0～5.0"
@@ -90,7 +90,7 @@
           <InputNumber
             :min="1.0"
             :max="5.0"
-            :disabled="isUpdate && !updateFields.includes('medicalScore') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('medicalScore')) || props.isSee"
             v-model:value="formState.medicalScore"
             autoComplete="off"
             placeholder="1.0～5.0"
@@ -100,7 +100,7 @@
           <InputNumber
             :min="1.0"
             :max="5.0"
-            :disabled="isUpdate && !updateFields.includes('trafficScore') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('trafficScore')) || props.isSee"
             v-model:value="formState.trafficScore"
             autoComplete="off"
             placeholder="1.0～5.0"
@@ -110,7 +110,7 @@
           <InputNumber
             :min="1.0"
             :max="5.0"
-            :disabled="isUpdate && !updateFields.includes('matchingScore') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('matchingScore')) || props.isSee"
             v-model:value="formState.matchingScore"
             autoComplete="off"
             placeholder="1.0～5.0"
@@ -118,14 +118,14 @@
         </FormItem>
         <FormItem ref="unitNumber" :label="t('host.unitNumber')" name="unitNumber">
           <InputNumber
-            :disabled="isUpdate && !updateFields.includes('unitNumber') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('unitNumber')) || props.isSee"
             v-model:value="formState.unitNumber"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="houseNumber" :label="t('host.houseNumber')" name="houseNumber">
           <InputNumber
-            :disabled="isUpdate && !updateFields.includes('houseNumber') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('houseNumber')) || props.isSee"
             v-model:value="formState.houseNumber"
             autoComplete="off"
           />
@@ -138,7 +138,7 @@
         </FormItem>
         <FormItem ref="areaId" :label="t('host.area')" name="areaId">
           <FArea
-            :disabledArea="isUpdate && !updateFields.includes('areaId') && props.isSee"
+            :disabledArea="(isUpdate && !updateFields.includes('areaId')) || props.isSee"
             :cityId="cityId"
             :areaId="formState.areaId"
             @change="areaChange"
@@ -147,7 +147,7 @@
         <FormItem ref="address" :label="t('host.address')" name="address">
           <div class="flex flex-row w-full h-full">
             <Input
-              :disabled="isUpdate && !updateFields.includes('address') && props.isSee"
+              :disabled="(isUpdate && !updateFields.includes('address')) || props.isSee"
               v-model:value="formState.address"
               autoComplete="off"
             />
@@ -166,7 +166,7 @@
           <br />
           <span>{{ brandName }}</span>
         </FormItem>
-        <FormItem ref="sandImg" :label="t('host.sandImg')" name="brandId">
+        <!-- <FormItem ref="sandImg" :label="t('host.sandImg')" name="brandId">
           <Button @click="setSandImg" :disabled="props.isSee">设置沙盘图</Button>
           <br />
           <Image :src="sandAddress" alt="" width="120px" />
@@ -175,7 +175,7 @@
           <Button @click="setFirstImg" :disabled="props.isSee">设置首图</Button>
           <br />
           <Image :src="firstAddress" alt="" width="120px" />
-        </FormItem>
+        </FormItem> -->
       </div>
       <br />
       <Divider orientation="left">销售信息</Divider>
@@ -184,7 +184,7 @@
         <FormItem ref="openTime" :label="t('host.openTime')" name="openTime">
           <DatePicker
             showTime
-            :disabled="isUpdate && !updateFields.includes('openTime') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('openTime')) || props.isSee"
             format="YYYY-MM-DD HH:mm:ss"
             :value="formState.openTime"
             @change="openTimechange"
@@ -193,7 +193,7 @@
         <FormItem ref="payTime" :label="t('host.payTime')" name="payTime">
           <DatePicker
             showTime
-            :disabled="isUpdate && !updateFields.includes('payTime') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('payTime')) || props.isSee"
             format="YYYY-MM-DD HH:mm:ss"
             :value="formState.payTime"
             @change="payTimechange"
@@ -213,14 +213,14 @@
           name="ladderHouseRatio"
         >
           <Input
-            :disabled="isUpdate && !updateFields.includes('ladderHouseRatio') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('ladderHouseRatio')) || props.isSee"
             v-model:value="formState.ladderHouseRatio"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="landArea" :label="t('host.landArea')" name="landArea">
           <Input
-            :disabled="isUpdate && !updateFields.includes('landArea') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('landArea')) || props.isSee"
             v-model:value="formState.landArea"
             autoComplete="off"
             suffix="m²"
@@ -229,7 +229,7 @@
         </FormItem>
         <FormItem ref="buildArea" :label="t('host.buildArea')" name="buildArea">
           <Input
-            :disabled="isUpdate && !updateFields.includes('buildArea') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('buildArea')) || props.isSee"
             v-model:value="formState.buildArea"
             autoComplete="off"
             suffix="m²"
@@ -238,7 +238,7 @@
         </FormItem>
         <FormItem ref="volumeRate" :label="t('host.volumeRate')" name="volumeRate">
           <InputNumber
-            :disabled="isUpdate && !updateFields.includes('volumeRate') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('volumeRate')) || props.isSee"
             v-model:value="formState.volumeRate"
             autoComplete="off"
             :formatter="(value) => `${value}%`"
@@ -247,7 +247,7 @@
         </FormItem>
         <FormItem ref="greenRate" :label="t('host.greenRate')" name="greenRate">
           <Input
-            :disabled="isUpdate && !updateFields.includes('greenRate') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('greenRate')) || props.isSee"
             v-model:value="formState.greenRate"
             autoComplete="off"
             suffix="%"
@@ -256,28 +256,30 @@
         </FormItem>
         <FormItem ref="parkingRatio" :label="t('host.park')" name="parkingRatio">
           <Input
-            :disabled="isUpdate && !updateFields.includes('formState.parkingRatio') && props.isSee"
+            :disabled="
+              (isUpdate && !updateFields.includes('formState.parkingRatio')) || props.isSee
+            "
             v-model:value="formState.parkingRatio"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="parking" :label="t('host.parking')" name="parking">
           <Input
-            :disabled="isUpdate && !updateFields.includes('parking') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('parking')) || props.isSee"
             v-model:value="formState.parking"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="buildingNumber" :label="t('host.buildingTotal')" name="buildingNumber">
           <InputNumber
-            :disabled="isUpdate && !updateFields.includes('buildingNumber') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('buildingNumber')) || props.isSee"
             v-model:value="formState.buildingNumber"
             autoComplete="off"
           />&nbsp;&nbsp;栋
         </FormItem>
         <FormItem ref="houseTotal" :label="t('host.houseTotal')" name="houseTotal">
           <Input
-            :disabled="isUpdate && !updateFields.includes('houseTotal') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('houseTotal')) || props.isSee"
             v-model:value="formState.houseTotal"
             autoComplete="off"
             suffix="户"
@@ -286,7 +288,7 @@
         </FormItem>
         <FormItem ref="elevatorInfo" :label="t('host.elevatorInfo')" name="elevatorInfo">
           <Input
-            :disabled="isUpdate && !updateFields.includes('elevatorInfo') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('elevatorInfo')) || props.isSee"
             v-model:value="formState.elevatorInfo"
             autoComplete="off"
           />
@@ -298,7 +300,7 @@
         </FormItem>
         <FormItem ref="estatePrice" :label="t('host.estatePrice')" name="estatePrice">
           <Input
-            :disabled="isUpdate && !updateFields.includes('estatePrice') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('estatePrice')) || props.isSee"
             v-model:value="formState.estatePrice"
             autoComplete="off"
             suffix="元/m²"
@@ -311,7 +313,7 @@
           name="estateDescription"
         >
           <Input
-            :disabled="isUpdate && !updateFields.includes('estateDescription') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('estateDescription')) || props.isSee"
             v-model:value="formState.estateDescription"
             autoComplete="off"
           />
@@ -387,56 +389,56 @@
         </FormItem>
         <FormItem ref="trafficInfo" :label="t('host.trafficInfo')" name="trafficInfo">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('trafficInfo') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('trafficInfo')) || props.isSee"
             v-model:value="formState.trafficInfo"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="medicalInfo" :label="t('host.medicalInfo')" name="medicalInfo">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('medicalInfo') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('medicalInfo')) || props.isSee"
             v-model:value="formState.medicalInfo"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="matchingInfo" :label="t('host.matchingInfo')" name="matchingInfo">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('matchingInfo') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('matchingInfo')) || props.isSee"
             v-model:value="formState.matchingInfo"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="educationInfo" :label="t('host.educationInfo')" name="educationInfo">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('educationInfo') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('educationInfo')) || props.isSee"
             v-model:value="formState.educationInfo"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="otherInfo" :label="t('host.otherInfo')" name="otherInfo">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('otherInfo') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('otherInfo')) || props.isSee"
             v-model:value="formState.otherInfo"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="description" :label="t('host.description')" name="description">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('description') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('description')) || props.isSee"
             v-model:value="formState.description"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="advantage" :label="t('host.advantage')" name="advantage">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('advantage') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('advantage')) || props.isSee"
             v-model:value="formState.advantage"
             autoComplete="off"
           />
         </FormItem>
         <FormItem ref="defect" :label="t('host.defect')" name="defect">
           <Textarea
-            :disabled="isUpdate && !updateFields.includes('defect') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('defect')) || props.isSee"
             v-model:value="formState.defect"
             autoComplete="off"
           />
@@ -456,7 +458,7 @@
       <div style="display: grid; grid-template-columns: 33.33% 33.33% 33.33%">
         <FormItem ref="number" :label="t('host.number')" name="number">
           <Input
-            :disabled="isUpdate && !updateFields.includes('number') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('number')) || props.isSee"
             v-model:value="formState.number"
             autoComplete="off"
             :type="'number'"
@@ -464,7 +466,7 @@
         </FormItem>
         <FormItem ref="lookTime" :label="t('host.lookTime')" name="lookTime">
           <InputNumber
-            :disabled="isUpdate && !updateFields.includes('lookTime') && props.isSee"
+            :disabled="(isUpdate && !updateFields.includes('lookTime')) || props.isSee"
             v-model:value="formState.lookTime"
             autoComplete="off"
           />
@@ -529,7 +531,6 @@
     Modal,
     Textarea,
     Divider,
-    Image,
   } from 'ant-design-vue';
   import { ValidateErrorEntity } from 'ant-design-vue/lib/form/interface';
   import { useUserStore } from '/@/store/modules/user';
@@ -572,7 +573,6 @@
       EstateTable,
       Divider,
       SandTable,
-      Image,
     },
     props: {
       id: {
