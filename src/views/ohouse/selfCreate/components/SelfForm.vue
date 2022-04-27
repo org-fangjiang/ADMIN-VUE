@@ -23,7 +23,7 @@
         ></span
       ></div
     >
-    <div>{{ formState.room }}室{{ formState.hall }}厅{{ formState.toilet }}卫</div>
+    <div>{{ formState.rooms }}室{{ formState.hall }}厅{{ formState.toilet }}卫</div>
     <div
       >朝向: <span v-if="formState.orientation === '1'">南</span
       ><span v-if="formState.orientation === '2'">北</span
