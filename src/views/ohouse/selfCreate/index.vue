@@ -64,6 +64,7 @@
         <Button :class="prefixCls" type="link" size="small" @click="clickTransfer(line)">
           转移
         </Button>
+        <Button :class="prefixCls" type="link" size="small" @click="clickSee(line)"> 查看 </Button>
       </template>
     </Table>
     <Modal
@@ -78,6 +79,7 @@
       centered
     >
       <HouseForm v-if="drawerParam.state === '0'" :id="drawerParam.id" />
+      <SelfForm v-if="drawerParam.state === '3'" :id="drawerParam.id" />
     </Modal>
     <Modal
       :bodyStyle="{ overflow: 'auto', margin: '16px' }"
@@ -113,6 +115,7 @@
   import { usePermission } from '/@/hooks/web/usePermission';
   import TransferForm from '../obuild/components/TransferForm.vue';
   import { useUserStore } from '/@/store/modules/user';
+  import SelfForm from './components/SelfForm.vue';
 
   export default defineComponent({
     name: 'HouseTable',
@@ -124,6 +127,7 @@
       Loading,
       HouseForm,
       TransferForm,
+      SelfForm,
     },
     setup() {
       const { t } = useI18n();
@@ -270,6 +274,13 @@
         drawerParam.id = line.id;
         drawerParam.title = t('host.action.update');
       };
+      // 查看
+      const clickSee = (line) => {
+        drawerParam.visible = true;
+        drawerParam.state = '3';
+        drawerParam.id = line.id;
+        drawerParam.title = t('host.action.see');
+      };
 
       //关闭抽屉
       const onClose = async () => {
@@ -324,6 +335,7 @@
         clickAllTransfer,
         clickTransfer,
         userId,
+        clickSee,
       };
     },
   });
