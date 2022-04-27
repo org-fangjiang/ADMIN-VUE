@@ -151,6 +151,7 @@ export const HouseConst = {
     { value: '2', label: t('ohouse.PENDING_APPROVAL'), color: 'volcano' },
     { value: '3', label: t('ohouse.FAILED'), color: 'geekblue' },
     { value: '4', label: t('ohouse.DEAL'), color: 'geekblue' },
+    { value: '5', label: t('ohouse.APPLY'), color: 'geekblue' },
   ],
   _UPDATE_FIELDS: [
     'title',

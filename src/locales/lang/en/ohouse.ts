@@ -7,6 +7,7 @@ export default {
   SALE_OFF: 'SALE_OFF',
   SALE_ON: 'SALE_ON',
   DEAL: 'DEAL',
+  APPLY: 'APPLY',
   SORT: {
     SORT_1: 'LAYOUT',
     SORT_2: 'BEDROOM',

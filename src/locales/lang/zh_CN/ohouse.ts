@@ -7,6 +7,7 @@ export default {
   SALE_OFF: '待售',
   SALE_ON: '在售',
   DEAL: '成交',
+  APPLY: '维护',
   SORT: {
     SORT_1: '户型',
     SORT_2: '卧室',

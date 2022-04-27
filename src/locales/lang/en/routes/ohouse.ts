@@ -3,4 +3,6 @@ export default {
   adminProject: 'adminProject',
   approval: 'approval',
   selfCreate: 'selfCreate',
+  invalidHouse: 'invalidHouse',
+  maintain: 'maintain',
 };

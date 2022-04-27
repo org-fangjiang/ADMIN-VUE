@@ -41,6 +41,24 @@ const ohouse: AppRouteModule = {
         roles: ['/ohouse/selfCreate'],
       },
     },
+    {
+      path: 'invalidHouse',
+      name: 'InvalidHouse',
+      component: () => import('/@/views/ohouse/invalidHouse/index.vue'),
+      meta: {
+        title: t('routes.ohouse.invalidHouse'),
+        roles: ['/ohouse/invalidHouse'],
+      },
+    },
+    {
+      path: 'maintain',
+      name: 'Maintain',
+      component: () => import('/@/views/ohouse/maintain/index.vue'),
+      meta: {
+        title: t('routes.ohouse.maintain'),
+        roles: ['/ohouse/maintain'],
+      },
+    },
   ],
 };
 

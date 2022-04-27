@@ -13,6 +13,54 @@ enum oHouseApi {
   TransferAll = 'ohouse-server/ohouse/transferAll',
   UpdatePrice = 'ohouse-server/ohousep',
   GetInfo = 'ohouse-server/ohouse/getInfo',
+  Maintain = 'ohouse-server/ohouse/maintain',
+  MaintainOk = 'ohouse-server/ohouse/maintainOk',
+  MaintainFail = 'ohouse-server/ohouse/maintainFail',
+}
+
+export function maintainFail(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: oHouseApi.MaintainFail,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function maintainOk(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: oHouseApi.MaintainOk,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
+}
+
+export function maintain(id: string, mode: ErrorMessageMode = 'modal') {
+  const reqParam = new RequestParam();
+  reqParam.setData({ id: id });
+  const data = reqParam.getInstance();
+  return defHttp.post(
+    {
+      url: oHouseApi.Maintain,
+      data,
+    },
+    {
+      errorMessageMode: mode,
+    }
+  );
 }
 
 export function getInfo(houseId: string, mode: ErrorMessageMode = 'modal') {

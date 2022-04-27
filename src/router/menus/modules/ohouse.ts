@@ -18,6 +18,14 @@ const ohouse: MenuModule = {
         path: 'selfCreate',
         name: t('routes.ohouse.selfCreate'),
       },
+      {
+        path: 'invalidHouse',
+        name: t('routes.ohouse.invalidHouse'),
+      },
+      {
+        path: 'maintain',
+        name: t('routes.ohouse.maintain'),
+      },
     ],
   },
 };
