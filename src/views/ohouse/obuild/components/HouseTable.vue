@@ -312,7 +312,7 @@
         :provinceId="props.provinceId"
         :cityId="props.cityId"
         :areaId="props.areaId"
-        :isSee="true"
+        :isSee="isSee"
       />
       <SourceTable
         v-if="drawerParam.state === '3'"
@@ -428,6 +428,9 @@
       const { t } = useI18n();
       const { createErrorModal } = useMessage();
       const { prefixCls } = useDesign('project');
+
+      // 查看
+      let isSee = ref(false);
 
       let loading = ref<boolean>(true);
       let tip = ref<string>('加载中...');
@@ -608,6 +611,7 @@
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = '';
+        isSee.value = false;
         drawerParam.title = t('host.action.add');
       };
       //更新
@@ -615,6 +619,7 @@
         drawerParam.visible = true;
         drawerParam.state = '0';
         drawerParam.id = line.id;
+        isSee.value = true;
         drawerParam.title = t('host.action.see');
       };
 
@@ -675,6 +680,7 @@
         clickPrice,
         dealHouse,
         clickResource,
+        isSee,
       };
     },
   });
