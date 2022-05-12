@@ -26,6 +26,10 @@ const ohouse: MenuModule = {
         path: 'maintain',
         name: t('routes.ohouse.maintain'),
       },
+      {
+        path: 'layoutForm',
+        name: t('routes.ohouse.layoutForm'),
+      },
     ],
   },
 };

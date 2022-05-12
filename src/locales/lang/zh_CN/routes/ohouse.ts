@@ -5,4 +5,5 @@ export default {
   selfCreate: '个人房源',
   invalidHouse: '无效房源',
   maintain: '维护待审核',
+  layoutForm: '户型图',
 };

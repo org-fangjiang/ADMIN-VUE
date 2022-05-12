@@ -5,4 +5,5 @@ export default {
   selfCreate: 'selfCreate',
   invalidHouse: 'invalidHouse',
   maintain: 'maintain',
+  layoutForm: 'layoutForm',
 };

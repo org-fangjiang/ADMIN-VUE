@@ -59,6 +59,15 @@ const ohouse: AppRouteModule = {
         roles: ['/ohouse/maintain'],
       },
     },
+    {
+      path: 'layoutForm',
+      name: 'LayoutForm',
+      component: () => import('/@/views/ohouse/layoutForm/index.vue'),
+      meta: {
+        title: t('routes.ohouse.layoutForm'),
+        roles: ['/ohouse/layoutForm'],
+      },
+    },
   ],
 };
 
