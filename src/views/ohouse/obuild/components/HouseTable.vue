@@ -111,9 +111,9 @@
         :pagination="false"
       />
     </div>
-    <div class="grid grid-cols-2 gap-y-2 my-2">
-      <InputGroup compact class="classGroup">
-        <Button>价格区间(万元)</Button>
+    <div class="grid grid-cols-2 mt-3 gap-y-3">
+      <div>
+        <Button class="w-24">价格区间(万元)</Button>
         <InputSearch
           v-model:value="condition.lowPrice"
           style="width: 120px; text-align: center"
@@ -128,13 +128,13 @@
         />
         <InputSearch
           v-model:value="condition.heightPrice"
-          style="width: 120px; text-align: center; border-left: 0"
+          style="width: 120px; text-align: center; border-left: 0; margin-right: 30px"
           placeholder="最高价"
           @search="refreshList"
         />
-      </InputGroup>
-      <InputGroup compact class="classGroup">
-        <Button>总价区间(万元)</Button>
+      </div>
+      <div>
+        <Button class="w-24">总价区间(万元)</Button>
         <InputSearch
           v-model:value="condition.lowTotalPrice"
           style="width: 120px; text-align: center"
@@ -149,13 +149,13 @@
         />
         <InputSearch
           v-model:value="condition.heightTotalPrice"
-          style="width: 120px; text-align: center; border-left: 0"
+          style="width: 120px; text-align: center; border-left: 0; margin-right: 30px"
           placeholder="最高价"
           @search="refreshList"
         />
-      </InputGroup>
-      <InputGroup compact class="classGroup">
-        <Button>屋内面积(平方米)</Button>
+      </div>
+      <div>
+        <Button class="w-24">屋内面积(平方米)</Button>
         <InputSearch
           v-model:value="condition.lowArea"
           style="width: 120px; text-align: center"
@@ -170,13 +170,13 @@
         />
         <InputSearch
           v-model:value="condition.heightArea"
-          style="width: 120px; text-align: center; border-left: 0"
+          style="width: 120px; text-align: center; border-left: 0; margin-right: 30px"
           placeholder="最大面积"
           @search="refreshList"
         />
-      </InputGroup>
-      <InputGroup compact class="classGroup">
-        <Button>建筑面积(平方米)</Button>
+      </div>
+      <div>
+        <Button class="w-24">建筑面积(平方米)</Button>
         <InputSearch
           v-model:value="condition.lowBuildArea"
           style="width: 120px; text-align: center"
@@ -191,11 +191,11 @@
         />
         <InputSearch
           v-model:value="condition.heightBuildArea"
-          style="width: 120px; text-align: center; border-left: 0"
+          style="width: 120px; text-align: center; border-left: 0; margin-right: 30px"
           placeholder="最大面积"
           @search="refreshList"
         />
-      </InputGroup>
+      </div>
     </div>
     <Table
       :columns="houseColumns"
@@ -345,16 +345,7 @@
 </template>
 <script lang="ts">
   import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
-  import {
-    Table,
-    Tag,
-    Button,
-    Modal,
-    Select,
-    InputSearch,
-    InputGroup,
-    Input,
-  } from 'ant-design-vue';
+  import { Table, Tag, Button, Modal, Select, InputSearch, Input } from 'ant-design-vue';
   import { Loading } from '/@/components/Loading';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -391,7 +382,6 @@
       HouseForm,
       Select,
       InputSearch,
-      InputGroup,
       Input,
       PriceForm,
       TransferForm,
