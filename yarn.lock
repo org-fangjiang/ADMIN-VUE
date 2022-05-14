@@ -10792,6 +10792,11 @@ ts-jest@^27.0.3:
     semver "7.x"
     yargs-parser "20.x"
 
+ts-mxgraph@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/ts-mxgraph/-/ts-mxgraph-1.0.0.tgz#0a6bdacb7a7ea69d7d354d3fd23240da5d47990e"
+  integrity sha512-kcHn6Q4rMUR+/TPOcmBuVOV5/CHPCCLOfPbuGhv5IQzjlnXRow5CgxlaBmVsWwZTc7pAJcGNZcFwEYnMdN/flQ==
+
 ts-node@^10.1.0:
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.1.0.tgz#e656d8ad3b61106938a867f69c39a8ba6efc966e"
